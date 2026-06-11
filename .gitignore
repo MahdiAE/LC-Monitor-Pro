@@ -1,0 +1,12 @@
+node_modules/
+package.json
+package-lock.json
+diag*.js
+verify*.js
+dbg.js
+shot.js
+*.png
+*.log
+.claude/
+LC Monitor Pro v51 - fable 5.html
+LC_Monitor_Pro_v55 - Office.html
