@@ -955,6 +955,12 @@ body:not([data-theme=dark])::before{opacity:.0 !important}
   display:inline-flex;align-items:center;justify-content:center;border-radius:7px;flex:0 0 auto}
 #page-review .rv-file-actions span{white-space:nowrap}
 
+/* ---- Contract details popup: larger so BoQ + info fit comfortably ---- */
+#cModal .md{max-width:1100px!important;width:96%!important;max-height:94vh!important}
+#cModal .md-body{max-height:none}
+#cModal .cboq-tbl{font-size:11px}
+#cModal .cboq-tbl select,#cModal .cboq-tbl input{font-size:11px}
+
 @media(prefers-reduced-motion:reduce){
   #page-dashboard *,.dash-hero *,.lc-funnel *{animation:none!important}
 }
@@ -3440,7 +3446,7 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.querySelectorAll('.mo').forEach(m=>m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');}));
 
 // TOAST
-function toast(msg,type='info'){const el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=(type==='ok'?'✅ ':type==='err'?'❌ ':'ℹ️ ')+msg;document.getElementById('tc').appendChild(el);setTimeout(()=>el.remove(),3600);}
+function toast(msg,type='info'){var tc=document.getElementById('tc');if(!tc){tc=document.createElement('div');tc.id='tc';tc.style.cssText='position:fixed;right:18px;bottom:18px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;';document.body.appendChild(tc);}const el=document.createElement('div');el.className=`toast ${type}`;el.innerHTML=(type==='ok'?'✅ ':type==='err'?'❌ ':'ℹ️ ')+msg;tc.appendChild(el);setTimeout(()=>el.remove(),3600);}
 
 // AI CHAT HELPERS
 function appendChatMsg(containerId,role,text){const c=document.getElementById(containerId);if(!c)return;const d=document.createElement('div');d.className=`ai-msg ${role}`;d.innerHTML=`<div class="ai-avatar ${role}">${role==='bot'?'🤖':'👤'}</div><div class="ai-bubble ${role}">${text.replace(/\n/g,'<br/>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/^- (.+)$/gm,'<li>$1</li>').replace(/(<li>.*<\/li>)/s,'<ul>$1</ul>')}</div>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
@@ -6366,6 +6372,11 @@ calcBids=function(){
   var w=fin.find(function(r){return !r.excluded&&!r.art19Shifted;});
   if(!w) w=fin.find(function(r){return !r.excluded;});
   if(curBid&&w) curBid.winner=w.name;
+  // v56: expose ranked results so Award & Finalize and MoM PDF can read them
+  if(curBid){
+    curBid.lastResults=fin.map(function(r,ix){return {rank:r.rank||ix+1,name:r.name,score:r.score||0,origPrice:r.price||0,adjustedPrice:r.adjustedPrice||r.price||0,lcPct:r.lcPct||0,nppPct:r.nppPct||0,isSME:!!r.isSME,hasCert:!!r.hasCert,excluded:!!r.excluded,exclusionReasons:r.exclusionReasons||[],notes:r.notes||''};});
+    curBid.topRanked=w?w.name:'';
+  }
 
   var mx=Math.max.apply(null,fin.filter(function(r){return !r.excluded;}).map(function(r){return r.score;}))||1;
   var sA=isNPP||isSME||isHybrid;
@@ -6521,7 +6532,7 @@ window._renderContractBoQ = function(cid){
     h+='<td><select onchange="updateCBoQ('+cid+','+i+',\'uom\',this.value)">';
     BOQ_UOM.forEach(function(u){h+='<option'+(item.uom===u?' selected':'')+'>'+u+'</option>';});
     h+='</select></td>';
-    h+='<td><input value="'+((item.origin||'').replace(/"/g,'&quot;'))+'" onchange="updateCBoQ('+cid+','+i+',\'origin\',this.value)" style="min-width:70px"/></td>';
+    h+='<td><select onchange="updateCBoQ('+cid+','+i+',\'origin\',this.value)"><option value="Local"'+(item.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(item.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>';
     h+='<td style="color:var(--text3)">'+fSAR(vat)+'</td>';
     h+='<td style="font-weight:700;color:var(--accent2)">'+fSAR(tp+vat)+'</td>';
     h+='<td>';
@@ -6557,7 +6568,7 @@ window.toggleContractBoQ=function(el){
 window.addCBoQRow=function(cid){
   var c=DB.find(function(x){return x.id===cid;});if(!c)return;
   if(!c.boqItems)c.boqItems=[];
-  c.boqItems.push({desc:'',nature:'Goods',unitPrice:0,qty:0,uom:'Unit',origin:'',evidenceName:'',evidenceData:''});
+  c.boqItems.push({desc:'',nature:'Goods',unitPrice:0,qty:0,uom:'Unit',origin:'Local',evidenceName:'',evidenceData:''});
   saveAll();openContractModal(cid);
 };
 
@@ -6644,13 +6655,16 @@ window.v55_extractRFPBoQ=function(){
   var boq=(rfp.boq||[]).filter(function(r){return r.desc;});
   if(boq.length){
     boqSec.style.display='block';
-    _subBoQItems=boq.map(function(b,i){return {desc:b.desc||'',mandatory:!!(b.mandatory),mandatoryResponse:false,nature:b.nature||'Goods',unitPrice:0,qty:b.qty||1,uom:b.uom||b.unit||'Unit',origin:b.origin||''};});
+    _subBoQItems=boq.map(function(b,i){var nat=(b.nature||'Goods');nat=(/serv/i.test(nat))?'Service':'Goods';return {desc:b.desc||'',mandatory:!!(b.isMandatory||b.mandatory),mandatoryResponse:false,nature:nat,unitPrice:0,qty:b.qty||1,uom:b.uom||b.unit||'Unit',origin:b.origin||'Local'};});
     window._subBoQItems=_subBoQItems;v55_renderSubBoQ();
+    var pp0=document.getElementById('subPrice');if(pp0){pp0.readOnly=true;}
   } else {
-    boqSec.style.display='none';
-    // Allow manual price entry
-    document.getElementById('subPrice').readOnly=false;
-    document.getElementById('subPrice').style.background='';
+    // RFP has no BoQ — make it visible & actionable instead of silently hiding
+    boqSec.style.display='block';
+    if(tbody)tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:14px;color:var(--text3)">This RFP has no BoQ line items yet. Add them in <b>RFP Preparation → BoQ</b>, or enter the total bid price manually below.</td></tr>';
+    var sm0=document.getElementById('subBoQSummary');if(sm0)sm0.innerHTML='';
+    _subBoQItems=[];window._subBoQItems=_subBoQItems;
+    var pp=document.getElementById('subPrice');if(pp){pp.readOnly=false;pp.style.background='';}
   }
   // Auto-fill NPP from supplier
   v55_autoFillSupplier();
@@ -6753,6 +6767,12 @@ window.openSubModal = function(){
   var tb=document.getElementById('subBoQTbody');if(tb)tb.innerHTML='';
   var sm=document.getElementById('subBoQSummary');if(sm)sm.innerHTML='';
   var pp=document.getElementById('subPrice');if(pp){pp.readOnly=false;pp.style.background='';}
+  // If an RFP was pre-selected in the page filter, carry it into the modal and load its BoQ
+  var pf=document.getElementById('subRFPFilter');
+  if(pf&&pf.value&&sr&&[].some.call(sr.options,function(o){return o.value===pf.value;})){
+    sr.value=pf.value;
+    if(typeof v55_extractRFPBoQ==='function')v55_extractRFPBoQ();
+  }
   if(typeof openModal==='function')openModal('subModal');
 };
 })();
