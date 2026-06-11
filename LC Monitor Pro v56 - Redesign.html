@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<!-- saved from url=(0058)file:///C:/Users/BA983VL/Downloads/LC_Monitor_Pro_v36.html -->
 <html lang="en" dir="ltr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LC Monitor Pro v55</title>
-<link href="file:///C:/Users/BA983VL/Downloads/LC%20Monitor%20Pro%20last%20working_files/css2" rel="stylesheet">
+<title>LC Monitor Pro v56</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232563eb'/><text x='32' y='45' font-size='32' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'>LC</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&display=swap">
 <script src="vendor/chart.umd.min.js"></script>
 <script>window.Chart||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>');</script>
 <script src="vendor/xlsx.full.min.js"></script>
@@ -534,9 +536,12 @@ body.rtl .tl-dot{left:auto;right:-17px;}
 /* Print styles for PDF export */
 @media print{
   body *{visibility:hidden}
-  #dashPrintArea,#dashPrintArea *{visibility:visible}
+  #dashPrintArea,#dashPrintArea *,#pdfContent,#pdfContent *{visibility:visible}
   #dashPrintArea{position:absolute;left:0;top:0;width:100%;padding:20px}
-  .sidebar,.topbar,.dash-export-bar{display:none!important}
+  #pdfContent{position:absolute;left:0;top:0;width:100%;padding:20px}
+  #pdfModal{position:static!important;background:none!important;backdrop-filter:none!important;padding:0!important}
+  #pdfModal .md{box-shadow:none!important;border:none!important;max-height:none!important}
+  .sidebar,.topbar,.dash-export-bar,.md-close{display:none!important}
 }
 
 /* V21 DASHBOARD */
@@ -964,13 +969,181 @@ body:not([data-theme=dark])::before{opacity:.0 !important}
 @media(prefers-reduced-motion:reduce){
   #page-dashboard *,.dash-hero *,.lc-funnel *{animation:none!important}
 }
+
+/* ============================================================= */
+/* ===========  DESIGN SYSTEM v56.2 · "SOVEREIGN"  ============= */
+/* ===========  premium look + motion, app-wide  ============== */
+/* ============================================================= */
+:root{
+  --r:16px;--rs:10px;--rl:22px;
+  --sh:0 1px 2px rgba(15,30,70,.04),0 8px 24px -8px rgba(15,30,70,.12);
+  --shl:0 24px 60px -16px rgba(15,30,70,.28);
+  --ring:0 0 0 4px rgba(37,99,235,.14);
+  --grad-brand:linear-gradient(135deg,#2563eb 0%,#6d28d9 55%,#7c3aed 100%);
+  --grad-accent:linear-gradient(135deg,#2563eb,#7c3aed);
+  --grad-side:linear-gradient(170deg,#0a1024 0%,#0e1838 50%,#141f47 100%);
+  --tr:.2s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --sh:0 1px 2px rgba(0,0,0,.5),0 10px 30px -8px rgba(0,0,0,.6);
+  --shl:0 24px 70px -16px rgba(0,0,0,.8);
+  --ring:0 0 0 4px rgba(255,230,0,.16);
+  --grad-brand:linear-gradient(135deg,#FFE600 0%,#FFC400 100%);
+  --grad-accent:linear-gradient(135deg,#FFE600,#FFB800);
+}
+
+/* ---- animated mesh backdrop (whole app, light + dark) ---- */
+body:not([data-theme=dark]){
+  background:
+    radial-gradient(1200px 760px at 6% -10%,rgba(37,99,235,.10),transparent 58%),
+    radial-gradient(900px 620px at 102% 4%,rgba(124,58,237,.09),transparent 52%),
+    radial-gradient(820px 720px at 50% 118%,rgba(13,148,136,.07),transparent 60%),
+    linear-gradient(180deg,#fbfcff 0%,#eef2fc 100%) !important;
+  background-attachment:fixed !important;
+}
+body:not([data-theme=dark])::before{opacity:0 !important}
+[data-theme=dark] body{
+  background:
+    radial-gradient(1200px 760px at 6% -10%,rgba(255,230,0,.06),transparent 58%),
+    radial-gradient(900px 620px at 102% 4%,rgba(124,58,237,.12),transparent 52%),
+    radial-gradient(820px 720px at 50% 118%,rgba(46,204,113,.05),transparent 60%),
+    linear-gradient(180deg,#15151e 0%,#1A1A24 100%) !important;
+  background-attachment:fixed !important;
+}
+
+/* ---- keyframes ---- */
+@keyframes dsUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes dsIn{from{opacity:0;transform:translateY(8px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes dsSheen{0%{transform:translateX(-130%) skewX(-20deg)}60%,100%{transform:translateX(230%) skewX(-20deg)}}
+@keyframes dsGlow{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes dsSpin{to{transform:rotate(360deg)}}
+
+/* ---- page transition ---- */
+.page.active{animation:dsIn .34s cubic-bezier(.22,1,.36,1)}
+
+/* ---- SIDEBAR ---- */
+.sidebar{background:var(--grad-side)!important;border-right:none!important;box-shadow:4px 0 30px -12px rgba(8,12,30,.5)}
+body.rtl .sidebar{box-shadow:-4px 0 30px -12px rgba(8,12,30,.5)}
+.sidebar .sl{border-bottom:1px solid rgba(255,255,255,.07)!important}
+.sidebar .slt{color:#fff!important}
+.sidebar .sls{color:#8da2c8!important}
+.sidebar .sli{background:var(--grad-accent)!important;box-shadow:0 6px 18px -4px rgba(37,99,235,.6);color:#fff!important}
+.sidebar .ns{color:#5f73a0!important;font-weight:800!important}
+.ni-wrap{color:#c2cde4!important;border-radius:11px;margin:1px 9px;padding:8px 11px!important;border-left:none!important;position:relative;transition:all var(--tr)}
+body.rtl .ni-wrap{border-right:none!important}
+.ni-wrap .ni{transition:transform var(--tr)}
+.ni-wrap:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;transform:translateX(3px)}
+body.rtl .ni-wrap:hover{transform:translateX(-3px)}
+.ni-wrap:hover .ni{transform:scale(1.18)}
+.ni-wrap.active{background:linear-gradient(100deg,rgba(37,99,235,.30),rgba(124,58,237,.16))!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.10),0 8px 20px -10px rgba(37,99,235,.7)}
+.ni-wrap.active::before{content:'';position:absolute;left:-9px;top:50%;transform:translateY(-50%);width:4px;height:62%;border-radius:0 4px 4px 0;background:var(--grad-accent);box-shadow:0 0 12px rgba(37,99,235,.9)}
+body.rtl .ni-wrap.active::before{left:auto;right:-9px;border-radius:4px 0 0 4px}
+[data-theme=dark] .ni-wrap.active{background:linear-gradient(100deg,rgba(255,230,0,.18),rgba(255,180,0,.08))!important}
+[data-theme=dark] .ni-wrap.active::before{background:var(--accent)}
+.sidebar .nbadge{box-shadow:0 3px 8px -2px rgba(220,38,38,.7);animation:dsGlow 2.4s ease-in-out infinite}
+#settSubNav .ni-wrap{font-size:11.5px}
+.sbtm{border-top:1px solid rgba(255,255,255,.07)!important}
+.sbtm .cl{color:#8da2c8!important}
+.sbtm .tg{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.10)!important}
+.sbtm .tb{color:#c2cde4!important}
+.sbtm .tb.active{background:var(--grad-accent)!important;color:#fff!important}
+
+/* ---- TOPBAR ---- */
+.topbar{background:rgba(255,255,255,.70)!important;backdrop-filter:blur(20px) saturate(1.4)!important;border-bottom:1px solid var(--border)!important;box-shadow:0 6px 24px -18px rgba(15,30,70,.5)}
+[data-theme=dark] .topbar{background:rgba(26,26,36,.74)!important}
+.page-title{font-family:var(--fn);font-weight:800;letter-spacing:-.4px;font-size:16px}
+.si{border-radius:22px!important;transition:all var(--tr)}
+.si:focus{box-shadow:var(--ring)}
+.tbtn{border-radius:11px!important;transition:all var(--tr);font-weight:700}
+.tbtn:hover{transform:translateY(-1px);box-shadow:0 8px 18px -8px rgba(37,99,235,.5)}
+.tbtn.primary{background:var(--grad-accent)!important;border:none!important;color:#fff!important}
+[data-theme=dark] .tbtn.primary{color:#1A1A24!important}
+.tbtn.primary:hover{filter:brightness(1.05);box-shadow:0 10px 22px -8px rgba(37,99,235,.7)}
+
+/* ---- CARDS ---- */
+.card{border-radius:var(--r)!important;box-shadow:var(--sh)!important;border:1px solid var(--border)!important;transition:transform var(--tr),box-shadow var(--tr),border-color var(--tr);position:relative;overflow:hidden}
+.content .card:hover{box-shadow:var(--shl)!important;border-color:var(--border2)!important}
+.card-title{font-family:var(--fn);font-weight:800;letter-spacing:-.2px}
+
+/* ---- BUTTONS ---- */
+.btn{border-radius:11px!important;font-weight:700;transition:all var(--tr);position:relative;overflow:hidden}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.985)}
+.btn-p,.btn.btn-p{background:var(--grad-accent)!important;border:none!important;color:#fff!important;box-shadow:0 8px 18px -8px rgba(37,99,235,.55)}
+[data-theme=dark] .btn-p{color:#1A1A24!important}
+.btn-p::after{content:'';position:absolute;top:0;left:0;width:45%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.4),transparent);transform:translateX(-130%) skewX(-20deg);opacity:0}
+.btn-p:hover::after{opacity:1;animation:dsSheen .8s ease}
+.btn-p:hover{filter:brightness(1.04);box-shadow:0 12px 26px -8px rgba(37,99,235,.7)}
+.btn-a{background:linear-gradient(135deg,#0d9488,#0ea5a3)!important;border:none!important;color:#fff!important}
+.btn-d:hover{box-shadow:0 8px 18px -8px rgba(220,38,38,.6)}
+
+/* ---- TABLES ---- */
+.tbl-wrap,.card .tbl-wrap{border-radius:var(--rs);overflow:auto}
+thead tr{border-bottom:none!important}
+th{background:var(--surface2)!important;position:sticky;top:0;z-index:2;backdrop-filter:blur(6px);border-bottom:1px solid var(--border)!important}
+tbody tr{transition:background var(--tr),box-shadow var(--tr)}
+tbody tr:hover{background:var(--al)!important;box-shadow:inset 3px 0 0 var(--accent)}
+body.rtl tbody tr:hover{box-shadow:inset -3px 0 0 var(--accent)}
+td{border-bottom:1px solid var(--border)!important}
+
+/* ---- FORM CONTROLS ---- */
+.fi,.fsel,.fsel2,.fta,.si,input[type=text],input[type=number],input[type=date],select,textarea{transition:border-color var(--tr),box-shadow var(--tr),background var(--tr)}
+.fi:focus,.fsel:focus,.fsel2:focus,.fta:focus,input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--accent)!important;box-shadow:var(--ring)!important}
+.fsec{border-radius:var(--r)}
+.fsec-title{font-family:var(--fn);font-weight:800;letter-spacing:-.2px}
+
+/* ---- MODALS ---- */
+.mo{background:rgba(10,16,34,.55)!important;backdrop-filter:blur(8px) saturate(1.2)!important}
+[data-theme=dark] .mo.open{background:rgba(0,0,0,.66)!important}
+.md{border-radius:var(--rl)!important;box-shadow:var(--shl)!important;border:1px solid var(--border)!important;overflow:hidden;animation:dsIn .3s cubic-bezier(.22,1,.36,1)}
+.md-hd{border-bottom:1px solid var(--border)!important}
+.md-title{font-family:var(--fn);font-weight:800}
+.md-close{transition:all var(--tr)}
+.md-close:hover{transform:rotate(90deg)}
+
+/* ---- BADGES / CHIPS ---- */
+.badge{border-radius:8px;font-weight:700;letter-spacing:.2px}
+.fc{border-radius:20px!important;transition:all var(--tr);font-weight:600}
+.fc:hover{transform:translateY(-1px)}
+.fc.on{background:var(--grad-accent)!important;color:#fff!important;border-color:transparent!important;box-shadow:0 6px 14px -6px rgba(37,99,235,.6)}
+[data-theme=dark] .fc.on{color:#1A1A24!important}
+
+/* ---- KPI cards (generic, non-dashboard) ---- */
+.kpi{border-radius:var(--r)!important;transition:transform var(--tr),box-shadow var(--tr)}
+.kpi:hover{transform:translateY(-3px)}
+.kpi-val{font-family:var(--fm)}
+
+/* ---- EMPTY STATES ---- */
+.empty{padding:34px 18px!important;opacity:.9}
+.empty .ei{font-size:34px!important;filter:grayscale(.1);animation:dsGlow 3s ease-in-out infinite}
+
+/* ---- TOASTS ---- */
+#tc{right:20px!important;bottom:20px!important}
+body.rtl #tc{right:auto!important;left:20px!important}
+.toast{border-radius:13px!important;box-shadow:var(--shl)!important;backdrop-filter:blur(10px);border:1px solid var(--border)!important;font-weight:600;animation:dsUp .26s cubic-bezier(.22,1,.36,1)}
+
+/* ---- SCROLLBARS ---- */
+*{scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+*::-webkit-scrollbar{width:9px;height:9px}
+*::-webkit-scrollbar-thumb{background:var(--border2);border-radius:8px;border:2px solid transparent;background-clip:content-box}
+*::-webkit-scrollbar-thumb:hover{background:var(--accent);background-clip:content-box}
+
+/* ---- staggered list/card entrance on content ---- */
+.content>.page.active>*{animation:dsUp .4s cubic-bezier(.22,1,.36,1) both}
+.content>.page.active>*:nth-child(2){animation-delay:.04s}
+.content>.page.active>*:nth-child(3){animation-delay:.08s}
+.content>.page.active>*:nth-child(4){animation-delay:.12s}
+.content>.page.active>*:nth-child(5){animation-delay:.16s}
+
+/* numbers in mono */
+.td-m,.kpi-val,.dc-val,.fun-n,.ch-num,.pf-kpi-v,.pg-p{font-family:var(--fm)}
 </style>
 </head>
 <body>
 <div class="app" id="app">
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro v55</div><div class="sls">منصة المحتوى المحلي</div></div></div></div>
+  <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro v56</div><div class="sls">منصة المحتوى المحلي</div></div></div></div>
   <div class="ns">OVERVIEW</div>
   <div class="ni-wrap active" onclick="nav(&#39;dashboard&#39;,this)"><span class="ni">⬛</span><span>Executive Dashboard</span></div>
   <div class="ns">RFP PREPARATION</div>
@@ -2536,7 +2709,7 @@ function renderBiddersList(){
   }).join('');
 }
 
-function addBidderManual(){var _bq=(curBid&&curBid.rfpBoQ)?JSON.parse(JSON.stringify(curBid.rfpBoQ.map(function(r){return{desc:r.desc||'',nature:r.nature||'',qty:r.qty||1,uom:r.uom||'Lump Sum',price:r.cost||0,origin:r.origin||'Local',isMandatoryRFP:r.isMandatory||false,isMandatoryResp:r.isMandatory||false};}))):[];curBidders.push({id:uid(),name:'Bidder '+(curBidders.length+1),price:0,lcPct:0,lcBaseline:0,baselinePct:0,nppPct:0,hasCert:true,hasNPP:false,isSME:false,isListed:false,isTadawul:false,mlCompliant:true,mlValue:0,boqItems:_bq,_collapsed:false,_techFile:null,_techFileName:null,_commFile:null,_commFileName:null,_mlFile:null,_mlFileName:null,_lcBaselineFile:null,_lcBaselineFileName:null,_lcTargetFile:null,_lcTargetFileName:null});renderBiddersList();}
+function addBidderManual(){var _bq=(curBid&&curBid.rfpBoQ)?JSON.parse(JSON.stringify(curBid.rfpBoQ.map(function(r){return{desc:r.desc||'',nature:r.nature||'',qty:r.qty||1,uom:r.uom||'Lump Sum',price:r.cost||0,origin:r.origin||'Local',isMandatoryRFP:r.isMandatory||false,isMandatoryResp:r.isMandatory||false};}))):[];curBidders.push({id:uid(),name:'Bidder '+(curBidders.length+1),price:0,lcPct:0,lcBaseline:0,baselinePct:0,nppPct:0,hasCert:true,hasNPP:false,isSME:false,isListed:false,isTadawul:false,mlCompliant:true,mlValue:0,boqItems:_bq,_collapsed:false,_techFile:null,_techFileName:null,_commFile:null,_commFileName:null,_mlFile:null,_mlFileName:null,_lcBaselineFile:null,_lcBaselineFileName:null,_lcTargetFile:null,_lcTargetFileName:null});renderBiddersList();toast('Bidder added','ok');}
 async function uploadBidDoc(file){
   if(!file)return;
   toast('AI reading bid document…','info');
@@ -2618,6 +2791,7 @@ async function aiBidAnalysis(){
   btn.disabled=false;btn.textContent='🤖 AI Deep Analysis';
 }
 function exportBidReport(){
+  if(!curBidders||!curBidders.length){toast('No bidders to export','err');return;}
   const mech=document.getElementById('bidMech').value;
   let csv='Rank,Bidder,Price (SAR),LC %,NPP %,Certificate,Score,Status\n';
   curBidders.forEach((b,i)=>{const excl=checkExclusions(b,mech);csv+=`${excl.length?'Excluded':i+1},"${b.name}",${b.price||0},${b.lcPct||0},${b.nppPct||0},${b.hasCert?'Yes':'No'},${b.score||0},"${excl.length?excl.join('; '):'Qualified'}"\n`;});
@@ -3269,15 +3443,15 @@ function recalcAllPenalties(){
   saveDB();
 }
 
-function saveSettings(){S.dev=parseFloat(document.getElementById('pDev').value)||0.30;S.gap=parseFloat(document.getElementById('pGap').value)||5;S.fin=parseFloat(document.getElementById('pFin').value)||10;S.npp=parseFloat(document.getElementById('pNPP').value)||0.30;S.ml=parseFloat(document.getElementById('pML').value)||0.30;S.rem=parseInt(document.getElementById('pRem').value)||15;S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();toast('Settings saved — penalties recalculated','ok');}
+function saveSettings(){function _num(id,dflt){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?dflt:v;}function _int(id,dflt){var v=parseInt(document.getElementById(id).value);return isNaN(v)?dflt:v;}S.dev=_num('pDev',0.30);S.gap=_num('pGap',5);S.fin=_num('pFin',10);S.npp=_num('pNPP',0.30);S.ml=_num('pML',0.30);S.rem=_int('pRem',15);S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();toast('Settings saved — penalties recalculated','ok');}
 function resetSettings(){S={dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10};saveS();renderSettings();toast('Reset','info');}
 function renderPPENGrid(){
   const yt={1:0,2:0,3:0,4:0,5:0};DB.forEach(c=>(c.penalties||[]).forEach(p=>{if(p.type==='Periodic'&&p.year)yt[p.year]=(yt[p.year]||0)+p.amount;}));
   document.getElementById('ppenGrid').innerHTML=[1,2,3,4,5].map(y=>`<div style="background:var(--surface2);border:1.5px solid ${PPEN[y]===false?'var(--border)':'var(--accent)'};border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year ${y} Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_${y}" ${PPEN[y]!==false?'checked':''} onchange="PPEN[${y}]=this.checked;renderPPENGrid()"/><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">${yt[y]>0?fSAR(yt[y]):'No penalty'}</span><span style="font-size:9px;font-weight:700;color:${PPEN[y]===false?'var(--text3)':'var(--accent3)'}">${PPEN[y]===false?'⊘ OFF':'✓ ON'}</span></div></div>`).join('');
 }
 function savePPENConfig(){savePPEN();recalcAllPenalties();renderCurrentPage();updateBadges();toast('Penalty toggles applied — recalculated','ok');}
-function enableAllPPEN(){[1,2,3,4,5].forEach(y=>PPEN[y]=true);renderPPENGrid();}
-function disableAllPPEN(){[1,2,3,4,5].forEach(y=>PPEN[y]=false);renderPPENGrid();}
+function enableAllPPEN(){[1,2,3,4,5].forEach(y=>PPEN[y]=true);renderPPENGrid();toast('All periodic penalties enabled — press Apply to recalculate','info');}
+function disableAllPPEN(){[1,2,3,4,5].forEach(y=>PPEN[y]=false);renderPPENGrid();toast('All periodic penalties disabled — press Apply to recalculate','info');}
 
 // MECHANISM FORMULA SETTINGS
 function renderMechFormulaList(){
@@ -3362,12 +3536,12 @@ function removeEU(i){if(ENDUSERS[i].frozen){toast('Unfreeze first','err');return
 function toggleFreezeEU(i){ENDUSERS[i].frozen=!ENDUSERS[i].frozen;saveEU();renderEUList();toast(ENDUSERS[i].frozen?`"${ENDUSERS[i].name}" frozen 🔒`:`Unfrozen 🔓`,'ok');}
 
 // AI CONTROLS
-function renderAIControlsList(){document.getElementById('aiControlsList').innerHTML=AI_CONTROLS.map((c,i)=>`<div class="mi"><div class="mi-n" title="${c}" style="max-width:350px;white-space:normal;line-height:1.3">${c}</div><div class="ma"><button class="mb del" onclick="removeAIControl(${i})">✕</button></div></div>`).join('')||'<div style="font-size:11px;color:var(--text3);padding:6px">No controls defined.</div>';}
-function addAIControl(){const v=document.getElementById('newAICtrl').value.trim();if(!v){toast('Enter control rule','err');return;}AI_CONTROLS.push(v);localStorage.setItem('lcAICtrl',JSON.stringify(AI_CONTROLS));document.getElementById('newAICtrl').value='';renderAIControlsList();toast('Control added','ok');}
+function renderAIControlsList(){var _ac=document.getElementById('aiControlsList');if(!_ac)return;_ac.innerHTML=AI_CONTROLS.map((c,i)=>`<div class="mi"><div class="mi-n" title="${c}" style="max-width:350px;white-space:normal;line-height:1.3">${c}</div><div class="ma"><button class="mb del" onclick="removeAIControl(${i})">✕</button></div></div>`).join('')||'<div style="font-size:11px;color:var(--text3);padding:6px">No controls defined.</div>';}
+function addAIControl(){var _nac=document.getElementById('newAICtrl');if(!_nac)return;const v=_nac.value.trim();if(!v){toast('Enter control rule','err');return;}AI_CONTROLS.push(v);localStorage.setItem('lcAICtrl',JSON.stringify(AI_CONTROLS));document.getElementById('newAICtrl').value='';renderAIControlsList();toast('Control added','ok');}
 function removeAIControl(i){if(!confirm('Remove?'))return;AI_CONTROLS.splice(i,1);localStorage.setItem('lcAICtrl',JSON.stringify(AI_CONTROLS));renderAIControlsList();toast('Removed','info');}
 
 // MLNP IMPORT
-function importMLNP(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:''});MLNP_LIST=rows;localStorage.setItem('lcMLNP',JSON.stringify(MLNP_LIST));document.getElementById('mlnpPreview').innerHTML=`<div class="badge bg" style="font-size:11px;padding:5px 10px">✓ ${MLNP_LIST.length} items loaded from ${file.name}</div>`;toast(`MLNP list loaded: ${MLNP_LIST.length} items`,'ok');}catch(err){toast('Error reading file: '+err.message,'err');}};r.readAsBinaryString(file);}
+function importMLNP(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:''});if(!rows.length){toast('No rows found in spreadsheet','err');return;}MLNP_LIST=rows;localStorage.setItem('lcMLNP',JSON.stringify(MLNP_LIST));document.getElementById('mlnpPreview').innerHTML=`<div class="badge bg" style="font-size:11px;padding:5px 10px">✓ ${MLNP_LIST.length} items loaded from ${file.name}</div>`;toast(`MLNP list loaded: ${MLNP_LIST.length} items`,'ok');}catch(err){toast('Error reading file: '+err.message,'err');}};r.readAsBinaryString(file);}
 
 // POPULATE SELECTS
 function populateEUSelectFor(id){const s=document.getElementById(id);if(!s)return;const cur=s.value;s.innerHTML='<option value="">Select end-user…</option>'+ENDUSERS.map(eu=>`<option value="${eu.name}">${eu.name}${eu.frozen?' 🔒':''}</option>`).join('');if(cur)s.value=cur;}
@@ -3405,12 +3579,12 @@ function submitContract(e){
 function resetForm(){document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');pendingFiles=[];document.getElementById('attachList').innerHTML='';}
 
 // IMPORT/EXPORT
-function importExcel(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets['Project X']||wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:null});let added=0,updated=0;const prev=[];rows.forEach(r=>{const num=String(r['Contract Number']||r['Contract #']||'').trim();if(!num)return;const amt=parseFloat(r['Amount']||0)||0;const name=String(r['Contract Name']||r['Name']||'').trim();const mech=String(r['Mechanisim']||r['Mechanism']||'').trim();const start=r['Start Date']?new Date(r['Start Date']).toISOString().split('T')[0]:null;const dur=parseInt(r['Duration']||0)||0;const apR=r['Agreed %']?parseFloat(r['Agreed %']):null;const ap=apR&&apR>1?apR/100:apR;const endDate=r['Contract End Date']?new Date(r['Contract End Date']).toISOString().split('T')[0]:null;const ex=DB.find(c=>c.num===num);if(ex){ex.name=name||ex.name;ex.mechanism=mech||ex.mechanism;ex.amount=amt||ex.amount;if(start)ex.start=start;if(dur)ex.duration=dur;if(endDate)ex.end=endDate;if(ap)ex.agreedPct=ap;updated++;prev.push(`<span class="badge ba">Updated</span> #${num} ${name.substring(0,28)}`);}else{DB.push({id:uid(),num,endUser:'',contractor:'',name,mechanism:mech,amount:amt,start:start||'',duration:dur,end:endDate||'',agreedPct:ap,lcAmount:ap&&amt?amt*ap:null,baseline:null,natProdAmount:0,mandatoryListAmount:0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:[],evidence:{},notes:''});added++;prev.push(`<span class="badge bg">Added</span> #${num} ${name.substring(0,28)}`);}});saveDB();document.getElementById('importPreview').innerHTML=`<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">Import Done</div><div class="badge bg">${added} added · ${updated} updated</div></div><div style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto">${prev.map(p=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)">${p}</div>`).join('')}</div></div>`;toast(`${added} added, ${updated} updated`,'ok');}catch(err){toast('Error: '+err.message,'err');}};r.readAsBinaryString(file);}
-function exportExcel(){const rows=DB.map(c=>({'Contract Number':c.num,'Contract Name':c.name,'End User':c.endUser,'Contractor':c.contractor,'Mechanism':c.mechanism,'Amount (SAR)':c.amount,'Start Date':c.start,'Duration (months)':c.duration,'Contract End Date':c.end,'Agreed LC %':c.agreedPct?+(c.agreedPct*100).toFixed(2):null,'LC Amount':c.lcAmount,'Total Penalty':tPen(c),'Missing Reports':mCnt(c),'Notes':c.notes||''}));const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Project X',ws);XLSX.writeFile(wb,'LC_Monitor_Export_'+new Date().toISOString().split('T')[0]+'.xlsx');toast('Excel exported','ok');}
-function exportCSV(){const h=['#','Name','End User','Mechanism','Amount','Start','End','Agreed%','Penalty','Missing'];const rows=DB.map(c=>[c.num,`"${c.name||''}"`,`"${c.endUser||''}"`,`"${c.mechanism||''}"`,c.amount,c.start,c.end,c.agreedPct?+(c.agreedPct*100).toFixed(1):'',tPen(c),mCnt(c)]);const csv=[h,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='contracts.csv';a.click();toast('CSV exported','ok');}
+function importExcel(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets['Project X']||wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:null});let added=0,updated=0;const prev=[];rows.forEach(r=>{const num=String(r['Contract Number']||r['Contract #']||'').trim();if(!num)return;const amt=parseFloat(r['Amount']||0)||0;const name=String(r['Contract Name']||r['Name']||'').trim();const mech=String(r['Mechanisim']||r['Mechanism']||'').trim();const start=r['Start Date']?new Date(r['Start Date']).toISOString().split('T')[0]:null;const dur=parseInt(r['Duration']||0)||0;const apR=r['Agreed %']?parseFloat(r['Agreed %']):null;const ap=apR&&apR>1?apR/100:apR;const endDate=r['Contract End Date']?new Date(r['Contract End Date']).toISOString().split('T')[0]:null;const ex=DB.find(c=>c.num===num);if(ex){ex.name=name||ex.name;ex.mechanism=mech||ex.mechanism;ex.amount=amt||ex.amount;if(start)ex.start=start;if(dur)ex.duration=dur;if(endDate)ex.end=endDate;if(ap)ex.agreedPct=ap;updated++;prev.push(`<span class="badge ba">Updated</span> #${num} ${name.substring(0,28)}`);}else{DB.push({id:uid(),num,endUser:'',contractor:'',name,mechanism:mech,amount:amt,start:start||'',duration:dur,end:endDate||'',agreedPct:ap,lcAmount:ap&&amt?amt*ap:null,baseline:null,natProdAmount:0,mandatoryListAmount:0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:[],evidence:{},notes:''});added++;prev.push(`<span class="badge bg">Added</span> #${num} ${name.substring(0,28)}`);}});if(added+updated===0){toast('No valid contract rows found — check the sheet has a "Contract Number" column','err');return;}saveDB();document.getElementById('importPreview').innerHTML=`<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">Import Done</div><div class="badge bg">${added} added · ${updated} updated</div></div><div style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto">${prev.map(p=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)">${p}</div>`).join('')}</div></div>`;toast(`${added} added, ${updated} updated`,'ok');}catch(err){toast('Error: '+err.message,'err');}};r.readAsBinaryString(file);}
+function exportExcel(){if(typeof XLSX==='undefined'){toast('Excel library not loaded — check your connection','err');return;}if(!DB.length){toast('No contracts to export','err');return;}try{const rows=DB.map(c=>({'Contract Number':c.num,'Contract Name':c.name,'End User':c.endUser,'Contractor':c.contractor,'Mechanism':c.mechanism,'Amount (SAR)':c.amount,'Start Date':c.start,'Duration (months)':c.duration,'Contract End Date':c.end,'Agreed LC %':c.agreedPct?+(c.agreedPct*100).toFixed(2):null,'LC Amount':c.lcAmount,'Total Penalty':tPen(c),'Missing Reports':mCnt(c),'Notes':c.notes||''}));const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Project X',ws);XLSX.writeFile(wb,'LC_Monitor_Export_'+new Date().toISOString().split('T')[0]+'.xlsx');toast('Excel exported ('+rows.length+' contracts)','ok');}catch(err){toast('Excel export failed: '+err.message,'err');}}
+function exportCSV(){if(!DB.length){toast('No contracts to export','err');return;}const h=['#','Name','End User','Mechanism','Amount','Start','End','Agreed%','Penalty','Missing'];const rows=DB.map(c=>[c.num,`"${c.name||''}"`,`"${c.endUser||''}"`,`"${c.mechanism||''}"`,c.amount,c.start,c.end,c.agreedPct?+(c.agreedPct*100).toFixed(1):'',tPen(c),mCnt(c)]);const csv=[h,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='contracts.csv';a.click();toast('CSV exported','ok');}
 function exportJSON(){const blob=new Blob([JSON.stringify({contracts:DB,settings:S,mechanisms:MECHS,endUsers:ENDUSERS,formulas:FORMULAS,exclusions:EXCLUSIONS,aiControls:AI_CONTROLS,mechTC:MECH_TC,rfps:RFPS,bids:BIDS},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lc_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();toast('JSON exported','ok');}
 function importJSON(file){const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.contracts)DB=d.contracts;if(d.settings)Object.assign(S,d.settings);if(d.mechanisms)MECHS=d.mechanisms;if(d.endUsers)ENDUSERS=d.endUsers;if(d.formulas)Object.assign(FORMULAS,d.formulas);if(d.exclusions)EXCLUSIONS=d.exclusions;if(d.aiControls)AI_CONTROLS=d.aiControls;if(d.mechTC)Object.assign(MECH_TC,d.mechTC);if(d.rfps)RFPS=d.rfps;if(d.bids)BIDS=d.bids;saveAll();toast('Backup restored','ok');renderCurrentPage();}catch(err){toast('Invalid JSON','err');}};r.readAsText(file);}
-function clearAllData(){if(!confirm('Clear ALL data?'))return;DB=JSON.parse(JSON.stringify(SEED_CONTRACTS));RFPS=[];BIDS=[];saveAll();toast('Data cleared','info');renderCurrentPage();}
+function clearAllData(){if(!confirm('This will DELETE all contracts, RFPs, bids, suppliers, submissions, evaluations, blacklist, certificates and reset to seed data. This cannot be undone. Continue?'))return;DB=JSON.parse(JSON.stringify(SEED_CONTRACTS));RFPS=[];BIDS=[];if(typeof SUPPLIERS!=='undefined')SUPPLIERS=[];if(typeof SUBMISSIONS!=='undefined')SUBMISSIONS=[];if(typeof SUP_EVALS!=='undefined')SUP_EVALS=[];if(typeof BLACKLIST!=='undefined')BLACKLIST=[];if(typeof CERTS!=='undefined')CERTS=[];if(typeof MLNP_LIST!=='undefined')MLNP_LIST=[];if(typeof AUDIT_LOG!=='undefined')AUDIT_LOG=[];if(typeof REM_LOG!=='undefined')REM_LOG=[];if(typeof saveSuppliers==='function')saveSuppliers();if(typeof saveSupEvals==='function')saveSupEvals();if(typeof saveBlacklistData==='function')saveBlacklistData();localStorage.setItem('lcCerts',JSON.stringify(typeof CERTS!=='undefined'?CERTS:[]));localStorage.setItem('lcMLNP',JSON.stringify(typeof MLNP_LIST!=='undefined'?MLNP_LIST:[]));saveAll();if(typeof recalcAllPenalties==='function')recalcAllPenalties();toast('All data cleared & reset to seed','info');renderCurrentPage();}
 
 // MOBILE VIEW
 function openMobileView(){
@@ -3455,7 +3629,7 @@ function removeThinking(id){const el=document.getElementById(id);if(el)el.remove
 
 // AI API CALL
 async function callAI(systemPrompt,messages){
-  const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:systemPrompt,messages:messages})});
+  const response=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:1000,system:systemPrompt,messages:messages})});
   if(!response.ok)throw new Error('API error: '+response.status);
   const data=await response.json();
   return data.content.map(b=>b.type==='text'?b.text:'').join('');
@@ -3640,7 +3814,7 @@ function renderPortfolio(){
       +'<div class="pf-kpis">'
       +'<div class="pf-kpi"><div class="pf-kpi-v" style="color:var(--accent)">'+cs.length+'</div><div class="pf-kpi-l">Contracts</div></div>'
       +'<div class="pf-kpi"><div class="pf-kpi-v" style="color:var(--accent3)">'+actN+'</div><div class="pf-kpi-l">Active</div></div>'
-      +'<div class="pf-kpi"><div class="pf-kpi-v" style="color:'+(totPen?'var(--danger)':'var(--accent3)')+';font-size:13px">'+(totPen?fSAR(totAmt).replace('SAR ',''):'OK')+'</div><div class="pf-kpi-l">Penalties</div></div>'
+      +'<div class="pf-kpi"><div class="pf-kpi-v" style="color:'+(totPen?'var(--danger)':'var(--accent3)')+';font-size:13px">'+(totPen?fSAR(totPen).replace('SAR ',''):'OK')+'</div><div class="pf-kpi-l">Penalties</div></div>'
       +'<div class="pf-kpi"><div class="pf-kpi-v" style="color:'+(missN?'var(--warn)':'var(--accent3)')+'">'+(missN?String(missN):'OK')+'</div><div class="pf-kpi-l">Missing</div></div>'
       +'</div>'
       +'<div class="tbl-wrap"><table style="font-size:10px"><thead><tr><th>#</th><th>Name</th><th>Amount</th><th>LC%</th><th>Missing</th><th>Penalty</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
@@ -3819,7 +3993,8 @@ function saveEmailJSConfig(){
   if(EJS.configured){
     if(!window.emailjs){
       var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
-      s.onload=function(){window.emailjs.init(EJS.publicKey);toast('EmailJS connected!','ok');};
+      s.onload=function(){if(window.emailjs){window.emailjs.init(EJS.publicKey);toast('EmailJS connected!','ok');}else{toast('EmailJS loaded but unavailable','err');}};
+      s.onerror=function(){toast('EmailJS library failed to load — check your connection','err');};
       document.head.appendChild(s);
     }else{window.emailjs.init(EJS.publicKey);toast('EmailJS reconnected!','ok');}
   }else{toast('EmailJS config saved','ok');}
@@ -4102,10 +4277,10 @@ function newBidManualChoice(){document.getElementById("newBidChoiceModal").remov
 // v49: ROLES & PERMISSIONS (governance layer — enforcement later)
 // ============================================================
 var SEED_ROLES=[
-  {id:'exec',name:'Executive',desc:'Read-only strategic visibility across dashboards and reports',system:true},
-  {id:'lc_custodian',name:'Local Content Custodian',desc:'Owns LC compliance lifecycle: contracts, reports, evidence approvals, penalties',system:true},
-  {id:'lc_officer',name:'Local Content Officer',desc:'Day-to-day LC operations: data entry, evidence upload, report tracking',system:true},
-  {id:'admin',name:'Admin',desc:'Platform configuration: settings, mechanisms, templates, end-users',system:true},
+  {id:'exec',name:'Viewer',desc:'Read-only strategic visibility: dashboards, reports and exports across the platform',system:true},
+  {id:'lc_officer',name:'Officer',desc:'Day-to-day LC operations: data entry, RFP/bid/contract creation, evidence upload, report tracking',system:true},
+  {id:'lc_custodian',name:'Manager',desc:'Owns the LC lifecycle: approvals, awards, penalties, blacklisting, deletions and analytics',system:true},
+  {id:'admin',name:'Admin',desc:'Platform configuration: settings, mechanisms, templates, users, roles & permissions',system:true},
   {id:'super_admin',name:'Super Admin',desc:'Full unrestricted access including roles, permissions and data management',system:true,locked:true}
 ];
 var ROLES;try{ROLES=JSON.parse(localStorage.getItem('lcRoles')||'null');}catch(e){ROLES=null;}
@@ -4117,7 +4292,7 @@ function saveRoles(){localStorage.setItem('lcRoles',JSON.stringify(ROLES));local
 // Full permission catalog — grouped by module
 var PERM_CATALOG=[
  {group:'Executive Dashboard',perms:[
-   ['dash.view','View dashboard'],['dash.drill','Open KPI drill-downs'],['dash.export.pdf','Export dashboard to PDF'],['dash.export.ppt','Export dashboard to PPT']]},
+   ['dash.view','View dashboard'],['dash.drill','Open KPI drill-downs'],['dash.export.pdf','Export dashboard to PDF']]},
  {group:'RFP Preparation',perms:[
    ['rfp.view','View RFPs'],['rfp.create','Create RFP'],['rfp.edit','Edit RFP'],['rfp.delete','Delete RFP'],['rfp.boq','Manage BoQ items'],['rfp.mechwizard','Run mechanism wizard'],['rfp.export.pdf','Export RFP to PDF']]},
  {group:'Bid Evaluation',perms:[
@@ -4130,6 +4305,8 @@ var PERM_CATALOG=[
    ['ev.view','View / preview evidence files'],['ev.upload','Attach / upload evidence'],['ev.remove','Remove evidence'],['ev.approve','Approve evidence'],['ev.reject','Reject evidence'],['ev.download','Download evidence files']]},
  {group:'Penalties',perms:[
    ['pen.view','View penalties'],['pen.recalc','Recalculate penalties'],['pen.toggle','Toggle per-year penalty on/off'],['pen.rules','Edit penalty rules (rates / tolerance)'],['pen.export','Export penalty data']]},
+ {group:'Alerts & Notifications',perms:[
+   ['alerts.view','View alerts page']]},
  {group:'Email Reminders',perms:[
    ['rem.view','View reminder queue & log'],['rem.send','Send / simulate reminders'],['rem.templates','Edit email templates'],['rem.emailjs','Configure EmailJS']]},
  {group:'Certificates',perms:[
@@ -4143,8 +4320,28 @@ var PERM_CATALOG=[
    ['subm.view','View bid submissions'],['subm.create','Record bid submission'],['subm.delete','Delete submission'],['subm.import','Import supplier bids into evaluation'],
    ['sreq.view','View supplier LC requirements'],['sreq.upload','Upload requirement evidence (supplier portal)']]},
  {group:'Settings & Administration',perms:[
-   ['set.view','View settings'],['set.kpi','Configure dashboard KPIs'],['set.mech','Manage mechanisms & T&Cs'],['set.formulas','Edit bid evaluation formulas'],['set.exclusions','Edit bid exclusion conditions'],['set.mlnp','Upload LCGPA mandatory list'],['set.eu','Manage end-users / entities'],['set.ai','Edit AI advisor controls'],['set.dt','Edit decision tree rules'],['set.blrules','Edit blacklisting rules'],['set.branding','Edit org name / logo / theme'],['set.lang','Change language settings'],['set.roles','Manage roles'],['set.perms','Manage permission matrix'],['data.export','Export data (JSON / CSV / Excel)'],['data.import','Import data'],['data.clear','Clear all data']]}
+   ['set.view','View settings'],['perms.page','Open Roles & Permissions page'],['set.kpi','Configure dashboard KPIs'],['set.mech','Manage mechanisms & T&Cs'],['set.formulas','Edit bid evaluation formulas'],['set.exclusions','Edit bid exclusion conditions'],['set.mlnp','Upload LCGPA mandatory list'],['set.eu','Manage end-users / entities'],['set.ai','Edit AI advisor controls'],['set.dt','Edit decision tree rules'],['set.blrules','Edit blacklisting rules'],['set.branding','Edit org name / logo / theme'],['set.lang','Change language settings'],['set.roles','Manage roles'],['set.perms','Manage permission matrix'],['data.export','Export data (JSON / CSV / Excel)'],['data.import','Import data'],['data.clear','Clear all data']]}
 ];
+// ===== v56: seed sensible default role grants (Viewer/Officer/Manager/Admin) =====
+(function seedRolePerms(){
+  if(localStorage.getItem('lcRolePerms'))return; // respect any saved matrix
+  var ALL=[];PERM_CATALOG.forEach(function(g){g.perms.forEach(function(p){ALL.push(p[0]);});});
+  function setOf(list){var o={};list.forEach(function(k){o[k]=true;});return o;}
+  var viewer=['dash.view','dash.drill','dash.export.pdf','rfp.view','rfp.export.pdf','bid.view','bid.export','con.view','con.export','con.pdf','rep.view','ev.view','ev.download','pen.view','pen.export','cert.view','pf.view','pf.export','sup.view','supp.view','alerts.view'];
+  var officerExtra=['rfp.create','rfp.edit','rfp.boq','rfp.mechwizard','bid.create','bid.edit','bid.bidders','bid.score','bid.exclude','con.create','con.edit','con.status','con.import','rep.markreceived','ev.upload','ev.remove','cert.create','cert.edit','cert.files','sup.create','sup.edit','supp.create','supp.edit','supp.files','subm.view','subm.create','subm.import','sreq.view','sreq.upload','bl.view','rem.view','rem.send'];
+  var managerExtra=['rfp.delete','bid.delete','bid.award','con.delete','con.admin','rep.editactuals','rep.duedates','ev.approve','ev.reject','pen.recalc','pen.toggle','cert.delete','sup.delete','supp.delete','subm.delete','bl.add','bl.remove','bl.evidence','audit.view','rem.templates','data.export'];
+  var adminExtra=['set.view','perms.page','set.kpi','set.mech','set.formulas','set.exclusions','set.mlnp','set.eu','set.ai','set.dt','set.blrules','set.branding','set.lang','set.roles','set.perms','rem.emailjs','pen.rules','data.import'];
+  var officer=viewer.concat(officerExtra);
+  var manager=officer.concat(managerExtra);
+  var admin=manager.concat(adminExtra);
+  ROLE_PERMS={exec:setOf(viewer),lc_officer:setOf(officer),lc_custodian:setOf(manager),admin:setOf(admin),super_admin:setOf(ALL)};
+  localStorage.setItem('lcRolePerms',JSON.stringify(ROLE_PERMS));
+})();
+// ===== v56: permission gate (PREP — defaults to full access until login is added in the next phase) =====
+var CURRENT_ROLE=localStorage.getItem('lcCurrentRole')||'super_admin';
+function hasPerm(key){if(!CURRENT_ROLE)return true;if(CURRENT_ROLE==='super_admin')return true;var rp=(typeof ROLE_PERMS!=='undefined')?ROLE_PERMS[CURRENT_ROLE]:null;return !!(rp&&rp[key]);}
+function setCurrentRole(rid){CURRENT_ROLE=rid;localStorage.setItem('lcCurrentRole',rid);var rn=(ROLES.find(function(r){return r.id===rid;})||{}).name||rid;toast('Active role set to '+rn,'info');if(typeof renderPermissions==='function')renderPermissions();}
+window.hasPerm=hasPerm;window.setCurrentRole=setCurrentRole;
 var permTabMode='roles';
 function permTab(m){permTabMode=m;
   document.getElementById('perm-tab-roles').classList.toggle('on',m==='roles');
@@ -4540,7 +4737,7 @@ function importFromAward(){
   var sme=document.getElementById('fSME');if(sme&&w.isSME)sme.checked=true;
   window._importedFromBidId=b.id;
   // Carry the winning bidder's BoQ line items into the new contract
-  window._importedBoQ=(w.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;var lineTotal=parseFloat(r.price)||0;return {desc:r.desc||'',nature:r.nature||'Goods',unitPrice:q?+(lineTotal/q).toFixed(2):lineTotal,qty:q,uom:r.uom||'Unit',origin:r.origin||'Local',evidenceName:'',evidenceData:''};});
+  window._importedBoQ=(w.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;var lineTotal=parseFloat(r.price)||0;return {desc:r.desc||'',nature:r.nature||'Goods',unitPrice:q?+(lineTotal/q).toFixed(2):lineTotal,qty:q,uom:r.uom||'Unit',origin:r.origin||'Local',isMandatoryRFP:!!r.isMandatoryRFP,isMandatoryResp:!!r.isMandatoryResp,mlCode:r.mlCode||'',evidenceName:'',evidenceData:''};});
   var _bq=window._importedBoQ.length?' · '+window._importedBoQ.length+' BoQ item(s)':'';
   toast('Imported from "'+(b.title||'evaluation')+'"'+_bq+' — review then save','ok');
 }
@@ -4692,7 +4889,7 @@ function renderSubs(){
        +'<td style="padding:5px 8px;border-bottom:1px solid var(--border)"><button class="mb del" onclick="removeSub(\''+x.id+'\')">✕</button></td></tr>';
    }).join('')+'</tbody></table>'):'<div class="empty"><div class="ei">📨</div><p>No submissions yet</p></div>';
 }
-function removeSub(id){SUBMISSIONS=SUBMISSIONS.filter(function(x){return String(x.id)!==String(id);});saveSuppliers();renderSubs();}
+function removeSub(id){var s=SUBMISSIONS.find(function(x){return String(x.id)===String(id);});if(!confirm('Remove this submission'+(s&&s.supplierName?' from "'+s.supplierName+'"':'')+'?'))return;SUBMISSIONS=SUBMISSIONS.filter(function(x){return String(x.id)!==String(id);});saveSuppliers();renderSubs();toast('Submission removed','info');}
 // ---- import supplier bids into evaluation ----
 function importSupplierBids(){
   if(!curBid){toast('Open an evaluation first','err');return;}
@@ -4824,7 +5021,7 @@ function applyThemeColor(color){
   var pv=document.getElementById("logoPreview");
   if(pv&&!pv.querySelector("img"))pv.style.background=color;
 }
-function saveThemeColor(color){localStorage.setItem("lcThemeColor",color);}
+function saveThemeColor(color){localStorage.setItem("lcThemeColor",color);toast('Theme color saved','ok');}
 function resetThemeColor(){
   localStorage.removeItem("lcThemeColor");
   document.documentElement.style.removeProperty("--accent");
@@ -4863,7 +5060,7 @@ function applyLogoToSidebar(dataUrl){
 }
 function applyOrgNameToSidebar(){
   var title=document.getElementById("sidebarTitle");
-  if(title){title.textContent=(S&&S.org&&S.org!=="My Organization")?S.org:"LC Monitor Pro v55";}
+  if(title){title.textContent=(S&&S.org&&S.org!=="My Organization")?S.org:"LC Monitor Pro v56";}
 }
 function applySavedBranding(){
   var savedColor=localStorage.getItem("lcThemeColor");
@@ -5060,9 +5257,17 @@ function exportDashPDF(){
   h+='<div class="footer">Generated by '+bi.org+' — LC Monitor Pro on '+dateStr+'</div>';
   h+='</body></html>';
   var w=window.open('','_blank','width=1100,height=800');
-  w.document.write(h);
-  w.document.close();
-  setTimeout(function(){w.print();},600);
+  if(w){
+    w.document.write(h);w.document.close();
+    setTimeout(function(){try{w.print();}catch(e){}},600);
+  }else{
+    var ifr=document.createElement('iframe');
+    ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+    document.body.appendChild(ifr);
+    var dd=ifr.contentWindow.document;dd.open();dd.write(h);dd.close();
+    setTimeout(function(){try{ifr.contentWindow.focus();ifr.contentWindow.print();}catch(e){}},700);
+  }
+  toast('Dashboard PDF generated — use the print dialog to save','ok');
 }
 
 
@@ -5905,8 +6110,8 @@ window.dtBuildMechOptions = dtBuildMechOptions;
 
 var _rsV30=renderSettings;renderSettings=function(){if(typeof _rsV30==="function")_rsV30();renderDTRules();};window.renderSettings=renderSettings;
 var _saV30=saveAll;saveAll=function(){if(typeof _saV30==="function")_saV30();saveDTRulesStore();};window.saveAll=saveAll;
-var _ejV30=exportJSON;exportJSON=function(){var d={contracts:DB,settings:S,mechanisms:MECHS,endUsers:ENDUSERS,formulas:FORMULAS,exclusions:EXCLUSIONS,aiControls:AI_CONTROLS,mechTC:MECH_TC,rfps:RFPS,bids:BIDS,decisionRules:DECISION_RULES};var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='lc_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();toast('Exported','ok');};window.exportJSON=exportJSON;
-var _ijV30=importJSON;importJSON=function(file){var rd=new FileReader();rd.onload=function(e){try{var d=JSON.parse(e.target.result);if(d.contracts)DB=d.contracts;if(d.settings)Object.assign(S,d.settings);if(d.mechanisms)MECHS=d.mechanisms;if(d.endUsers)ENDUSERS=d.endUsers;if(d.formulas)Object.assign(FORMULAS,d.formulas);if(d.exclusions)EXCLUSIONS=d.exclusions;if(d.aiControls)AI_CONTROLS=d.aiControls;if(d.mechTC)Object.assign(MECH_TC,d.mechTC);if(d.rfps)RFPS=d.rfps;if(d.bids)BIDS=d.bids;if(d.decisionRules){DECISION_RULES=d.decisionRules;saveDTRulesStore();}saveAll();toast('Restored','ok');renderCurrentPage();}catch(err){toast('Invalid JSON','err');}};rd.readAsText(file);};window.importJSON=importJSON;
+var _ejV30=exportJSON;exportJSON=function(){var d={contracts:DB,settings:S,mechanisms:MECHS,endUsers:ENDUSERS,formulas:FORMULAS,exclusions:EXCLUSIONS,aiControls:AI_CONTROLS,mechTC:MECH_TC,rfps:RFPS,bids:BIDS,decisionRules:DECISION_RULES,suppliers:(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]),submissions:(typeof SUBMISSIONS!=='undefined'?SUBMISSIONS:[]),supEvals:(typeof SUP_EVALS!=='undefined'?SUP_EVALS:[]),blacklist:(typeof BLACKLIST!=='undefined'?BLACKLIST:[]),certs:(typeof CERTS!=='undefined'?CERTS:[]),emailTpl:(typeof EMAIL_TPL!=='undefined'?EMAIL_TPL:{}),mlnp:(typeof MLNP_LIST!=='undefined'?MLNP_LIST:[]),roles:(typeof ROLES!=='undefined'?ROLES:[]),rolePerms:(typeof ROLE_PERMS!=='undefined'?ROLE_PERMS:{}),_v:56,_exportedAt:new Date().toISOString()};var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='lc_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();toast('Full backup exported','ok');};window.exportJSON=exportJSON;
+var _ijV30=importJSON;importJSON=function(file){var rd=new FileReader();rd.onload=function(e){try{var d=JSON.parse(e.target.result);if(typeof d!=='object'||d===null||(!('contracts' in d)&&!('rfps' in d)&&!('bids' in d)&&!('suppliers' in d))){toast('Not a valid LC Monitor backup file','err');return;}if(!confirm('This will REPLACE all current data with the backup. Continue?'))return;var n=0;if(d.contracts){DB=d.contracts;n++;}if(d.settings)Object.assign(S,d.settings);if(d.mechanisms)MECHS=d.mechanisms;if(d.endUsers)ENDUSERS=d.endUsers;if(d.formulas)Object.assign(FORMULAS,d.formulas);if(d.exclusions)EXCLUSIONS=d.exclusions;if(d.aiControls)AI_CONTROLS=d.aiControls;if(d.mechTC)Object.assign(MECH_TC,d.mechTC);if(d.rfps){RFPS=d.rfps;n++;}if(d.bids){BIDS=d.bids;n++;}if(d.decisionRules){DECISION_RULES=d.decisionRules;if(typeof saveDTRulesStore==='function')saveDTRulesStore();}if(d.suppliers&&typeof SUPPLIERS!=='undefined'){SUPPLIERS=d.suppliers;n++;}if(d.submissions&&typeof SUBMISSIONS!=='undefined')SUBMISSIONS=d.submissions;if(d.supEvals&&typeof SUP_EVALS!=='undefined'){SUP_EVALS=d.supEvals;if(typeof saveSupEvals==='function')saveSupEvals();}if(d.blacklist&&typeof BLACKLIST!=='undefined'){BLACKLIST=d.blacklist;if(typeof saveBlacklistData==='function')saveBlacklistData();}if(d.certs&&typeof CERTS!=='undefined'){CERTS=d.certs;localStorage.setItem('lcCerts',JSON.stringify(CERTS));}if(d.emailTpl&&typeof EMAIL_TPL!=='undefined'){EMAIL_TPL=d.emailTpl;localStorage.setItem('lcEmailTpl',JSON.stringify(EMAIL_TPL));}if(d.mlnp&&typeof MLNP_LIST!=='undefined'){MLNP_LIST=d.mlnp;localStorage.setItem('lcMLNP',JSON.stringify(MLNP_LIST));}if(d.roles&&typeof ROLES!=='undefined'){ROLES=d.roles;localStorage.setItem('lcRoles',JSON.stringify(ROLES));}if(d.rolePerms&&typeof ROLE_PERMS!=='undefined'){ROLE_PERMS=d.rolePerms;localStorage.setItem('lcRolePerms',JSON.stringify(ROLE_PERMS));}if(typeof saveSuppliers==='function')saveSuppliers();saveAll();toast('Backup restored ('+n+' core datasets)','ok');renderCurrentPage();}catch(err){toast('Invalid backup file: '+err.message,'err');}};rd.readAsText(file);};window.importJSON=importJSON;
 if(typeof AR!=="undefined"){AR['Decision Tree Rules']='\u0642\u0648\u0627\u0639\u062f \u0634\u062c\u0631\u0629 \u0627\u0644\u0642\u0631\u0627\u0631';AR['Origin']='\u0627\u0644\u0645\u0646\u0634\u0623';AR['Mandatory List']='\u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064a\u0629';AR['Local']='\u0645\u062d\u0644\u064a';AR['Foreign']='\u0623\u062c\u0646\u0628\u064a';}
 </script>
 
