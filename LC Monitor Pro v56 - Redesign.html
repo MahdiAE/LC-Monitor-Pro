@@ -2886,7 +2886,7 @@ function renderBiddersList(){
         +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'
         +'<td style="text-align:center">'+(r.isMandatoryRFP?'\u2705':'\u2796')+'</td>'
         +'<td style="text-align:center"><input type="checkbox" '+(r.isMandatoryResp?'checked':'')+' onchange="curBidders['+i+'].boqItems['+ri+'].isMandatoryResp=this.checked;renderBiddersList()"/>'+(mlFail?'<div style="font-size:8px;color:var(--danger)">\u26a0 Required</div>':'')+'</td>'
-        +'<td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/></td>'
+        +'<td>'+(b._fromSubmission?'<span style="font-size:11px;font-weight:600" title="Imported from supplier — locked">'+(r.price||0)+'</span>':'<input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/>')+'</td>'
         +'</tr>';
     }).join('');
     var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">📋 BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Mandatory List Exception</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="9" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="9" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Bid \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
@@ -2944,7 +2944,7 @@ function checkExclusions(bidder,mech){
     if(e.label.includes('LC% below')&&minLCVal>0&&(bidder.lcPct||0)<minLCVal)reasons.push(`LC% ${bidder.lcPct||0}% below minimum ${minLCVal}%`);
     if(e.label.includes('budget')&&e.threshold&&curBid?.value&&bidder.price>(curBid.value*(1+e.threshold/100)))reasons.push(`Bid price exceeds budget by >${e.threshold}%`);
   });
-  if(bidder.boqItems&&bidder.boqItems.length){bidder.boqItems.forEach(function(r,ri){if(r.isMandatoryRFP&&!r.isMandatoryResp)reasons.push('Mandatory RFP item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') not confirmed in response');});}
+  if(bidder.boqItems&&bidder.boqItems.length){bidder.boqItems.forEach(function(r,ri){var _rp=(r.respStatus==='approved')||(r.respStatus!=='rejected'&&r.isMandatoryResp);var _fe=(r.origin==='Foreign'&&r.exceptionStatus!=='approved');if(r.isMandatoryRFP&&(!_rp||_fe))reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(_fe?'has Foreign origin'+(r.exceptionFile?' — exception '+(r.exceptionStatus||'pending'):' (no exception letter)'):'mandatory response '+(r.respStatus==='rejected'?'rejected':'not confirmed')));});}
   return reasons;
 }
 function calcBids(){
@@ -5288,12 +5288,14 @@ function renderSubs(){
        +'<td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right">'+fSAR(x.price)+'</td>'
        +'<td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right">'+(x.lcPct||0)+'%</td>'
        +'<td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:right">'+(x.nppPct||0)+'%</td>'
-       +'<td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:center">'+(x.file?'📎':'—')+'</td>'
-       +'<td style="padding:5px 8px;border-bottom:1px solid var(--border)">'+fD(x.submitted.split('T')[0])+'</td>'
+       +'<td style="padding:5px 8px;border-bottom:1px solid var(--border);text-align:center">'+((x.files&&(x.files.tech||x.files.fin||x.files.mand))?'📎':'—')+'</td>'
+       +'<td style="padding:5px 8px;border-bottom:1px solid var(--border)">'+fD(((x.submittedAt||x.submitted||'')+'').split('T')[0])+'</td>'
        +'<td style="padding:5px 8px;border-bottom:1px solid var(--border)"><button class="mb del" onclick="removeSub(\''+x.id+'\')">✕</button></td></tr>';
    }).join('')+'</tbody></table>'):'<div class="empty"><div class="ei">📨</div><p>No submissions yet</p></div>';
 }
 function removeSub(id){if(typeof requirePerm==='function'&&!requirePerm('subm.delete'))return;var s=SUBMISSIONS.find(function(x){return String(x.id)===String(id);});if(!confirm('Remove this submission'+(s&&s.supplierName?' from "'+s.supplierName+'"':'')+'?'))return;SUBMISSIONS=SUBMISSIONS.filter(function(x){return String(x.id)!==String(id);});saveSuppliers();renderSubs();toast('Submission removed','info');}
+// normalise a submission/supplier file to {name,dataUrl,mimeType} for the bidder file slots
+function _impFile(f){if(!f)return null;var d=f.dataUrl||f.data;if(!d)return {name:f.name,_stripped:true};return {name:f.name,dataUrl:d,mimeType:f.mimeType||''};}
 // ---- import supplier bids into evaluation ----
 function importSupplierBids(){
   if(!curBid){toast('Open an evaluation first','err');return;}
@@ -5306,7 +5308,11 @@ function importSupplierBids(){
     var s=SUPPLIERS.find(function(ss){return String(ss.id)===String(x.supplierId);})||{};
     curBidders.push({id:uid(),name:x.supplierName,price:x.price,lcPct:x.lcPct||0,nppPct:x.nppPct||0,
       isSME:!!s.isSME,isTadawul:!!s.isTadawul,hasCert:!!(s.lcCertId||s.lcFile),lcBaseline:(x.lcBaseline!=null?x.lcBaseline:(s.lcPct||null)),baselinePct:(x.lcBaseline!=null?x.lcBaseline:0),
-      boqItems:(x.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;return {desc:r.desc||'',nature:r.nature||'Goods',qty:q,uom:r.uom||'Unit',price:(parseFloat(r.unitPrice)||0)*q,origin:r.origin||'Local',isMandatoryRFP:!!r.mandatory,isMandatoryResp:!!r.mandatoryResponse,exceptionFile:r.exceptionFile||null,exceptionStatus:r.exceptionStatus||(r.exceptionFile?'pending':'')};}),
+      boqItems:(x.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;return {desc:r.desc||'',nature:r.nature||'Goods',qty:q,uom:r.uom||'Unit',price:(parseFloat(r.unitPrice)||0)*q,origin:r.origin||'Local',isMandatoryRFP:!!r.mandatory,isMandatoryResp:!!r.mandatoryResponse,respStatus:r.respStatus||'',exceptionFile:r.exceptionFile||null,exceptionStatus:r.exceptionStatus||(r.exceptionFile?'pending':'')};}),
+      _techFile:_impFile(x.files&&x.files.tech),_techFileName:(x.files&&x.files.tech)?x.files.tech.name:null,
+      _commFile:_impFile(x.files&&x.files.fin),_commFileName:(x.files&&x.files.fin)?x.files.fin.name:null,
+      _mlFile:_impFile(x.files&&x.files.mand),_mlFileName:(x.files&&x.files.mand)?x.files.mand.name:null,
+      _lcBaselineFile:_impFile(s.lcFile),_lcBaselineFileName:s.lcFile?s.lcFile.name:null,
       _fromSubmission:x.id});
     added++;
   });
@@ -6943,7 +6949,7 @@ renderBiddersList=function(){
 
     // ── BoQ table rows (v42: mandatory+foreign highlight) ──
     var bqR=b.boqItems.map(function(r,ri){
-      var mlFail=r.isMandatoryRFP&&(!r.isMandatoryResp||(r.origin==='Foreign'&&r.exceptionStatus!=='approved'));
+      var _rp=(r.respStatus==='approved')||(r.respStatus!=='rejected'&&r.isMandatoryResp);var mlFail=r.isMandatoryRFP&&(!_rp||(r.origin==='Foreign'&&r.exceptionStatus!=='approved'));
       return '<tr'+(mlFail?' style="background:rgba(220,38,38,0.08)"':(r.isMandatoryRFP&&r.origin==='Foreign'&&r.exceptionStatus==='approved'?' style="background:rgba(16,185,129,0.08)"':''))+'>'
         +'<td>'+(ri+1)+'</td>'
         +'<td style="font-size:11px">'+((r.desc||'').replace(/"/g,'&quot;'))+'</td>'
@@ -6952,9 +6958,9 @@ renderBiddersList=function(){
         +'<td style="font-size:11px">'+(r.uom||'--')+'</td>'
         +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'
         +'<td style="text-align:center">'+(r.isMandatoryRFP?'\u2705':'\u2796')+'</td>'
-        +'<td style="text-align:center"><input type="checkbox" '+(r.isMandatoryResp?'checked':'')+' onchange="curBidders['+i+'].boqItems['+ri+'].isMandatoryResp=this.checked;renderBiddersList()"/>'+(mlFail?'<div style="font-size:8px;color:var(--danger)">\u26a0 '+(r.origin==='Foreign'&&r.isMandatoryResp?'Foreign origin':'Response required')+'</div>':'')+'</td>'
+        +'<td style="text-align:center">'+window._respCell(i,ri,r)+'</td>'
         +'<td style="text-align:center">'+window._excCell(i,ri,r)+'</td>'
-        +'<td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/></td>'
+        +'<td>'+(b._fromSubmission?'<span style="font-size:11px;font-weight:600" title="Imported from supplier — locked">'+(r.price||0)+'</span>':'<input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/>')+'</td>'
         +'</tr>';
     }).join('');
 
@@ -7008,19 +7014,12 @@ renderBiddersList=function(){
     }
 
     // ── File uploads (v39) ──
-    var fileSection='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px;padding:8px;background:var(--surface);border-radius:var(--rs)">';
-    fileSection+='<div><label class="fl2" style="margin-bottom:4px">\uD83D\uDCCE Technical Proposal</label><div style="display:flex;align-items:center;gap:6px"><input type="file" id="techFile_'+i+'" style="display:none" onchange="handleBidderFile('+i+','+SQ+'tech'+SQ+',this)"><button class="btn btn-s btn-sm" onclick="document.getElementById('+SQ+'techFile_'+i+SQ+').click()" style="font-size:10px">'+(tFn?'\uD83D\uDCC4 '+tFn:'+ Upload')+'</button>'+(tFn?'<button class="btn btn-d btn-sm" onclick="curBidders['+i+']._techFileName=null;renderBiddersList()" style="font-size:9px">\u2715</button>':'')+'</div></div>';
-    fileSection+='<div><label class="fl2" style="margin-bottom:4px">\uD83D\uDCCE Commercial Proposal</label><div style="display:flex;align-items:center;gap:6px"><input type="file" id="commFile_'+i+'" style="display:none" onchange="handleBidderFile('+i+','+SQ+'comm'+SQ+',this)"><button class="btn btn-s btn-sm" onclick="document.getElementById('+SQ+'commFile_'+i+SQ+').click()" style="font-size:10px">'+(cFn?'\uD83D\uDCC4 '+cFn:'+ Upload')+'</button>'+(cFn?'<button class="btn btn-d btn-sm" onclick="curBidders['+i+']._commFileName=null;renderBiddersList()" style="font-size:9px">\u2715</button>':'')+'</div></div>';
-    fileSection+='<div><label class="fl2" style="margin-bottom:4px">\uD83D\uDCCE ML Commitment Letter</label><div style="display:flex;align-items:center;gap:6px"><input type="file" id="mlFile_'+i+'" style="display:none" onchange="handleBidderFile('+i+','+SQ+'ml'+SQ+',this)"><button class="btn btn-s btn-sm" onclick="document.getElementById('+SQ+'mlFile_'+i+SQ+').click()" style="font-size:10px">'+(mlFn?'\uD83D\uDCC4 '+mlFn:'+ Upload')+'</button>'+(mlFn?'<button class="btn btn-d btn-sm" onclick="curBidders['+i+']._mlFileName=null;renderBiddersList()" style="font-size:9px">\u2715</button>':'')+'</div></div>';
-    fileSection+='</div>';
+    var fileSection='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px;padding:8px;background:var(--surface);border-radius:var(--rs)">'+window._bidSlot(i,'Technical Proposal','tech',b._techFile,tFn,'techFile','handleBidderFile','tech')+window._bidSlot(i,'Commercial Proposal','comm',b._commFile,cFn,'commFile','handleBidderFile','comm')+window._bidSlot(i,'ML Commitment Letter','ml',b._mlFile,mlFn,'mlFile','handleBidderFile','ml')+'</div>';
 
     // ── LC Certificate uploads ──
     var lcCertSection='';
     if(showLC){
-      lcCertSection='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;padding:8px;background:var(--surface);border-radius:var(--rs)">';
-      lcCertSection+='<div><label class="fl2" style="margin-bottom:4px">\uD83D\uDCCE LC Baseline Certificate</label><div style="display:flex;align-items:center;gap:6px"><input type="file" id="blCert_'+i+'" style="display:none" onchange="handleBidderCertFile('+i+','+SQ+'baseline'+SQ+',this)"><button class="btn btn-s btn-sm" onclick="document.getElementById('+SQ+'blCert_'+i+SQ+').click()" style="font-size:10px">'+(blCertFn?'\uD83D\uDCC4 '+blCertFn:'+ Upload')+'</button>'+(blCertFn?'<button class="btn btn-d btn-sm" onclick="curBidders['+i+']._lcBaselineFileName=null;renderBiddersList()" style="font-size:9px">\u2715</button>':'')+'</div></div>';
-      lcCertSection+='<div><label class="fl2" style="margin-bottom:4px">\uD83D\uDCCE LC Target Certificate</label><div style="display:flex;align-items:center;gap:6px"><input type="file" id="tgCert_'+i+'" style="display:none" onchange="handleBidderCertFile('+i+','+SQ+'target'+SQ+',this)"><button class="btn btn-s btn-sm" onclick="document.getElementById('+SQ+'tgCert_'+i+SQ+').click()" style="font-size:10px">'+(tgCertFn?'\uD83D\uDCC4 '+tgCertFn:'+ Upload')+'</button>'+(tgCertFn?'<button class="btn btn-d btn-sm" onclick="curBidders['+i+']._lcTargetFileName=null;renderBiddersList()" style="font-size:9px">\u2715</button>':'')+'</div></div>';
-      lcCertSection+='</div>';
+      lcCertSection='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;padding:8px;background:var(--surface);border-radius:var(--rs)">'+window._bidSlot(i,'LC Baseline Certificate','baseline',b._lcBaselineFile,blCertFn,'blCert','handleBidderCertFile','baseline')+window._bidSlot(i,'LC Target Certificate','target',b._lcTargetFile,tgCertFn,'tgCert','handleBidderCertFile','target')+'</div>';
     }
 
     // ── Assemble bidder card ──
@@ -7140,15 +7139,7 @@ calcBids=function(){
 
     if(isML&&b.mlCompliant===false) excl.push("Mandatory List non-compliant");
 
-    // v42: Mandatory BoQ — exclude if mandatory AND (not responded OR foreign)
-    if(b.boqItems&&b.boqItems.length){
-      b.boqItems.forEach(function(r,ri){
-        var _fEx=(r.origin==='Foreign'&&r.exceptionStatus!=='approved');
-        if(r.isMandatoryRFP&&(!r.isMandatoryResp||_fEx)){
-          excl.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(_fEx?'has Foreign origin'+(r.exceptionFile?' — exception '+(r.exceptionStatus||'pending'):' (no exception letter)'):'response not confirmed'));
-        }
-      });
-    }
+    // Mandatory BoQ exclusions (response approval + foreign-origin exception) are handled in checkExclusions()
 
     return Object.assign({},b,{excluded:excl.length>0,exclusionReasons:excl,adjustedPrice:b.price||0,score:0,priceScore:0,lcScore:0,tadawulScore:0,notes:"",rank:999,art19Shifted:false});
   });
@@ -7618,6 +7609,41 @@ window.viewBidderException=function(i,ri){
   }
   openModal('fileViewerModal');
 };
+// ── Imported bid attachments: render a slot (view/download if present, else upload) ──
+window._bidSlot=function(i,label,slot,fileObj,fileName,inputId,handlerFn,handlerType){
+  var has=fileObj&&(fileObj.dataUrl||fileObj.data),inner;
+  if(has){inner='<button class="btn btn-s btn-sm" style="font-size:10px" onclick="viewBidderFile('+i+',\''+slot+'\')">👁 '+escSub(fileName||'View')+'</button><button class="btn btn-a btn-sm" style="font-size:9px;padding:3px 7px" onclick="dlBidderFile('+i+',\''+slot+'\')">⬇</button>';}
+  else if(fileObj&&fileObj._stripped){inner='<span style="font-size:9px;color:var(--text3)">📄 '+escSub(fileName||'')+' (name only)</span>';}
+  else{inner='<input type="file" id="'+inputId+'_'+i+'" style="display:none" onchange="'+handlerFn+'('+i+',\''+handlerType+'\',this)"><button class="btn btn-s btn-sm" onclick="document.getElementById(\''+inputId+'_'+i+'\').click()" style="font-size:10px">+ Upload</button>';}
+  return '<div><label class="fl2" style="margin-bottom:4px">📎 '+label+'</label><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+inner+'</div></div>';
+};
+window._bidFileObj=function(i,slot){var m={tech:'_techFile',comm:'_commFile',ml:'_mlFile',baseline:'_lcBaselineFile',target:'_lcTargetFile'};return curBidders[i]&&curBidders[i][m[slot]];};
+window.viewBidderFile=function(i,slot){
+  var f=window._bidFileObj(i,slot);var data=f&&(f.dataUrl||f.data);
+  if(!data){toast('File stored as name only (uploaded in a previous session)','info');return;}
+  var t=document.getElementById('fvTitle');if(t)t.textContent=f.name||'Bid Document';
+  var sb=document.getElementById('fvSub');if(sb)sb.textContent='Imported bid attachment';
+  var dl=document.getElementById('fvDownload');if(dl){dl.href=data;dl.download=f.name||'document';}
+  var body=document.getElementById('fvBody');
+  if(body){var mime=f.mimeType||'';
+    if(mime.indexOf('image/')===0)body.innerHTML='<img src="'+data+'" style="max-width:100%;display:block;margin:auto;padding:12px"/>';
+    else if(mime==='application/pdf'||/^data:application\/pdf/.test(data))body.innerHTML='<iframe src="'+data+'" style="width:100%;height:75vh;border:none"></iframe>';
+    else body.innerHTML='<div style="padding:32px;text-align:center"><div style="font-size:36px">📄</div><b>'+escSub(f.name||'file')+'</b><br><a href="'+data+'" download="'+escSub(f.name||'file')+'" class="btn btn-p" style="margin-top:12px;display:inline-flex">⬇ Download</a></div>';
+  }
+  openModal('fileViewerModal');
+};
+window.dlBidderFile=function(i,slot){var f=window._bidFileObj(i,slot);var data=f&&(f.dataUrl||f.data);if(!data){toast('File not available','info');return;}var a=document.createElement('a');a.href=data;a.download=f.name||'document';document.body.appendChild(a);a.click();a.remove();};
+// ── Mandatory Response evidence approve/reject (evaluator) ──
+window.setBidderResp=function(i,ri,status){if(curBidders[i]&&curBidders[i].boqItems&&curBidders[i].boqItems[ri]){curBidders[i].boqItems[ri].respStatus=status;if(typeof renderBiddersList==='function')renderBiddersList();toast('Mandatory response '+status+' — recalculate to apply','ok');}};
+window._respCell=function(i,ri,r){
+  var chk='<input type="checkbox" '+(r.isMandatoryResp?'checked':'')+' onchange="curBidders['+i+'].boqItems['+ri+'].isMandatoryResp=this.checked;renderBiddersList()"/>';
+  if(!r.isMandatoryRFP)return chk;
+  var st=r.respStatus||'';
+  var badge=st==='approved'?'<span style="color:var(--accent3);font-weight:700;font-size:9px">✓ Approved</span>':st==='rejected'?'<span style="color:var(--danger);font-weight:700;font-size:9px">✕ Rejected</span>':'<span style="color:var(--warn);font-weight:700;font-size:9px">'+(r.isMandatoryResp?'⏳ Confirm':'⚠ Pending')+'</span>';
+  var ap='<button class="mb" title="Approve response" style="font-size:9px;padding:1px 6px;background:var(--accent3);color:#fff;border-color:var(--accent3)" onclick="setBidderResp('+i+','+ri+',\'approved\')">✓</button>';
+  var rj='<button class="mb del" title="Reject response" style="font-size:9px;padding:1px 6px" onclick="setBidderResp('+i+','+ri+',\'rejected\')">✕</button>';
+  return '<div style="display:flex;flex-direction:column;gap:3px;align-items:center">'+chk+badge+'<div style="display:flex;gap:3px">'+ap+rj+'</div></div>';
+};
 
 window.v55_recalcSubTotal=function(){
   var total=0,nonMandAll=0,nonMandLocal=0;
@@ -7647,7 +7673,10 @@ window.v55_saveSub=function(){
     files:JSON.parse(JSON.stringify(_subFiles)),
     submittedAt:new Date().toISOString()
   });
-  saveSuppliers();
+  var _sub=SUBMISSIONS[SUBMISSIONS.length-1];
+  var _persistOk=true,_stripped=false;
+  try{saveSuppliers();}
+  catch(_e1){try{_stripped=true;['tech','fin','mand'].forEach(function(k){if(_sub&&_sub.files&&_sub.files[k]&&_sub.files[k].dataUrl)_sub.files[k]={name:_sub.files[k].name,size:_sub.files[k].size,_stripped:true};});((_sub&&_sub.boqItems)||[]).forEach(function(it){if(it.exceptionFile&&it.exceptionFile.dataUrl)it.exceptionFile={name:it.exceptionFile.name,_stripped:true};});saveSuppliers();}catch(_e2){_persistOk=false;}}
 
   // Success popup
   var _sp=document.createElement('div');
@@ -7656,8 +7685,8 @@ window.v55_saveSub=function(){
   document.body.appendChild(_sp);
   setTimeout(function(){_sp.style.transition='opacity .5s';_sp.style.opacity='0';setTimeout(function(){_sp.remove();},500);},4000);
   closeModal('subModal');
-  toast('Bid submitted','ok');
-  if(typeof renderSubs==='function')renderSubs();
+  toast(_persistOk?(_stripped?'Bid submitted (attachments too large to store — filenames kept)':'Bid submitted'):'Bid submitted (could not save to local storage)', (_persistOk&&!_stripped)?'ok':'info');
+  try{if(typeof renderSubs==='function')renderSubs();}catch(_e4){}
   // Reset
   _subBoQItems=[];_subFiles={tech:null,fin:null,mand:null};
 };
