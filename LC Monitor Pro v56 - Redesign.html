@@ -1205,6 +1205,48 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
 @media(max-width:620px){.dr-kpi{grid-template-columns:1fr 1fr}}
 @media(max-width:400px){.dr-kpi{grid-template-columns:1fr}}
 </style>
+<style id="kpiAuroraSkin">
+/* ===================== KPI "Aurora" skin (design D1) — theme-aware ===================== */
+#page-dashboard .dc.dc-blue{--c:#2563eb;--c2:#22a7f0;--cs:rgba(37,99,235,.12)}
+#page-dashboard .dc.dc-green{--c:#0ea371;--c2:#34d399;--cs:rgba(16,185,129,.13)}
+#page-dashboard .dc.dc-teal{--c:#0891b2;--c2:#22d3ee;--cs:rgba(8,145,178,.13)}
+#page-dashboard .dc.dc-purple{--c:#7c3aed;--c2:#a78bfa;--cs:rgba(124,58,237,.12)}
+#page-dashboard .dc.dc-red{--c:#e11d48;--c2:#fb7185;--cs:rgba(225,29,72,.12)}
+#page-dashboard .dc.dc-amber{--c:#d97706;--c2:#fbbf24;--cs:rgba(217,119,6,.14)}
+[data-theme=dark] #page-dashboard .dc.dc-blue{--c:#4f8cff;--c2:#38bdf8;--cs:rgba(79,140,255,.22)}
+[data-theme=dark] #page-dashboard .dc.dc-green{--c:#34d399;--c2:#6ee7b7;--cs:rgba(52,211,153,.20)}
+[data-theme=dark] #page-dashboard .dc.dc-teal{--c:#22d3ee;--c2:#67e8f9;--cs:rgba(34,211,238,.20)}
+[data-theme=dark] #page-dashboard .dc.dc-purple{--c:#a78bfa;--c2:#c4b5fd;--cs:rgba(167,139,250,.22)}
+[data-theme=dark] #page-dashboard .dc.dc-red{--c:#fb7185;--c2:#fda4af;--cs:rgba(251,113,133,.20)}
+[data-theme=dark] #page-dashboard .dc.dc-amber{--c:#fbbf24;--c2:#fcd34d;--cs:rgba(251,191,36,.20)}
+/* gradient icon chip — every dashboard KPI card */
+#page-dashboard .dc .dc-icon{background:linear-gradient(135deg,var(--c),var(--c2))!important;color:#fff!important;border:1px solid rgba(255,255,255,.30);box-shadow:0 7px 18px var(--cs)!important}
+/* value: crisp in light, gradient glow in dark */
+#page-dashboard .dc .dc-val{color:var(--text)}
+[data-theme=dark] #page-dashboard .dc .dc-val{background:linear-gradient(92deg,#ffffff,var(--c2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+/* ----- Key Performance Indicators (.dr-kpi) get the full glass treatment ----- */
+#page-dashboard .dr-kpi{gap:13px}
+#page-dashboard .dr-kpi .dc{border-radius:20px!important;padding:18px 18px 15px!important;min-height:124px;border:1px solid var(--border)!important;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .26s cubic-bezier(.22,1,.36,1),box-shadow .26s,border-color .26s!important}
+#page-dashboard .dr-kpi .dc.dc-blue,#page-dashboard .dr-kpi .dc.dc-green,#page-dashboard .dr-kpi .dc.dc-teal,#page-dashboard .dr-kpi .dc.dc-purple,#page-dashboard .dr-kpi .dc.dc-red,#page-dashboard .dr-kpi .dc.dc-amber{background:radial-gradient(150px 115px at 100% 0,var(--cs),transparent 72%),linear-gradient(165deg,var(--surface),var(--surface2) 72%)!important;box-shadow:0 8px 24px rgba(15,30,70,.08)!important}
+[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-blue,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-green,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-teal,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-purple,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-red,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-amber{background:radial-gradient(150px 115px at 100% 0,var(--cs),transparent 72%),linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.015) 72%)!important;border-color:rgba(255,255,255,.10)!important;box-shadow:0 14px 36px rgba(0,0,0,.42)!important}
+#page-dashboard .dr-kpi .dc:hover{transform:translateY(-6px)!important;border-color:var(--c)!important}
+[data-theme=dark] #page-dashboard .dr-kpi .dc:hover{box-shadow:0 22px 48px rgba(0,0,0,.55)!important}
+#page-dashboard .dr-kpi .dc .dc-val{font-size:26px}
+#page-dashboard .dr-kpi .dc .dc-lbl{letter-spacing:.6px}
+#page-dashboard .dr-kpi .dc .dc-icon{width:42px;height:42px;border-radius:13px;font-size:19px}
+#page-dashboard .dr-kpi .dc .dc-prog{height:6px;border-radius:6px;margin-top:9px;background:var(--border)}
+/* ----- Reports rendered for print (#pdfContent) reflect the dark theme ----- */
+[data-theme=dark] #pdfContent,[data-theme=dark] #pdfContent .pdf-wrap{background:#0e1830!important;color:#e9eeff!important}
+[data-theme=dark] #pdfContent .pdf-tbl th{background:#1f3a6b!important;color:#fff!important}
+[data-theme=dark] #pdfContent .pdf-tbl td{border-color:#26365c!important;color:#e9eeff!important}
+[data-theme=dark] #pdfContent .pdf-tbl tr:nth-child(even) td{background:#16233f!important}
+[data-theme=dark] #pdfContent .pdf-sec,[data-theme=dark] #pdfContent .pdf-g,[data-theme=dark] #pdfContent .pdf-hd,[data-theme=dark] #pdfContent .pdf-f{background:#13203c!important;border-color:#26365c!important;color:#e9eeff!important}
+[data-theme=dark] #pdfContent .pdf-verdict,[data-theme=dark] #pdfContent .pdf-pen{background:#13203c!important;border-color:#26365c!important}
+[data-theme=dark] #pdfContent .pdf-sec-title{color:#9ec5ff!important;border-color:#26365c!important}
+[data-theme=dark] #pdfContent .pdf-f .lbl{color:#9fb0d8!important}
+[data-theme=dark] #pdfContent .pdf-f .val{color:#e9eeff!important}
+@media print{[data-theme=dark] #pdfContent,[data-theme=dark] #pdfContent *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+</style>
 </head>
 <body>
 <div class="app" id="app">
@@ -1685,7 +1727,7 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
       <div class="fg"><label class="fl2">Job Title</label><input class="fi" id="acctJob" placeholder="e.g. LC Officer"/></div>
       <div class="fg"><label class="fl2">Department</label><input class="fi" id="acctDept" placeholder="e.g. Procurement"/></div>
       <div class="fg"><label class="fl2">Phone</label><input class="fi" id="acctPhone" placeholder="+966…"/></div>
-      <div class="fg"><label class="fl2">Assigned Role</label><input class="fi" id="acctRole" disabled style="opacity:.7" title="Roles are assigned in Roles &amp; Permissions"/></div>
+      <div class="fg"><label class="fl2">Assigned Role</label><select class="fsel2" id="acctRole" style="width:100%" title="Role for this account — defined in Roles &amp; Permissions"></select></div>
     </div>
     <div class="fsec-title" style="font-size:13px;margin-top:18px">🔑 Change Password</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
@@ -4772,7 +4814,7 @@ function exportBidMoMPDF(){
    +'.sig{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-top:34px}'
    +'.sig div{border-top:1.5px solid #94a3b8;padding-top:6px;font-size:11px;text-align:center;color:#475569}'
    +'@media print{body{padding:0}}';
-  var h='<!DOCTYPE html><html'+(AR_MODE?' dir="rtl" lang="ar"':'')+'><head><meta charset="utf-8"><title>'+L('Bid Evaluation MoM','محضر تقييم العطاءات')+'</title><style>'+css+'</style></head><body>';
+  var h='<!DOCTYPE html><html'+(AR_MODE?' dir="rtl" lang="ar"':'')+'><head><meta charset="utf-8"><title>'+L('Bid Evaluation MoM','محضر تقييم العطاءات')+'</title><style>'+css+'</style>'+(typeof _pdfThemeCSS==='function'?'<style>'+_pdfThemeCSS()+'</style>':'')+'</head><body>';
   h+='<div class="hd"><div>'+(bi.logo?'<img src="'+bi.logo+'" style="height:40px;border-radius:8px;vertical-align:middle;margin-'+(AR_MODE?'left':'right')+':10px"/>':'')
     +'<span class="org">'+bi.org+'</span></div><h1>'+L('Minutes of Meeting — Bid Evaluation','محضر اجتماع — تقييم العطاءات')+'</h1></div>';
   h+='<div class="sub">'+L('Date','التاريخ')+': '+dateStr+' &nbsp;|&nbsp; '+L('Evaluation','التقييم')+': '+(curBid.title||'-')
@@ -4791,8 +4833,8 @@ function exportBidMoMPDF(){
     h+='<div class="box'+(r.excluded?' warnbox':'')+'">';
     h+='<b>'+(r.excluded?'🚫 ':'#'+r.rank+' — ')+r.name+'</b>'+(r.name===winner?' 🏆 <b style="color:#059669">'+L('AWARDED','تمت الترسية')+'</b>':'');
     h+='<table><tr><th>'+L('Criterion','المعيار')+'</th><th>'+L('Value','القيمة')+'</th></tr>';
-    h+='<tr><td>'+L('Original Bid Price','سعر العطاء الأصلي')+'</td><td>'+fSAR(r.origPrice)+'</td></tr>';
-    if(mech.indexOf('NPP')>=0)h+='<tr><td>'+L('Adjusted Bid Price','السعر المعدل')+'</td><td>'+fSAR(r.adjustedPrice)+'</td></tr>';
+    h+='<tr><td>'+L('Original Bid Price','سعر العطاء الأصلي')+'</td><td>'+(r.name===winner?fSAR(r.origPrice):'<i>'+L('*Hidden*','*مخفي*')+'</i>')+'</td></tr>';
+    if(mech.indexOf('NPP')>=0)h+='<tr><td>'+L('Adjusted Bid Price','السعر المعدل')+'</td><td>'+(r.name===winner?fSAR(r.adjustedPrice):'<i>'+L('*Hidden*','*مخفي*')+'</i>')+'</td></tr>';
     h+='<tr><td>'+L('Local Content Committed','المحتوى المحلي الملتزم به')+'</td><td>'+(r.lcPct||0)+'%</td></tr>';
     h+='<tr><td>'+L('NPP Committed','المنتجات الوطنية الملتزم بها')+'</td><td>'+(r.nppPct||0)+'%</td></tr>';
     h+='<tr><td>'+L('SME','منشأة صغيرة/متوسطة')+'</td><td>'+(r.isSME?L('Yes','نعم'):L('No','لا'))+'</td></tr>';
@@ -4807,8 +4849,8 @@ function exportBidMoMPDF(){
   h+='<h2>3. '+L('Final Ranking','الترتيب النهائي')+'</h2>';
   h+='<table><tr><th>#</th><th>'+L('Bidder','المتقدم')+'</th><th>'+L('Price','السعر')+'</th>'+(mech.indexOf('NPP')>=0?'<th>'+L('Adjusted','المعدل')+'</th>':'')+'<th>'+L('LC %','المحتوى المحلي %')+'</th><th>'+L('Score','الدرجة')+'</th><th>'+L('Status','الحالة')+'</th></tr>';
   res.forEach(function(r){
-    h+='<tr class="'+(r.name===winner?'win':'')+'"><td>'+(r.excluded?'—':r.rank)+'</td><td>'+r.name+(r.name===winner?' 🏆':'')+'</td><td>'+fSAR(r.origPrice)+'</td>'
-      +(mech.indexOf('NPP')>=0?'<td>'+fSAR(r.adjustedPrice)+'</td>':'')
+    h+='<tr class="'+(r.name===winner?'win':'')+'"><td>'+(r.excluded?'—':r.rank)+'</td><td>'+r.name+(r.name===winner?' 🏆':'')+'</td><td>'+(r.name===winner?fSAR(r.origPrice):'<i>'+L('*Hidden*','*مخفي*')+'</i>')+'</td>'
+      +(mech.indexOf('NPP')>=0?'<td>'+(r.name===winner?fSAR(r.adjustedPrice):'<i>'+L('*Hidden*','*مخفي*')+'</i>')+'</td>':'')
       +'<td>'+(r.lcPct||0)+'%</td><td>'+(r.excluded?'—':r.score.toFixed(2))+'</td>'
       +'<td>'+(r.excluded?'<span class="excl">'+L('Excluded','مستبعد')+'</span>':(r.name===winner?L('Awarded','تمت الترسية'):L('Qualified','مؤهل')))+'</td></tr>';
   });
@@ -5022,7 +5064,38 @@ function openSupplierModal(id){
   document.getElementById('supLCFileName').textContent=s&&s.lcFile?'📎 '+s.lcFile.name:'';
   openModal('supplierModal');
 }
+// Theme-aware CSS injected into every exported/printed PDF so it reflects the
+// app's current Light/Dark theme instead of being plain white.
+function _pdfThemeCSS(){
+  var dark=(document.documentElement.getAttribute('data-theme')==='dark');
+  var P=dark
+    ? {bg:'#0e1830',text:'#e9eeff',head:'#1f3a6b',accent:'#5b9bff',border:'#26365c',stripe:'#16233f',box:'#13203c',sub:'#9fb0d8',danger:'#fb7185'}
+    : {bg:'#ffffff',text:'#0b1324',head:'#1d4ed8',accent:'#2563eb',border:'#dbe3f0',stripe:'#f4f7fd',box:'#f6f9ff',sub:'#5b6b86',danger:'#dc2626'};
+  return '@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}'
+    +'html,body{background:'+P.bg+'!important;color:'+P.text+'!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    +'h1,h2,h3,h4{color:'+P.text+'!important}'
+    +'table{border-color:'+P.border+'!important}'
+    +'th{background:'+P.head+'!important;color:#fff!important;border-color:'+P.border+'!important}'
+    +'td{border-color:'+P.border+'!important;color:'+P.text+'!important}'
+    +'tr:nth-child(even) td{background:'+P.stripe+'!important}'
+    +'.hd,.header,.hdr{border-color:'+P.accent+'!important}'
+    +'.hd h1,.header h1,.hdr h1{color:'+P.accent+'!important}'
+    +'.logo{color:'+P.accent+'!important}'
+    +'.org{color:'+P.text+'!important}'
+    +'.sub,.dt,.ft,.foot,.footer,.muted{color:'+P.sub+'!important}'
+    +'.box,.mech,.tcb,.card,.kpi-card,.pdf-sec,.pdf-g,.pdf-hd,.sec{background:'+P.box+'!important;border-color:'+P.border+'!important;color:'+P.text+'!important}'
+    +'.kpi-card .lbl,.kpi-card .sub{color:'+P.sub+'!important}'
+    +'.win td{color:#0b3d2a!important}'
+    +'.mech,.mech *{color:'+P.text+'!important}.mech{background:'+P.box+'!important;border-color:'+P.accent+'!important}'
+    +'.tcb,.tcb *{color:'+P.text+'!important}'
+    +'.sig div{color:'+P.sub+'!important;border-color:'+P.border+'!important}'
+    +'.tot{color:'+P.accent+'!important}'
+    +'.excl{color:'+P.danger+'!important}'
+    +'.foot,.ft{color:'+P.sub+'!important}';
+}
+window._pdfThemeCSS=_pdfThemeCSS;
 function _openPrintDoc(html){
+  try{if(typeof _pdfThemeCSS==='function')html=html.replace(/<\/head>/i,'<style>'+_pdfThemeCSS()+'</style></head>');}catch(e){}
   var w=window.open('','_blank','width=1000,height=800');
   if(w){w.document.write(html);w.document.close();setTimeout(function(){try{w.print();}catch(e){}},500);}
   else{var ifr=document.createElement('iframe');ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';document.body.appendChild(ifr);var d=ifr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(function(){try{ifr.contentWindow.focus();ifr.contentWindow.print();}catch(e){}},600);}
@@ -5568,7 +5641,7 @@ function exportDashPDF(){
   h+='.alerts h3{font-size:14px;margin-bottom:8px;color:#2d2d5e}';
   h+='.alerts li{font-size:11px;padding:4px 0;border-bottom:1px solid #eee}';
   h+='.footer{margin-top:30px;text-align:center;font-size:10px;color:#999;border-top:1px solid #eee;padding-top:10px}';
-  h+='</style></head><body>';
+  h+='</style>'+(typeof _pdfThemeCSS==='function'?'<style>'+_pdfThemeCSS()+'</style>':'')+'</head><body>';
   var bi=brandInfo();h+='<div class="header"><h1>'+(bi.logo?'<img src="'+bi.logo+'" style="height:34px;vertical-align:middle;margin-right:10px;border-radius:6px"/>':'\u{1F4CA} ')+bi.org+' — Executive Dashboard</h1><span class="dt">'+dateStr+'</span></div>';
   h+='<div class="kpi-grid">';
   d.kpis.forEach(function(k){
@@ -6034,7 +6107,7 @@ function editMechName(i){var o=MECHS[i];var n=prompt("Edit mechanism name:",o);i
 window.editMechName=editMechName;
 function generateRFPPDF(){if(!curRFP){toast("No RFP open","err");return;}var r=curRFP;var now=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});var boq=r.boq||rfpBoQ.filter(function(b){return b.desc;});var tot=boq.reduce(function(s,b){return s+(b.cost||0);},0);var tc=MECH_TC[r.suggestedMech]||{};
 var css="*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;color:#1e293b;padding:30px;font-size:11px}h1{font-size:20px;color:#1e3a5f;margin-bottom:4px}h2{font-size:13px;font-weight:800;color:#1e3a5f;margin:16px 0 8px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}.hdr{text-align:center;border-bottom:3px solid #003087;padding-bottom:14px;margin-bottom:20px}.logo{font-size:18px;font-weight:800;color:#003087}.sub{font-size:10px;color:#666;margin-top:2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-bottom:10px}.fld .lbl{font-size:8px;color:#777;font-weight:700;text-transform:uppercase}.fld .val{font-size:10px;font-weight:600}table{width:100%;border-collapse:collapse;font-size:10px;margin-top:6px}th{background:#003087;color:#fff;padding:5px 7px;text-align:left}td{padding:4px 7px;border-bottom:1px solid #ddd}tr:nth-child(even) td{background:#f5f7fa}.mech{background:#f0f7ff;border:2px solid #003087;border-radius:6px;padding:10px 14px;margin:10px 0}.tcb{background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px;margin-top:6px;font-size:10px;line-height:1.5;white-space:pre-wrap}.ft{border-top:1px solid #ccc;padding-top:8px;margin-top:20px;font-size:9px;color:#999;display:flex;justify-content:space-between}@media print{@page{size:A4;margin:12mm}body{padding:0}}";
-var htm="<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>RFP</title><style>"+css+"</style></head><body>";
+var htm="<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>RFP</title><style>"+css+"</style>"+(typeof _pdfThemeCSS==='function'?"<style>"+_pdfThemeCSS()+"</style>":"")+"</head><body>";
 var bif=brandInfo();htm+="<div class=\"hdr\">"+(bif.logo?"<img src=\""+bif.logo+"\" style=\"height:42px;border-radius:8px;margin-bottom:6px\"/>":"")+"<div class=\"logo\">"+bif.org+"</div><h1>Request for Proposal (RFP)</h1><div class=\"sub\">"+now+"</div></div>";
 htm+="<h2>1. RFP Information</h2><div class=\"grid\"><div class=\"fld\"><div class=\"lbl\">Title</div><div class=\"val\">"+(r.title||"--")+"</div></div><div class=\"fld\"><div class=\"lbl\">Ref #</div><div class=\"val\">"+(r.ref||"--")+"</div></div><div class=\"fld\"><div class=\"lbl\">End-User</div><div class=\"val\">"+(r.endUser||"--")+"</div></div><div class=\"fld\"><div class=\"lbl\">Value</div><div class=\"val\">"+fSAR(r.value||0)+"</div></div></div>";
 if(r.scope)htm+="<h2>2. Scope of Work</h2><div style=\"font-size:11px;line-height:1.6;margin-bottom:10px\">"+r.scope.replace(/\n/g,"<br/>")+"</div>";
@@ -6312,7 +6385,8 @@ function renderAccountSettings(){
   function set(id,v){var e=document.getElementById(id);if(e)e.value=v||'';}
   set('acctName',u&&u.name); set('acctEmail',u&&u.email);
   set('acctJob',u&&u.jobTitle); set('acctDept',u&&u.department); set('acctPhone',u&&u.phone);
-  set('acctRole',u?(typeof roleName==='function'?roleName(u.roleId):u.roleId):'');
+  var rsel=document.getElementById('acctRole');
+  if(rsel){rsel.innerHTML=(typeof roleOpts==='function')?roleOpts(u?u.roleId:''):(typeof ROLES!=='undefined'?ROLES.map(function(r){return '<option value="'+r.id+'"'+((u&&u.roleId===r.id)?' selected':'')+'>'+r.name+'</option>';}).join(''):'');}
   var curWrap=document.getElementById('acctCurPwWrap');
   if(curWrap)curWrap.style.display=(u&&u.password)?'':'none';
   ['acctCurPw','acctNewPw','acctNewPw2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
@@ -6339,6 +6413,11 @@ function saveAccountSettings(){
   u.jobTitle=((document.getElementById('acctJob')||{}).value||'').trim();
   u.department=((document.getElementById('acctDept')||{}).value||'').trim();
   u.phone=((document.getElementById('acctPhone')||{}).value||'').trim();
+  var rsel2=document.getElementById('acctRole');
+  if(rsel2&&rsel2.value){
+    u.roleId=rsel2.value;
+    if(typeof CURRENT_USER!=='undefined'&&CURRENT_USER&&CURRENT_USER.id===u.id){window.CURRENT_ROLE=u.roleId;localStorage.setItem('lcCurrentRole',u.roleId);if(typeof applyNavPerms==='function')applyNavPerms();}
+  }
   if(typeof USERS!=='undefined'){var idx=USERS.findIndex(function(x){return x.id===u.id;});if(idx>=0)USERS[idx]=u;}
   if(typeof saveUsers==='function')saveUsers();
   if(typeof renderProfileChip==='function')renderProfileChip();
@@ -6358,7 +6437,7 @@ generateRFPPDF=function(){
   var tot=boq.reduce(function(s,b){return s+(b.cost||0);},0);
   var tc=MECH_TC[r.suggestedMech]||{};
   var css="*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;color:#1e293b;padding:30px;font-size:11px}h1{font-size:20px;color:#1e3a5f;margin-bottom:4px}h2{font-size:13px;font-weight:800;color:#1e3a5f;margin:16px 0 8px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}.hdr{text-align:center;border-bottom:3px solid #003087;padding-bottom:14px;margin-bottom:20px}.logo{font-size:18px;font-weight:800;color:#003087}.sub{font-size:10px;color:#666;margin-top:2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-bottom:10px}.fld .lbl{font-size:8px;color:#777;font-weight:700;text-transform:uppercase}.fld .val{font-size:10px;font-weight:600}table{width:100%;border-collapse:collapse;font-size:10px;margin-top:6px}th{background:#003087;color:#fff;padding:5px 7px;text-align:left}td{padding:4px 7px;border-bottom:1px solid #ddd}tr:nth-child(even) td{background:#f5f7fa}.mech{background:#f0f7ff;border:2px solid #003087;border-radius:6px;padding:10px 14px;margin:10px 0}.tcb{background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px;margin-top:6px;font-size:10px;line-height:1.5;white-space:pre-wrap}.ft{border-top:1px solid #ccc;padding-top:8px;margin-top:20px;font-size:9px;color:#999;display:flex;justify-content:space-between}@media print{@page{size:A4;margin:12mm}body{padding:0}}";
-  var htm='<!DOCTYPE html><html><head><meta charset="utf-8"><title>RFP</title><style>'+css+'</style></head><body>';
+  var htm='<!DOCTYPE html><html><head><meta charset="utf-8"><title>RFP</title><style>'+css+'</style>'+(typeof _pdfThemeCSS==='function'?'<style>'+_pdfThemeCSS()+'</style>':'')+'</head><body>';
   htm+='<div class="hdr"><div class="logo">'+(S.org&&S.org!=="My Organization"?S.org:"LC Monitor Pro")+'</div><h1>Request for Proposal (RFP)</h1><div class="sub">'+now+'</div></div>';
   htm+='<h2>1. RFP Information</h2><div class="grid"><div class="fld"><div class="lbl">Title</div><div class="val">'+(r.title||"--")+'</div></div><div class="fld"><div class="lbl">Ref #</div><div class="val">'+(r.ref||"--")+'</div></div><div class="fld"><div class="lbl">End-User</div><div class="val">'+(r.endUser||"--")+'</div></div><div class="fld"><div class="lbl">Value</div><div class="val">'+fSAR(r.value||0)+'</div></div></div>';
   if(r.scope)htm+='<h2>2. Scope of Work</h2><div style="font-size:11px;line-height:1.6;margin-bottom:10px">'+r.scope.replace(/\n/g,"<br/>")+'</div>';
@@ -7382,7 +7461,7 @@ window.v55_extractRFPBoQ=function(){
   if(!rfp){infoDiv.style.display='none';boqSec.style.display='none';return;}
   // Show RFP info
   infoDiv.style.display='block';
-  infoDiv.innerHTML='<b>\U0001f4c4 '+(rfp.title||rfp.ref||'')+'</b><br>'+'<span style="color:var(--text3)">Scope: '+(rfp.scope||'-')+'</span>'+' | <span>Value: '+fSAR(rfp.value||0)+'</span>'+' | <span>Mechanism: '+(rfp.mechanism||'-')+'</span>';
+  infoDiv.innerHTML='<b>\U0001f4c4 '+(rfp.title||rfp.ref||'')+'</b><br>'+'<span style="color:var(--text3)">Scope: '+(rfp.scope||'-')+'</span>'+' | <span>Mechanism: '+(rfp.mechanism||'-')+'</span>';
   // Extract BoQ from RFP
   var boq=(rfp.boq||[]).filter(function(r){return r.desc;});
   if(boq.length){
@@ -7421,19 +7500,23 @@ window.v55_renderSubBoQ=function(){
     h+='<td style="font-size:10px;font-weight:600">'+item.desc+'</td>';
     h+='<td style="background:#f3f4f6;color:#6b7280;font-size:9px;text-align:center">'+(item.mandatory?'Mandatory':'Optional')+'</td>';
     h+='<td style="text-align:center"><input type="checkbox" '+(item.mandatoryResponse?'checked ':'')+' onchange="_subBoQItems['+i+'].mandatoryResponse=this.checked"/></td>';
-    h+='<td><select onchange="_subBoQItems['+i+'].nature=this.value;v55_renderSubBoQ()">';
-    natures.forEach(function(n){h+='<option'+(item.nature===n?' selected':'')+'>'+n+'</option>';});
-    h+='</select></td>';
-    h+='<td><input type="number" value="'+(item.unitPrice||'')+'" onchange="_subBoQItems['+i+'].unitPrice=parseFloat(this.value)||0;v55_recalcSubTotal()" style="width:80px"/></td>';
-    h+='<td><input type="number" value="'+(item.qty||'')+'" onchange="_subBoQItems['+i+'].qty=parseFloat(this.value)||0;v55_recalcSubTotal()" style="width:55px"/></td>';
-    h+='<td><select onchange="_subBoQItems['+i+'].uom=this.value">';
-    uoms.forEach(function(u){h+='<option'+(item.uom===u?' selected':'')+'>'+u+'</option>';});
-    h+='</select></td>';
+    h+='<td style="font-size:10px;white-space:nowrap">'+(item.nature||'')+'</td>';
+    h+='<td><input type="number" min="0" value="'+(item.unitPrice||'')+'" onchange="_subBoQItems['+i+'].unitPrice=parseFloat(this.value)||0;v55_subLine('+i+')" style="width:80px" placeholder="0"/></td>';
+    h+='<td style="text-align:center">'+(item.qty||0)+'</td>';
+    h+='<td style="font-size:10px;white-space:nowrap">'+(item.uom||'')+'</td>';
     h+='<td><select onchange="_subBoQItems['+i+'].origin=this.value;v55_recalcSubTotal()"><option value="Local"'+(item.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(item.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>';
-    h+='<td style="font-weight:700">'+fSAR(tp)+'</td>';
+    h+='<td id="subTot'+i+'" style="font-weight:700">'+fSAR(tp)+'</td>';
     h+='</tr>';
     return h;
   }).join('');
+  v55_recalcSubTotal();
+};
+
+// update one line's total (Qty × Unit Price) live, then refresh the grand total
+window.v55_subLine=function(i){
+  var it=_subBoQItems[i];if(!it)return;
+  var tp=(it.unitPrice||0)*(it.qty||0);
+  var c=document.getElementById('subTot'+i);if(c)c.textContent=fSAR(tp);
   v55_recalcSubTotal();
 };
 
