@@ -1246,6 +1246,195 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
 [data-theme=dark] #pdfContent .pdf-f .lbl{color:#9fb0d8!important}
 [data-theme=dark] #pdfContent .pdf-f .val{color:#e9eeff!important}
 @media print{[data-theme=dark] #pdfContent,[data-theme=dark] #pdfContent *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+
+/* ============================================================= */
+/* ===========  v57 · VERDICT DASHBOARD (premium)  ============= */
+/* ===========  hierarchy · semantic status · SVG icons  ======= */
+/* ============================================================= */
+:root{
+  --st-ok:#15803d;--st-ok-bg:rgba(21,128,61,.08);--st-ok-bd:rgba(21,128,61,.30);
+  --st-warn:#b45309;--st-warn-bg:rgba(180,83,9,.09);--st-warn-bd:rgba(180,83,9,.32);
+  --st-bad:#b91c1c;--st-bad-bg:rgba(185,28,28,.07);--st-bad-bd:rgba(185,28,28,.30);
+}
+[data-theme=dark]{
+  --st-ok:#4ade80;--st-ok-bg:rgba(74,222,128,.12);--st-ok-bd:rgba(74,222,128,.26);
+  --st-warn:#fbbf24;--st-warn-bg:rgba(251,191,36,.12);--st-warn-bd:rgba(251,191,36,.26);
+  --st-bad:#fb7185;--st-bad-bg:rgba(251,113,133,.13);--st-bad-bd:rgba(251,113,133,.30);
+}
+
+/* --- neutralize the v55/v56 decorative layers --- */
+#page-dashboard .dc::before,#page-dashboard .dc::after,#page-dashboard .dc .dc-body::after{display:none!important}
+#page-dashboard .dc:hover .dc-icon{transform:none!important}
+#page-dashboard .dsec::before{display:none!important}
+#page-dashboard .lc-funnel .fun-step::before{display:none!important}
+#page-dashboard .fun-arrow{animation:none!important}
+
+/* --- icon base --- */
+#page-dashboard svg.ic{width:20px;height:20px;display:block;flex:none;stroke-width:1.8}
+
+/* --- entrance (extend stagger to new blocks) --- */
+#page-dashboard>div>.cmd-band,#page-dashboard>div>.kpi-area{animation:rdFadeUp .5s cubic-bezier(.22,1,.36,1) both}
+
+/* ============ COMMAND BAND ============ */
+#page-dashboard .cmd-band{background:var(--grad-side);border:1px solid rgba(255,255,255,.07);border-radius:var(--rl);
+  padding:20px 22px;margin-bottom:16px;box-shadow:0 18px 48px -18px rgba(8,15,40,.6);color:#eaf0ff;
+  display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,1.55fr);gap:22px;align-items:center}
+#page-dashboard .cmd-id{display:flex;align-items:center;gap:14px;min-width:0}
+#page-dashboard .cmd-logo{width:52px;height:52px;border-radius:14px;object-fit:cover;flex:none;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#page-dashboard .cmd-logo-txt{display:flex;align-items:center;justify-content:center;font-family:var(--fn);font-weight:800;font-size:20px;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+#page-dashboard .cmd-id-txt{flex:1;min-width:0}
+#page-dashboard .cmd-org{font-family:var(--fn);font-weight:800;font-size:20px;color:#fff;line-height:1.15;letter-spacing:-.01em;text-wrap:balance}
+#page-dashboard .cmd-sub{font-size:11.5px;color:#aebcd8;margin-top:3px;line-height:1.35}
+#page-dashboard .cmd-date{font-size:11px;color:#8593bb;margin-top:5px;font-variant-numeric:tabular-nums}
+#page-dashboard .cmd-export{flex:none;display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.1);
+  color:#eaf0ff;border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:9px 13px;font-size:12px;
+  font-weight:700;font-family:var(--fn);cursor:pointer;transition:background .18s,border-color .18s;align-self:center}
+#page-dashboard .cmd-export svg.ic{width:16px;height:16px}
+#page-dashboard .cmd-export:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.32)}
+#page-dashboard .cmd-export:focus-visible{outline:none;box-shadow:0 0 0 3px rgba(120,160,255,.5)}
+/* verdict tiles */
+#page-dashboard .cmd-verdict{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;min-width:0}
+#page-dashboard .verdict-tile{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:16px;
+  padding:14px 16px;cursor:pointer;transition:background .18s,border-color .18s,transform .18s;position:relative;outline:none;min-width:0}
+#page-dashboard .verdict-tile:hover{background:rgba(255,255,255,.085);transform:translateY(-2px);border-color:rgba(255,255,255,.16)}
+#page-dashboard .verdict-tile:focus-visible{box-shadow:0 0 0 3px rgba(120,160,255,.5)}
+#page-dashboard .vt-gauge{display:flex;align-items:center;gap:14px}
+#page-dashboard .vt-stat{display:flex;flex-direction:column;justify-content:center}
+#page-dashboard .vt-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;background:rgba(255,255,255,.08);color:#cdd9f5}
+#page-dashboard .vt-ic svg.ic{width:17px;height:17px}
+#page-dashboard .vt-lbl{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#aebcd8}
+#page-dashboard .vt-sub{font-size:10.5px;color:#8c9bc4;margin-top:3px;line-height:1.3}
+#page-dashboard .vt-target{font-size:10.5px;color:#8593bb;margin-top:5px;font-variant-numeric:tabular-nums}
+#page-dashboard .vt-val{font-family:var(--fm);font-weight:800;font-size:23px;color:#fff;line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums}
+#page-dashboard .vt-unit{font-size:13px;color:#8c9bc4;font-weight:700;margin-left:2px}
+#page-dashboard .vt-foot{margin-top:9px}
+#page-dashboard .vt-bar,#page-dashboard .vt-meter{height:5px;border-radius:3px;background:rgba(255,255,255,.13);overflow:hidden}
+#page-dashboard .vt-bar>div,#page-dashboard .vt-meter>div{height:100%;border-radius:3px;background:currentColor;transition:width .8s cubic-bezier(.22,1,.36,1)}
+#page-dashboard .vt-foot-t{display:block;font-size:10px;color:#8c9bc4;margin-top:5px;font-variant-numeric:tabular-nums}
+#page-dashboard .vt-stat.st-ok{color:#86efac}#page-dashboard .vt-stat.st-warn{color:#fcd34d}#page-dashboard .vt-stat.st-bad{color:#fda4af}#page-dashboard .vt-stat.st-neutral{color:#9fb0d6}
+#page-dashboard .vt-stat.st-bad .vt-ic{background:rgba(251,113,133,.16);color:#fda4af}
+#page-dashboard .vt-stat.st-warn .vt-ic{background:rgba(251,191,36,.16);color:#fcd34d}
+#page-dashboard .vt-stat.st-ok .vt-ic{background:rgba(74,222,128,.16);color:#86efac}
+/* gauge */
+#page-dashboard .gauge{position:relative;width:84px;height:84px;flex:none}
+#page-dashboard .gauge-svg{width:84px;height:84px;display:block}
+#page-dashboard .g-track{fill:none;stroke:rgba(255,255,255,.13);stroke-width:9}
+#page-dashboard .g-fill{fill:none;stroke-width:9;stroke-linecap:round;animation:gaugeFill .9s cubic-bezier(.22,1,.36,1)}
+#page-dashboard .g-fill.st-ok{stroke:#4ade80}#page-dashboard .g-fill.st-warn{stroke:#fbbf24}#page-dashboard .g-fill.st-bad{stroke:#fb7185}#page-dashboard .g-fill.st-neutral{stroke:#8593bb}
+#page-dashboard .gauge-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-weight:800;font-size:20px;color:#fff;font-variant-numeric:tabular-nums}
+#page-dashboard .gauge-num span{font-size:11px;color:#aebcd8;margin-left:1px}
+@keyframes gaugeFill{from{stroke-dashoffset:100}}
+
+/* ============ FUNNEL ============ */
+#page-dashboard .lc-funnel{background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh);border-radius:18px;padding:13px;gap:5px}
+#page-dashboard .lc-funnel .fun-step{background:var(--surface2);border:1px solid var(--border);border-radius:14px;gap:5px;padding:13px 10px}
+#page-dashboard .lc-funnel .fun-step:hover{transform:translateY(-3px);box-shadow:0 10px 24px -12px rgba(15,30,70,.25);border-color:var(--border2)}
+#page-dashboard .lc-funnel .fun-step:focus-visible{outline:none;box-shadow:var(--ring);border-color:var(--accent)}
+#page-dashboard .fun-ic{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:var(--surface3);color:var(--text2);margin-bottom:3px;filter:none}
+#page-dashboard .fun-ic svg.ic{width:19px;height:19px}
+#page-dashboard .fun-n{font-family:var(--fm);font-weight:800;font-size:22px;line-height:1.05;color:var(--text);-webkit-text-fill-color:currentColor;background:none;font-variant-numeric:tabular-nums}
+#page-dashboard .fun-l{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text2)}
+#page-dashboard .fun-sub{font-size:9.5px;color:var(--text3);font-weight:600}
+#page-dashboard .fun-arrow{display:flex;align-items:center;justify-content:center;color:var(--text3)}
+#page-dashboard .fun-arrow svg.ic{width:18px;height:18px}
+body.rtl #page-dashboard .fun-arrow svg.ic{transform:scaleX(-1)}
+#page-dashboard .fun-end .fun-ic{color:#fff}
+#page-dashboard .fun-end.st-ok .fun-ic{background:var(--st-ok)}#page-dashboard .fun-end.st-warn .fun-ic{background:var(--st-warn)}#page-dashboard .fun-end.st-bad .fun-ic{background:var(--st-bad)}#page-dashboard .fun-end.st-neutral .fun-ic{background:var(--text3)}
+#page-dashboard .fun-end.st-ok .fun-n{color:var(--st-ok)}#page-dashboard .fun-end.st-warn .fun-n{color:var(--st-warn)}#page-dashboard .fun-end.st-bad .fun-n{color:var(--st-bad)}
+
+/* ============ KPI CLUSTERS ============ */
+#page-dashboard .kpi-area{display:flex;flex-direction:column;gap:18px;margin-bottom:16px}
+#page-dashboard .cluster-hd{display:flex;align-items:center;gap:9px;margin:2px 2px 11px}
+#page-dashboard .cluster-hd .cl-ic{width:18px;height:18px;color:var(--accent);flex:none}
+#page-dashboard .cluster-hd h3{margin:0;font-family:var(--fn);font-size:13px;font-weight:700;letter-spacing:.01em;color:var(--text);text-transform:none}
+#page-dashboard .cluster-hd .cl-count{font-size:10px;font-weight:700;color:var(--text3);background:var(--surface3);border-radius:20px;padding:1px 8px;font-variant-numeric:tabular-nums}
+#page-dashboard .cluster-hd::after{content:'';flex:1;height:1px;background:var(--border)}
+#page-dashboard .dr-kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:12px}
+
+/* status cards (override v56 glass) */
+#page-dashboard .dc,#page-dashboard .dr-kpi .dc{display:flex;align-items:flex-start;gap:12px;background:var(--surface)!important;
+  border:1px solid var(--border)!important;border-radius:14px!important;padding:14px 15px!important;min-height:0!important;
+  box-shadow:0 1px 2px rgba(15,30,70,.04)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;position:relative;
+  transition:transform .18s cubic-bezier(.22,1,.36,1),box-shadow .18s,border-color .18s!important}
+#page-dashboard .dc:hover,#page-dashboard .dr-kpi .dc:hover{transform:translateY(-2px)!important;box-shadow:0 10px 24px -12px rgba(15,30,70,.22)!important;border-color:var(--border2)!important}
+#page-dashboard .dc:focus-visible{outline:none;box-shadow:var(--ring)!important;border-color:var(--accent)!important}
+#page-dashboard .dc .dc-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--surface3);color:var(--text2);box-shadow:none;font-size:0}
+#page-dashboard .dc .dc-icon svg.ic{width:20px;height:20px}
+#page-dashboard .dc .dc-body{flex:1;min-width:0}
+#page-dashboard .dc .dc-lbl{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text3);margin-bottom:3px}
+#page-dashboard .dc .dc-val{font-family:var(--fm);font-weight:800;font-size:21px!important;line-height:1.1;color:var(--text);letter-spacing:-.01em;font-variant-numeric:tabular-nums;background:none;-webkit-text-fill-color:currentColor}
+[data-theme=dark] #page-dashboard .dc .dc-val{background:none;-webkit-text-fill-color:currentColor;color:var(--text)}
+#page-dashboard .dc .dc-sub{font-size:10px;color:var(--text3);margin-top:3px;line-height:1.3}
+#page-dashboard .dc .dc-prog{height:5px!important;border-radius:3px!important;background:var(--border)!important;overflow:hidden;margin-top:8px}
+#page-dashboard .dc .dc-prog>div{height:100%;border-radius:3px;background:var(--text3);background-image:none!important;box-shadow:none!important}
+#page-dashboard .dc-flag{position:absolute;top:12px;right:13px;font-size:9px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:20px;white-space:nowrap;font-family:var(--fn)}
+body.rtl #page-dashboard .dc-flag{right:auto;left:13px}
+/* status variants */
+#page-dashboard .dc.st-ok,#page-dashboard .dr-kpi .dc.st-ok{border-color:var(--st-ok-bd)!important;background:linear-gradient(180deg,var(--st-ok-bg),transparent 70%)!important}
+#page-dashboard .dc.st-warn,#page-dashboard .dr-kpi .dc.st-warn{border-color:var(--st-warn-bd)!important;background:linear-gradient(180deg,var(--st-warn-bg),transparent 70%)!important}
+#page-dashboard .dc.st-bad,#page-dashboard .dr-kpi .dc.st-bad{border-color:var(--st-bad-bd)!important;background:linear-gradient(180deg,var(--st-bad-bg),transparent 70%)!important}
+#page-dashboard .dc.st-ok .dc-icon{background:var(--st-ok-bg);color:var(--st-ok)}
+#page-dashboard .dc.st-warn .dc-icon{background:var(--st-warn-bg);color:var(--st-warn)}
+#page-dashboard .dc.st-bad .dc-icon{background:var(--st-bad-bg);color:var(--st-bad)}
+#page-dashboard .dc.st-ok .dc-val,[data-theme=dark] #page-dashboard .dc.st-ok .dc-val{color:var(--st-ok)}
+#page-dashboard .dc.st-warn .dc-val,[data-theme=dark] #page-dashboard .dc.st-warn .dc-val{color:var(--st-warn)}
+#page-dashboard .dc.st-bad .dc-val,[data-theme=dark] #page-dashboard .dc.st-bad .dc-val{color:var(--st-bad)}
+#page-dashboard .dc.st-ok .dc-prog>div{background:var(--st-ok)}
+#page-dashboard .dc.st-warn .dc-prog>div{background:var(--st-warn)}
+#page-dashboard .dc.st-bad .dc-prog>div{background:var(--st-bad)}
+#page-dashboard .dc-flag.f-ok{background:var(--st-ok-bg);color:var(--st-ok)}
+#page-dashboard .dc-flag.f-warn{background:var(--st-warn-bg);color:var(--st-warn)}
+#page-dashboard .dc-flag.f-bad{background:var(--st-bad-bg);color:var(--st-bad)}
+
+/* ============ SECTION CARDS / SPLIT / BOTTOM ============ */
+#page-dashboard .dsec{background:var(--surface)!important;border:1px solid var(--border);border-radius:18px!important;padding:18px!important;box-shadow:var(--sh)!important;backdrop-filter:none!important}
+#page-dashboard .dsec-hd{display:flex;align-items:center;gap:9px;margin-bottom:13px}
+#page-dashboard .dsec-hd .dsi{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:var(--surface3)!important;color:var(--text2)!important;box-shadow:none!important;animation:none!important}
+#page-dashboard .dsec-hd .dsi svg.ic{width:18px;height:18px}
+#page-dashboard .dsec-hd b{font-size:14px!important;font-weight:700;color:var(--text);letter-spacing:-.01em}
+#page-dashboard .dsplit{background:transparent!important;box-shadow:none!important;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#page-dashboard .dsplit-half{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:var(--sh)}
+#page-dashboard .dsplit-tab{display:flex;align-items:center;gap:8px;background:transparent!important;border-radius:0;margin-bottom:11px}
+#page-dashboard .dsplit-tab .dsi{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface3)!important;color:var(--text2)!important}
+#page-dashboard .dsplit-tab .dsi svg.ic{width:17px;height:17px}
+#page-dashboard .dsplit-tab b{font-size:13px;font-weight:700;color:var(--text)}
+#page-dashboard .dr4,#page-dashboard .dr3{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#page-dashboard .dcharts .card,#page-dashboard .dbottom .card{border-radius:16px!important;border:1px solid var(--border);background:var(--surface);box-shadow:var(--sh)}
+#page-dashboard .card-title{font-weight:700;font-size:13px;color:var(--text)}
+/* high-value cards (no side-stripe) */
+#page-dashboard .dhv-card{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:13px!important;padding:13px 14px;display:flex;flex-direction:column;gap:5px;min-width:206px;transition:transform .18s,box-shadow .18s,border-color .18s;background-image:none!important}
+#page-dashboard .dhv-card:hover{transform:translateY(-3px)!important;box-shadow:0 12px 26px -14px rgba(15,30,70,.28)!important;border-color:var(--border2)!important}
+#page-dashboard .dhv-card.st-bad{border-color:var(--st-bad-bd)!important}
+#page-dashboard .dhv-card:focus-visible{outline:none;box-shadow:var(--ring)!important;border-color:var(--accent)!important}
+#page-dashboard .hc-top{display:flex;align-items:center;gap:7px}
+#page-dashboard .hc-ic{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--surface3);color:var(--text2);flex:none}
+#page-dashboard .dhv-card.st-bad .hc-ic{background:var(--st-bad-bg);color:var(--st-bad)}
+#page-dashboard .hc-ic svg.ic{width:15px;height:15px}
+#page-dashboard .hc-num{font-family:var(--fm);font-weight:700;font-size:12px;color:var(--text2)}
+#page-dashboard .hc-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#page-dashboard .hc-amt{font-family:var(--fm);font-weight:800;font-size:16px;color:var(--text);font-variant-numeric:tabular-nums}
+#page-dashboard .hc-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+#page-dashboard .hc-lc{font-size:10px;font-weight:700;color:var(--accent)}
+#page-dashboard .al-clear{display:flex;flex-direction:column;align-items:center;gap:6px}
+#page-dashboard .al-clear .ei{width:28px;height:28px;color:var(--st-ok);display:block}
+#page-dashboard .al-clear .ei svg.ic{width:28px;height:28px}
+#page-dashboard .al-clear p{color:var(--text2);font-size:12px;margin:0}
+#page-dashboard .kpi-area .empty .ei svg.ic{width:34px;height:34px}
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:980px){
+  #page-dashboard .cmd-band{grid-template-columns:1fr;gap:16px}
+  #page-dashboard .cmd-verdict{grid-template-columns:1fr 1fr}
+  #page-dashboard .vt-gauge{grid-column:1/-1}
+}
+@media(max-width:640px){
+  #page-dashboard .cmd-verdict{grid-template-columns:1fr}
+  #page-dashboard .dsplit{grid-template-columns:1fr}
+  #page-dashboard .cmd-id{flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+  #page-dashboard .g-fill,#page-dashboard .vt-bar>div,#page-dashboard .vt-meter>div{animation:none!important;transition:none!important}
+}
 </style>
 </head>
 <body>
@@ -2433,38 +2622,93 @@ function updateBadges(){
 function getAllPendingEvidence(){let n=0;DB.forEach(c=>{Object.values(c.evidence||{}).forEach(arr=>arr.forEach(f=>{if((f.status||'pending')==='pending')n++;}));(c.boqItems||[]).forEach(it=>{if(it.nature&&!/good/i.test(it.nature))return;var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;if(recd&&!it.recvApproved&&!it._recvRejected)n++;});});return n;}
 
 // KPI DEFS
+// ============================================================
+// v57 ICON SYSTEM — monochrome stroke icons (inherit currentColor)
+// ============================================================
+var ICONS={
+ file:'<path d="M6 3h7l5 5v13H6z"/><path d="M13 3v5h5"/>',
+ 'file-check':'<path d="M6 3h7l5 5v13H6z"/><path d="M13 3v5h5"/><path d="M8.5 14.6l2 2 4-4"/>',
+ 'file-text':'<path d="M6 3h7l5 5v13H6z"/><path d="M13 3v5h5"/><path d="M9 13h6"/><path d="M9 16.5h4"/>',
+ wallet:'<rect x="2.5" y="6" width="19" height="12" rx="2.5"/><circle cx="12" cy="12" r="2.6"/><path d="M5.6 12h.3"/><path d="M18.1 12h.3"/>',
+ target:'<circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/>',
+ pulse:'<path d="M3 12h3.6l1.9-6 4 12 2.1-6H21"/>',
+ 'alert-triangle':'<path d="M12 4 2.7 20h18.6z"/><path d="M12 10v4"/><path d="M12 17h.01"/>',
+ 'alert-octagon':'<path d="M8.2 3h7.6l5.2 5.2v7.6L15.8 21H8.2L3 15.8V8.2z"/><path d="M12 8v4.2"/><path d="M12 16h.01"/>',
+ inbox:'<path d="M4 13.6 6.2 5.4A1.6 1.6 0 0 1 7.7 4.3h8.6a1.6 1.6 0 0 1 1.5 1.1L20 13.6V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 13.6h4.2l1.3 2.5h5l1.3-2.5H20"/>',
+ download:'<path d="M12 4v10"/><path d="M8 10.5l4 4 4-4"/><path d="M5 19.5h14"/>',
+ 'clipboard-check':'<rect x="6" y="5" width="12" height="16" rx="2"/><path d="M9.4 5V4.2A1.8 1.8 0 0 1 11.2 2.4h1.6A1.8 1.8 0 0 1 14.6 4.2V5z"/><path d="M9 13.6l2 2 4-4"/>',
+ package:'<path d="M12 3 4 7.2v9.6L12 21l8-4.2V7.2z"/><path d="M4 7.2 12 11.5l8-4.3"/><path d="M12 11.5V21"/>',
+ layers:'<path d="M12 3 3.5 7.5 12 12l8.5-4.5z"/><path d="M3.5 12.5 12 17l8.5-4.5"/>',
+ scale:'<path d="M12 4.5v15"/><path d="M7 19.5h10"/><path d="M4.5 8h15"/><path d="M4.5 8 2.5 13h4z"/><path d="M19.5 8 17.5 13h4z"/>',
+ award:'<circle cx="12" cy="9" r="5"/><path d="M8.8 13.2 7.5 21l4.5-2.4L16.5 21l-1.3-7.8"/>',
+ clock:'<circle cx="12" cy="12" r="8.2"/><path d="M12 7.5V12l3 1.8"/>',
+ ban:'<circle cx="12" cy="12" r="8.2"/><path d="M6.2 6.2 17.8 17.8"/>',
+ 'bar-chart':'<path d="M4 20h16"/><path d="M7 20v-6"/><path d="M12 20V7"/><path d="M17 20v-9.5"/>',
+ users:'<circle cx="9" cy="8" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 5.2a3.2 3.2 0 0 1 0 5.8"/><path d="M17 13.4A5.5 5.5 0 0 1 20.5 19"/>',
+ arrow:'<path d="M4 12h13"/><path d="M12.5 6.5 18 12l-5.5 5.5"/>',
+ export:'<path d="M12 3v9.5"/><path d="M8.5 9 12 12.5 15.5 9"/><path d="M5 14v4a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 18v-4"/>'
+};
+function ic(n,cls){return '<svg class="ic'+(cls?' '+cls:'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+(ICONS[n]||ICONS.file)+'</svg>';}
+// global bilingual helper for the dashboard block (other blocks define their own local L)
+if(typeof window.L!=='function'){window.L=function(en,ar){return (typeof lang!=='undefined'&&lang==='ar')?ar:en;};}
+
+// ============================================================
+// KPI registry — clustered + semantic stroke icons (status-colored at render)
+// ============================================================
+var KPI_GROUPS=[
+ {key:'compliance',label:'Compliance & Delivery',ar:'الالتزام والتسليم',icon:'target'},
+ {key:'financial',label:'Financial Exposure',ar:'الانكشاف المالي',icon:'wallet'},
+ {key:'pipeline',label:'Pipeline Throughput',ar:'مسار الإجراءات',icon:'scale'},
+ {key:'supplier',label:'Supplier & Quality',ar:'الموردون والجودة',icon:'users'}
+];
 const KPI_DEFS=[
-  {key:'total',label:'Total Contracts',color:'blue',icon:'📋'},
-  {key:'active',label:'Active Contracts',color:'green',icon:'✅'},
-  {key:'portfolio',label:'Portfolio Value',color:'teal',icon:'💰'},
-  {key:'compliance',label:'LC Compliance %',color:'purple',icon:'🎯'},
-  {key:'complianceScore',label:'Compliance Health Score',color:'purple',icon:'🩺'},
-  {key:'penalties',label:'Penalty Exposure (SAR)',color:'red',icon:'💸'},
-  {key:'withPen',label:'Contracts With Penalties',color:'red',icon:'⚠️'},
-  {key:'missing',label:'Missing Reports',color:'amber',icon:'📭'},
-  {key:'reportsReceived',label:'Reports Received %',color:'blue',icon:'📥'},
-  {key:'reviews',label:'Pending Reviews',color:'amber',icon:'📁'},
-  {key:'npp',label:'NPP Delivered %',color:'green',icon:'📦'},
-  {key:'mlnp',label:'MLNP Delivered %',color:'teal',icon:'🧱'},
-  {key:'rfps',label:'Active RFPs',color:'blue',icon:'📄'},
-  {key:'bids',label:'Open Evaluations',color:'amber',icon:'⚖️'},
-  {key:'awarded',label:'Awarded Evaluations',color:'green',icon:'🏆'},
-  {key:'awardCycle',label:'Avg Award Cycle (days)',color:'blue',icon:'⏱'},
-  {key:'supplierRisk',label:'Supplier Risk (blacklisted)',color:'red',icon:'🚫'},
-  {key:'avgSupScore',label:'Avg Supplier Score',color:'green',icon:'📊'},
+  {key:'total',label:'Total Contracts',group:'pipeline',icon:'file'},
+  {key:'active',label:'Active Contracts',group:'pipeline',icon:'file-check'},
+  {key:'portfolio',label:'Portfolio Value',group:'financial',icon:'wallet'},
+  {key:'compliance',label:'LC Compliance %',group:'compliance',icon:'target'},
+  {key:'complianceScore',label:'Compliance Health Score',group:'compliance',icon:'pulse'},
+  {key:'penalties',label:'Penalty Exposure (SAR)',group:'financial',icon:'alert-triangle'},
+  {key:'withPen',label:'Contracts With Penalties',group:'financial',icon:'alert-octagon'},
+  {key:'missing',label:'Missing Reports',group:'compliance',icon:'inbox'},
+  {key:'reportsReceived',label:'Reports Received %',group:'compliance',icon:'download'},
+  {key:'reviews',label:'Pending Reviews',group:'pipeline',icon:'clipboard-check'},
+  {key:'npp',label:'NPP Delivered %',group:'compliance',icon:'package'},
+  {key:'mlnp',label:'MLNP Delivered %',group:'compliance',icon:'layers'},
+  {key:'rfps',label:'Active RFPs',group:'pipeline',icon:'file-text'},
+  {key:'bids',label:'Open Evaluations',group:'pipeline',icon:'scale'},
+  {key:'awarded',label:'Awarded Evaluations',group:'pipeline',icon:'award'},
+  {key:'awardCycle',label:'Avg Award Cycle (days)',group:'pipeline',icon:'clock'},
+  {key:'supplierRisk',label:'Supplier Risk (blacklisted)',group:'supplier',icon:'ban'},
+  {key:'avgSupScore',label:'Avg Supplier Score',group:'supplier',icon:'bar-chart'},
 ];
 
 // ============================================================
 // DASHBOARD
 // ============================================================
-function DC(lbl,val,sub,color,icon,oc){
-  var vs=String(val);var fs=vs.length>8?'font-size:14px':'';
-  return '<div class="dc dc-'+color+'" onclick="'+oc+'"><div class="dc-body"><div class="dc-lbl">'+lbl+'</div><div class="dc-val" style="'+fs+'">'+val+'</div><div class="dc-sub">'+sub+'</div></div><div class="dc-icon">'+icon+'</div></div>';
+function dcKey(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();e.currentTarget.click();}}
+function _dcFlag(st){return (st&&st!=='neutral')?'<span class="dc-flag f-'+st+'">'+(st==='ok'?L('On track','ضمن المستهدف'):st==='warn'?L('Watch','تحت المتابعة'):L('Action','إجراء مطلوب'))+'</span>':'';}
+function DC(lbl,val,sub,status,iconName,oc){
+  var st=status||'neutral';var vs=String(val);var fs=vs.length>9?'font-size:15px':'';
+  return '<div class="dc st-'+st+'" onclick="'+oc+'" onkeydown="dcKey(event)" role="button" tabindex="0">'
+    +'<span class="dc-icon">'+ic(iconName||'file')+'</span>'
+    +'<div class="dc-body"><div class="dc-lbl">'+lbl+'</div><div class="dc-val" style="'+fs+'">'+val+'</div><div class="dc-sub">'+sub+'</div></div>'
+    +_dcFlag(st)+'</div>';
 }
-function DCP(lbl,val,sub,color,icon,oc,pctVal,pColor){
-  var vs=String(val);var fs=vs.length>8?'font-size:14px':'';
-  var pw=Math.min(parseFloat(pctVal)||0,100);
-  return '<div class="dc dc-'+color+'" onclick="'+oc+'"><div class="dc-body"><div class="dc-lbl">'+lbl+'</div><div class="dc-val" style="'+fs+'">'+val+'</div><div class="dc-sub">'+sub+'</div><div class="dc-prog"><div style="width:'+pw+'%;background:'+(pColor||'var(--accent3)')+'"></div></div></div><div class="dc-icon">'+icon+'</div></div>';
+function DCP(lbl,val,sub,status,iconName,oc,pctVal){
+  var st=status||'neutral';var vs=String(val);var fs=vs.length>9?'font-size:15px':'';
+  var pw=Math.max(0,Math.min(parseFloat(pctVal)||0,100));
+  return '<div class="dc st-'+st+'" onclick="'+oc+'" onkeydown="dcKey(event)" role="button" tabindex="0">'
+    +'<span class="dc-icon">'+ic(iconName||'file')+'</span>'
+    +'<div class="dc-body"><div class="dc-lbl">'+lbl+'</div><div class="dc-val" style="'+fs+'">'+val+'</div><div class="dc-sub">'+sub+'</div>'
+    +'<div class="dc-prog"><div style="width:'+pw+'%"></div></div></div>'
+    +_dcFlag(st)+'</div>';
+}
+function gaugeSVG(pct,st){
+  var v=Math.max(0,Math.min(pct,100));var r=42;
+  return '<div class="gauge"><svg viewBox="0 0 100 100" class="gauge-svg" aria-hidden="true">'
+    +'<circle class="g-track" cx="50" cy="50" r="'+r+'"/>'
+    +'<circle class="g-fill st-'+st+'" cx="50" cy="50" r="'+r+'" pathLength="100" stroke-dasharray="100" stroke-dashoffset="'+(100-v).toFixed(1)+'" transform="rotate(-90 50 50)"/>'
+    +'</svg><div class="gauge-num">'+Math.round(pct)+'<span>%</span></div></div>';
 }
 function SH(icon,title,badge){
   return '<div class="dsec-hd"><span class="dsi">'+icon+'</span><b>'+title+'</b><span class="dsb badge bb">'+badge+'</span></div>';
@@ -2511,124 +2755,153 @@ function renderDashboard(){
   var oldX=document.getElementById('dashExportBar');if(oldX)oldX.remove();
   var h='';
   var _bi=brandInfo();
-  h+='<div class="dash-hero">'
-    +'<div class="dh-glow g1"></div><div class="dh-glow g2"></div>'
-    +'<div class="dh-left">'
-    +(_bi.logo?'<img src="'+_bi.logo+'" class="dh-logo"/>':'<div class="dh-logo dh-logo-txt">LC</div>')
-    +'<div><div class="dh-title">'+_bi.org+'</div>'
-    +'<div class="dh-sub">'+(_bi.proj?_bi.proj+' · ':'')+'Local Content Compliance Command Center</div>'
-    +'<div class="dh-date">'+new Date().toLocaleDateString(_loc(),{weekday:'long',day:'2-digit',month:'long',year:'numeric'})+' · '+new Date().toLocaleTimeString(_loc(),{hour:'2-digit',minute:'2-digit'})+'</div></div></div>'
-    +'<div class="dash-top-btns"><button class="dbtn-pdf" onclick="exportDashPDF()">📄 Export PDF</button></div>'
-    +'</div>';
+  // ---- derived metrics + semantic statuses (computed before the command band) ----
   var _awN=BIDS.filter(function(b){return b.status==='awarded';}).length;
   var _readyR=RFPS.filter(function(r){return r.status==='ready';}).length;
   var _compPct=avgComp*100;
-  h+='<div class="lc-funnel">'
-    +'<div class="fun-step" onclick="nav(\'rfp\',null)"><div class="fun-ic">📄</div><div class="fun-n">'+RFPS.length+'</div><div class="fun-l">RFPs</div><div class="fun-sub">'+_readyR+' ready</div></div>'
-    +'<div class="fun-arrow">➜</div>'
-    +'<div class="fun-step" onclick="nav(\'bids\',null)"><div class="fun-ic">⚖️</div><div class="fun-n">'+BIDS.length+'</div><div class="fun-l">Evaluations</div><div class="fun-sub">'+openBids+' open</div></div>'
-    +'<div class="fun-arrow">➜</div>'
-    +'<div class="fun-step gold" onclick="nav(\'bids\',null)"><div class="fun-ic">🏆</div><div class="fun-n">'+_awN+'</div><div class="fun-l">Awarded</div><div class="fun-sub">'+fDays(avgAwardCycleDays())+' avg</div></div>'
-    +'<div class="fun-arrow">➜</div>'
-    +'<div class="fun-step teal" onclick="nav(\'contracts\',null)"><div class="fun-ic">📑</div><div class="fun-n">'+tot+'</div><div class="fun-l">Contracts</div><div class="fun-sub">'+actN+' active</div></div>'
-    +'<div class="fun-arrow">➜</div>'
-    +'<div class="fun-step '+(_compPct>=60?'green':'red')+'" onclick="showKPIDrill(\'compliance\')"><div class="fun-ic">🎯</div><div class="fun-n">'+_compPct.toFixed(0)+'%</div><div class="fun-l">LC Compliance</div><div class="fun-sub">vs agreed</div></div>'
-    +'</div>';
-  // ---- derived metrics for the configurable KPI registry ----
   var _allReps=0,_rcvReps=0;DB.forEach(function(c){(c.reports||[]).forEach(function(r){if(r.type==='period'||r.type==='final'||r.type==='npp'||r.type==='mlnp'){_allReps++;if(r.received===true)_rcvReps++;}});});
   var repRcvPct=_allReps?+(_rcvReps/_allReps*100).toFixed(0):0;
   var _penRatio=portV>0?Math.min(penT/portV,1):0;
   var compScore=Math.round((avgComp*100)*0.4 + repRcvPct*0.3 + (1-_penRatio)*100*0.3);
   var _awN2=BIDS.filter(function(b){return b.status==='awarded'||b.status==='done';}).length;
+  var _hasLC=lcC.length>0;
+  var _compSt=_hasLC?(avgComp>=1?'ok':avgComp>=0.6?'warn':'bad'):'neutral';
+  var _scoreSt=!DB.length?'neutral':(compScore>=70?'ok':compScore>=40?'warn':'bad');
+  var _penSt=penT>0?'bad':(DB.length?'ok':'neutral');
+  var _penPctPort=portV>0?Math.min(penT/portV*100,100):0;
+  // ---- COMMAND BAND: identity + the 5-second verdict ----
+  h+='<section class="cmd-band">';
+  h+='<div class="cmd-id">'
+    +(_bi.logo?'<img src="'+_bi.logo+'" class="cmd-logo" alt=""/>':'<div class="cmd-logo cmd-logo-txt">LC</div>')
+    +'<div class="cmd-id-txt"><div class="cmd-org">'+_bi.org+'</div>'
+    +'<div class="cmd-sub">'+(_bi.proj?_bi.proj+' · ':'')+L('Local Content Compliance Command Center','مركز قيادة الالتزام بالمحتوى المحلي')+'</div>'
+    +'<div class="cmd-date">'+new Date().toLocaleDateString(_loc(),{weekday:'long',day:'2-digit',month:'long',year:'numeric'})+' · '+new Date().toLocaleTimeString(_loc(),{hour:'2-digit',minute:'2-digit'})+'</div></div>'
+    +'<button class="cmd-export" onclick="exportDashPDF()">'+ic('export')+'<span>'+L('Export PDF','تصدير PDF')+'</span></button>'
+    +'</div>';
+  h+='<div class="cmd-verdict">';
+  h+='<div class="verdict-tile vt-gauge st-'+_compSt+'" onclick="showKPIDrill(\'compliance\')" onkeydown="dcKey(event)" role="button" tabindex="0">'
+    +gaugeSVG(_compPct,_compSt)
+    +'<div class="vt-meta"><div class="vt-lbl">'+L('LC Compliance','الالتزام بالمحتوى المحلي')+'</div>'
+    +'<div class="vt-sub">'+L('Achieved vs agreed','المحقق مقابل المتعاقد عليه')+'</div>'
+    +'<div class="vt-target">'+L('Target','المستهدف')+' · '+avgTarget+'%</div></div></div>';
+  h+='<div class="verdict-tile vt-stat st-'+_penSt+'" onclick="showKPIDrill(\'penalties\')" onkeydown="dcKey(event)" role="button" tabindex="0">'
+    +'<span class="vt-ic">'+ic('alert-triangle')+'</span>'
+    +'<div class="vt-lbl">'+L('Penalty Exposure','الانكشاف للغرامات')+'</div>'
+    +'<div class="vt-val">'+fSAR(penT)+'</div>'
+    +'<div class="vt-foot"><div class="vt-bar"><div style="width:'+_penPctPort.toFixed(1)+'%"></div></div>'
+    +'<span class="vt-foot-t">'+withPen+' '+L('of','من')+' '+tot+' '+L('contracts','عقد')+'</span></div></div>';
+  h+='<div class="verdict-tile vt-stat st-'+_scoreSt+'" onclick="showKPIDrill(\'compliance\')" onkeydown="dcKey(event)" role="button" tabindex="0">'
+    +'<span class="vt-ic">'+ic('pulse')+'</span>'
+    +'<div class="vt-lbl">'+L('Compliance Health','صحة الالتزام')+'</div>'
+    +'<div class="vt-val">'+compScore+'<span class="vt-unit">/100</span></div>'
+    +'<div class="vt-foot"><div class="vt-meter"><div style="width:'+Math.max(0,Math.min(compScore,100))+'%"></div></div></div></div>';
+  h+='</div></section>';
+  // ---- PIPELINE FUNNEL ----
+  h+='<div class="lc-funnel">'
+    +'<button class="fun-step" onclick="nav(\'rfp\',null)" onkeydown="dcKey(event)"><span class="fun-ic">'+ic('file-text')+'</span><div class="fun-n">'+RFPS.length+'</div><div class="fun-l">'+L('RFPs','طلبات العروض')+'</div><div class="fun-sub">'+_readyR+' '+L('ready','جاهز')+'</div></button>'
+    +'<span class="fun-arrow">'+ic('arrow')+'</span>'
+    +'<button class="fun-step" onclick="nav(\'bids\',null)" onkeydown="dcKey(event)"><span class="fun-ic">'+ic('scale')+'</span><div class="fun-n">'+BIDS.length+'</div><div class="fun-l">'+L('Evaluations','التقييمات')+'</div><div class="fun-sub">'+openBids+' '+L('open','مفتوح')+'</div></button>'
+    +'<span class="fun-arrow">'+ic('arrow')+'</span>'
+    +'<button class="fun-step" onclick="nav(\'bids\',null)" onkeydown="dcKey(event)"><span class="fun-ic">'+ic('award')+'</span><div class="fun-n">'+_awN+'</div><div class="fun-l">'+L('Awarded','المُرساة')+'</div><div class="fun-sub">'+fDays(avgAwardCycleDays())+' '+L('avg','متوسط')+'</div></button>'
+    +'<span class="fun-arrow">'+ic('arrow')+'</span>'
+    +'<button class="fun-step" onclick="nav(\'contracts\',null)" onkeydown="dcKey(event)"><span class="fun-ic">'+ic('file')+'</span><div class="fun-n">'+tot+'</div><div class="fun-l">'+L('Contracts','العقود')+'</div><div class="fun-sub">'+actN+' '+L('active','نشط')+'</div></button>'
+    +'<span class="fun-arrow">'+ic('arrow')+'</span>'
+    +'<button class="fun-step fun-end st-'+_compSt+'" onclick="showKPIDrill(\'compliance\')" onkeydown="dcKey(event)"><span class="fun-ic">'+ic('target')+'</span><div class="fun-n">'+_compPct.toFixed(0)+'%</div><div class="fun-l">'+L('LC Compliance','الالتزام المحلي')+'</div><div class="fun-sub">'+L('vs agreed','مقابل المتعاقد')+'</div></button>'
+    +'</div>';
   var KPIVALS={
-    total:{val:tot,sub:actN+' active',drill:"showKPIDrill('total')"},
-    active:{val:actN,sub:(tot-actN)+' expired',drill:"showKPIDrill('active')"},
-    portfolio:{val:fSAR(portV),sub:'Total value',drill:"showKPIDrill('portfolio')"},
-    compliance:{val:(avgComp*100).toFixed(1)+'%',sub:'Achieved vs agreed ('+avgTarget+'% target)',drill:"showKPIDrill('compliance')",pct:(avgComp*100),pc:(avgComp*100>=60?'var(--accent3)':'var(--danger)')},
-    complianceScore:{val:compScore+' /100',sub:'LC + reports + penalties',drill:"showKPIDrill('compliance')",pct:compScore,pc:(compScore>=70?'var(--accent3)':compScore>=40?'var(--warn)':'var(--danger)')},
-    penalties:{val:fSAR(penT),sub:'Total exposure',drill:"showKPIDrill('penalties')"},
-    withPen:{val:withPen,sub:'of '+tot+' contracts',drill:"showKPIDrill('withPen')"},
-    missing:{val:missN,sub:'Need attention',drill:"showKPIDrill('missing')"},
-    reportsReceived:{val:repRcvPct+'%',sub:_rcvReps+' of '+_allReps+' reports',drill:"nav('review',null)",pct:repRcvPct,pc:'var(--accent)'},
-    reviews:{val:pendRev,sub:'Evidence items',drill:"showKPIDrill('reviews')"},
-    npp:{val:nppPct+'%',sub:fSAR(actualNPP)+' / '+fSAR(plannedNPP),drill:"showKPIDrill('complianceGoods')",pct:+nppPct,pc:'var(--accent3)'},
-    mlnp:{val:mlnpPct+'%',sub:fSAR(actualMLNP)+' / '+fSAR(plannedMLNP),drill:"showKPIDrill('complianceGoods')",pct:+mlnpPct,pc:'var(--info)'},
-    rfps:{val:RFPS.length,sub:readyRFPs+' ready to issue',drill:"nav('rfp',null)"},
-    bids:{val:openBids,sub:'In progress',drill:"nav('bids',null)"},
-    awarded:{val:_awN2,sub:'Completed',drill:"nav('bids',null)"},
-    awardCycle:{val:fDays(avgAwardCycleDays()),sub:'Creation → Award',drill:"nav('bids',null)"},
-    supplierRisk:{val:blCount,sub:'Blacklisted suppliers',drill:"nav('blacklist',null)"},
-    avgSupScore:{val:seAvg.toFixed(1)+'%',sub:seCount+' evaluated',drill:"nav('supeval',null)"}
+    total:{val:tot,sub:actN+' '+L('active','نشط'),drill:"showKPIDrill('total')",st:'neutral'},
+    active:{val:actN,sub:(tot-actN)+' '+L('expired','منتهٍ'),drill:"showKPIDrill('active')",st:'neutral'},
+    portfolio:{val:fSAR(portV),sub:L('Total value','إجمالي القيمة'),drill:"showKPIDrill('portfolio')",st:'neutral'},
+    compliance:{val:(avgComp*100).toFixed(1)+'%',sub:L('Achieved vs agreed','المحقق مقابل المتعاقد')+' ('+avgTarget+'%)',drill:"showKPIDrill('compliance')",pct:(avgComp*100),st:_compSt},
+    complianceScore:{val:compScore+' /100',sub:L('LC + reports + penalties','الالتزام + التقارير + الغرامات'),drill:"showKPIDrill('compliance')",pct:compScore,st:_scoreSt},
+    penalties:{val:fSAR(penT),sub:L('Total exposure','إجمالي الانكشاف'),drill:"showKPIDrill('penalties')",st:_penSt},
+    withPen:{val:withPen,sub:L('of','من')+' '+tot+' '+L('contracts','عقد'),drill:"showKPIDrill('withPen')",st:(withPen>0?'warn':(DB.length?'ok':'neutral'))},
+    missing:{val:missN,sub:L('Need attention','تتطلب انتباهاً'),drill:"showKPIDrill('missing')",st:(missN>0?'warn':(_allReps?'ok':'neutral'))},
+    reportsReceived:{val:repRcvPct+'%',sub:_rcvReps+' '+L('of','من')+' '+_allReps+' '+L('reports','تقرير'),drill:"nav('review',null)",pct:repRcvPct,st:(!_allReps?'neutral':repRcvPct>=90?'ok':repRcvPct>=50?'warn':'bad')},
+    reviews:{val:pendRev,sub:L('Evidence items','عناصر الإثبات'),drill:"showKPIDrill('reviews')",st:(pendRev>0?'warn':'ok')},
+    npp:{val:nppPct+'%',sub:fSAR(actualNPP)+' / '+fSAR(plannedNPP),drill:"showKPIDrill('complianceGoods')",pct:+nppPct,st:(plannedNPP<=0?'neutral':+nppPct>=90?'ok':+nppPct>=50?'warn':'bad')},
+    mlnp:{val:mlnpPct+'%',sub:fSAR(actualMLNP)+' / '+fSAR(plannedMLNP),drill:"showKPIDrill('complianceGoods')",pct:+mlnpPct,st:(plannedMLNP<=0?'neutral':+mlnpPct>=90?'ok':+mlnpPct>=50?'warn':'bad')},
+    rfps:{val:RFPS.length,sub:readyRFPs+' '+L('ready to issue','جاهز للإصدار'),drill:"nav('rfp',null)",st:'neutral'},
+    bids:{val:openBids,sub:L('In progress','قيد التنفيذ'),drill:"nav('bids',null)",st:'neutral'},
+    awarded:{val:_awN2,sub:L('Completed','مكتمل'),drill:"nav('bids',null)",st:'neutral'},
+    awardCycle:{val:fDays(avgAwardCycleDays()),sub:L('Creation','الإنشاء')+' → '+L('Award','الترسية'),drill:"nav('bids',null)",st:'neutral'},
+    supplierRisk:{val:blCount,sub:L('Blacklisted suppliers','موردون محظورون'),drill:"nav('blacklist',null)",st:(blCount>0?'bad':(DB.length?'ok':'neutral'))},
+    avgSupScore:{val:seAvg.toFixed(1)+'%',sub:seCount+' '+L('evaluated','مُقيَّم'),drill:"nav('supeval',null)",st:(!seCount?'neutral':seAvg>=75?'ok':seAvg>=50?'warn':'bad')}
   };
   var _enKPI=KPI_DEFS.filter(function(d){return KPICFG[d.key]!==false&&KPIVALS[d.key];});
-  h+='<div class="dsec acc-blue">';
-  h+=SH('📈','Key Performance Indicators',_enKPI.length);
-  h+='<div class="dr-kpi">';
+  h+='<div class="kpi-area">';
   if(_enKPI.length){
-    _enKPI.forEach(function(d){var v=KPIVALS[d.key];
-      if(v.pct!=null)h+=DCP(d.label,v.val,v.sub,d.color,d.icon||'📊',v.drill,v.pct,v.pc);
-      else h+=DC(d.label,v.val,v.sub,d.color,d.icon||'📊',v.drill);
+    KPI_GROUPS.forEach(function(g){
+      var items=_enKPI.filter(function(d){return d.group===g.key;});
+      if(!items.length)return;
+      h+='<section class="kpi-cluster">';
+      h+='<div class="cluster-hd">'+ic(g.icon,'cl-ic')+'<h3>'+L(g.label,g.ar)+'</h3><span class="cl-count">'+items.length+'</span></div>';
+      h+='<div class="dr-kpi">';
+      items.forEach(function(d){var v=KPIVALS[d.key];
+        if(v.pct!=null)h+=DCP(d.label,v.val,v.sub,v.st,d.icon,v.drill,v.pct);
+        else h+=DC(d.label,v.val,v.sub,v.st,d.icon,v.drill);
+      });
+      h+='</div></section>';
     });
-  }else{h+='<div class="empty" style="grid-column:1/-1"><div class="ei">📊</div><p>No KPIs enabled — turn them on in Settings → Dashboard KPI Configuration</p></div>';}
-  h+='</div></div>';
+  }else{h+='<div class="empty" style="grid-column:1/-1"><div class="ei">'+ic('bar-chart')+'</div><p>'+L('No KPIs enabled — turn them on in Settings → Dashboard KPI Configuration','لا توجد مؤشرات مفعّلة — فعّلها من الإعدادات ← تهيئة مؤشرات لوحة القيادة')+'</p></div>';}
+  h+='</div>';
   h+='<div class="dsplit">';
-  h+='<div class="dsplit-half"><div class="dsplit-tab"><span class="dsi">📄</span><b>Pre-Tendering</b><span class="dstb badge bb">'+RFPS.length+'</span></div>';
+  h+='<div class="dsplit-half"><div class="dsplit-tab"><span class="dsi">'+ic('file-text')+'</span><b>'+L('Pre-Tendering','ما قبل الطرح')+'</b><span class="dstb badge bb">'+RFPS.length+'</span></div>';
   h+='<div class="dr4">';
-  h+=DC('Draft RFPs',draftRFPs,'In preparation','amber','📝',"nav(\x27rfp\x27,null)");
-  h+=DC('Ready RFPs',readyRFPs,'Ready to issue','green','✅',"nav(\x27rfp\x27,null)");
-  h+=DC('Total RFPs',RFPS.length,'All time','blue','📄',"nav(\x27rfp\x27,null)");
-  h+=DC('Avg RFP Cycle',fDays(avgRFPCycleDays()),'Creation → Ready','purple','⏱',"nav(\x27rfp\x27,null)");
+  h+=DC(L('Draft RFPs','مسودات الطلبات'),draftRFPs,L('In preparation','قيد الإعداد'),'neutral','file-text',"nav(\x27rfp\x27,null)");
+  h+=DC(L('Ready RFPs','طلبات جاهزة'),readyRFPs,L('Ready to issue','جاهزة للإصدار'),'neutral','file-check',"nav(\x27rfp\x27,null)");
+  h+=DC(L('Total RFPs','إجمالي الطلبات'),RFPS.length,L('All time','الإجمالي'),'neutral','file',"nav(\x27rfp\x27,null)");
+  h+=DC(L('Avg RFP Cycle','متوسط دورة الطلب'),fDays(avgRFPCycleDays()),L('Creation','الإنشاء')+' → '+L('Ready','الجاهزية'),'neutral','clock',"nav(\x27rfp\x27,null)");
   h+='</div></div>';
-  h+='<div class="dsplit-half"><div class="dsplit-tab"><span class="dsi">⚖️</span><b>Post-Tendering</b><span class="dstb badge bb">'+BIDS.length+'</span></div>';
+  h+='<div class="dsplit-half"><div class="dsplit-tab"><span class="dsi">'+ic('scale')+'</span><b>'+L('Post-Tendering','ما بعد الطرح')+'</b><span class="dstb badge bb">'+BIDS.length+'</span></div>';
   h+='<div class="dr4">';
-  h+=DC('Open Evaluations',openBids,'In progress','amber','📋',"nav(\x27bids\x27,null)");
-  h+=DC('Awarded',doneBids,'Completed','green','🏆',"nav(\x27bids\x27,null)");
-  h+=DC('Total Evaluations',BIDS.length,'All time','blue','📊',"nav(\x27bids\x27,null)");
-  h+=DC('Avg Time to Award',fDays(avgAwardCycleDays()),'Creation → Award','purple','⏱',"nav(\x27bids\x27,null)");
+  h+=DC(L('Open Evaluations','تقييمات مفتوحة'),openBids,L('In progress','قيد التنفيذ'),'neutral','scale',"nav(\x27bids\x27,null)");
+  h+=DC(L('Awarded','مُرساة'),doneBids,L('Completed','مكتمل'),'neutral','award',"nav(\x27bids\x27,null)");
+  h+=DC(L('Total Evaluations','إجمالي التقييمات'),BIDS.length,L('All time','الإجمالي'),'neutral','bar-chart',"nav(\x27bids\x27,null)");
+  h+=DC(L('Avg Time to Award','متوسط زمن الترسية'),fDays(avgAwardCycleDays()),L('Creation','الإنشاء')+' → '+L('Award','الترسية'),'neutral','clock',"nav(\x27bids\x27,null)");
   h+='</div></div>';
   h+='</div>';
   h+='<div class="dcharts">';
-  h+='<div class="card"><div class="card-hd"><div class="card-title">LC Agreed vs Achieved</div></div><div class="ch"><canvas id="cBar"></canvas></div></div>';
-  h+='<div class="card"><div class="card-hd"><div class="card-title">Report Status</div></div><div class="ch" style="position:relative"><canvas id="cDonut"></canvas><div class="ch-ctr"><div class="ch-num" id="donutN">0</div><div class="ch-lbl">Reports</div></div></div></div>';
-  h+='<div class="card"><div class="card-hd"><div class="card-title">Penalty Exposure</div></div><div class="ch"><canvas id="cPenBar"></canvas></div></div>';
-  var al=[];DB.forEach(function(c){var p=tPen(c),m=mCnt(c);if(p>0)al.push({t:'',txt:'<strong>#'+c.num+'</strong> '+fSAR(p),cid:c.id});if(m>0)al.push({t:'warn',txt:'<strong>#'+c.num+'</strong> '+m+' reports missing',cid:c.id});});
-  h+='<div class="card"><div class="card-hd"><div class="card-title">Active Alerts</div><span class="badge br">'+al.length+'</span></div><div class="al-list" style="max-height:170px;overflow:auto">';
-  h+=al.length?al.map(function(a){return '<div class="al-item '+a.t+'" style="cursor:pointer" onclick="openContractModal('+a.cid+')"><div class="al-dot"></div><div class="al-txt">'+a.txt+'</div></div>';}).join(''):'<div class="empty" style="padding:10px"><p>✅ No alerts</p></div>';
+  h+='<div class="card"><div class="card-hd"><div class="card-title">'+L('LC Agreed vs Achieved','المتعاقد مقابل المحقق')+'</div></div><div class="ch"><canvas id="cBar"></canvas></div></div>';
+  h+='<div class="card"><div class="card-hd"><div class="card-title">'+L('Report Status','حالة التقارير')+'</div></div><div class="ch" style="position:relative"><canvas id="cDonut"></canvas><div class="ch-ctr"><div class="ch-num" id="donutN">0</div><div class="ch-lbl">'+L('Reports','تقارير')+'</div></div></div></div>';
+  h+='<div class="card"><div class="card-hd"><div class="card-title">'+L('Penalty Exposure','الانكشاف للغرامات')+'</div></div><div class="ch"><canvas id="cPenBar"></canvas></div></div>';
+  var al=[];DB.forEach(function(c){var p=tPen(c),m=mCnt(c);if(p>0)al.push({t:'',txt:'<strong>#'+c.num+'</strong> '+fSAR(p),cid:c.id});if(m>0)al.push({t:'warn',txt:'<strong>#'+c.num+'</strong> '+m+' '+L('reports missing','تقارير ناقصة'),cid:c.id});});
+  h+='<div class="card"><div class="card-hd"><div class="card-title">'+L('Active Alerts','تنبيهات نشطة')+'</div><span class="badge br">'+al.length+'</span></div><div class="al-list" style="max-height:170px;overflow:auto">';
+  h+=al.length?al.map(function(a){return '<div class="al-item '+a.t+'" style="cursor:pointer" onclick="openContractModal('+a.cid+')"><div class="al-dot"></div><div class="al-txt">'+a.txt+'</div></div>';}).join(''):'<div class="empty al-clear" style="padding:14px"><span class="ei">'+ic('file-check')+'</span><p>'+L('No active alerts','لا توجد تنبيهات نشطة')+'</p></div>';
   h+='</div></div>';
   h+='</div>';
   h+='<div class="dbottom">';
-  h+='<div class="dsec acc-gold">';
-  h+='<div class="dsec-hd"><span class="dsi">⭐</span><b>High-Value Contracts</b><span class="dsb badge ba">'+hvC.length+'</span></div>';
+  h+='<div class="dsec hv-sec">';
+  h+='<div class="dsec-hd"><span class="dsi">'+ic('award')+'</span><b>'+L('High-Value Contracts','العقود عالية القيمة')+'</b><span class="dsb badge ba">'+hvC.length+'</span></div>';
   if(hvC.length){
     h+='<div class="dhv-scroll">';
     hvC.forEach(function(c){
       var p=tPen(c);var isP=p>0;
-      var icons=['🏗','🏭','⚡','🔧','🚀'];var ri=Math.abs(c.id)%icons.length;
-      h+='<div class="dhv-card" onclick="openContractModal('+c.id+')" style="border-left:3px solid '+(isP?'var(--danger)':'var(--accent3)')+'">';
-      h+='<div class="hc-num">'+icons[ri]+' #C-'+c.num+'</div>';
+      h+='<div class="dhv-card st-'+(isP?'bad':'ok')+'" onclick="openContractModal('+c.id+')" onkeydown="dcKey(event)" role="button" tabindex="0">';
+      h+='<div class="hc-top"><span class="hc-ic">'+ic('file')+'</span><span class="hc-num">#C-'+c.num+'</span></div>';
       h+='<div class="hc-name">'+(c.name||'—')+'</div>';
       h+='<div class="hc-amt">'+fSAR(c.amount)+'</div>';
-      h+='<div class="hc-foot"><span style="color:var(--accent2)">LC '+pct(c.agreedPct)+'</span>'+(isP?'<span class="badge br" style="font-size:9px">'+fSAR(p)+'</span>':'<span class="badge bg" style="font-size:9px">✓ Clear</span>')+'</div>';
+      h+='<div class="hc-foot"><span class="hc-lc">LC '+pct(c.agreedPct)+'</span>'+(isP?'<span class="badge br" style="font-size:9px">'+fSAR(p)+'</span>':'<span class="badge bg" style="font-size:9px">'+L('Clear','سليم')+'</span>')+'</div>';
       h+='</div>';
     });
     h+='</div>';
-  }else{h+='<div class="empty"><p>No high-value contracts</p></div>';}
+  }else{h+='<div class="empty"><p>'+L('No high-value contracts','لا توجد عقود عالية القيمة')+'</p></div>';}
   h+='</div>';
   h+='<div class="dright-stack">';
-  h+='<div class="dsec acc-purple">';
-  h+='<div class="dsec-hd"><span class="dsi">🏆</span><b>Performance & Reporting</b></div>';
+  h+='<div class="dsec">';
+  h+='<div class="dsec-hd"><span class="dsi">'+ic('users')+'</span><b>'+L('Performance & Reporting','الأداء والتقارير')+'</b></div>';
   h+='<div class="dr3">';
-  h+=DC('Evaluations',seCount,'View all','blue','👥',"nav(\x27supeval\x27,null)");
-  h+=DC('Avg Score',seAvg.toFixed(1)+'%','4 metrics','green','📊',"nav(\x27supeval\x27,null)");
-  h+=DC('Blacklisted',blCount,'Manage','red','🚫',"nav(\x27blacklist\x27,null)");
+  h+=DC(L('Evaluations','التقييمات'),seCount,L('View all','عرض الكل'),'neutral','users',"nav(\x27supeval\x27,null)");
+  h+=DC(L('Avg Score','متوسط النتيجة'),seAvg.toFixed(1)+'%',L('4 metrics','4 معايير'),'neutral','bar-chart',"nav(\x27supeval\x27,null)");
+  h+=DC(L('Blacklisted','محظور'),blCount,L('Manage','إدارة'),(blCount>0?'bad':'neutral'),'ban',"nav(\x27blacklist\x27,null)");
   h+='</div></div>';
-  
   h+='</div>';
   h+='</div>';
   document.getElementById('dashKPIs').innerHTML=h;
   renderCharts();
-  // animated count-up on numeric KPI values
-  document.querySelectorAll('#dashKPIs .dc-val').forEach(function(el){
+  // animated count-up on numeric KPI values (skipped under reduced-motion)
+  var _rmCount=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!_rmCount)document.querySelectorAll('#dashKPIs .dc-val').forEach(function(el){
     var txt=el.textContent.trim();
     var mNum=txt.match(/^([0-9][0-9,\.]*)$/);
     if(!mNum)return;
@@ -5690,7 +5963,7 @@ function gatherDashboardData(){
     var lbl=el.querySelector('.dc-lbl');
     var val=el.querySelector('.dc-val');
     var sub=el.querySelector('.dc-sub');
-    kpis.push({label:lbl?lbl.textContent:'',value:val?val.textContent:'',sub:sub?sub.textContent:'',color:el.className.match(/dc-(blue|green|red|amber|purple|teal)/)?RegExp.$1:'blue'});
+    kpis.push({label:lbl?lbl.textContent:'',value:val?val.textContent:'',sub:sub?sub.textContent:'',color:el.className.match(/st-(ok|warn|bad|neutral)/)?RegExp.$1:'neutral'});
   });
   var charts=[];
   document.querySelectorAll('#page-dashboard canvas').forEach(function(cv){
@@ -5705,7 +5978,7 @@ function gatherDashboardData(){
 
 function exportDashPDF(){
   var d=gatherDashboardData();
-  var colorMap={blue:'#2196F3',green:'#43A047',red:'#E53935',amber:'#FFB300',purple:'#8E24AA',teal:'#00897B'};
+  var colorMap={ok:'#15803d',warn:'#b45309',bad:'#b91c1c',neutral:'#334155'};
   var now=new Date();
   var dateStr=now.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})+' — '+now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   var _ar=(typeof lang!=='undefined'&&lang==='ar');var h='<!DOCTYPE html><html'+(_ar?' dir="rtl" lang="ar"':'')+'><head><meta charset="utf-8"><title>'+brandInfo().org+' — Dashboard Export</title>';
@@ -5717,7 +5990,7 @@ function exportDashPDF(){
   h+='.header h1{font-size:22px;color:#2d2d5e}';
   h+='.header .dt{font-size:12px;color:#666}';
   h+='.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}';
-  h+='.kpi-card{border-radius:8px;padding:16px;text-align:center;border-left:4px solid #ccc;background:#f9f9f9}';
+  h+='.kpi-card{border-radius:10px;padding:16px;text-align:center;border:1px solid #e4e9f2;border-top:3px solid #cbd5e1;background:#fbfcff}';
   h+='.kpi-card .lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}';
   h+='.kpi-card .val{font-size:24px;font-weight:800}';
   h+='.kpi-card .sub{font-size:10px;color:#888;margin-top:2px}';
