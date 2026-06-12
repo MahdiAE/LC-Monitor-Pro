@@ -2883,7 +2883,7 @@ function renderBiddersList(){
         +'<td style="font-size:11px">'+(r.nature||'--')+'</td>'
         +'<td style="font-size:11px">'+(r.qty||1)+'</td>'
         +'<td style="font-size:11px">'+(r.uom||'--')+'</td>'
-        +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'
+        +'<td>'+(b._fromSubmission?'<span style="font-size:11px;font-weight:600" title="Imported from supplier — locked">'+(r.origin||'Local')+'</span>':'<select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select>')+'</td>'
         +'<td style="text-align:center">'+(r.isMandatoryRFP?'\u2705':'\u2796')+'</td>'
         +'<td style="text-align:center"><input type="checkbox" '+(r.isMandatoryResp?'checked':'')+' onchange="curBidders['+i+'].boqItems['+ri+'].isMandatoryResp=this.checked;renderBiddersList()"/>'+(mlFail?'<div style="font-size:8px;color:var(--danger)">\u26a0 Required</div>':'')+'</td>'
         +'<td>'+(b._fromSubmission?'<span style="font-size:11px;font-weight:600" title="Imported from supplier — locked">'+(r.price||0)+'</span>':'<input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/>')+'</td>'
@@ -2944,7 +2944,7 @@ function checkExclusions(bidder,mech){
     if(e.label.includes('LC% below')&&minLCVal>0&&(bidder.lcPct||0)<minLCVal)reasons.push(`LC% ${bidder.lcPct||0}% below minimum ${minLCVal}%`);
     if(e.label.includes('budget')&&e.threshold&&curBid?.value&&bidder.price>(curBid.value*(1+e.threshold/100)))reasons.push(`Bid price exceeds budget by >${e.threshold}%`);
   });
-  if(bidder.boqItems&&bidder.boqItems.length){bidder.boqItems.forEach(function(r,ri){var _fe=(r.origin==='Foreign'&&r.exceptionStatus!=='approved');if(r.isMandatoryRFP&&(!r.isMandatoryResp||_fe))reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(_fe?'has Foreign origin'+(r.exceptionFile?' — exception '+(r.exceptionStatus||'pending'):' (no exception letter)'):'response not confirmed'));});}
+  if(bidder.boqItems&&bidder.boqItems.length){bidder.boqItems.forEach(function(r,ri){if(!r.isMandatoryRFP)return;if(r.exceptionStatus==='approved')return;if(r.exceptionStatus==='rejected'){reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') exception rejected');return;}if(!r.isMandatoryResp||r.origin==='Foreign')reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(r.origin==='Foreign'?'has Foreign origin'+(r.exceptionFile?' — exception pending':' (no exception letter)'):'response not confirmed'));});}
   return reasons;
 }
 function calcBids(){
@@ -6949,14 +6949,14 @@ renderBiddersList=function(){
 
     // ── BoQ table rows (v42: mandatory+foreign highlight) ──
     var bqR=b.boqItems.map(function(r,ri){
-      var mlFail=r.isMandatoryRFP&&(!r.isMandatoryResp||(r.origin==='Foreign'&&r.exceptionStatus!=='approved'));
-      return '<tr'+(mlFail?' style="background:rgba(220,38,38,0.08)"':(r.isMandatoryRFP&&r.origin==='Foreign'&&r.exceptionStatus==='approved'?' style="background:rgba(16,185,129,0.08)"':''))+'>'
+      var mlFail=r.isMandatoryRFP&&(r.exceptionStatus==='rejected'||(r.exceptionStatus!=='approved'&&(!r.isMandatoryResp||r.origin==='Foreign')));
+      return '<tr'+(mlFail?' style="background:rgba(220,38,38,0.08)"':(r.isMandatoryRFP&&r.exceptionStatus==='approved'?' style="background:rgba(16,185,129,0.08)"':''))+'>'
         +'<td>'+(ri+1)+'</td>'
         +'<td style="font-size:11px">'+((r.desc||'').replace(/"/g,'&quot;'))+'</td>'
         +'<td style="font-size:11px">'+(r.nature||'--')+'</td>'
         +'<td style="font-size:11px">'+(r.qty||1)+'</td>'
         +'<td style="font-size:11px">'+(r.uom||'--')+'</td>'
-        +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'
+        +'<td>'+(b._fromSubmission?'<span style="font-size:11px;font-weight:600" title="Imported from supplier — locked">'+(r.origin||'Local')+'</span>':'<select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select>')+'</td>'
         +'<td style="text-align:center">'+(r.isMandatoryRFP?'\u2705':'\u2796')+'</td>'
         +'<td style="text-align:center"><input type="checkbox" '+(r.isMandatoryResp?'checked':'')+' onchange="curBidders['+i+'].boqItems['+ri+'].isMandatoryResp=this.checked;renderBiddersList()"/>'+(mlFail?'<div style="font-size:8px;color:var(--danger)">⚠ '+(r.origin==='Foreign'&&r.isMandatoryResp?'Foreign origin':'Response required')+'</div>':'')+'</td>'
         +'<td style="text-align:center">'+window._excCell(i,ri,r)+'</td>'
