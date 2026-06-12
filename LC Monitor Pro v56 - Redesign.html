@@ -3531,6 +3531,8 @@ function regenerateReports(c){
   // prune evidence for report keys that no longer exist
   if(c.evidence){
     var validKeys={};fresh.forEach(function(r){validKeys[r.type==='period'?'period_'+r.year:r.type]=1;});
+    // BoQ line-item evidence (National Products) and exception letters are keyed to boqItems, not reports — keep them.
+    (c.boqItems||[]).forEach(function(it,i){validKeys['li_'+i]=1;validKeys['liexc_'+i]=1;});
     Object.keys(c.evidence).forEach(function(k){if(!validKeys[k])delete c.evidence[k];});
   }
   recalcContractPenalties(c);
@@ -5373,7 +5375,8 @@ function _evStatusBadge(evs){
   return '<span class="badge ba" style="font-size:9px">'+evs.filter(function(f){return (f.status||"pending")==="pending";}).length+' pending</span>';
 }
 function evLabel(rt,c){
-  if(typeof rt==='string'&&rt.indexOf('li_')===0){var idx=+rt.slice(3);var it=c&&c.boqItems&&c.boqItems[idx];return 'Line Item: '+(it?(it.desc||('#'+(idx+1))):('#'+(idx+1)));}
+  if(typeof rt==='string'&&rt.indexOf('liexc_')===0){var ei=+rt.slice(6);var eit=c&&c.boqItems&&c.boqItems[ei];return 'Exception Letter — '+(eit?(eit.desc||('Line Item #'+(ei+1))):('Line Item #'+(ei+1)));}
+  if(typeof rt==='string'&&rt.indexOf('li_')===0){var idx=+rt.slice(3);var it=c&&c.boqItems&&c.boqItems[idx];return 'National Products Evidence — '+(it?(it.desc||('Line Item #'+(idx+1))):('Line Item #'+(idx+1)));}
   return (typeof REPORT_LABELS!=='undefined'&&REPORT_LABELS[rt])||rt;
 }
 function supReqUpload(inp,cid,key){
@@ -5599,7 +5602,7 @@ function showKPIDrill(key){
   }
   else if(key==='reviews'){
     title='Pending Reviews';var pend=0;var rows='';
-    DB.forEach(function(c){Object.keys(c.evidence||{}).forEach(function(rt){(c.evidence[rt]||[]).forEach(function(f){if((f.status||'pending')==='pending'){pend++;rows+=tRow(['#'+c.num,(REPORT_LABELS[rt]||rt),f.name,'<span class="badge ba">Pending</span>',f.uploaded||'\u2014']);}});});});
+    DB.forEach(function(c){Object.keys(c.evidence||{}).forEach(function(rt){(c.evidence[rt]||[]).forEach(function(f){if((f.status||'pending')==='pending'){pend++;rows+=tRow(['#'+c.num,(typeof evLabel==='function'?evLabel(rt,c):(REPORT_LABELS[rt]||rt)),f.name,'<span class="badge ba">Pending</span>',f.uploaded||'\u2014']);}});});});
     sub=pend+' files pending approval';
     body=rows?tWrap(['Contract','Report','File','Status','Uploaded'],rows):'<div class="empty"><p>No pending reviews</p></div>';
   }
