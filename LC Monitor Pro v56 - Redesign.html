@@ -577,7 +577,7 @@ body.rtl .dsec-hd .dsb{margin-left:0;margin-right:8px}
 .dsplit-tab .dstb{margin-left:6px;padding:2px 8px;border-radius:12px;font-size:10px;font-weight:700}
 .dcharts{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:14px}
 .dbottom{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;align-items:stretch}.dbottom .dsec{height:100%;display:flex;flex-direction:column}.dbottom .dsec>*:last-child{flex:1}
-.dright-stack{display:flex;flex-direction:column;gap:14px}
+.dright-stack{display:flex;flex-direction:column;gap:14px}.dbottom .dright-stack>.dsec{margin-bottom:0;flex:1}
 .dhv-scroll{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 12px}
 .dhv-scroll::-webkit-scrollbar{height:4px}
 .dhv-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
@@ -1273,8 +1273,8 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
   <div class="ni-wrap" onclick="nav(&#39;portfolio&#39;,this)"><span class="ni">🏢</span><span>Portfolio View</span></div>
   <div class="ni-wrap" onclick="nav(&#39;audit&#39;,this)"><span class="ni">📝</span><span>Audit Trail</span></div>
   <div class="ns">SUPPLIERS &amp; PERFORMANCE</div>
-  <div class="ni-wrap" onclick="nav(&#39;suppliers&#39;,this)"><span class="ni">🏭</span><span>Suppliers Registry</span></div>
   <div class="ni-wrap" onclick="nav(&#39;certs&#39;,this)"><span class="ni">🏅</span><span>Certificates</span></div>
+  <div class="ni-wrap" onclick="nav(&#39;suppliers&#39;,this)"><span class="ni">🏭</span><span>Suppliers Registry</span></div>
   <div class="ni-wrap" onclick="nav(&#39;subs&#39;,this)"><span class="ni">📨</span><span>Supplier Submissions</span></div>
   <div class="ni-wrap" onclick="nav(&#39;supreq&#39;,this)"><span class="ni">📌</span><span>Supplier LC Requirements</span></div>
   <div class="ni-wrap" onclick="nav(&#39;supeval&#39;,this)"><span class="ni">🏆</span><span>Supplier Evaluation</span></div>
@@ -2085,8 +2085,8 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
       <div class="fg"><label class="fl2">City</label><input class="fi" id="supCity"/></div>
       <div class="fg"><label class="fl2">SME?</label><select class="fsel2" id="supSME"><option value="">No</option><option value="1">Yes</option></select></div>
       <div class="fg"><label class="fl2">Tadawul Listed?</label><select class="fsel2" id="supTadawul"><option value="">No</option><option value="1">Yes</option></select></div>
-      <div class="fg"><label class="fl2">End of Financial Year — Month</label><select class="fsel2" id="supFYEndMonth"><option value="">—</option><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select></div>
-      <div class="fg"><label class="fl2">End of Financial Year — Day</label><select class="fsel2" id="supFYEndDay"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option></select></div>
+      <div class="fg"><label class="fl2">End of Financial Year — Month *</label><select class="fsel2" id="supFYEndMonth"><option value="">—</option><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">August</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select></div>
+      <div class="fg"><label class="fl2">End of Financial Year — Day *</label><select class="fsel2" id="supFYEndDay"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option></select></div>
       <div class="fg full" style="grid-column:1/-1"><div style="font-size:10px;color:var(--text3);line-height:1.5">📅 Used later to schedule each supplier's periodic LC report due dates relative to their financial year-end.</div></div>
     </div>
     <div class="fa-row"><button class="btn btn-s" type="button" onclick="closeModal('supplierModal')">Cancel</button><button class="btn btn-a" type="button" onclick="generateSupplierCardPDF()">📄 Card PDF</button><button class="btn btn-p" onclick="saveSupplier()">✓ Save Supplier</button></div>
@@ -2104,7 +2104,7 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
     <div id="subBoQSection" style="display:none;margin-top:10px">
       <div style="font-weight:700;font-size:12px;margin-bottom:6px">📋 BoQ Line Items</div>
       <div style="overflow-x:auto"><table class="cboq-tbl" id="subBoQTable"><thead><tr>
-        <th>#</th><th>Description</th><th style="background:#6b7280">Mandatory (RFP)</th><th>Mandatory Response</th><th>Nature</th><th>Unit Price (SAR)</th><th>QTY</th><th>UoM</th><th>Origin</th><th>Total</th>
+        <th>#</th><th>Description</th><th style="background:#6b7280">Mandatory (RFP)</th><th>Mandatory Response</th><th>Nature</th><th>Unit Price (SAR)</th><th>QTY</th><th>UoM</th><th>Origin</th><th style="background:#b45309">Mandatory List Exception</th><th>Total</th>
       </tr></thead><tbody id="subBoQTbody"></tbody></table></div>
       <div id="subBoQSummary" class="cboq-summary" style="margin-top:8px"></div>
     </div>
@@ -2889,7 +2889,7 @@ function renderBiddersList(){
         +'<td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/></td>'
         +'</tr>';
     }).join('');
-    var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">📋 BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="8" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="8" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Bid \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
+    var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">📋 BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Mandatory List Exception</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="9" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="9" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Bid \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
     var tFn=b._techFileName||'';var cFn=b._commFileName||'';var mlFn=b._mlFileName||'';
     return '<div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:7px">'
       +'<div onclick="toggleBidderCollapse('+i+')" style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;cursor:pointer;user-select:none">'
@@ -5189,6 +5189,9 @@ function saveSupplier(){
   var name=document.getElementById('supName').value.trim();
   var cr=document.getElementById('supCR').value.trim();
   if(!name||!cr){toast('Name and CR number are required','err');return;}
+  var _fym=(document.getElementById('supFYEndMonth')||{}).value||'';
+  var _fyd=(document.getElementById('supFYEndDay')||{}).value||'';
+  if(!_fym||!_fyd){toast('End of Financial Year (Month and Day) is required','err');return;}
   var s=editSupId?SUPPLIERS.find(function(x){return String(x.id)===String(editSupId);}):{id:uid(),created:new Date().toISOString()};
   s.name=name;s.cr=cr;
   s.vat=document.getElementById('supVAT').value.trim();
@@ -5303,7 +5306,7 @@ function importSupplierBids(){
     var s=SUPPLIERS.find(function(ss){return String(ss.id)===String(x.supplierId);})||{};
     curBidders.push({id:uid(),name:x.supplierName,price:x.price,lcPct:x.lcPct||0,nppPct:x.nppPct||0,
       isSME:!!s.isSME,isTadawul:!!s.isTadawul,hasCert:!!(s.lcCertId||s.lcFile),lcBaseline:(x.lcBaseline!=null?x.lcBaseline:(s.lcPct||null)),baselinePct:(x.lcBaseline!=null?x.lcBaseline:0),
-      boqItems:(x.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;return {desc:r.desc||'',nature:r.nature||'Goods',qty:q,uom:r.uom||'Unit',price:(parseFloat(r.unitPrice)||0)*q,origin:r.origin||'Local',isMandatoryRFP:!!r.mandatory,isMandatoryResp:!!r.mandatoryResponse};}),
+      boqItems:(x.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;return {desc:r.desc||'',nature:r.nature||'Goods',qty:q,uom:r.uom||'Unit',price:(parseFloat(r.unitPrice)||0)*q,origin:r.origin||'Local',isMandatoryRFP:!!r.mandatory,isMandatoryResp:!!r.mandatoryResponse,exceptionFile:r.exceptionFile||null,exceptionStatus:r.exceptionStatus||(r.exceptionFile?'pending':'')};}),
       _fromSubmission:x.id});
     added++;
   });
@@ -6940,8 +6943,8 @@ renderBiddersList=function(){
 
     // ── BoQ table rows (v42: mandatory+foreign highlight) ──
     var bqR=b.boqItems.map(function(r,ri){
-      var mlFail=r.isMandatoryRFP&&(!r.isMandatoryResp||r.origin==='Foreign');
-      return '<tr'+(mlFail?' style="background:rgba(220,38,38,0.08)"':'')+'>'
+      var mlFail=r.isMandatoryRFP&&(!r.isMandatoryResp||(r.origin==='Foreign'&&r.exceptionStatus!=='approved'));
+      return '<tr'+(mlFail?' style="background:rgba(220,38,38,0.08)"':(r.isMandatoryRFP&&r.origin==='Foreign'&&r.exceptionStatus==='approved'?' style="background:rgba(16,185,129,0.08)"':''))+'>'
         +'<td>'+(ri+1)+'</td>'
         +'<td style="font-size:11px">'+((r.desc||'').replace(/"/g,'&quot;'))+'</td>'
         +'<td style="font-size:11px">'+(r.nature||'--')+'</td>'
@@ -6950,11 +6953,12 @@ renderBiddersList=function(){
         +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="curBidders['+i+'].boqItems['+ri+'].origin=this.value;renderBiddersList()"><option value="Local"'+(r.origin==='Local'?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'
         +'<td style="text-align:center">'+(r.isMandatoryRFP?'\u2705':'\u2796')+'</td>'
         +'<td style="text-align:center"><input type="checkbox" '+(r.isMandatoryResp?'checked':'')+' onchange="curBidders['+i+'].boqItems['+ri+'].isMandatoryResp=this.checked;renderBiddersList()"/>'+(mlFail?'<div style="font-size:8px;color:var(--danger)">\u26a0 '+(r.origin==='Foreign'&&r.isMandatoryResp?'Foreign origin':'Response required')+'</div>':'')+'</td>'
+        +'<td style="text-align:center">'+window._excCell(i,ri,r)+'</td>'
         +'<td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.price||0)+'" onchange="curBidders['+i+'].boqItems['+ri+'].price=parseFloat(this.value)||0;recalcBidderBoQ('+i+')"/></td>'
         +'</tr>';
     }).join('');
 
-    var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">\uD83D\uDCCB BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="8" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="8" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Bid \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
+    var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">\uD83D\uDCCB BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Mandatory List Exception</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="9" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="9" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Bid \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
 
     var tFn=b._techFileName||'';var cFn=b._commFileName||'';var mlFn=b._mlFileName||'';
     var blCertFn=b._lcBaselineFileName||'';var tgCertFn=b._lcTargetFileName||'';
@@ -7139,8 +7143,9 @@ calcBids=function(){
     // v42: Mandatory BoQ — exclude if mandatory AND (not responded OR foreign)
     if(b.boqItems&&b.boqItems.length){
       b.boqItems.forEach(function(r,ri){
-        if(r.isMandatoryRFP&&(!r.isMandatoryResp||r.origin==='Foreign')){
-          excl.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(r.origin==='Foreign'?'has Foreign origin':'response not confirmed'));
+        var _fEx=(r.origin==='Foreign'&&r.exceptionStatus!=='approved');
+        if(r.isMandatoryRFP&&(!r.isMandatoryResp||_fEx)){
+          excl.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(_fEx?'has Foreign origin'+(r.exceptionFile?' — exception '+(r.exceptionStatus||'pending'):' (no exception letter)'):'response not confirmed'));
         }
       });
     }
@@ -7529,7 +7534,7 @@ window.v55_extractRFPBoQ=function(){
   } else {
     // RFP has no BoQ — make it visible & actionable instead of silently hiding
     boqSec.style.display='block';
-    if(tbody)tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:14px;color:var(--text3)">This RFP has no BoQ line items yet. Add them in <b>RFP Preparation → BoQ</b>, or enter the total bid price manually below.</td></tr>';
+    if(tbody)tbody.innerHTML='<tr><td colspan="11" style="text-align:center;padding:14px;color:var(--text3)">This RFP has no BoQ line items yet. Add them in <b>RFP Preparation → BoQ</b>, or enter the total bid price manually below.</td></tr>';
     var sm0=document.getElementById('subBoQSummary');if(sm0)sm0.innerHTML='';
     _subBoQItems=[];window._subBoQItems=_subBoQItems;
     var pp=document.getElementById('subPrice');if(pp){pp.readOnly=false;pp.style.background='';}
@@ -7555,13 +7560,16 @@ window.v55_renderSubBoQ=function(){
     var h='<tr>';
     h+='<td>'+(i+1)+'</td>';
     h+='<td style="font-size:10px;font-weight:600">'+item.desc+'</td>';
-    h+='<td style="background:#f3f4f6;color:#6b7280;font-size:9px;text-align:center">'+(item.mandatory?'Mandatory':'Optional')+'</td>';
+    var _isForeign=(item.origin==='Foreign');
+    var _mandCell=!item.mandatory?'<span style="color:#9aa3b3">-</span>':(_isForeign?'<span style="color:#f59e0b;font-weight:700">⚠ Mandatory · Attach exception letter</span>':'<span style="font-weight:700">Mandatory</span>');
+    h+='<td style="background:'+(item.mandatory&&_isForeign?'rgba(245,158,11,.12)':'#f3f4f6')+';font-size:9px;text-align:center">'+_mandCell+'</td>';
     h+='<td style="text-align:center"><input type="checkbox" '+(item.mandatoryResponse?'checked ':'')+' onchange="_subBoQItems['+i+'].mandatoryResponse=this.checked"/></td>';
     h+='<td style="font-size:10px;white-space:nowrap">'+(item.nature||'')+'</td>';
     h+='<td><input type="number" min="0" value="'+(item.unitPrice||'')+'" onchange="_subBoQItems['+i+'].unitPrice=parseFloat(this.value)||0;v55_subLine('+i+')" style="width:80px" placeholder="0"/></td>';
     h+='<td style="text-align:center">'+(item.qty||0)+'</td>';
     h+='<td style="font-size:10px;white-space:nowrap">'+(item.uom||'')+'</td>';
-    h+='<td><select onchange="_subBoQItems['+i+'].origin=this.value;v55_recalcSubTotal()"><option value="Local"'+(item.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(item.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>';
+    h+='<td><select onchange="_subBoQItems['+i+'].origin=this.value;v55_renderSubBoQ()"><option value="Local"'+(item.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(item.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>';
+    h+='<td style="text-align:center;font-size:9px">'+(item.mandatory&&_isForeign?(item.exceptionFile?'<div style="display:flex;flex-direction:column;gap:2px;align-items:center"><span style="color:var(--accent3)">📎 '+escSub(item.exceptionFile.name)+'</span><button class="mb del" style="font-size:8px;padding:1px 5px" onclick="v55_removeException('+i+')">✕ remove</button></div>':'<label class="ev-add-btn" style="cursor:pointer;font-size:9px">📎 Attach<input type="file" accept=".pdf,.png,.jpg,.jpeg,.doc,.docx" style="display:none" onchange="v55_attachException('+i+',this)"/></label>'):'<span style="color:#9aa3b3">—</span>')+'</td>';
     h+='<td id="subTot'+i+'" style="font-weight:700">'+fSAR(tp)+'</td>';
     h+='</tr>';
     return h;
@@ -7575,6 +7583,40 @@ window.v55_subLine=function(i){
   var tp=(it.unitPrice||0)*(it.qty||0);
   var c=document.getElementById('subTot'+i);if(c)c.textContent=fSAR(tp);
   v55_recalcSubTotal();
+};
+// ── Mandatory List exception letter (per BoQ line) ──
+window.v55_attachException=function(i,input){
+  var f=input&&input.files&&input.files[0];if(!f){return;}
+  if(f.size>3*1024*1024){toast('Exception letter too large (max 3MB)','err');return;}
+  var rd=new FileReader();
+  rd.onload=function(ev){if(_subBoQItems[i]){_subBoQItems[i].exceptionFile={name:f.name,dataUrl:ev.target.result,mimeType:f.type,size:fSize(f.size)};v55_renderSubBoQ();toast('Exception letter attached','ok');}};
+  rd.readAsDataURL(f);
+};
+window.v55_removeException=function(i){if(_subBoQItems[i]){_subBoQItems[i].exceptionFile=null;v55_renderSubBoQ();}};
+// ── Evaluator view of an exception (file viewer) + approve/reject ──
+window._excCell=function(i,ri,r){
+  if(!(r.isMandatoryRFP&&r.origin==='Foreign'))return '<span style="color:var(--text3)">—</span>';
+  var st=r.exceptionStatus||'pending';
+  var badge=st==='approved'?'<span style="color:var(--accent3);font-weight:700;font-size:9px">✓ Approved</span>':st==='rejected'?'<span style="color:var(--danger);font-weight:700;font-size:9px">✕ Rejected</span>':'<span style="color:var(--warn);font-weight:700;font-size:9px">⏳ Pending</span>';
+  var view=(r.exceptionFile&&r.exceptionFile.dataUrl)?'<button class="mb" title="View exception letter" style="font-size:9px;padding:1px 6px" onclick="viewBidderException('+i+','+ri+')">👁</button>':'<span style="font-size:8px;color:var(--danger)">⚠ no letter</span>';
+  var ap='<button class="mb" title="Approve exception" style="font-size:9px;padding:1px 6px;background:var(--accent3);color:#fff;border-color:var(--accent3)" onclick="setBidderException('+i+','+ri+',\'approved\')">✓</button>';
+  var rj='<button class="mb del" title="Reject exception" style="font-size:9px;padding:1px 6px" onclick="setBidderException('+i+','+ri+',\'rejected\')">✕</button>';
+  return '<div style="display:flex;flex-direction:column;gap:3px;align-items:center">'+badge+'<div style="display:flex;gap:3px">'+view+ap+rj+'</div></div>';
+};
+window.setBidderException=function(i,ri,status){if(curBidders[i]&&curBidders[i].boqItems&&curBidders[i].boqItems[ri]){curBidders[i].boqItems[ri].exceptionStatus=status;if(typeof renderBiddersList==='function')renderBiddersList();toast('Exception '+status+' — recalculate to apply','ok');}};
+window.viewBidderException=function(i,ri){
+  var f=curBidders[i]&&curBidders[i].boqItems&&curBidders[i].boqItems[ri]&&curBidders[i].boqItems[ri].exceptionFile;
+  if(!f||!f.dataUrl){toast('No exception letter attached','err');return;}
+  var t=document.getElementById('fvTitle');if(t)t.textContent=f.name||'Exception Letter';
+  var sb=document.getElementById('fvSub');if(sb)sb.textContent='Mandatory List exception letter';
+  var dl=document.getElementById('fvDownload');if(dl){dl.href=f.dataUrl;dl.download=f.name||'exception';}
+  var body=document.getElementById('fvBody');
+  if(body){var mime=f.mimeType||'';
+    if(mime.indexOf('image/')===0)body.innerHTML='<img src="'+f.dataUrl+'" style="max-width:100%;display:block;margin:auto;padding:12px"/>';
+    else if(mime==='application/pdf')body.innerHTML='<iframe src="'+f.dataUrl+'" style="width:100%;height:75vh;border:none"></iframe>';
+    else body.innerHTML='<div style="padding:32px;text-align:center"><div style="font-size:36px">📄</div><b>'+(f.name||'file')+'</b><br><a href="'+f.dataUrl+'" download="'+(f.name||'file')+'" class="btn btn-p" style="margin-top:12px;display:inline-flex">⬇ Download</a></div>';
+  }
+  openModal('fileViewerModal');
 };
 
 window.v55_recalcSubTotal=function(){
