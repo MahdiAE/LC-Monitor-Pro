@@ -7391,9 +7391,13 @@ body.rtl .profile-chip{padding:4px 5px 4px 10px}
   window.signOut=function(){CURRENT_USER=null;localStorage.removeItem('lcCurrentUser');renderProfileChip();showLogin();};
   window.addEventListener('load',function(){
     setTimeout(function(){
-      var uid=localStorage.getItem('lcCurrentUser');var u=uid&&USERS.filter(function(x){return x.active;}).find(function(x){return x.id===uid;});
-      if(u){CURRENT_USER=u;CURRENT_ROLE=u.roleId;applyNavPerms();renderProfileChip();}
-      else{showLogin();}
+      var uid=localStorage.getItem('lcCurrentUser');var u=uid&&USERS.filter(function(x){return x.active;}).find(function(x){return String(x.id)===String(uid);});
+      // Login gate disabled for now — auto sign-in with full access (Super Admin). Switch users any time via the profile chip.
+      if(!u){u=USERS.find(function(x){return x.roleId==='super_admin'&&x.active;})||USERS.find(function(x){return x.active;});}
+      if(u){CURRENT_USER=u;CURRENT_ROLE=u.roleId;localStorage.setItem('lcCurrentUser',u.id);localStorage.setItem('lcCurrentRole',u.roleId);}
+      else{CURRENT_ROLE='super_admin';}
+      var ov=document.getElementById('loginOverlay');if(ov)ov.classList.remove('open');
+      applyNavPerms();renderProfileChip();
     },150);
   });
 })();
