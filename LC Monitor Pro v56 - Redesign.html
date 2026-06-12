@@ -2430,7 +2430,7 @@ function updateBadges(){
   document.getElementById('nbReview').textContent=pending||'';
   document.getElementById('nbBids').textContent=openBids||'';
 }
-function getAllPendingEvidence(){let n=0;DB.forEach(c=>Object.values(c.evidence||{}).forEach(arr=>arr.forEach(f=>{if((f.status||'pending')==='pending')n++;})));return n;}
+function getAllPendingEvidence(){let n=0;DB.forEach(c=>{Object.values(c.evidence||{}).forEach(arr=>arr.forEach(f=>{if((f.status||'pending')==='pending')n++;}));(c.boqItems||[]).forEach(it=>{if(it.nature&&!/good/i.test(it.nature))return;var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;if(recd&&!it.recvApproved&&!it._recvRejected)n++;});});return n;}
 
 // KPI DEFS
 const KPI_DEFS=[
@@ -3329,48 +3329,85 @@ function renderReview(){
   var selId=sel.value?parseInt(sel.value):null;
   var contracts=selId?DB.filter(function(c){return c.id===selId;}):DB;
   var rows=[];
+  var fMatch=function(f){return rvMode==='all'||((f.status||'pending')===(rvMode==='pend'?'pending':rvMode==='app'?'approved':'rejected'));};
   contracts.forEach(function(c){
     var ev=c.evidence||{};
+    // helper: render one evidence-file row (reused by report groups and goods-line blocks)
+    function fileRow(rt,f){
+      var realFi=(ev[rt]||[]).findIndex(function(x){return x.name===f.name&&x.uploaded===f.uploaded;});
+      var st=f.status||'pending'; var isPend=st==='pending';
+      var stLabel=st.charAt(0).toUpperCase()+st.slice(1);
+      var stColor=st==='approved'?'var(--accent3)':st==='rejected'?'var(--danger)':'var(--warn)';
+      var vB=f.dataUrl?'<button class="ev-btn view" title="View" onclick="viewEvFile('+c.id+',\''+rt+'\','+realFi+')">&#128065; View</button>':'';
+      var dB=f.dataUrl?'<button class="ev-btn dl" title="Download" onclick="downloadEvFile('+c.id+',\''+rt+'\','+realFi+')">&#11015; Download</button>':'';
+      var aB=isPend?'<button class="ev-btn app" title="Approve" onclick="reviewEvidence('+c.id+',\''+rt+'\','+realFi+',\'approved\')">&#10003; Approve</button>':'';
+      var rB=isPend?'<button class="ev-btn rej" title="Reject" onclick="reviewEvidence('+c.id+',\''+rt+'\','+realFi+',\'rejected\')">&#10007; Reject</button>':'';
+      return '<div class="rv-file-row"><div class="rv-file-info"><span class="rv-file-name">&#128206; '+f.name+'</span>'
+        +'<span class="rv-file-meta"> &nbsp;'+(f.size||'')+' &middot; '+(f.uploaded||'\u2014')+(f.reviewedBy?' &middot; '+f.reviewedBy:'')+'</span></div>'
+        +'<div class="rv-file-actions"><span class="rv-status" style="font-weight:700;color:'+stColor+'">'+stLabel+'</span>'+vB+dB+aB+rB+'</div></div>';
+    }
+    // Report-level evidence (period/final/npp/mlnp) \u2014 exclude per-line keys, those render in goods-receipt blocks
     var allFiles=[];
-    Object.keys(ev).forEach(function(rt){(ev[rt]||[]).forEach(function(f){allFiles.push(Object.assign({},f,{rt:rt}));});});
-    var filtered=rvMode==='all'?allFiles:allFiles.filter(function(f){return (f.status||'pending')===(rvMode==='pend'?'pending':rvMode==='app'?'approved':'rejected');});
-    if(!filtered.length)return;
-    var grouped={};filtered.forEach(function(f){if(!grouped[f.rt])grouped[f.rt]=[];grouped[f.rt].push(f);});
+    Object.keys(ev).forEach(function(rt){if(rt.indexOf('li_')===0||rt.indexOf('liexc_')===0)return;(ev[rt]||[]).forEach(function(f){allFiles.push(Object.assign({},f,{rt:rt}));});});
+    var filtered=allFiles.filter(fMatch);
+    // Goods-line receipts (visible even with NO attached evidence file)
+    function rcStatus(it){return it.recvApproved?'approved':it._recvRejected?'rejected':'pending';}
+    var goods=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){
+      var it=o.it; if(it.nature&&!/good/i.test(it.nature))return false;
+      var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;
+      var hasFiles=((ev['li_'+o.idx]||[]).length+(ev['liexc_'+o.idx]||[]).length)>0;
+      return recd||hasFiles;
+    });
+    function lineMatches(o){
+      if(rvMode==='all')return true;
+      var fs=rvMode==='pend'?'pending':rvMode==='app'?'approved':'rejected';
+      if(rcStatus(o.it)===fs)return true;
+      return (ev['li_'+o.idx]||[]).concat(ev['liexc_'+o.idx]||[]).some(function(f){return (f.status||'pending')===fs;});
+    }
+    var goodsShown=goods.filter(lineMatches);
+    if(!filtered.length&&!goodsShown.length)return;
+    // counts
     var pendN=filtered.filter(function(f){return (f.status||'pending')==='pending';}).length;
     var appN=filtered.filter(function(f){return f.status==='approved';}).length;
+    goodsShown.forEach(function(o){
+      var s=rcStatus(o.it); if(s==='pending')pendN++; else if(s==='approved')appN++;
+      (ev['li_'+o.idx]||[]).concat(ev['liexc_'+o.idx]||[]).forEach(function(f){var fs=f.status||'pending';if(fs==='pending')pendN++;else if(fs==='approved')appN++;});
+    });
     var html='<div class="review-card">'
       +'<div class="review-hd"><div>'
       +'<div style="font-size:13px;font-weight:700">#'+c.num+' \u2014 '+(c.name||'')+'</div>'
       +'<div style="font-size:10px;color:var(--text3)">'+(c.mechanism||'')+'</div></div>'
       +'<div class="review-status">'+(pendN?'<span class="badge ba">'+pendN+' pending</span>':'')+'<span class="badge bg">'+appN+' approved</span></div>'
       +'</div>';
+    // report-level groups
+    var grouped={};filtered.forEach(function(f){if(!grouped[f.rt])grouped[f.rt]=[];grouped[f.rt].push(f);});
     Object.keys(grouped).forEach(function(rt){
-      var files=grouped[rt];
-      html+='<div style="margin-bottom:6px">'
-        +'<div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+evLabel(rt,c)+'</div>';
-      files.forEach(function(f){
-        var realFi=(ev[rt]||[]).findIndex(function(x){return x.name===f.name&&x.uploaded===f.uploaded;});
-        var st=f.status||'pending'; var isPend=st==='pending';
-        var stLabel=st.charAt(0).toUpperCase()+st.slice(1);
-        var stColor=st==='approved'?'var(--accent3)':st==='rejected'?'var(--danger)':'var(--warn)';
-        var vB=f.dataUrl?'<button class="ev-btn view" title="View" onclick="viewEvFile('+c.id+',' + "'" + rt + "'" + ','+realFi+')">&#128065; View</button>':'';
-        var dB=f.dataUrl?'<button class="ev-btn dl" title="Download" onclick="downloadEvFile('+c.id+',' + "'" + rt + "'" + ','+realFi+')">&#11015; Download</button>':'';
-        var aB=isPend?'<button class="ev-btn app" title="Approve" onclick="reviewEvidence('+c.id+',' + "'" + rt + "'" + ','+realFi+',' + "'approved'" + ')">&#10003; Approve</button>':'';
-        var rB=isPend?'<button class="ev-btn rej" title="Reject" onclick="reviewEvidence('+c.id+',' + "'" + rt + "'" + ','+realFi+',' + "'rejected'" + ')">&#10007; Reject</button>':'';
-        html+='<div class="rv-file-row">'
-          +'<div class="rv-file-info">'
-          +'<span class="rv-file-name">&#128206; '+f.name+'</span>'
-          +'<span class="rv-file-meta"> &nbsp;'+(f.size||'')+' &middot; '+(f.uploaded||'\u2014')+(f.reviewedBy?' &middot; '+f.reviewedBy:'')+'</span>'
-          +'</div>'
-          +'<div class="rv-file-actions"><span class="rv-status" style="font-weight:700;color:'+stColor+'">'+stLabel+'</span>'+vB+dB+aB+rB+'</div>'
-          +'</div>';
-      });
+      html+='<div style="margin-bottom:6px"><div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+evLabel(rt,c)+'</div>';
+      grouped[rt].forEach(function(f){html+=fileRow(rt,f);});
+      html+='</div>';
+    });
+    // goods-receipt blocks
+    goodsShown.forEach(function(o){
+      var it=o.it,idx=o.idx,rs=rcStatus(it);
+      var rl=parseFloat(it.recvLocal)||0,rf=parseFloat(it.recvForeign)||0,qty=parseFloat(it.qty)||0;
+      var rsColor=rs==='approved'?'var(--accent3)':rs==='rejected'?'var(--danger)':'var(--warn)';
+      var rsLabel=rs.charAt(0).toUpperCase()+rs.slice(1);
+      var promisedLocal=(it.origin==='Local');
+      html+='<div style="margin-bottom:8px;border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;background:var(--surface)">';
+      html+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700">&#129534; Goods Receipt \u2014 '+(it.desc||('Line Item #'+(idx+1)))+'</span><span class="rv-status" style="font-weight:700;color:'+rsColor+'">'+rsLabel+'</span></div>';
+      html+='<div style="font-size:10px;color:var(--text3);margin:3px 0 6px">Ordered <b style="color:var(--text)">'+qty+'</b> '+(it.uom||'')+' &middot; Promised <b style="color:'+(promisedLocal?'var(--accent3)':'var(--warn)')+'">'+(it.origin||'Local')+'</b> &middot; Received <b>'+rl+'</b> Local + <b>'+rf+'</b> Foreign'+(it.recvOrigin?' ('+it.recvOrigin+')':'')+'</div>';
+      if(it.recvDevPenalty>0)html+='<div style="font-size:10px;color:var(--danger);font-weight:700;margin-bottom:5px">&#9888;&#65039; Local-content deviation penalty: '+fSAR(it.recvDevPenalty)+'</div>';
+      if(rs==='pending')html+='<div class="rv-file-actions" style="margin-bottom:5px"><button class="ev-btn app" onclick="reviewLineReceipt('+c.id+','+idx+',\'approved\')">&#10003; Approve Receipt</button><button class="ev-btn rej" onclick="reviewLineReceipt('+c.id+','+idx+',\'rejected\')">&#10007; Reject Receipt</button></div>';
+      var npFiles=ev['li_'+idx]||[],exFiles=ev['liexc_'+idx]||[];
+      if(npFiles.length){html+='<div style="font-size:10px;font-weight:600;color:var(--text2);margin:4px 0 2px">&#128206; National Products Evidence</div>';npFiles.forEach(function(f){html+=fileRow('li_'+idx,f);});}
+      else if(rs!=='approved'){html+='<div style="font-size:9px;color:var(--warn);margin-top:2px">&#9888;&#65039; No National Products evidence attached.</div>';}
+      if(exFiles.length){html+='<div style="font-size:10px;font-weight:600;color:var(--text2);margin:4px 0 2px">&#128206; Exception Letter</div>';exFiles.forEach(function(f){html+=fileRow('liexc_'+idx,f);});}
       html+='</div>';
     });
     html+='</div>';
     rows.push(html);
   });
-  document.getElementById('reviewContent').innerHTML=rows.length?rows.join(''):'<div class="empty"><div class="ei">&#128269;</div><p>No evidence files match this filter</p></div>';
+  document.getElementById('reviewContent').innerHTML=rows.length?rows.join(''):'<div class="empty"><div class="ei">&#128269;</div><p>Nothing to review for this filter</p></div>';
 }
 
 
@@ -3383,6 +3420,21 @@ function reviewEvidence(cid,rt,fi,status){
   if(typeof renderContracts==='function')renderContracts();if(typeof renderDashboard==='function')renderDashboard();if(typeof renderPenalties==='function')renderPenalties();
   if(typeof logAudit==='function')logAudit('approve','Evidence '+status+(status==='approved'?' → reflected on contract':'')+' for '+(typeof evLabel==='function'?evLabel(rt,c):rt)+' · #'+c.num,c.num);
   toast(`Evidence ${status}`,'ok');
+}
+
+// Approve/reject a received BoQ goods line (the receipt quantities & origin), independent of attached files.
+function reviewLineReceipt(cid,idx,status){
+  if(typeof requirePerm==='function'&&!requirePerm(status==='rejected'?'ev.reject':'ev.approve'))return;
+  var c=DB.find(function(x){return x.id===cid;});if(!c||!c.boqItems||!c.boqItems[idx])return;
+  var it=c.boqItems[idx];
+  if(status==='approved'){it.recvApproved=true;it._recvRejected=false;}
+  else{it.recvApproved=false;it._recvRejected=true;}
+  it._recvReviewBy='Admin';it._recvReviewAt=new Date().toLocaleDateString('en-GB');
+  if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);
+  saveDB();renderReview();updateBadges();
+  if(typeof renderContracts==='function')renderContracts();if(typeof renderDashboard==='function')renderDashboard();if(typeof renderPenalties==='function')renderPenalties();
+  if(typeof logAudit==='function')logAudit('approve','Goods receipt '+status+(status==='approved'?' → reflected on contract':'')+' for line "'+(it.desc||('#'+(idx+1)))+'" ('+(parseFloat(it.recvLocal)||0)+' Local + '+(parseFloat(it.recvForeign)||0)+' Foreign) · #'+c.num,c.num);
+  toast('Goods receipt '+status,'ok');
 }
 
 // Evidence upload from contract view
@@ -5603,7 +5655,8 @@ function showKPIDrill(key){
   else if(key==='reviews'){
     title='Pending Reviews';var pend=0;var rows='';
     DB.forEach(function(c){Object.keys(c.evidence||{}).forEach(function(rt){(c.evidence[rt]||[]).forEach(function(f){if((f.status||'pending')==='pending'){pend++;rows+=tRow(['#'+c.num,(typeof evLabel==='function'?evLabel(rt,c):(REPORT_LABELS[rt]||rt)),f.name,'<span class="badge ba">Pending</span>',f.uploaded||'\u2014']);}});});});
-    sub=pend+' files pending approval';
+    DB.forEach(function(c){(c.boqItems||[]).forEach(function(it,idx){if(it.nature&&!/good/i.test(it.nature))return;var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;if(recd&&!it.recvApproved&&!it._recvRejected){pend++;rows+=tRow(['#'+c.num,'Goods Receipt \u2014 '+(it.desc||('Line Item #'+(idx+1))),(parseFloat(it.recvLocal)||0)+' Local + '+(parseFloat(it.recvForeign)||0)+' Foreign','<span class="badge ba">Pending</span>','\u2014']);}});});
+    sub=pend+' items pending approval';
     body=rows?tWrap(['Contract','Report','File','Status','Uploaded'],rows):'<div class="empty"><p>No pending reviews</p></div>';
   }
   else{title='Details';body='<div class="empty"><p>No drill-through available for this KPI</p></div>';}
@@ -8032,6 +8085,7 @@ function recvLine(cid,idx){
   if(loc<=0&&fo<=0){toast('Enter a received quantity (Local and/or Foreign)','err');return;}
   it.recvLocal=loc;it.recvForeign=fo;it.recvQty=loc+fo;it.recvOrigin=(loc>0&&fo>0)?'Mixed':(fo>0?'Foreign':'Local');
   it._recvBy=_recvWho();it._recvAt=new Date().toLocaleDateString('en-GB');
+  it.recvApproved=false;it._recvRejected=false;/* new receipt → back to pending Reports Review */
   if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);
   if(typeof saveAll==='function')saveAll();
   if(typeof logAudit==='function')logAudit('receive','End-User received line "'+(it.desc||('#'+(idx+1)))+'": '+loc+' Local + '+fo+' Foreign of '+(it.qty||0)+' '+(it.uom||'')+' ('+it.recvOrigin+') · #'+c.num,c.num);
