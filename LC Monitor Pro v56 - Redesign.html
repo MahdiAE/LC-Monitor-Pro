@@ -1242,6 +1242,7 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
 <div class="ns">ADMIN</div>
   <div class="ni-wrap" onclick="openSettingsNav(this)" style="position:relative;cursor:pointer"><span class="ni">⚙</span><span>Settings &amp; Admin</span><span id="settArrow" style="margin-left: auto; font-size: 9px; transition: transform 0.2s;" onclick="event.stopPropagation();toggleSettSubs()">▼</span></div>
   <div id="settSubNav" style="display: none; padding-left: 20px;">
+    <div class="ni-wrap" onclick="navSettSec(&#39;settSec-account&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>👤 User Settings</span></div>
     <div class="ni-wrap" onclick="navSettSec(&#39;settSec-dashboard&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>📊 Dashboard KPIs</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-decisionTree&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🌳 Decision Tree</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-tc&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>📜 Mechanism T&amp;Cs</span></div>
@@ -1384,9 +1385,9 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
       <div class="alist" id="rfpFileList"></div>
     </div>
     <div class="rfp-step">
-      <div class="rfp-step-hd"><div class="rfp-step-num">3</div><div><div class="rfp-step-title">🤖 MLNP Item Identification</div><div class="rfp-step-desc">AI cross-references your BoQ against the LCGPA Mandatory List</div></div></div>
+      <div class="rfp-step-hd"><div class="rfp-step-num">3</div><div><div class="rfp-step-title">📋 Mandatory List Identification</div><div class="rfp-step-desc">Matches your BoQ line items against the uploaded LCGPA Mandatory List by name &amp; description (English / Arabic) — you confirm each before it is applied</div></div></div>
       <div id="mlnpAdvisorArea">
-        <button class="btn btn-a" onclick="runMLNPAdvisor()" id="mlnpAdvisorBtn">🔍 Identify Mandatory List Items</button>
+        <button class="btn btn-a" onclick="runMLNPMatch()" id="mlnpAdvisorBtn">🔍 Identify Mandatory List Items</button>
         <div id="mlnpResults" style="margin-top:12px"></div>
       </div>
     </div>
@@ -1675,6 +1676,28 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
 
 <!-- =================== PAGE: SETTINGS =================== -->
 <div class="page" id="page-settings">
+  <div class="fsec" id="settSec-account">
+    <div class="fsec-title">👤 User Settings — My Account</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Set up your profile and password. This prepares your account for the upcoming <b>Login &amp; Roles</b> — the login page is not active yet, so changes here are saved locally for now. Your role is assigned in <b>Roles &amp; Permissions</b>.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="fg"><label class="fl2">Full Name *</label><input class="fi" id="acctName" placeholder="e.g. Mohammed Al-…"/></div>
+      <div class="fg"><label class="fl2">Email</label><input class="fi" id="acctEmail" type="email" placeholder="name@org.gov.sa"/></div>
+      <div class="fg"><label class="fl2">Job Title</label><input class="fi" id="acctJob" placeholder="e.g. LC Officer"/></div>
+      <div class="fg"><label class="fl2">Department</label><input class="fi" id="acctDept" placeholder="e.g. Procurement"/></div>
+      <div class="fg"><label class="fl2">Phone</label><input class="fi" id="acctPhone" placeholder="+966…"/></div>
+      <div class="fg"><label class="fl2">Assigned Role</label><input class="fi" id="acctRole" disabled style="opacity:.7" title="Roles are assigned in Roles &amp; Permissions"/></div>
+    </div>
+    <div class="fsec-title" style="font-size:13px;margin-top:18px">🔑 Change Password</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div class="fg" id="acctCurPwWrap"><label class="fl2">Current Password</label><input class="fi" id="acctCurPw" type="password" autocomplete="current-password" placeholder="••••••"/></div>
+      <div class="fg"><label class="fl2">New Password</label><input class="fi" id="acctNewPw" type="password" autocomplete="new-password" placeholder="min 6 characters"/></div>
+      <div class="fg"><label class="fl2">Confirm New Password</label><input class="fi" id="acctNewPw2" type="password" autocomplete="new-password" placeholder="re-enter"/></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-top:4px">Leave the password fields blank to keep your current password. Stored locally only (no server) until login is activated.</div>
+    <div class="fa-row" style="justify-content:flex-start;margin-top:14px;border-top:none;padding-top:0">
+      <button class="btn btn-p" onclick="saveAccountSettings()">💾 Save My Account</button>
+    </div>
+  </div>
   <div class="fsec" id="settSec-dashboard">
     <div class="fsec-title">📊 Dashboard KPI Configuration</div>
     <div class="kpi-cfg" id="kpiCfg"><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Total Contracts</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;total&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Active Contracts</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;active&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Total Penalties</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;penalties&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Missing Reports</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;missing&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Avg LC Compliance (Services)</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;compliance&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Avg LC Compliance (Goods)</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;complianceGoods&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">With Penalties</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;withPen&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Portfolio Value</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;portfolio&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Active RFPs</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;rfps&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Open Evaluations</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;bids&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Pending Reviews</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;reviews&#39;]=this.checked"><span class="sw-slider"></span></label></div></div>
@@ -1762,7 +1785,7 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
   </div>
   <div class="fsec" id="settSec-mlnp">
     <div class="fsec-title">📋 MLNP — LCGPA Mandatory List Upload</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Upload the latest LCGPA Mandatory List Excel. AI uses this to match BoQ items in RFP preparation.</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Upload the latest LCGPA Mandatory List Excel (include an Etimad-code column and item name in English and/or Arabic). It is used to match BoQ line items during RFP preparation — no AI, fully on-device.</div>
     <div class="az" id="mlnpDropZ" onclick="document.getElementById(&#39;mlnpFile&#39;).click()" ondragover="dOver(event,&#39;mlnpDropZ&#39;)" ondragleave="dLeave(&#39;mlnpDropZ&#39;)" ondrop="dDropMLNP(event)">
       <div class="az-icon">📋</div><div class="az-txt">Upload LCGPA MLNP Excel List</div><div class="az-sub">.xlsx format — LCGPA Mandatory List</div>
     </div>
@@ -2159,6 +2182,20 @@ body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .d
     <div class="md-body" id="fvBody" style="padding:0;max-height:78vh;overflow:auto"></div></div>
 </div>
 
+<!-- MLNP NOMINATION MODAL (deterministic, non-AI mandatory-list matcher) -->
+<div class="mo" id="mlnpNomModal">
+  <div class="md" style="max-width:760px">
+    <div class="md-hd"><div><div class="md-title">📋 Mandatory List — Nominated Items</div><div class="md-sub" id="mlnpNomSub">Matched against your uploaded LCGPA Mandatory List</div></div><button class="md-close" onclick="closeModal('mlnpNomModal')">✕</button></div>
+    <div class="md-body" id="mlnpNomBody"></div>
+    <div class="fa-row" style="padding:12px 20px;position:sticky;bottom:0;background:var(--surface)">
+      <button class="btn btn-s btn-sm" type="button" onclick="mlnpNomToggleAll(true)">Select All</button>
+      <button class="btn btn-s btn-sm" type="button" onclick="mlnpNomToggleAll(false)">Deselect All</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-s" type="button" onclick="closeModal('mlnpNomModal')">Cancel</button>
+      <button class="btn btn-p" type="button" onclick="mlnpApplyNominations()">✓ Apply Selected</button>
+    </div>
+  </div>
+</div>
 
 </div><!-- /content -->
 </div><!-- /main -->
@@ -6102,7 +6139,7 @@ renderBoQ=function(){
     else no='<option value="services"'+(r.nature==="services"?" selected":"")+'>Services</option><option value="goods"'+(r.nature==="goods"?" selected":"")+'>Goods</option>';
     var oo='<option value="Local"'+(r.origin==="Local"||!r.origin?" selected":"")+'>Local</option><option value="Foreign"'+(r.origin==="Foreign"?" selected":"")+'>Foreign</option>';
     var mc=r.isMandatory?"checked":"";
-    var mlc=r.isMandatory?'<input class="fi" style="font-size:10px;padding:2px 5px;width:80px;margin-top:3px" placeholder="ML Code" value="'+((r.mlCode||"").replace(/"/g,"&quot;"))+'" onchange="rfpBoQ['+i+'].mlCode=this.value"/>':"";
+    var mlc=r.isMandatory?'<input class="fi" style="font-size:10px;padding:2px 5px;width:95px;margin-top:3px" placeholder="Etimad Code" title="Etimad / Mandatory List code" value="'+((r.mlCode||"").replace(/"/g,"&quot;"))+'" onchange="rfpBoQ['+i+'].mlCode=this.value"/>':"";
     return "<tr><td>"+(i+1)+"</td>"
       +'<td><input class="fi" style="font-size:11px;padding:4px 7px" value="'+((r.desc||"").replace(/"/g,"&quot;"))+'" onchange="rfpBoQ['+i+'].desc=this.value"/></td>'
       +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ['+i+'].nature=this.value">'+no+'</select></td>'
@@ -6120,6 +6157,198 @@ addBoQRow=function(){rfpBoQ.push({desc:"",nature:"",qty:1,uom:"Lump Sum",cost:0,
 window.addBoQRow=addBoQRow;
 addBoQRows=function(n){for(var i=0;i<n;i++)rfpBoQ.push({desc:"",nature:"",qty:1,uom:"Lump Sum",cost:0,origin:"Local",isMandatory:false,mlCode:""});renderBoQ();};
 window.addBoQRows=addBoQRows;
+
+// ============================================================
+// MLNP — Deterministic (no-AI) Mandatory List matcher
+//   Matches RFP BoQ line items against the uploaded LCGPA Mandatory
+//   List (MLNP_LIST) by name<->name / name<->description, bilingual
+//   (English + Arabic). The user confirms each nomination in a popup;
+//   on accept, the item's Etimad code is written into rfpBoQ[i].mlCode.
+// ============================================================
+(function(){
+  // --- Text normalisation (Latin + Arabic) ---
+  function normML(s){
+    s=(s==null?'':String(s)).toLowerCase();
+    s=s.replace(/[ً-ْٰـ]/g,'')        // tashkeel + superscript alef + tatweel
+       .replace(/[آأإٱ]/g,'ا')   // آ أ إ ٱ -> ا
+       .replace(/ى/g,'ي')                        // ى -> ي
+       .replace(/ة/g,'ه')                        // ة -> ه
+       .replace(/[ؤئ]/g,'ء');               // ؤ ئ -> ء
+    s=s.replace(/[^0-9a-zء-ي\s]/g,' ').replace(/\s+/g,' ').trim();
+    return s;
+  }
+  var STOP={};['the','and','for','with','of','to','in','on','a','an','or','by','from','at','is','are','services','service','goods','supply','supplies','provision','project','works','work','system','systems','equipment','من','الى','إلى','على','في','عن','مع','او','أو','ال','هذا','تلك','عدد','توريد','خدمات','خدمة','مشروع','نظام','اعمال','أعمال','معدات'].forEach(function(w){STOP[w]=1;});
+  function tokens(s){return normML(s).split(' ').filter(function(t){return t.length>=2 && !/^\d+$/.test(t) && !STOP[t];});}
+
+  // --- Column detection on a raw MLNP (Mandatory List) row ---
+  var RE_CODE=/(etimad|eitmad|اعتماد|إعتماد|code|كود|رمز|الرقم|رقم|no\.?|^id$|id$)/i;
+  var RE_NAME=/(name|item|product|desc|description|english|en|الاسم|اسم|البند|الصنف|المنتج|الوصف|وصف|بيان|عربي|arabic|ar)/i;
+  function mlnpFields(row){
+    var code='', texts=[], best='';
+    Object.keys(row||{}).forEach(function(k){
+      var v=row[k]; if(v==null) return; v=String(v).trim(); if(!v) return;
+      if(!code && RE_CODE.test(k) && /[0-9]/.test(v)) code=v;
+      if(RE_NAME.test(k)) texts.push(v);
+      if(v.length>best.length && !RE_CODE.test(k)) best=v;
+    });
+    if(!texts.length){ Object.keys(row||{}).forEach(function(k){var v=row[k];if(v==null)return;v=String(v).trim();if(v&&!RE_CODE.test(k))texts.push(v);}); }
+    if(!code){ Object.keys(row||{}).forEach(function(k){var v=row[k];if(code||v==null)return;v=String(v).trim();if(/^[A-Za-z0-9][A-Za-z0-9\-\/.]{1,18}$/.test(v)&&/[0-9]/.test(v))code=v;}); }
+    return {code:code, label:texts[0]||best||'', texts:texts};
+  }
+  function buildIndex(){
+    return (typeof MLNP_LIST!=='undefined'?MLNP_LIST:[]).map(function(row){
+      var f=mlnpFields(row);
+      return {code:f.code, label:f.label, fields:f.texts.map(function(t){return {norm:normML(t), toks:tokens(t)};})};
+    }).filter(function(e){return e.fields.length;});
+  }
+  // best match of one BoQ description against the index
+  function matchOne(desc, idx){
+    var bn=normML(desc); if(bn.length<2) return null;
+    var bt=tokens(desc); var bset={}; bt.forEach(function(t){bset[t]=1;});
+    var best=null;
+    idx.forEach(function(e){
+      e.fields.forEach(function(fld){
+        if(!fld.norm) return;
+        var score=0, type='';
+        if(bn===fld.norm){score=1;type='exact';}
+        else{
+          var shorter=bn.length<=fld.norm.length?bn:fld.norm;
+          var longer =bn.length<=fld.norm.length?fld.norm:bn;
+          if(shorter.length>=4 && longer.indexOf(shorter)>=0){score=0.9;type='contains';}
+          else if(fld.toks.length){
+            var inter=fld.toks.filter(function(t){return bset[t];}).length;
+            if(inter>=1){
+              var cov=inter/fld.toks.length;
+              var bcov=bt.length?inter/bt.length:0;
+              var sc=Math.max(cov,(cov+bcov)/2);
+              if(sc>=0.5){score=0.5+sc*0.39;type='keyword';}
+            }
+          }
+        }
+        if(score>0 && (!best||score>best.score)) best={score:score,type:type,code:e.code,label:e.label};
+      });
+    });
+    return best;
+  }
+  function escML(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
+  function pillType(t){
+    var map={exact:['Exact','var(--accent3)'],contains:['Contains','var(--info)'],keyword:['Keyword','var(--warn)']};
+    var m=map[t]||['Match','var(--text3)'];
+    return '<span class="badge" style="background:rgba(0,0,0,.04);color:'+m[1]+';font-size:9px;padding:2px 7px;border:1px solid '+m[1]+'">'+m[0]+'</span>';
+  }
+  function renderMLNPNominations(noms){
+    var sub=document.getElementById('mlnpNomSub'), body=document.getElementById('mlnpNomBody');
+    if(!noms.length){
+      if(sub)sub.textContent='No matches found';
+      body.innerHTML='<div class="empty" style="padding:24px"><div class="ei">🔍</div><p>None of the current BoQ line items matched the uploaded Mandatory List.<br>You can still tick “Mandatory List” manually on any row.</p></div>';
+      return;
+    }
+    if(sub)sub.textContent=noms.length+' BoQ line item(s) matched — tick the ones to mark as Mandatory. The Etimad code is filled automatically.';
+    var h='<div class="md-sec"><div style="display:flex;flex-direction:column;gap:8px">';
+    noms.forEach(function(n,k){
+      h+='<label style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface2)">'
+        +'<input type="checkbox" class="mlnpNomChk" data-k="'+k+'" checked style="margin-top:3px;width:16px;height:16px;flex:0 0 auto"/>'
+        +'<div style="flex:1;min-width:0">'
+          +'<div style="font-size:12px;font-weight:700;color:var(--text)">'+escML(n.desc)+'</div>'
+          +'<div style="font-size:11px;color:var(--text2);margin-top:3px">↳ Mandatory match: <b>'+escML(n.label||'—')+'</b></div>'
+          +'<div style="display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap">'+pillType(n.type)
+            +'<span style="font-size:10px;color:var(--text3)">Confidence '+Math.round(n.score*100)+'%</span>'
+            +'<span style="font-size:10px;color:var(--text3)">Etimad code: <b style="color:var(--accent)">'+escML(n.code||'—')+'</b></span>'
+          +'</div>'
+        +'</div></label>';
+    });
+    h+='</div></div>';
+    body.innerHTML=h;
+  }
+  window.runMLNPMatch=function(){
+    if(typeof rfpBoQ==='undefined'){toast('Open an RFP first','err');return;}
+    if(!(typeof MLNP_LIST!=='undefined'&&MLNP_LIST.length)){toast('Upload the LCGPA Mandatory List in Settings → Mandatory List first','err');return;}
+    if(!rfpBoQ.filter(function(r){return (r.desc||'').trim();}).length){toast('Add BoQ line items with descriptions first','err');return;}
+    var idx=buildIndex();
+    if(!idx.length){toast('Mandatory List has no readable name/description columns','err');return;}
+    var noms=[];
+    rfpBoQ.forEach(function(r,i){
+      if(!(r.desc||'').trim()) return;
+      var m=matchOne(r.desc, idx);
+      if(m) noms.push({boqIdx:i, desc:r.desc, code:m.code, label:m.label, score:m.score, type:m.type});
+    });
+    window._mlnpNoms=noms;
+    renderMLNPNominations(noms);
+    document.getElementById('mlnpNomModal').classList.add('open');
+    var res=document.getElementById('mlnpResults');
+    if(res) res.innerHTML='<div style="font-size:11px;color:var(--text2)">'+(noms.length?('✓ '+noms.length+' line item(s) matched the Mandatory List — review the popup to confirm.'):'No BoQ line items matched the Mandatory List.')+'</div>';
+  };
+  window.mlnpNomToggleAll=function(v){var l=document.querySelectorAll('.mlnpNomChk');for(var i=0;i<l.length;i++)l[i].checked=v;};
+  window.mlnpApplyNominations=function(){
+    var noms=window._mlnpNoms||[], applied=0;
+    var l=document.querySelectorAll('.mlnpNomChk');
+    for(var i=0;i<l.length;i++){
+      if(!l[i].checked) continue;
+      var n=noms[+l[i].getAttribute('data-k')]; if(!n||typeof rfpBoQ==='undefined'||!rfpBoQ[n.boqIdx]) continue;
+      rfpBoQ[n.boqIdx].isMandatory=true;
+      rfpBoQ[n.boqIdx].mlCode=n.code||rfpBoQ[n.boqIdx].mlCode||'';
+      applied++;
+    }
+    if(typeof curRFP!=='undefined'&&curRFP){
+      curRFP.mlnpItems=noms.map(function(n){return {name:n.label,code:n.code,relevance:(n.type==='keyword'?'Medium':'High'),reason:'Matched BoQ item: '+n.desc};});
+    }
+    if(typeof renderBoQ==='function')renderBoQ();
+    closeModal('mlnpNomModal');
+    toast(applied?(applied+' line item(s) marked as Mandatory & Etimad code filled'):'No items selected','ok');
+  };
+  // keep the old AI entry-point name working in case anything references it
+  window.runMLNPAdvisor=window.runMLNPMatch;
+})();
+
+// ============================================================
+// USER SETTINGS — My Account (preparation for Login & Roles)
+//   Lets the signed-in user edit their profile (name/email/job/
+//   department/phone) and set a password, stored locally for when
+//   the login page is later activated. Does NOT activate login.
+// ============================================================
+function renderAccountSettings(){
+  var u=(typeof window.CURRENT_USER!=='undefined'&&window.CURRENT_USER)?window.CURRENT_USER:null;
+  if(!u&&typeof USERS!=='undefined'&&USERS.length){u=USERS.find(function(x){return x.roleId==='super_admin';})||USERS[0];}
+  function set(id,v){var e=document.getElementById(id);if(e)e.value=v||'';}
+  set('acctName',u&&u.name); set('acctEmail',u&&u.email);
+  set('acctJob',u&&u.jobTitle); set('acctDept',u&&u.department); set('acctPhone',u&&u.phone);
+  set('acctRole',u?(typeof roleName==='function'?roleName(u.roleId):u.roleId):'');
+  var curWrap=document.getElementById('acctCurPwWrap');
+  if(curWrap)curWrap.style.display=(u&&u.password)?'':'none';
+  ['acctCurPw','acctNewPw','acctNewPw2'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+}
+window.renderAccountSettings=renderAccountSettings;
+function saveAccountSettings(){
+  var u=(typeof window.CURRENT_USER!=='undefined'&&window.CURRENT_USER)?window.CURRENT_USER:null;
+  if(!u&&typeof USERS!=='undefined'&&USERS.length){u=USERS.find(function(x){return x.roleId==='super_admin';})||USERS[0];window.CURRENT_USER=u;}
+  if(!u){toast('No active user','err');return;}
+  var name=((document.getElementById('acctName')||{}).value||'').trim();
+  if(!name){toast('Full name is required','err');return;}
+  var email=((document.getElementById('acctEmail')||{}).value||'').trim();
+  if(email&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){toast('Enter a valid email address','err');return;}
+  var curPw=(document.getElementById('acctCurPw')||{}).value||'';
+  var np=(document.getElementById('acctNewPw')||{}).value||'';
+  var np2=(document.getElementById('acctNewPw2')||{}).value||'';
+  if(np||np2){
+    if(u.password&&curPw!==u.password){toast('Current password is incorrect','err');return;}
+    if(np.length<6){toast('New password must be at least 6 characters','err');return;}
+    if(np!==np2){toast('New passwords do not match','err');return;}
+    u.password=np;
+  }
+  u.name=name; u.email=email;
+  u.jobTitle=((document.getElementById('acctJob')||{}).value||'').trim();
+  u.department=((document.getElementById('acctDept')||{}).value||'').trim();
+  u.phone=((document.getElementById('acctPhone')||{}).value||'').trim();
+  if(typeof USERS!=='undefined'){var idx=USERS.findIndex(function(x){return x.id===u.id;});if(idx>=0)USERS[idx]=u;}
+  if(typeof saveUsers==='function')saveUsers();
+  if(typeof renderProfileChip==='function')renderProfileChip();
+  if(typeof logAudit==='function')logAudit('edit','Updated account profile: '+u.name);
+  renderAccountSettings();
+  toast('Account settings saved'+(np?' · password updated':''),'ok');
+}
+window.saveAccountSettings=saveAccountSettings;
+// populate the account form whenever the Settings page renders
+(function(){var _rsAcct=renderSettings;renderSettings=function(){if(typeof _rsAcct==='function')_rsAcct.apply(this,arguments);try{renderAccountSettings();}catch(e){}};window.renderSettings=renderSettings;})();
 
 // RFP PDF with Origin + ML Code
 generateRFPPDF=function(){
@@ -6966,8 +7195,10 @@ calcBids=function(){
     if(dk && !document.getElementById('dashContent')){
       var dc = document.createElement('div');
       dc.id = 'dashContent';
-      dc.innerHTML = dk.innerHTML;
-      dk.innerHTML = '';
+      /* MOVE the existing nodes into the wrapper (do NOT serialize innerHTML —
+         that replaces the live <canvas> elements with blank ones and orphans the
+         Chart.js instances, leaving the dashboard charts permanently empty). */
+      while(dk.firstChild){ dc.appendChild(dk.firstChild); }
       dk.appendChild(dc);
     }
   };

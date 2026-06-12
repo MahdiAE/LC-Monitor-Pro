@@ -1,6 +1,7 @@
 node_modules/
 package.json
 package-lock.json
+/*.js
 diag*.js
 verify*.js
 dbg.js
