@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Compliance Register — LC Monitor Pro</title>
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  var d = document.documentElement;
+  d.setAttribute('data-theme', p.get('theme') === 'dark' ? 'dark' : 'light');
+  if (p.get('lang') === 'ar') { d.lang = 'ar'; d.dir = 'rtl'; }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:            oklch(0.976 0.003 170);
+  --surface:       oklch(0.990 0.002 170);
+  --surface2:      oklch(0.946 0.005 170);
+  --ink:           oklch(0.215 0.020 170);
+  --ink2:          oklch(0.370 0.020 170);
+  --ink3:          oklch(0.455 0.020 170);
+  --line:          oklch(0.860 0.010 170);
+  --line2:         oklch(0.640 0.018 170);
+  --rule:          oklch(0.300 0.030 170);   /* heavy document rules */
+  --accent:        oklch(0.355 0.070 170);   /* institutional green — interactive */
+  --accent-ink:    oklch(0.985 0.003 170);
+  --chrome:        oklch(0.305 0.062 172);   /* letterhead band */
+  --chrome2:       oklch(0.262 0.056 172);   /* verdict field */
+  --chrome-ink:    oklch(0.965 0.006 170);
+  --chrome-ink2:   oklch(0.825 0.022 170);
+  --chrome-line:   oklch(0.420 0.050 172);
+  --gold:          oklch(0.720 0.115 88);    /* seal accent — used once */
+  --ok:            oklch(0.430 0.095 162);
+  --ok-bg:         oklch(0.930 0.028 162);
+  --warn:          oklch(0.480 0.105 70);
+  --warn-bg:       oklch(0.938 0.040 85);
+  --bad:           oklch(0.450 0.150 27);
+  --bad-bg:        oklch(0.932 0.030 27);
+  --info:          oklch(0.430 0.065 225);
+  --info-bg:       oklch(0.930 0.018 225);
+  --warn-on-chrome: oklch(0.840 0.110 85);
+  --bad-on-chrome:  oklch(0.820 0.090 27);
+  --r: 3px; --rs: 2px; --rl: 6px;
+  --z-nav: 100; --z-sticky: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-ui: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  --font-ar: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+[data-theme="dark"]{
+  --bg:            oklch(0.182 0.012 172);
+  --surface:       oklch(0.212 0.014 172);
+  --surface2:      oklch(0.252 0.016 172);
+  --ink:           oklch(0.930 0.008 170);
+  --ink2:          oklch(0.790 0.014 170);
+  --ink3:          oklch(0.690 0.014 170);
+  --line:          oklch(0.320 0.020 172);
+  --line2:         oklch(0.460 0.020 172);
+  --rule:          oklch(0.800 0.020 170);
+  --accent:        oklch(0.740 0.085 168);
+  --accent-ink:    oklch(0.170 0.030 172);
+  --chrome:        oklch(0.240 0.045 172);
+  --chrome2:       oklch(0.205 0.040 172);
+  --chrome-ink:    oklch(0.950 0.008 170);
+  --chrome-ink2:   oklch(0.800 0.020 170);
+  --chrome-line:   oklch(0.360 0.040 172);
+  --gold:          oklch(0.780 0.118 88);
+  --ok:            oklch(0.760 0.105 162);
+  --ok-bg:         oklch(0.282 0.030 162);
+  --warn:          oklch(0.800 0.115 80);
+  --warn-bg:       oklch(0.290 0.040 80);
+  --bad:           oklch(0.760 0.120 27);
+  --bad-bg:        oklch(0.282 0.040 27);
+  --info:          oklch(0.770 0.075 225);
+  --info-bg:       oklch(0.272 0.028 225);
+}
+html[lang="ar"]{
+  --font-display: 'Amiri', 'Source Serif 4', serif;
+}
+
+/* ============ BASE ============ */
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-ui); font-size:14px; line-height:1.55;
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+h1,h2,h3{ font-family:var(--font-display); margin:0; font-weight:600; }
+p{ margin:0; }
+a{ color:var(--accent); }
+svg{ display:block; }
+.mono, .ref{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+.ref{ direction:ltr; unicode-bidi:isolate; }
+.num{ font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--rs); }
+.band :focus-visible{ outline-color:var(--chrome-ink); }
+.skip{
+  position:absolute; inset-inline-start:-9999px; z-index:var(--z-toast);
+  background:var(--surface); color:var(--ink); padding:8px 14px; border:1px solid var(--rule);
+}
+.skip:focus{ inset-inline-start:12px; top:12px; }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ transition:none !important; animation:none !important; }
+}
+
+/* ============ LETTERHEAD BAND ============ */
+.band{ background:var(--chrome); color:var(--chrome-ink); }
+.band-inner{
+  max-width:1160px; margin-inline:auto; padding:26px 32px 22px;
+  display:flex; align-items:center; gap:24px; flex-wrap:wrap;
+}
+.brand{ display:flex; align-items:center; gap:18px; min-width:0; flex:1 1 380px; }
+.seal{ flex:0 0 auto; color:var(--chrome-ink); }
+.authority{
+  font-family:var(--font-display); font-size:19px; font-weight:600; line-height:1.25;
+  letter-spacing:.01em;
+}
+html[lang="ar"] .authority{ font-size:21px; }
+.authority-sub{
+  margin-top:4px; font-size:12.5px; color:var(--chrome-ink2); display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+}
+.authority-sub .wordmark{ font-weight:600; color:var(--chrome-ink); letter-spacing:.02em; }
+.authority-sub .sep{ color:var(--chrome-line); }
+.band-meta{
+  display:grid; grid-template-columns:auto auto; gap:3px 14px; font-size:12.5px;
+  padding-inline-start:24px; border-inline-start:1px solid var(--chrome-line);
+  align-self:center;
+}
+.band-meta dt{ margin:0; color:var(--chrome-ink2); }
+.band-meta dd{ margin:0; color:var(--chrome-ink); }
+.band-controls{ display:flex; align-items:center; gap:10px; margin-inline-start:auto; }
+.bctl{
+  appearance:none; cursor:pointer; font-family:var(--font-ui); font-size:12.5px; font-weight:500;
+  background:transparent; color:var(--chrome-ink); border:1px solid var(--chrome-line);
+  border-radius:var(--r); padding:7px 12px; display:inline-flex; align-items:center; gap:7px;
+  text-decoration:none; transition:background-color .15s var(--ease), border-color .15s var(--ease);
+}
+.bctl:hover{ background:var(--chrome2); border-color:var(--chrome-ink2); }
+.theme-icon{ width:14px; height:14px; }
+[data-theme="light"] .icon-sun{ display:none; }
+[data-theme="dark"] .icon-moon{ display:none; }
+
+/* ============ VERDICT — the ruling ============ */
+.verdict{ background:var(--chrome2); color:var(--chrome-ink); border-top:1px solid var(--chrome-line); }
+.verdict-inner{
+  max-width:1160px; margin-inline:auto; padding:34px 32px 38px;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:20px 56px; align-items:center;
+}
+.ruling-no{
+  font-size:11.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--chrome-ink2);
+  display:flex; align-items:center; gap:10px;
+}
+html[lang="ar"] .ruling-no{ letter-spacing:0; font-size:12.5px; }
+.ruling-no::after{ content:""; flex:1; max-width:120px; border-top:1px solid var(--chrome-line); }
+.verdict h1{
+  font-size:42px; line-height:1.12; font-weight:700; margin-top:12px; color:var(--chrome-ink);
+  display:flex; align-items:baseline; gap:14px; flex-wrap:wrap;
+}
+html[lang="ar"] .verdict h1{ font-size:46px; }
+.verdict-mark{
+  flex:0 0 auto; align-self:center; color:var(--warn-on-chrome);
+}
+.verdict-statement{
+  margin-top:14px; max-width:62ch; font-size:14.5px; line-height:1.7; color:var(--chrome-ink2);
+}
+.verdict-statement strong{ color:var(--chrome-ink); font-weight:600; }
+.keyfigs{
+  margin-top:26px; display:flex; flex-wrap:wrap;
+  border-top:1px solid var(--chrome-line);
+}
+.keyfig{ padding:14px 26px 2px 0; margin-inline-end:26px; border-inline-end:1px solid var(--chrome-line); }
+.keyfig:last-child{ border-inline-end:none; margin-inline-end:0; }
+html[dir="rtl"] .keyfig{ padding:14px 0 2px 26px; }
+.keyfig .v{ font-size:19px; font-weight:600; color:var(--chrome-ink); font-variant-numeric:tabular-nums; }
+.keyfig .k{ font-size:12px; color:var(--chrome-ink2); margin-top:1px; }
+/* seal gauge */
+.gauge-wrap{ text-align:center; }
+.gauge-caption{ margin-top:10px; font-size:12px; color:var(--chrome-ink2); max-width:220px; }
+.gauge-caption b{ color:var(--chrome-ink); font-weight:600; }
+
+/* ============ DOCUMENT BODY ============ */
+.doc{ max-width:1160px; margin-inline:auto; padding:8px 32px 48px; }
+.section{ padding-top:34px; }
+.sec-head{
+  border-top:2px solid var(--rule); padding-top:12px; margin-bottom:18px;
+  display:flex; align-items:baseline; gap:16px; flex-wrap:wrap;
+}
+.sec-head h2{ font-size:21px; font-weight:600; display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+html[lang="ar"] .sec-head h2{ font-size:23px; }
+.sec-no{ color:var(--ink3); font-weight:400; font-size:15px; font-family:var(--font-ui); }
+.sec-aside{ margin-inline-start:auto; font-size:12.5px; color:var(--ink3); }
+.drill{
+  font-size:12.5px; font-weight:500; color:var(--accent); text-decoration:none;
+  border-bottom:1px solid transparent; transition:border-color .15s var(--ease);
+}
+.drill:hover{ border-bottom-color:var(--accent); }
+.drill .arr::after{ content:"\2192"; margin-inline-start:5px; }
+html[dir="rtl"] .drill .arr::after{ content:"\2190"; }
+
+/* ruled register tables */
+.regtable{ width:100%; border-collapse:collapse; font-size:13.5px; }
+.regtable th{
+  text-align:start; font-weight:600; font-size:12px; color:var(--ink2);
+  padding:8px 14px; border-bottom:2px solid var(--rule); white-space:nowrap;
+}
+.regtable td{
+  padding:10px 14px; border-bottom:1px solid var(--line); vertical-align:baseline;
+}
+.regtable .num-cell{ text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.regtable th.num-cell{ text-align:end; }
+.regtable tfoot td{
+  border-bottom:none; border-top:2px solid var(--rule); font-weight:600; padding-top:11px;
+}
+.regtable tbody tr:hover td{ background:var(--surface2); }
+.cell-sub{ display:block; font-size:12px; color:var(--ink3); margin-top:1px; }
+.table-scroll{ overflow-x:auto; }
+.table-scroll .regtable{ min-width:640px; }
+
+/* status designation */
+.des{
+  display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
+  padding:2px 9px; border-radius:var(--r); border:1px solid; white-space:nowrap;
+}
+.des .g{ font-size:10px; line-height:1; }
+.des-ok{   color:var(--ok);   background:var(--ok-bg);   border-color:color-mix(in oklch, var(--ok) 40%, transparent); }
+.des-warn{ color:var(--warn); background:var(--warn-bg); border-color:color-mix(in oklch, var(--warn) 40%, transparent); }
+.des-bad{  color:var(--bad);  background:var(--bad-bg);  border-color:color-mix(in oklch, var(--bad) 40%, transparent); }
+.des-info{ color:var(--info); background:var(--info-bg); border-color:color-mix(in oklch, var(--info) 40%, transparent); }
+.des-mute{ color:var(--ink2); background:var(--surface2); border-color:var(--line2); }
+
+/* trend figure */
+.figure{ border:1px solid var(--line); border-radius:var(--rs); background:var(--surface); padding:18px 20px 10px; }
+.figure-caption{
+  display:flex; gap:18px; flex-wrap:wrap; align-items:baseline;
+  font-size:12.5px; color:var(--ink3); padding:10px 2px 8px; border-top:1px solid var(--line); margin-top:8px;
+}
+.figure-caption b{ color:var(--ink); font-weight:600; font-variant-numeric:tabular-nums; }
+.chart{ width:100%; height:auto; }
+html[dir="rtl"] .chart{ transform:scaleX(-1); }
+html[dir="rtl"] .chart text{ transform:scaleX(-1); transform-box:fill-box; transform-origin:center; }
+.chart .gridline{ stroke:var(--line); stroke-width:1; }
+.chart .gridline-major{ stroke:var(--line2); stroke-width:1; }
+.chart .axis-label{ fill:var(--ink3); font-family:var(--font-ui); font-size:10.5px; font-variant-numeric:tabular-nums; }
+.chart .series{ stroke:var(--accent); stroke-width:2; fill:none; }
+.chart .series-fill{ fill:color-mix(in oklch, var(--accent) 9%, transparent); }
+.chart .endpoint{ fill:var(--accent); }
+.chart .endlabel{ fill:var(--ink); font-family:var(--font-ui); font-weight:600; font-size:11.5px; font-variant-numeric:tabular-nums; }
+
+/* schedule (dl) columns */
+.sched-grid{ display:grid; grid-template-columns:1fr 1fr; gap:0 56px; }
+.sched h3{
+  font-size:15px; font-weight:600; padding-bottom:8px; border-bottom:1px solid var(--line2);
+}
+html[lang="ar"] .sched h3{ font-size:17px; }
+.sched dl{ margin:0; }
+.sched .row{
+  display:flex; justify-content:space-between; align-items:baseline; gap:18px;
+  padding:9px 2px; border-bottom:1px solid var(--line);
+}
+.sched dt{ color:var(--ink2); font-size:13.5px; }
+.sched dd{ margin:0; font-weight:600; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.sched dd small{ font-weight:400; color:var(--ink3); font-size:12px; }
+
+/* memoranda */
+.memos{ list-style:none; margin:0; padding:0; counter-reset:memo; }
+.memo{
+  counter-increment:memo; display:grid; grid-template-columns:54px minmax(0,1fr) auto;
+  gap:4px 18px; padding:14px 2px; border-bottom:1px solid var(--line); align-items:start;
+}
+.memo::before{
+  content:counter(memo, decimal-leading-zero);
+  grid-row:1 / span 2; font-family:var(--font-mono); font-size:18px; color:var(--ink3);
+  border-inline-end:1px solid var(--line); padding-top:2px; align-self:stretch;
+}
+.memo-title{ font-weight:600; font-size:13.5px; }
+.memo-body{ grid-column:2; font-size:13px; color:var(--ink2); max-width:78ch; }
+.memo-side{ grid-row:1 / span 2; grid-column:3; display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.memo-side .drill{ font-size:12px; }
+
+/* footer */
+.doc-footer{
+  margin-top:44px; border-top:2px solid var(--rule); padding-top:14px;
+  display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  font-size:12px; color:var(--ink3);
+}
+.doc-footer .endmark{ font-family:var(--font-display); font-size:13px; color:var(--ink2); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px){
+  .band-inner{ padding:22px 24px 18px; }
+  .verdict-inner{ padding:28px 24px 32px; grid-template-columns:1fr; }
+  .gauge-wrap{ justify-self:start; display:flex; align-items:center; gap:22px; text-align:start; }
+  .gauge-caption{ margin-top:0; }
+  .doc{ padding-inline:24px; }
+  .sched-grid{ gap:0 36px; }
+}
+@media (max-width: 720px){
+  .band-meta{ border-inline-start:none; padding-inline-start:0; }
+  .verdict h1{ font-size:32px; }
+  html[lang="ar"] .verdict h1{ font-size:36px; }
+  .sched-grid{ grid-template-columns:1fr; }
+  .sched + .sched{ margin-top:26px; }
+  .memo{ grid-template-columns:40px minmax(0,1fr); }
+  .memo::before{ font-size:15px; }
+  .memo-side{ grid-column:2; grid-row:auto; flex-direction:row; align-items:center; margin-top:4px; }
+  .keyfig{ padding-inline-end:18px; margin-inline-end:18px; }
+  .doc{ padding-inline:18px; }
+  .band-inner{ padding-inline:18px; }
+  .verdict-inner{ padding-inline:18px; }
+  .gauge-wrap{ flex-wrap:wrap; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-ar="تخطّ إلى المحتوى">Skip to content</a>
+
+<!-- ============ LETTERHEAD ============ -->
+<header class="band">
+  <div class="band-inner">
+    <div class="brand">
+      <svg class="seal" width="58" height="58" viewBox="0 0 58 58" aria-hidden="true">
+        <circle cx="29" cy="29" r="27.5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="29" cy="29" r="23" fill="none" stroke="currentColor" stroke-width="0.75" stroke-dasharray="1.5 3"/>
+        <circle cx="29" cy="29" r="18.5" fill="none" stroke="currentColor" stroke-width="0.75"/>
+        <text x="29" y="34.5" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="15" font-weight="600" fill="currentColor">LC</text>
+        <path d="M29 6.5 L30.8 10 L27.2 10 Z" fill="currentColor"/>
+        <path d="M29 51.5 L30.8 48 L27.2 48 Z" fill="currentColor"/>
+      </svg>
+      <div style="min-width:0">
+        <div class="authority" data-ar="هيئة المحتوى المحلي والمشتريات الحكومية">Local Content &amp; Government Procurement Authority</div>
+        <div class="authority-sub">
+          <span class="wordmark">LC Monitor Pro</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span data-ar="السجل التنفيذي لالتزام المحتوى المحلي">Executive Local Content Compliance Register</span>
+        </div>
+      </div>
+    </div>
+    <dl class="band-meta">
+      <dt data-ar="المرجع">Reference</dt>
+      <dd class="ref">LCMP/EXEC/2026-163</dd>
+      <dt data-ar="تاريخ الإصدار">Issued</dt>
+      <dd><span class="num">12</span> <span data-ar="يونيو 2026">June 2026</span></dd>
+    </dl>
+    <div class="band-controls">
+      <a class="bctl" href="site.html" data-keep-params><span data-ar="فتح السجل">Open register</span></a>
+      <button type="button" class="bctl" id="langToggle" lang="ar">العربية</button>
+      <button type="button" class="bctl" id="themeToggle" aria-label="Switch colour theme" data-ar-label="تبديل نمط الألوان">
+        <svg class="theme-icon icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7Z"/></svg>
+        <svg class="theme-icon icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M13 3l-1.4 1.4M4.4 11.6 3 13"/></svg>
+        <span data-ar="السمة">Theme</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ THE RULING ============ -->
+<section class="verdict" aria-labelledby="verdict-h">
+  <div class="verdict-inner">
+    <div>
+      <p class="ruling-no"><span data-ar="قرار الالتزام رقم 47/2026">Compliance Ruling No. 47/2026</span></p>
+      <h1 id="verdict-h">
+        <svg class="verdict-mark" width="26" height="26" viewBox="0 0 26 26" aria-hidden="true" fill="currentColor"><path d="M13 2.5 24.5 22.5H1.5Z" fill="none" stroke="currentColor" stroke-width="2"/><rect x="12" y="10" width="2" height="6.5"/><rect x="12" y="18.4" width="2" height="2"/></svg>
+        <span data-ar="يتطلب الانتباه">Attention required</span>
+      </h1>
+      <p class="verdict-statement" data-ar="يبلغ الالتزام المرجّح بالمحتوى المحلي عبر 31 عقدًا نشطًا 86.2% مقابل متوسط مستهدف 38.4% (المحقق 33.1%). عقدان في حالة مخالفة وأربعة تقارير متأخرة؛ ويبلغ إجمالي الغرامات المحتملة 19.6 مليون ريال عبر سبعة عقود.">Weighted Local Content compliance across 31 active contracts stands at 86.2% against an average target of 38.4% (achieved 33.1%). Two contracts are in breach and four reports are overdue; penalty exposure totals SAR 19.6M across seven contracts.</p>
+      <div class="keyfigs" role="list">
+        <div class="keyfig" role="listitem">
+          <div class="v num">SAR 2.84B</div>
+          <div class="k" data-ar="قيمة المحفظة">Portfolio value</div>
+        </div>
+        <div class="keyfig" role="listitem">
+          <div class="v"><span class="num">47</span> <small style="font-weight:400;font-size:13px" data-ar="(31 نشطًا)">(31 active)</small></div>
+          <div class="k" data-ar="العقود المسجّلة">Contracts on register</div>
+        </div>
+        <div class="keyfig" role="listitem">
+          <div class="v num">SAR 19.6M</div>
+          <div class="k" data-ar="الغرامات المحتملة">Penalty exposure</div>
+        </div>
+        <div class="keyfig" role="listitem">
+          <div class="v num">12</div>
+          <div class="k" data-ar="أدلة قيد المراجعة">Reviews pending</div>
+        </div>
+        <div class="keyfig" role="listitem">
+          <div class="v num">4</div>
+          <div class="k" data-ar="تقارير متأخرة">Reports overdue</div>
+        </div>
+      </div>
+    </div>
+    <div class="gauge-wrap">
+      <svg width="196" height="196" viewBox="0 0 196 196" role="img" aria-label="Seal gauge: weighted Local Content compliance 86.2 percent" data-ar-label="مؤشر دائري: الالتزام المرجّح بالمحتوى المحلي 86.2 بالمئة">
+        <!-- serrated seal edge -->
+        <circle cx="98" cy="98" r="95" fill="none" stroke="var(--chrome-line)" stroke-width="1.5" stroke-dasharray="2.5 4"/>
+        <circle cx="98" cy="98" r="88" fill="none" stroke="var(--chrome-line)" stroke-width="1"/>
+        <!-- track -->
+        <circle cx="98" cy="98" r="74" fill="none" stroke="var(--chrome-line)" stroke-width="7"/>
+        <!-- value arc: 86.2% of C=464.96 → 400.8 -->
+        <circle cx="98" cy="98" r="74" fill="none" stroke="var(--gold)" stroke-width="7"
+                stroke-dasharray="400.8 464.96" transform="rotate(-90 98 98)"/>
+        <text x="98" y="97" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-weight="700" font-size="40" fill="var(--chrome-ink)">86.2<tspan font-size="21">%</tspan></text>
+        <text x="98" y="121" text-anchor="middle" font-family="IBM Plex Sans Arabic, sans-serif" font-size="10.5" fill="var(--chrome-ink2)" data-ar="الالتزام المرجّح">WEIGHTED COMPLIANCE</text>
+        <text x="98" y="136" text-anchor="middle" font-family="IBM Plex Sans Arabic, sans-serif" font-size="10" fill="var(--chrome-ink2)" data-ar="المحتوى المحلي · يونيو 2026">LOCAL CONTENT · JUN 2026</text>
+      </svg>
+      <p class="gauge-caption"><span data-ar="المتوسط المستهدف">Average target</span> <b class="num">38.4%</b> · <span data-ar="المحقق">achieved</span> <b class="num">33.1%</b></p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DOCUMENT ============ -->
+<main class="doc" id="main">
+
+  <!-- SECTION I -->
+  <section class="section" aria-labelledby="s1h">
+    <header class="sec-head">
+      <h2 id="s1h"><span class="sec-no" data-ar="القسم الأول">Section I</span> <span data-ar="جدول التعرّض للغرامات">Schedule of Penalty Exposure</span></h2>
+      <span class="sec-aside"><a class="drill" href="site.html" data-keep-params><span data-ar="فتح سجل الغرامات">Open penalties register</span><span class="arr" aria-hidden="true"></span></a></span>
+    </header>
+    <div class="table-scroll">
+      <table class="regtable">
+        <thead>
+          <tr>
+            <th scope="col" data-ar="العقد">Contract</th>
+            <th scope="col" data-ar="المورد">Supplier</th>
+            <th scope="col" data-ar="الحالة">Status</th>
+            <th scope="col" class="num-cell" data-ar="العجز (نقطة)">Shortfall (pts)</th>
+            <th scope="col" class="num-cell" data-ar="الغرامة المحتملة (مليون ر.س)">Exposure (SAR M)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="ref">C-2024-0210</td>
+            <td><span data-ar="شركة الكابلات السعودية">Saudi Cable Co.</span><span class="cell-sub" data-ar="كابلات الطاقة — هيئة المياه السعودية">Power cabling — Saudi Water Authority</span></td>
+            <td><span class="des des-bad"><span class="g" aria-hidden="true">✕</span><span data-ar="مخالفة">Breach</span></span></td>
+            <td class="num-cell">7.6</td>
+            <td class="num-cell">4.8</td>
+          </tr>
+          <tr>
+            <td class="ref">C-2024-0142</td>
+            <td><span data-ar="شركة التصنيع الوطنية">National Industrialization Co.</span><span class="cell-sub" data-ar="معدات طبية — وزارة الصحة">Medical equipment — Ministry of Health</span></td>
+            <td><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+            <td class="num-cell">3.8</td>
+            <td class="num-cell">3.1</td>
+          </tr>
+          <tr>
+            <td class="ref">C-2023-0154</td>
+            <td><span data-ar="كابلات الرياض">Riyadh Cables</span><span class="cell-sub" data-ar="كابلات جهد متوسط — هيئة المياه السعودية">MV cables — Saudi Water Authority</span></td>
+            <td><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+            <td class="num-cell">4.5</td>
+            <td class="num-cell">2.2</td>
+          </tr>
+          <tr>
+            <td class="ref">C-2025-0203</td>
+            <td><span data-ar="المتقدمة للبتروكيماويات">Advanced Petrochemical</span><span class="cell-sub" data-ar="مواد بوليمرية — الهيئة الملكية للجبيل وينبع">Polymer feedstock — Royal Commission Jubail &amp; Yanbu</span></td>
+            <td><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+            <td class="num-cell">2.1</td>
+            <td class="num-cell">1.9</td>
+          </tr>
+          <tr>
+            <td colspan="2"><span data-ar="ثلاثة عقود أخرى دون عتبة الإفصاح الفردي">Three further contracts below individual disclosure threshold</span></td>
+            <td><span class="des des-mute"><span class="g" aria-hidden="true">○</span><span data-ar="متفرقات">Various</span></span></td>
+            <td class="num-cell">—</td>
+            <td class="num-cell">7.6</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="4" data-ar="الإجمالي — سبعة عقود">Total — seven contracts</td>
+            <td class="num-cell">19.6</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECTION II -->
+  <section class="section" aria-labelledby="s2h">
+    <header class="sec-head">
+      <h2 id="s2h"><span class="sec-no" data-ar="القسم الثاني">Section II</span> <span data-ar="اتجاه الالتزام">Compliance Trend</span></h2>
+      <span class="sec-aside" data-ar="يوليو 2025 — يونيو 2026">July 2025 — June 2026</span>
+    </header>
+    <figure class="figure" style="margin:0">
+      <svg class="chart" viewBox="0 0 760 224" role="img" aria-label="Line figure: monthly weighted compliance rising from 83.1 percent in July 2025 to 86.2 percent in June 2026" data-ar-label="رسم خطي: الالتزام المرجّح الشهري يرتفع من 83.1 بالمئة في يوليو 2025 إلى 86.2 بالمئة في يونيو 2026">
+        <!-- gridlines: 82,84,86,88 -->
+        <line class="gridline-major" x1="48" y1="180" x2="712" y2="180"/>
+        <line class="gridline" x1="48" y1="125.3" x2="712" y2="125.3"/>
+        <line class="gridline" x1="48" y1="70.7" x2="712" y2="70.7"/>
+        <line class="gridline" x1="48" y1="16" x2="712" y2="16"/>
+        <text class="axis-label" x="40" y="184" text-anchor="end">82</text>
+        <text class="axis-label" x="40" y="129.3" text-anchor="end">84</text>
+        <text class="axis-label" x="40" y="74.7" text-anchor="end">86</text>
+        <text class="axis-label" x="40" y="20" text-anchor="end">88%</text>
+        <!-- series -->
+        <polygon class="series-fill" points="48,149.9 108.4,130.8 168.7,108.9 229.1,119.9 289.5,98 349.8,78.9 410.2,92.5 470.5,73.4 530.9,59.7 591.3,70.7 651.6,57 712,65.2 712,180 48,180"/>
+        <polyline class="series" points="48,149.9 108.4,130.8 168.7,108.9 229.1,119.9 289.5,98 349.8,78.9 410.2,92.5 470.5,73.4 530.9,59.7 591.3,70.7 651.6,57 712,65.2"/>
+        <rect class="endpoint" x="708.5" y="61.7" width="7" height="7"/>
+        <text class="endlabel" x="712" y="48" text-anchor="end">86.2%</text>
+        <!-- month labels (alternating) -->
+        <text class="axis-label" x="48" y="202" text-anchor="middle" data-ar="يوليو">Jul</text>
+        <text class="axis-label" x="168.7" y="202" text-anchor="middle" data-ar="سبتمبر">Sep</text>
+        <text class="axis-label" x="289.5" y="202" text-anchor="middle" data-ar="نوفمبر">Nov</text>
+        <text class="axis-label" x="410.2" y="202" text-anchor="middle" data-ar="يناير 26">Jan ’26</text>
+        <text class="axis-label" x="530.9" y="202" text-anchor="middle" data-ar="مارس">Mar</text>
+        <text class="axis-label" x="651.6" y="202" text-anchor="middle" data-ar="مايو">May</text>
+        <text class="axis-label" x="712" y="218" text-anchor="middle" data-ar="يونيو">Jun</text>
+      </svg>
+      <figcaption class="figure-caption">
+        <span><span data-ar="التغيّر خلال 12 شهرًا">12-month movement</span> <b class="num">+3.1 pts</b></span>
+        <span><span data-ar="الذروة">Peak</span> <b class="num">86.5%</b> <span data-ar="(مايو 2026)">(May 2026)</span></span>
+        <span><span data-ar="المتوسط المستهدف">Average target</span> <b class="num">38.4%</b></span>
+        <span><span data-ar="المتوسط المحقق">Average achieved</span> <b class="num">33.1%</b></span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- SECTION III -->
+  <section class="section" aria-labelledby="s3h">
+    <header class="sec-head">
+      <h2 id="s3h"><span class="sec-no" data-ar="القسم الثالث">Section III</span> <span data-ar="المحفظة وخطة الترسية">Portfolio &amp; Award Pipeline</span></h2>
+      <span class="sec-aside" data-ar="كما في 12 يونيو 2026">As of 12 June 2026</span>
+    </header>
+    <div class="sched-grid">
+      <div class="sched">
+        <h3 data-ar="المحفظة">Portfolio</h3>
+        <dl>
+          <div class="row"><dt data-ar="قيمة المحفظة">Portfolio value</dt><dd class="num">SAR 2.84B</dd></div>
+          <div class="row"><dt data-ar="العقود المسجّلة">Contracts on register</dt><dd><span class="num">47</span> <small data-ar="(31 نشطًا)">(31 active)</small></dd></div>
+          <div class="row"><dt data-ar="مشتريات المنتج الوطني المسلّمة">National Product purchases delivered</dt><dd class="num">SAR 412M</dd></div>
+          <div class="row"><dt data-ar="بنود القائمة الإلزامية المسلّمة">Mandatory-List items delivered</dt><dd class="num">SAR 268M</dd></div>
+          <div class="row"><dt data-ar="أدلة قيد المراجعة">Evidence pending review</dt><dd class="num">12</dd></div>
+          <div class="row"><dt data-ar="تقارير مفقودة">Reports missing</dt><dd><span class="num">6</span> <small data-ar="(4 متأخرة)">(4 overdue)</small></dd></div>
+        </dl>
+      </div>
+      <div class="sched">
+        <h3 data-ar="خطة الترسية">Award pipeline</h3>
+        <dl>
+          <div class="row"><dt data-ar="منافسات قيد الإعداد">Draft RFPs in preparation</dt><dd class="num">5</dd></div>
+          <div class="row"><dt data-ar="جاهزة للطرح">Ready to publish</dt><dd class="num">3</dd></div>
+          <div class="row"><dt data-ar="تقييمات جارية">Open evaluations</dt><dd class="num">4</dd></div>
+          <div class="row"><dt data-ar="عقود مرساة منذ بداية السنة">Contracts awarded YTD</dt><dd class="num">19</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION IV -->
+  <section class="section" aria-labelledby="s4h">
+    <header class="sec-head">
+      <h2 id="s4h"><span class="sec-no" data-ar="القسم الرابع">Section IV</span> <span data-ar="المذكرات الرسمية">Official Memoranda</span></h2>
+      <span class="sec-aside"><span class="num">5</span> <span data-ar="مذكرات تتطلب الاطلاع">items requiring attention</span></span>
+    </header>
+    <ol class="memos">
+      <li class="memo">
+        <p class="memo-title"><span class="ref">C-2024-0210</span> — <span data-ar="تقرير دوري متأخر 21 يومًا">Periodic report overdue by 21 days</span></p>
+        <p class="memo-body" data-ar="شركة الكابلات السعودية — العقد في حالة مخالفة؛ بند الغرامة بقيمة 4.8 مليون ر.س قائم. خطاب الاستثناء قيد التسجيل.">Saudi Cable Co. — contract stands in breach; the SAR 4.8M penalty clause is engaged. Exception letter pending entry.</p>
+        <span class="memo-side"><span class="des des-bad"><span class="g" aria-hidden="true">✕</span><span data-ar="مخالفة">Breach</span></span><a class="drill" href="site.html" data-keep-params><span data-ar="فتح الملف">Open file</span><span class="arr" aria-hidden="true"></span></a></span>
+      </li>
+      <li class="memo">
+        <p class="memo-title"><span class="ref">C-2024-0142</span> — <span data-ar="اتساع العجز في المحتوى المحلي">LC shortfall widening</span></p>
+        <p class="memo-body" data-ar="شركة التصنيع الوطنية — اتسع العجز إلى 3.8 نقطة مقابل مستهدف 40%. يُوصى بمراجعة خطة التوريد المحلي.">National Industrialization Co. — shortfall widened to 3.8 points against a 40% target. Local sourcing plan review recommended.</p>
+        <span class="memo-side"><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span><a class="drill" href="site.html" data-keep-params><span data-ar="فتح الملف">Open file</span><span class="arr" aria-hidden="true"></span></a></span>
+      </li>
+      <li class="memo">
+        <p class="memo-title"><span data-ar="تراكم مراجعات الأدلة">Evidence review backlog</span></p>
+        <p class="memo-body" data-ar="12 بندًا من الأدلة بانتظار المراجعة منذ أكثر من 5 أيام عبر 4 عقود. يلزم توجيه المراجعين.">12 evidence items have awaited review for more than 5 days across 4 contracts. Reviewer assignment required.</p>
+        <span class="memo-side"><span class="des des-info"><span class="g" aria-hidden="true">◆</span><span data-ar="قيد المراجعة">Pending</span></span><a class="drill" href="site.html" data-keep-params><span data-ar="فتح قائمة المراجعة">Open review queue</span><span class="arr" aria-hidden="true"></span></a></span>
+      </li>
+      <li class="memo">
+        <p class="memo-title"><span data-ar="تحديث القائمة الإلزامية — أبريل 2026">Mandatory List update — April 2026</span></p>
+        <p class="memo-body" data-ar="14 بندًا في جداول الكميات تتطلب إعادة مطابقة مع القائمة المحدّثة قبل دورة التقارير المقبلة.">14 BoQ lines require re-matching against the updated list before the next reporting cycle.</p>
+        <span class="memo-side"><span class="des des-info"><span class="g" aria-hidden="true">◆</span><span data-ar="إجراء مطلوب">Action required</span></span><a class="drill" href="site.html" data-keep-params><span data-ar="فتح المطابقة">Open matching</span><span class="arr" aria-hidden="true"></span></a></span>
+      </li>
+      <li class="memo">
+        <p class="memo-title"><span class="ref">C-2025-0031</span> — <span data-ar="التقرير النهائي يستحق خلال 9 أيام">Final report due in 9 days</span></p>
+        <p class="memo-body" data-ar="أسترا الصناعية — التقرير النهائي للمحتوى المحلي يستحق في 21 يونيو 2026. آخر التزام مسجّل 41.0% مقابل مستهدف 45%.">Astra Industrial — final Local Content report due 21 June 2026. Last recorded compliance 41.0% against a 45% target.</p>
+        <span class="memo-side"><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="استحقاق قريب">Due soon</span></span><a class="drill" href="site.html" data-keep-params><span data-ar="فتح الملف">Open file</span><span class="arr" aria-hidden="true"></span></a></span>
+      </li>
+    </ol>
+  </section>
+
+  <footer class="doc-footer">
+    <span data-ar="صادر عن LC Monitor Pro نيابةً عن هيئة المحتوى المحلي والمشتريات الحكومية. الأرقام كما في 12 يونيو 2026، 09:00 بتوقيت السعودية.">Prepared by LC Monitor Pro for the Local Content &amp; Government Procurement Authority. Figures as of 12 June 2026, 09:00 AST.</span>
+    <span class="endmark" data-ar="— نهاية التقرير —">— End of report —</span>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var D = document.documentElement;
+  var EN_TITLE = 'Executive Compliance Register — LC Monitor Pro';
+  var AR_TITLE = 'السجل التنفيذي للالتزام — LC Monitor Pro';
+
+  function syncParams(){
+    var p = new URLSearchParams(location.search);
+    p.set('theme', D.getAttribute('data-theme'));
+    p.set('lang', D.lang);
+    try{ history.replaceState(null, '', '?' + p.toString()); }catch(e){}
+    document.querySelectorAll('a[data-keep-params]').forEach(function(a){
+      var base = a.getAttribute('href').split('?')[0];
+      a.setAttribute('href', base + '?' + p.toString());
+    });
+  }
+
+  function applyLang(lang){
+    D.lang = lang;
+    D.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-ar]').forEach(function(el){
+      if (el.dataset.en == null) el.dataset.en = el.textContent;
+      el.textContent = (lang === 'ar') ? el.dataset.ar : el.dataset.en;
+    });
+    document.querySelectorAll('[data-ar-label]').forEach(function(el){
+      if (el.dataset.enLabel == null) el.dataset.enLabel = el.getAttribute('aria-label') || '';
+      el.setAttribute('aria-label', (lang === 'ar') ? el.dataset.arLabel : el.dataset.enLabel);
+    });
+    var lt = document.getElementById('langToggle');
+    if (lt){ lt.textContent = (lang === 'ar') ? 'English' : 'العربية'; lt.setAttribute('lang', lang === 'ar' ? 'en' : 'ar'); }
+    document.title = (lang === 'ar') ? AR_TITLE : EN_TITLE;
+    syncParams();
+  }
+
+  document.getElementById('langToggle').addEventListener('click', function(){
+    applyLang(D.lang === 'ar' ? 'en' : 'ar');
+  });
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    D.setAttribute('data-theme', D.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    syncParams();
+  });
+
+  if (D.lang === 'ar') applyLang('ar'); else syncParams();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Dashboard — LC Monitor Pro</title>
+<script>
+/* Read URL params before first paint */
+(function () {
+  var d = document.documentElement, p = new URLSearchParams(location.search);
+  var t = p.get('theme'); if (t === 'dark' || t === 'light') d.setAttribute('data-theme', t);
+  var l = p.get('lang'); if (l === 'ar') { d.lang = 'ar'; d.dir = 'rtl'; }
+  else if (l === 'en') { d.lang = 'en'; d.dir = 'ltr'; }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* surfaces */
+  --bg: oklch(0.985 0.002 255);
+  --surface: oklch(1 0 0);
+  --surface2: oklch(0.965 0.004 255);
+  /* ink */
+  --ink: oklch(0.235 0.030 262);
+  --ink2: oklch(0.430 0.022 262);
+  --ink3: oklch(0.510 0.018 262);
+  /* lines */
+  --line: oklch(0.905 0.006 255);
+  --line2: oklch(0.840 0.010 255);
+  /* brand */
+  --accent: oklch(0.546 0.215 262);          /* ≈ #2563eb */
+  --accent-ink: oklch(0.480 0.200 262);
+  --violet: oklch(0.541 0.247 293);          /* ≈ #7c3aed */
+  --accent-tint: oklch(0.946 0.022 262);
+  /* semantics (text-safe on --bg) */
+  --ok: oklch(0.455 0.110 155);
+  --ok-tint: oklch(0.950 0.026 155);
+  --warn: oklch(0.470 0.100 70);
+  --warn-tint: oklch(0.955 0.030 85);
+  --bad: oklch(0.505 0.180 27);
+  --bad-tint: oklch(0.950 0.020 27);
+  --info: oklch(0.480 0.150 240);
+  --info-tint: oklch(0.945 0.020 240);
+  --warn-bar: oklch(0.700 0.130 75);
+  --bad-bar: oklch(0.580 0.190 27);
+  /* radii */
+  --r: 8px; --rs: 5px; --rl: 14px;
+  /* type */
+  --font-display: "Bricolage Grotesque", "IBM Plex Sans Arabic", sans-serif;
+  --font-ui: "IBM Plex Sans", "IBM Plex Sans Arabic", sans-serif;
+  --font-ar: "IBM Plex Sans Arabic", "IBM Plex Sans", sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Sans Arabic", monospace;
+  /* z-scale */
+  --z-nav: 10; --z-sticky: 20; --z-overlay: 30; --z-modal: 40; --z-toast: 50;
+  /* rhythm */
+  --measure: 1120px;
+}
+[data-theme="dark"] {
+  --bg: oklch(0.165 0.022 262);
+  --surface: oklch(0.200 0.024 262);
+  --surface2: oklch(0.235 0.026 262);
+  --ink: oklch(0.940 0.008 262);
+  --ink2: oklch(0.760 0.016 262);
+  --ink3: oklch(0.650 0.020 262);
+  --line: oklch(0.285 0.022 262);
+  --line2: oklch(0.350 0.024 262);
+  --accent: oklch(0.680 0.160 262);
+  --accent-ink: oklch(0.730 0.140 262);
+  --violet: oklch(0.700 0.180 293);
+  --accent-tint: oklch(0.280 0.060 262);
+  --ok: oklch(0.760 0.130 155);
+  --ok-tint: oklch(0.270 0.040 155);
+  --warn: oklch(0.800 0.120 80);
+  --warn-tint: oklch(0.280 0.040 80);
+  --bad: oklch(0.740 0.150 27);
+  --bad-tint: oklch(0.280 0.045 27);
+  --info: oklch(0.750 0.110 240);
+  --info-tint: oklch(0.270 0.040 240);
+  --warn-bar: oklch(0.720 0.130 80);
+  --bad-bar: oklch(0.640 0.190 27);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { height: 100%; }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui); font-size: 15px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+html[lang="ar"] body { font-family: var(--font-ar); }
+
+/* ---- language switching (CSS, pre-paint safe) ---- */
+.ar { display: none; }
+html[lang="ar"] .ar { display: revert; }
+html[lang="ar"] .en { display: none; }
+
+/* ---- primitives ---- */
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+[data-status] { font-weight: 500; }
+
+.wrap { max-width: var(--measure); margin-inline: auto; padding-inline: 32px; }
+@media (max-width: 700px) { .wrap { padding-inline: 20px; } }
+
+/* ---- topbar ---- */
+.topbar {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  background: var(--bg); border-bottom: 1px solid var(--line);
+}
+.topbar-in {
+  display: flex; align-items: center; gap: 14px; height: 60px;
+}
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+.brand-mark {
+  width: 28px; height: 28px; border-radius: 7px; flex: none;
+  background: linear-gradient(135deg, oklch(0.546 0.215 262), oklch(0.541 0.247 293));
+  display: grid; place-items: center; color: #fff;
+}
+.brand-name { font-family: var(--font-display); font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
+html[lang="ar"] .brand-name { font-family: var(--font-ar); font-weight: 700; letter-spacing: 0; }
+.brand-sub { color: var(--ink3); font-size: 13px; border-inline-start: 1px solid var(--line2); padding-inline-start: 14px; }
+.topbar-spacer { flex: 1; }
+.asof { color: var(--ink3); font-size: 13px; white-space: nowrap; }
+@media (max-width: 860px) { .asof, .brand-sub { display: none; } }
+
+.ctl {
+  appearance: none; border: 1px solid var(--line2); background: var(--surface);
+  color: var(--ink2); border-radius: var(--r); height: 34px; min-width: 34px;
+  padding-inline: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  font: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: border-color 160ms cubic-bezier(.22,1,.36,1), color 160ms cubic-bezier(.22,1,.36,1), background-color 160ms cubic-bezier(.22,1,.36,1);
+}
+.ctl:hover { border-color: var(--accent); color: var(--ink); }
+.ctl svg { width: 16px; height: 16px; }
+.ctl .moon { display: none; }
+[data-theme="dark"] .ctl .moon { display: block; }
+[data-theme="dark"] .ctl .sun { display: none; }
+.go-workbench {
+  display: inline-flex; align-items: center; gap: 7px; text-decoration: none;
+  height: 34px; padding-inline: 13px; border-radius: var(--r);
+  background: var(--ink); color: var(--bg); font-size: 13px; font-weight: 500; white-space: nowrap;
+  transition: opacity 160ms cubic-bezier(.22,1,.36,1);
+}
+.go-workbench:hover { opacity: 0.86; }
+.go-workbench svg { width: 14px; height: 14px; }
+html[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+@media (max-width: 560px) { .go-workbench .lbl { display: none; } .go-workbench { padding-inline: 10px; } }
+
+/* ---- hero verdict ---- */
+.hero { padding-block: 72px 60px; }
+.kicker { font-size: 13.5px; color: var(--ink3); margin: 0 0 18px; }
+.kicker strong { color: var(--ink2); font-weight: 600; }
+.verdict {
+  margin: 0; max-width: 21ch;
+  font-family: var(--font-display); font-weight: 600; letter-spacing: -0.022em;
+  font-size: clamp(2.05rem, 1.1rem + 3.4vw, 3.4rem); line-height: 1.12;
+  text-wrap: balance;
+}
+html[lang="ar"] .verdict { font-family: var(--font-ar); font-weight: 700; letter-spacing: 0; line-height: 1.3; max-width: 26ch; }
+.verdict .vnum { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.04em; }
+.verdict .vwarn {
+  color: var(--warn); white-space: nowrap; position: relative; display: inline-block;
+}
+.verdict .vwarn::after {
+  content: ""; position: absolute; inset-inline: 0; bottom: -0.10em; height: 3px;
+  background: var(--warn); border-radius: 2px; opacity: 0.55;
+  transform-origin: 0 50%;
+  animation: sweep 700ms cubic-bezier(.22,1,.36,1) both 150ms;
+}
+html[dir="rtl"] .verdict .vwarn::after { transform-origin: 100% 50%; }
+@keyframes sweep { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.drivers { margin: 22px 0 0; font-size: 16px; color: var(--ink2); max-width: 62ch; }
+.drivers a { color: var(--accent-ink); text-decoration: none; border-bottom: 1px solid var(--line2); transition: border-color 160ms; font-weight: 500; }
+.drivers a:hover { border-color: var(--accent-ink); }
+@media (max-width: 700px) { .hero { padding-block: 48px 44px; } }
+
+/* ---- three consequential figures: ledger row, not cards ---- */
+.figures {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  border-block: 1px solid var(--line); padding-block: 36px;
+}
+.figure { padding-inline-end: 36px; }
+.figure + .figure { border-inline-start: 1px solid var(--line); padding-inline-start: 36px; }
+.figure h2 { margin: 0 0 10px; font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink2); }
+.figure-val { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; font-size: 40px; line-height: 1; letter-spacing: -0.03em; }
+.figure-val .unit { font-size: 16px; font-weight: 500; color: var(--ink3); letter-spacing: 0; margin-inline-end: 6px; }
+.figure-val .qual { font-family: var(--font-ui); font-size: 15px; font-weight: 500; color: var(--warn); letter-spacing: 0; margin-inline-start: 8px; }
+html[lang="ar"] .figure-val .qual, html[lang="ar"] .figure-val .unit { font-family: var(--font-ar); }
+.figure p { margin: 12px 0 0; font-size: 13.5px; color: var(--ink3); max-width: 34ch; }
+.figure-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 12px; font-size: 13px; font-weight: 500; color: var(--accent-ink); text-decoration: none; }
+.figure-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.figure-link svg { width: 13px; height: 13px; }
+@media (max-width: 940px) {
+  .figures { grid-template-columns: 1fr; padding-block: 8px; }
+  .figure { padding: 24px 0; }
+  .figure + .figure { border-inline-start: 0; border-top: 1px solid var(--line); padding-inline-start: 0; }
+}
+
+/* ---- sections ---- */
+section.band { padding-block: 56px; }
+section.band + section.band { border-top: 1px solid var(--line); }
+.band-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+.band-head h2 {
+  margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 22px; letter-spacing: -0.015em;
+}
+html[lang="ar"] .band-head h2 { font-family: var(--font-ar); font-weight: 700; letter-spacing: 0; }
+.band-head .meta { font-size: 13.5px; color: var(--ink3); }
+.band-head .spacer { flex: 1; }
+.band-note { font-size: 13.5px; color: var(--ink3); margin: 0 0 28px; }
+
+/* ---- trend chart ---- */
+.chart-frame { position: relative; margin-top: 26px; }
+.chart-plot { position: relative; }
+.chart-plot svg { display: block; width: 100%; height: 280px; }
+@media (max-width: 700px) { .chart-plot svg { height: 200px; } }
+.gridline { stroke: var(--line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.gridline.base { stroke: var(--line2); }
+.trend-area { fill: var(--accent); opacity: 0.07; }
+.trend-line { fill: none; stroke: var(--accent); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+html[dir="rtl"] .trend-geom { transform: scaleX(-1); transform-origin: center; transform-box: view-box; }
+.ylab {
+  position: absolute; inset-inline-start: 0; transform: translateY(-50%);
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 11.5px; color: var(--ink3); background: var(--bg); padding-inline-end: 8px; line-height: 1;
+}
+/* gradient endpoint: the one active indicator */
+.endpoint { position: absolute; left: 98.08%; top: 30.53%; width: 12px; height: 12px; margin: -6px 0 0 -6px; }
+html[dir="rtl"] .endpoint { left: 1.92%; }
+.endpoint .dot {
+  position: absolute; inset: 0; border-radius: 50%;
+  background: linear-gradient(135deg, oklch(0.546 0.215 262), oklch(0.541 0.247 293));
+  box-shadow: 0 0 0 3px var(--bg);
+}
+.endpoint .halo {
+  position: absolute; inset: -7px; border-radius: 50%;
+  border: 1.5px solid var(--violet); opacity: 0;
+  animation: halo 2.6s cubic-bezier(.22,1,.36,1) infinite 800ms;
+}
+@keyframes halo { 0% { transform: scale(0.45); opacity: 0.8; } 60% { transform: scale(1); opacity: 0; } 100% { opacity: 0; } }
+.end-tag {
+  position: absolute; left: 98.08%; top: 30.53%;
+  transform: translate(-100%, -160%);
+  font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 600; color: var(--ink); white-space: nowrap;
+}
+html[dir="rtl"] .end-tag { left: 1.92%; transform: translate(100%, -160%); }
+.months { display: flex; justify-content: space-between; margin-top: 12px; padding-inline-start: 0; }
+.months span { font-size: 11.5px; color: var(--ink3); flex: 1; text-align: center; }
+.months span:first-child { text-align: start; }
+.months span:last-child { text-align: end; }
+@media (max-width: 700px) { .months span:nth-child(even) { visibility: hidden; } }
+.chart-foot { display: flex; gap: 24px; margin-top: 22px; font-size: 13.5px; color: var(--ink3); flex-wrap: wrap; }
+.chart-foot .delta { color: var(--ok); font-weight: 500; }
+.chart-foot .num { color: inherit; }
+
+/* ---- penalty bars ---- */
+.bars { margin-top: 30px; display: grid; gap: 0; }
+.bar-row {
+  display: grid; grid-template-columns: minmax(220px, 300px) 1fr 110px; gap: 20px; align-items: center;
+  padding-block: 13px;
+}
+.bar-row + .bar-row { border-top: 1px solid var(--line); }
+.bar-id { min-width: 0; }
+.bar-id .cno { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 500; color: var(--ink); }
+.bar-id .sup { display: block; font-size: 12.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { position: relative; height: 6px; border-radius: 3px; background: var(--surface2); }
+.bar-fill { position: absolute; inset-block: 0; inset-inline-start: 0; border-radius: 3px; background: var(--warn-bar); }
+.bar-fill.is-bad { background: var(--bad-bar); }
+.bar-val { text-align: end; }
+.bar-val .num { font-size: 14px; font-weight: 600; }
+.bar-val .st { display: block; font-size: 11.5px; }
+.bar-val .st.bad { color: var(--bad); }
+.bar-val .st.warn { color: var(--warn); }
+.bars-foot { display: flex; justify-content: space-between; gap: 16px; border-top: 1px solid var(--line2); margin-top: 2px; padding-top: 14px; font-size: 13.5px; color: var(--ink2); flex-wrap: wrap; }
+.bars-foot .num { font-weight: 600; color: var(--ink); }
+@media (max-width: 700px) {
+  .bar-row { grid-template-columns: 1fr 92px; grid-template-areas: "id val" "track track"; row-gap: 8px; }
+  .bar-id { grid-area: id; } .bar-track { grid-area: track; } .bar-val { grid-area: val; }
+}
+
+/* ---- portfolio & pipeline ledgers ---- */
+.ledgers { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-top: 8px; }
+@media (max-width: 940px) { .ledgers { grid-template-columns: 1fr; gap: 40px; } }
+.ledger h3 { margin: 0 0 6px; font-size: 14px; font-weight: 600; color: var(--ink); }
+.ledger dl { margin: 0; }
+.ledger .lrow { display: flex; align-items: baseline; gap: 12px; padding-block: 11px; border-bottom: 1px solid var(--line); }
+.ledger dt { font-size: 13.5px; color: var(--ink2); }
+.ledger .dots { flex: 1; border-bottom: 1px dotted var(--line2); transform: translateY(-3px); }
+.ledger dd { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13.5px; font-weight: 500; color: var(--ink); white-space: nowrap; }
+.ledger dd small { font-family: var(--font-ui); font-weight: 400; color: var(--ink3); font-size: 12px; }
+html[lang="ar"] .ledger dd small { font-family: var(--font-ar); }
+
+/* ---- alerts ---- */
+.alerts { margin-top: 8px; }
+.alert {
+  display: grid; grid-template-columns: 128px 1fr auto; gap: 18px; align-items: baseline;
+  padding-block: 15px; border-bottom: 1px solid var(--line);
+  text-decoration: none; transition: background-color 160ms cubic-bezier(.22,1,.36,1);
+}
+.alert:hover { background: var(--surface2); }
+.sev { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 600; white-space: nowrap; }
+.sev::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.sev.bad { color: var(--bad); }
+.sev.warn { color: var(--warn); }
+.sev.info { color: var(--info); }
+.alert-body { font-size: 14px; color: var(--ink); min-width: 0; }
+.alert-body .cno { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; font-weight: 500; }
+.alert-body small { display: block; color: var(--ink3); font-size: 12.5px; margin-top: 2px; }
+.alert .chev { color: var(--ink3); align-self: center; }
+.alert .chev svg { width: 15px; height: 15px; display: block; }
+@media (max-width: 700px) {
+  .alert { grid-template-columns: 1fr auto; }
+  .sev { grid-column: 1 / -1; }
+}
+
+/* ---- footer ---- */
+.foot { padding-block: 36px 56px; color: var(--ink3); font-size: 12.5px; display: flex; gap: 8px; flex-wrap: wrap; }
+.foot .sep { color: var(--line2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .verdict .vwarn::after { transform: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="#" aria-label="LC Monitor Pro">
+      <span class="brand-mark" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2v10h8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-name">LC Monitor Pro</span>
+    </a>
+    <span class="brand-sub"><span class="en">Executive Dashboard</span><span class="ar">لوحة المتابعة التنفيذية</span></span>
+    <div class="topbar-spacer"></div>
+    <span class="asof"><span class="en">As of 12 June 2026</span><span class="ar">كما في 12 يونيو 2026</span></span>
+    <button class="ctl" id="langBtn" type="button">
+      <span class="en">عربي</span><span class="ar">EN</span>
+    </button>
+    <button class="ctl" id="themeBtn" type="button" aria-label="Toggle theme" data-aria-en="Toggle theme" data-aria-ar="تبديل المظهر">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
+    </button>
+    <a class="go-workbench" id="wbLink" href="site.html">
+      <span class="lbl"><span class="en">Open workbench</span><span class="ar">فتح منصة العمل</span></span>
+      <svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+</header>
+
+<main class="wrap" id="main">
+
+  <!-- Verdict -->
+  <section class="hero" aria-labelledby="verdictH">
+    <p class="kicker">
+      <span class="en"><strong>47 contracts</strong> · SAR 2.84B under monitoring · 12 June 2026</span>
+      <span class="ar"><strong>47 عقدًا</strong> · 2.84 مليار ر.س قيد المراقبة · 12 يونيو 2026</span>
+    </p>
+    <h1 class="verdict" id="verdictH">
+      <span class="en">Portfolio compliance stands at <span class="vnum">86.2%</span> — <span class="vwarn">attention required.</span></span>
+      <span class="ar">التزام المحفظة بالمحتوى المحلي عند <span class="vnum">86.2%</span> — <span class="vwarn">يتطلب الانتباه.</span></span>
+    </h1>
+    <p class="drivers">
+      <span class="en">Driven by <a href="#penalties">2 active breaches</a> and <a href="#alerts">4 overdue reports</a>. Weighted achievement is 33.1% against an average target of 38.4%.</span>
+      <span class="ar">بسبب <a href="#penalties">مخالفتين قائمتين</a> و<a href="#alerts">4 تقارير متأخرة</a>. بلغ المتوسط المرجّح للمحقق 33.1% مقابل مستهدف متوسطه 38.4%.</span>
+    </p>
+  </section>
+
+  <!-- Three consequential figures -->
+  <section class="figures" aria-label="Key figures">
+    <div class="figure">
+      <h2><span class="en">Penalty exposure</span><span class="ar">الغرامات المحتملة</span></h2>
+      <div class="figure-val"><span class="unit"><span class="en">SAR</span><span class="ar">ر.س</span></span>19.6M</div>
+      <p>
+        <span class="en">Across 7 contracts — SAR 4.8M concentrated in C-2024-0210 (breach).</span>
+        <span class="ar">موزعة على 7 عقود — منها 4.8 مليون ر.س في العقد C-2024-0210 (مخالفة).</span>
+      </p>
+      <a class="figure-link" href="#penalties">
+        <span class="en">View penalties</span><span class="ar">عرض الغرامات</span>
+        <svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="figure">
+      <h2><span class="en">Pending evidence reviews</span><span class="ar">مراجعات الإثباتات المعلّقة</span></h2>
+      <div class="figure-val">12</div>
+      <p>
+        <span class="en">Items in the review queue; the oldest has waited 9 days.</span>
+        <span class="ar">بنود في قائمة المراجعة؛ أقدمها بانتظار البتّ منذ 9 أيام.</span>
+      </p>
+      <a class="figure-link" href="#">
+        <span class="en">Open review queue</span><span class="ar">فتح قائمة المراجعة</span>
+        <svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+    <div class="figure">
+      <h2><span class="en">Overdue reports</span><span class="ar">التقارير المتأخرة</span></h2>
+      <div class="figure-val">4<span class="qual"><span class="en">of 6 missing</span><span class="ar">من 6 ناقصة</span></span></div>
+      <p>
+        <span class="en">Longest overdue: 21 days — C-2024-0210, Saudi Cable Co.</span>
+        <span class="ar">أطولها تأخرًا: 21 يومًا — العقد C-2024-0210، شركة الكابلات السعودية.</span>
+      </p>
+      <a class="figure-link" href="#alerts">
+        <span class="en">Chase reports</span><span class="ar">متابعة التقارير</span>
+        <svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Trend -->
+  <section class="band" aria-labelledby="trendH">
+    <div class="band-head">
+      <h2 id="trendH"><span class="en">Twelve-month compliance trend</span><span class="ar">مسار الالتزام خلال اثني عشر شهرًا</span></h2>
+      <span class="meta"><span class="en">Weighted LC compliance, Jul 2025 – Jun 2026</span><span class="ar">الالتزام المرجّح بالمحتوى المحلي، يوليو 2025 – يونيو 2026</span></span>
+    </div>
+    <figure class="chart-frame" style="margin-inline:0">
+      <div class="chart-plot">
+        <svg viewBox="0 0 1040 300" preserveAspectRatio="none" role="img"
+             aria-label="Line chart of weighted compliance by month, rising from 83.1 percent in July 2025 to 86.2 percent in June 2026">
+          <line class="gridline" x1="20" y1="16"  x2="1020" y2="16"/>
+          <line class="gridline" x1="20" y1="100" x2="1020" y2="100"/>
+          <line class="gridline" x1="20" y1="184" x2="1020" y2="184"/>
+          <line class="gridline base" x1="20" y1="268" x2="1020" y2="268"/>
+          <g class="trend-geom">
+            <path class="trend-area" d="M20,221.8 L111,192.4 L202,158.8 L293,175.6 L384,142 L475,112.6 L565,133.6 L656,104.2 L747,83.2 L838,100 L929,79 L1020,91.6 L1020,268 L20,268 Z"/>
+            <path class="trend-line" d="M20,221.8 L111,192.4 L202,158.8 L293,175.6 L384,142 L475,112.6 L565,133.6 L656,104.2 L747,83.2 L838,100 L929,79 L1020,91.6"/>
+          </g>
+        </svg>
+        <span class="ylab num" style="top:5.3%"  aria-hidden="true">88%</span>
+        <span class="ylab num" style="top:33.3%" aria-hidden="true">86%</span>
+        <span class="ylab num" style="top:61.3%" aria-hidden="true">84%</span>
+        <span class="ylab num" style="top:89.3%" aria-hidden="true">82%</span>
+        <span class="endpoint" aria-hidden="true"><span class="halo"></span><span class="dot"></span></span>
+        <span class="end-tag" aria-hidden="true">86.2%</span>
+      </div>
+      <div class="months" aria-hidden="true">
+        <span><span class="en">Jul</span><span class="ar">يوليو</span></span>
+        <span><span class="en">Aug</span><span class="ar">أغسطس</span></span>
+        <span><span class="en">Sep</span><span class="ar">سبتمبر</span></span>
+        <span><span class="en">Oct</span><span class="ar">أكتوبر</span></span>
+        <span><span class="en">Nov</span><span class="ar">نوفمبر</span></span>
+        <span><span class="en">Dec</span><span class="ar">ديسمبر</span></span>
+        <span><span class="en">Jan</span><span class="ar">يناير</span></span>
+        <span><span class="en">Feb</span><span class="ar">فبراير</span></span>
+        <span><span class="en">Mar</span><span class="ar">مارس</span></span>
+        <span><span class="en">Apr</span><span class="ar">أبريل</span></span>
+        <span><span class="en">May</span><span class="ar">مايو</span></span>
+        <span><span class="en">Jun</span><span class="ar">يونيو</span></span>
+      </div>
+      <figcaption class="chart-foot">
+        <span class="delta"><span class="en">▲ +3.1 pts over twelve months</span><span class="ar">▲ +3.1 نقطة خلال اثني عشر شهرًا</span></span>
+        <span><span class="en">Peak <span class="num">86.5%</span> in May; dip of <span class="num">−0.3</span> pts in June.</span><span class="ar">الذروة <span class="num">86.5%</span> في مايو؛ وتراجع بمقدار <span class="num">0.3</span> نقطة في يونيو.</span></span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- Penalty exposure by contract -->
+  <section class="band" id="penalties" aria-labelledby="penH">
+    <div class="band-head">
+      <h2 id="penH"><span class="en">Penalty exposure by contract</span><span class="ar">الغرامات المحتملة حسب العقد</span></h2>
+      <span class="meta"><span class="en">7 contracts · estimated at current shortfall</span><span class="ar">7 عقود · مقدّرة وفق الفجوة الحالية</span></span>
+    </div>
+    <div class="bars">
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2024-0210</span><span class="sup"><span class="en">Saudi Cable Co. — power cabling</span><span class="ar">شركة الكابلات السعودية — كابلات الطاقة</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 4.8 million"><span class="bar-fill is-bad" style="width:100%"></span></div>
+        <div class="bar-val"><span class="num">4.8M</span><span class="st bad"><span class="en">Breach</span><span class="ar">مخالفة</span></span></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2022-0186</span><span class="sup"><span class="en">Gulf Pipes Industries — GRP piping</span><span class="ar">أنابيب الخليج الصناعية — أنابيب GRP</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 3.4 million"><span class="bar-fill" style="width:70.8%"></span></div>
+        <div class="bar-val"><span class="num">3.4M</span><span class="st warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2024-0142</span><span class="sup"><span class="en">National Industrialization Co. — medical equipment</span><span class="ar">شركة التصنيع الوطنية — معدات طبية</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 3.1 million"><span class="bar-fill" style="width:64.6%"></span></div>
+        <div class="bar-val"><span class="num">3.1M</span><span class="st warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2024-0095</span><span class="sup"><span class="en">Middle East Specialized Cables — control cables</span><span class="ar">الشرق الأوسط للكابلات المتخصصة — كابلات تحكم</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 2.6 million"><span class="bar-fill" style="width:54.2%"></span></div>
+        <div class="bar-val"><span class="num">2.6M</span><span class="st warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2023-0154</span><span class="sup"><span class="en">Riyadh Cables — MV cables</span><span class="ar">كابلات الرياض — كابلات جهد متوسط</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 2.2 million"><span class="bar-fill" style="width:45.8%"></span></div>
+        <div class="bar-val"><span class="num">2.2M</span><span class="st warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2025-0203</span><span class="sup"><span class="en">Advanced Petrochemical — polymer feedstock</span><span class="ar">المتقدمة للبتروكيماويات — مواد بوليمر أولية</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 1.9 million"><span class="bar-fill" style="width:39.6%"></span></div>
+        <div class="bar-val"><span class="num">1.9M</span><span class="st warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-id"><span class="cno">C-2023-0067</span><span class="sup"><span class="en">National Metal Manufacturing — structural steel</span><span class="ar">التصنيع الوطني للمعادن — حديد إنشائي</span></span></div>
+        <div class="bar-track" role="img" aria-label="SAR 1.6 million"><span class="bar-fill" style="width:33.3%"></span></div>
+        <div class="bar-val"><span class="num">1.6M</span><span class="st warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></div>
+      </div>
+      <div class="bars-foot">
+        <span><span class="en">Total estimated exposure</span><span class="ar">إجمالي الغرامات المقدّرة</span></span>
+        <span class="num"><span class="en">SAR 19.6M</span><span class="ar">19.6 مليون ر.س</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio & pipeline (subordinate) -->
+  <section class="band" aria-labelledby="ctxH">
+    <div class="band-head">
+      <h2 id="ctxH"><span class="en">Portfolio &amp; pipeline</span><span class="ar">المحفظة وخط الإعداد</span></h2>
+    </div>
+    <div class="ledgers">
+      <div class="ledger">
+        <h3><span class="en">Under monitoring</span><span class="ar">قيد المراقبة</span></h3>
+        <dl>
+          <div class="lrow"><dt><span class="en">Contracts</span><span class="ar">العقود</span></dt><span class="dots" aria-hidden="true"></span><dd>47 <small><span class="en">31 active</span><span class="ar">31 نشطًا</span></small></dd></div>
+          <div class="lrow"><dt><span class="en">Portfolio value</span><span class="ar">قيمة المحفظة</span></dt><span class="dots" aria-hidden="true"></span><dd><span class="en">SAR 2.84B</span><span class="ar">2.84 مليار ر.س</span></dd></div>
+          <div class="lrow"><dt><span class="en">Average LC target / achieved</span><span class="ar">متوسط المستهدف / المحقق</span></dt><span class="dots" aria-hidden="true"></span><dd>38.4% / 33.1%</dd></div>
+          <div class="lrow"><dt><span class="en">National Product delivered</span><span class="ar">مشتريات المنتجات الوطنية الموردة</span></dt><span class="dots" aria-hidden="true"></span><dd><span class="en">SAR 412M</span><span class="ar">412 مليون ر.س</span></dd></div>
+          <div class="lrow"><dt><span class="en">Mandatory-List items delivered</span><span class="ar">بنود القائمة الإلزامية الموردة</span></dt><span class="dots" aria-hidden="true"></span><dd><span class="en">SAR 268M</span><span class="ar">268 مليون ر.س</span></dd></div>
+        </dl>
+      </div>
+      <div class="ledger">
+        <h3><span class="en">Procurement pipeline</span><span class="ar">خط إعداد المنافسات</span></h3>
+        <dl>
+          <div class="lrow"><dt><span class="en">Draft RFPs</span><span class="ar">منافسات قيد الإعداد</span></dt><span class="dots" aria-hidden="true"></span><dd>5 <small><span class="en">3 ready to publish</span><span class="ar">3 جاهزة للطرح</span></small></dd></div>
+          <div class="lrow"><dt><span class="en">Open bid evaluations</span><span class="ar">تقييمات عروض مفتوحة</span></dt><span class="dots" aria-hidden="true"></span><dd>4</dd></div>
+          <div class="lrow"><dt><span class="en">Contracts awarded YTD</span><span class="ar">عقود مرساة منذ بداية السنة</span></dt><span class="dots" aria-hidden="true"></span><dd>19</dd></div>
+          <div class="lrow"><dt><span class="en">Missing reports</span><span class="ar">تقارير ناقصة</span></dt><span class="dots" aria-hidden="true"></span><dd>6 <small><span class="en">4 overdue</span><span class="ar">4 متأخرة</span></small></dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alerts -->
+  <section class="band" id="alerts" aria-labelledby="alertsH">
+    <div class="band-head">
+      <h2 id="alertsH"><span class="en">Needs attention</span><span class="ar">يتطلب الانتباه</span></h2>
+      <span class="meta"><span class="en">5 open alerts</span><span class="ar">5 تنبيهات مفتوحة</span></span>
+    </div>
+    <div class="alerts">
+      <a class="alert" href="#">
+        <span class="sev bad"><span class="en">Breach</span><span class="ar">مخالفة</span></span>
+        <span class="alert-body">
+          <span class="en"><span class="cno">C-2024-0210</span> — periodic report overdue by 21 days<small>Saudi Cable Co. · Saudi Water Authority</small></span>
+          <span class="ar"><span class="cno">C-2024-0210</span> — تقرير دوري متأخر 21 يومًا<small>شركة الكابلات السعودية · هيئة المياه السعودية</small></span>
+        </span>
+        <span class="chev" aria-hidden="true"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="alert" href="#">
+        <span class="sev warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span>
+        <span class="alert-body">
+          <span class="en"><span class="cno">C-2024-0142</span> — LC shortfall widened to 3.8 pts<small>National Industrialization Co. · Ministry of Health</small></span>
+          <span class="ar"><span class="cno">C-2024-0142</span> — اتسعت فجوة المحتوى المحلي إلى 3.8 نقطة<small>شركة التصنيع الوطنية · وزارة الصحة</small></span>
+        </span>
+        <span class="chev" aria-hidden="true"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="alert" href="#">
+        <span class="sev warn"><span class="en">Queue</span><span class="ar">قائمة الانتظار</span></span>
+        <span class="alert-body">
+          <span class="en">12 evidence items awaiting review for more than 5 days<small>Reports Review queue</small></span>
+          <span class="ar">12 بند إثبات بانتظار المراجعة منذ أكثر من 5 أيام<small>قائمة مراجعة التقارير</small></span>
+        </span>
+        <span class="chev" aria-hidden="true"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="alert" href="#">
+        <span class="sev info"><span class="en">Update</span><span class="ar">تحديث</span></span>
+        <span class="alert-body">
+          <span class="en">Mandatory List — April 2026 update: 14 BoQ lines need re-matching<small>Affects 6 active contracts</small></span>
+          <span class="ar">القائمة الإلزامية — تحديث أبريل 2026: 14 بندًا في جداول الكميات تحتاج إعادة مطابقة<small>يشمل 6 عقود نشطة</small></span>
+        </span>
+        <span class="chev" aria-hidden="true"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+      <a class="alert" href="#">
+        <span class="sev info"><span class="en">Due soon</span><span class="ar">استحقاق قريب</span></span>
+        <span class="alert-body">
+          <span class="en"><span class="cno">C-2025-0031</span> — final report due in 9 days<small>Astra Industrial · Ministry of Health</small></span>
+          <span class="ar"><span class="cno">C-2025-0031</span> — التقرير النهائي يستحق خلال 9 أيام<small>أسترا الصناعية · وزارة الصحة</small></span>
+        </span>
+        <span class="chev" aria-hidden="true"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span><span class="en">Data as of 12 June 2026, 09:00 AST</span><span class="ar">البيانات كما في 12 يونيو 2026، 09:00 بتوقيت السعودية</span></span>
+    <span class="sep" aria-hidden="true">·</span>
+    <span><span class="en">LCGPA Local Content monitoring · figures pending final review are marked in the workbench</span><span class="ar">مراقبة المحتوى المحلي — هيئة المحتوى المحلي والمشتريات الحكومية · الأرقام قيد المراجعة النهائية مؤشَّرة في منصة العمل</span></span>
+  </footer>
+
+</main>
+
+<script>
+(function () {
+  var d = document.documentElement;
+
+  function param(k, v) {
+    var p = new URLSearchParams(location.search);
+    p.set(k, v);
+    history.replaceState(null, '', location.pathname + '?' + p.toString() + location.hash);
+  }
+  function syncWorkbenchLink() {
+    var p = new URLSearchParams();
+    p.set('theme', d.getAttribute('data-theme') || 'light');
+    p.set('lang', d.lang || 'en');
+    document.getElementById('wbLink').href = 'site.html?' + p.toString();
+  }
+  function syncAria() {
+    var ar = d.lang === 'ar';
+    document.querySelectorAll('[data-aria-en]').forEach(function (el) {
+      el.setAttribute('aria-label', ar ? el.getAttribute('data-aria-ar') : el.getAttribute('data-aria-en'));
+    });
+    document.title = ar ? 'لوحة المتابعة التنفيذية — LC Monitor Pro' : 'Executive Dashboard — LC Monitor Pro';
+  }
+
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var t = d.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    d.setAttribute('data-theme', t); param('theme', t); syncWorkbenchLink();
+  });
+  document.getElementById('langBtn').addEventListener('click', function () {
+    var ar = d.lang !== 'ar';
+    d.lang = ar ? 'ar' : 'en'; d.dir = ar ? 'rtl' : 'ltr';
+    param('lang', d.lang); syncAria(); syncWorkbenchLink();
+  });
+
+  syncAria(); syncWorkbenchLink();
+})();
+</script>
+</body>
+</html>

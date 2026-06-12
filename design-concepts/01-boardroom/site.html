@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contracts &amp; Monitoring — LC Monitor Pro</title>
+<script>
+/* Read URL params before first paint */
+(function () {
+  var d = document.documentElement, p = new URLSearchParams(location.search);
+  var t = p.get('theme'); if (t === 'dark' || t === 'light') d.setAttribute('data-theme', t);
+  var l = p.get('lang'); if (l === 'ar') { d.lang = 'ar'; d.dir = 'rtl'; }
+  else if (l === 'en') { d.lang = 'en'; d.dir = 'ltr'; }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: oklch(0.985 0.002 255);
+  --surface: oklch(1 0 0);
+  --surface2: oklch(0.965 0.004 255);
+  --ink: oklch(0.235 0.030 262);
+  --ink2: oklch(0.430 0.022 262);
+  --ink3: oklch(0.510 0.018 262);
+  --line: oklch(0.905 0.006 255);
+  --line2: oklch(0.840 0.010 255);
+  --accent: oklch(0.546 0.215 262);
+  --accent-ink: oklch(0.480 0.200 262);
+  --violet: oklch(0.541 0.247 293);
+  --accent-tint: oklch(0.946 0.022 262);
+  --ok: oklch(0.455 0.110 155);
+  --ok-tint: oklch(0.950 0.026 155);
+  --warn: oklch(0.470 0.100 70);
+  --warn-tint: oklch(0.955 0.030 85);
+  --bad: oklch(0.505 0.180 27);
+  --bad-tint: oklch(0.950 0.020 27);
+  --info: oklch(0.480 0.150 240);
+  --info-tint: oklch(0.945 0.020 240);
+  --r: 8px; --rs: 5px; --rl: 14px;
+  --font-display: "Bricolage Grotesque", "IBM Plex Sans Arabic", sans-serif;
+  --font-ui: "IBM Plex Sans", "IBM Plex Sans Arabic", sans-serif;
+  --font-ar: "IBM Plex Sans Arabic", "IBM Plex Sans", sans-serif;
+  --font-mono: "JetBrains Mono", "IBM Plex Sans Arabic", monospace;
+  --z-nav: 10; --z-sticky: 20; --z-overlay: 30; --z-modal: 40; --z-toast: 50;
+  --rail-w: 248px;
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+[data-theme="dark"] {
+  --bg: oklch(0.165 0.022 262);
+  --surface: oklch(0.200 0.024 262);
+  --surface2: oklch(0.235 0.026 262);
+  --ink: oklch(0.940 0.008 262);
+  --ink2: oklch(0.760 0.016 262);
+  --ink3: oklch(0.650 0.020 262);
+  --line: oklch(0.285 0.022 262);
+  --line2: oklch(0.350 0.024 262);
+  --accent: oklch(0.680 0.160 262);
+  --accent-ink: oklch(0.730 0.140 262);
+  --violet: oklch(0.700 0.180 293);
+  --accent-tint: oklch(0.280 0.060 262);
+  --ok: oklch(0.760 0.130 155);
+  --ok-tint: oklch(0.270 0.040 155);
+  --warn: oklch(0.800 0.120 80);
+  --warn-tint: oklch(0.280 0.040 80);
+  --bad: oklch(0.740 0.150 27);
+  --bad-tint: oklch(0.280 0.045 27);
+  --info: oklch(0.750 0.110 240);
+  --info-tint: oklch(0.270 0.040 240);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { height: 100%; }
+body {
+  margin: 0; min-height: 100%;
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui); font-size: 14px; line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+html[lang="ar"] body { font-family: var(--font-ar); }
+
+.ar { display: none; }
+html[lang="ar"] .ar { display: revert; }
+html[lang="ar"] .en { display: none; }
+
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+svg { flex: none; }
+html[dir="rtl"] .flip-rtl { transform: scaleX(-1); }
+
+.skip {
+  position: absolute; inset-inline-start: 12px; top: -48px;
+  background: var(--ink); color: var(--bg); padding: 8px 14px; border-radius: var(--r);
+  font-size: 13px; z-index: var(--z-toast); transition: top 160ms var(--ease); text-decoration: none;
+}
+.skip:focus-visible { top: 12px; }
+
+/* ================= layout ================= */
+.app { display: grid; grid-template-columns: var(--rail-w) minmax(0, 1fr); min-height: 100dvh; }
+
+/* ================= rail (quiet, unboxed) ================= */
+.rail {
+  border-inline-end: 1px solid var(--line);
+  padding: 18px 14px 16px;
+  display: flex; flex-direction: column; gap: 4px;
+  position: sticky; top: 0; height: 100dvh; overflow-y: auto;
+  background: var(--bg); z-index: var(--z-nav);
+}
+.rail-brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 16px; text-decoration: none; }
+.rail-mark {
+  width: 28px; height: 28px; border-radius: 7px; flex: none;
+  background: linear-gradient(135deg, oklch(0.546 0.215 262), oklch(0.541 0.247 293));
+  display: grid; place-items: center;
+}
+.rail-brand b { font-family: var(--font-display); font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+html[lang="ar"] .rail-brand b { font-family: var(--font-ar); font-weight: 700; letter-spacing: 0; }
+.rail-brand small { display: block; font-weight: 400; font-size: 11px; color: var(--ink3); font-family: var(--font-ui); margin-top: 1px; }
+html[lang="ar"] .rail-brand small { font-family: var(--font-ar); }
+
+.nav-group { padding-top: 14px; }
+.nav-group > span {
+  display: block; padding: 0 10px 6px;
+  font-size: 11.5px; font-weight: 600; color: var(--ink3);
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 10px; border-radius: var(--r);
+  color: var(--ink2); text-decoration: none; font-size: 13.5px; font-weight: 500;
+  transition: background-color 150ms var(--ease), color 150ms var(--ease);
+  position: relative;
+}
+.nav-item svg { width: 17px; height: 17px; color: var(--ink3); transition: color 150ms var(--ease); }
+.nav-item:hover { background: var(--surface2); color: var(--ink); }
+.nav-item:hover svg { color: var(--ink2); }
+.nav-item[aria-current="page"] { background: var(--accent-tint); color: var(--accent-ink); font-weight: 600; }
+.nav-item[aria-current="page"] svg { color: var(--accent-ink); }
+.nav-item .live-dot {
+  width: 6px; height: 6px; border-radius: 50%; margin-inline-start: auto;
+  background: linear-gradient(135deg, oklch(0.546 0.215 262), oklch(0.541 0.247 293));
+}
+.nav-item .count {
+  margin-inline-start: auto; font-family: var(--font-mono); font-variant-numeric: tabular-nums;
+  font-size: 11.5px; color: var(--ink3); font-weight: 500;
+}
+.rail-foot { margin-top: auto; padding: 16px 10px 0; border-top: 1px solid var(--line); font-size: 11.5px; color: var(--ink3); }
+
+.scrim {
+  display: none; position: fixed; inset: 0; background: oklch(0.2 0.02 262 / 0.45);
+  z-index: var(--z-overlay); border: 0; padding: 0;
+}
+
+/* ================= topbar ================= */
+.shell { min-width: 0; display: flex; flex-direction: column; }
+.topbar {
+  position: sticky; top: 0; z-index: var(--z-sticky);
+  display: flex; align-items: center; gap: 12px;
+  height: 58px; padding-inline: 24px;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+}
+.menu-btn { display: none; }
+.page-title { font-size: 15px; font-weight: 600; margin: 0; white-space: nowrap; }
+.topbar .grow { flex: 1; }
+.search {
+  display: flex; align-items: center; gap: 8px;
+  width: min(340px, 100%); height: 34px; padding-inline: 11px;
+  border: 1px solid var(--line2); border-radius: var(--r); background: var(--surface);
+  color: var(--ink3);
+  transition: border-color 150ms var(--ease);
+}
+.search:focus-within { border-color: var(--accent); }
+.search svg { width: 15px; height: 15px; }
+.search input { border: 0; background: none; outline: none; font: inherit; color: var(--ink); width: 100%; }
+.search input::placeholder { color: var(--ink3); }
+.search kbd {
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--ink3);
+  border: 1px solid var(--line2); border-radius: 4px; padding: 1px 5px; white-space: nowrap;
+}
+.ctl {
+  appearance: none; border: 1px solid var(--line2); background: var(--surface);
+  color: var(--ink2); border-radius: var(--r); height: 34px; min-width: 34px;
+  padding-inline: 9px; display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  font: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+  transition: border-color 150ms var(--ease), color 150ms var(--ease);
+}
+.ctl:hover { border-color: var(--accent); color: var(--ink); }
+.ctl svg { width: 16px; height: 16px; }
+.ctl .moon { display: none; }
+[data-theme="dark"] .ctl .moon { display: block; }
+[data-theme="dark"] .ctl .sun { display: none; }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex: none;
+  background: var(--surface2); border: 1px solid var(--line2);
+  display: grid; place-items: center; font-size: 11.5px; font-weight: 600; color: var(--ink2);
+}
+
+/* ================= page ================= */
+.page { padding: 26px 24px 48px; display: flex; flex-direction: column; gap: 20px; }
+.page-head { display: flex; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
+.page-head h1 {
+  margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 24px; letter-spacing: -0.015em;
+}
+html[lang="ar"] .page-head h1 { font-family: var(--font-ar); font-weight: 700; letter-spacing: 0; }
+.page-head .sub { color: var(--ink3); font-size: 13px; padding-bottom: 3px; }
+.page-head .actions { margin-inline-start: auto; display: flex; gap: 8px; }
+
+.btn {
+  appearance: none; font: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+  height: 34px; padding-inline: 14px; border-radius: var(--r);
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: background-color 150ms var(--ease), border-color 150ms var(--ease), opacity 150ms var(--ease);
+}
+.btn svg { width: 15px; height: 15px; }
+.btn-primary { background: var(--accent); border: 1px solid var(--accent); color: oklch(0.99 0 0); }
+[data-theme="dark"] .btn-primary { color: oklch(0.16 0.02 262); }
+.btn-primary:hover { background: var(--accent-ink); border-color: var(--accent-ink); }
+[data-theme="dark"] .btn-primary:hover { background: var(--accent-ink); }
+.btn-secondary { background: var(--surface); border: 1px solid var(--line2); color: var(--ink2); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--ink); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn:disabled:hover { background: var(--surface); border-color: var(--line2); color: var(--ink2); }
+
+/* summary strip */
+.strip {
+  display: flex; align-items: stretch; gap: 0;
+  border-block: 1px solid var(--line); padding-block: 14px;
+  overflow-x: auto;
+}
+.stat { padding-inline: 22px; white-space: nowrap; }
+.stat:first-child { padding-inline-start: 2px; }
+.stat + .stat { border-inline-start: 1px solid var(--line); }
+.stat dt { font-size: 11.5px; color: var(--ink3); margin-bottom: 3px; font-weight: 500; }
+.stat dd { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 17px; font-weight: 600; }
+.stat dd small { font-family: var(--font-ui); font-size: 11.5px; font-weight: 400; color: var(--ink3); }
+html[lang="ar"] .stat dd small { font-family: var(--font-ar); }
+.stat dd .flag { color: var(--bad); font-family: inherit; }
+
+/* ================= workbench grid ================= */
+.work { display: grid; grid-template-columns: minmax(0, 1fr) 376px; gap: 24px; align-items: start; }
+@media (max-width: 1279px) { .work { grid-template-columns: minmax(0, 1fr); } }
+
+/* table card */
+.table-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--rl); overflow: hidden; }
+.filters { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.filters .search { width: min(280px, 100%); background: var(--bg); }
+.select {
+  appearance: none; font: inherit; font-size: 13px; font-weight: 500; color: var(--ink2);
+  height: 34px; padding-inline: 11px 30px; border: 1px solid var(--line2); border-radius: var(--r);
+  background-color: var(--bg); cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23667' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center;
+  transition: border-color 150ms var(--ease);
+}
+html[dir="rtl"] .select { background-position: left 11px center; }
+.select:hover { border-color: var(--accent); }
+.filters .grow { flex: 1; }
+.chipcount { font-size: 12.5px; color: var(--ink3); white-space: nowrap; }
+
+.table-wrap { overflow: auto; max-height: clamp(420px, 58vh, 640px); }
+table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 1080px; }
+thead th {
+  position: sticky; top: 0; z-index: 2;
+  background: var(--surface);
+  text-align: start; font-size: 11.5px; font-weight: 600; color: var(--ink3);
+  padding: 10px 12px; border-bottom: 1px solid var(--line2); white-space: nowrap;
+}
+thead th.sorted { color: var(--ink); }
+thead th .sort { display: inline-flex; align-items: center; gap: 4px; }
+thead th .sort svg { width: 11px; height: 11px; }
+tbody td {
+  padding: 11px 12px; border-bottom: 1px solid var(--line);
+  font-size: 13px; vertical-align: top; white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr { transition: background-color 120ms var(--ease); }
+tbody tr:hover td { background: var(--surface2); }
+td.c-no, th.c-no { position: sticky; inset-inline-start: 0; background: var(--surface); z-index: 1; }
+th.c-no { z-index: 3; }
+tbody tr:hover td.c-no { background: var(--surface2); }
+.c-no a { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12.5px; font-weight: 500; text-decoration: none; color: var(--ink); }
+.c-no a:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.cell-2l small { display: block; color: var(--ink3); font-size: 11.5px; margin-top: 1px; }
+td.t-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 12.5px; text-align: end; }
+th.t-num { text-align: end; }
+td.t-num .pct-gap { color: var(--bad); }
+td.t-num .pct-over { color: var(--ok); }
+td .muted { color: var(--ink3); }
+td.t-date { font-size: 12.5px; }
+td.t-date .due-bad { color: var(--bad); font-weight: 600; }
+td.t-date small { display: block; color: var(--ink3); font-size: 11px; }
+td.row-go { width: 36px; padding-inline: 8px; }
+td.row-go svg { width: 14px; height: 14px; color: var(--ink3); opacity: 0; transition: opacity 120ms var(--ease); }
+tbody tr:hover td.row-go svg { opacity: 1; }
+
+/* status chips: dot + text, never color-only */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11.5px; font-weight: 600; line-height: 1;
+  padding: 5px 9px; border-radius: 999px;
+}
+.chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.chip.ok   { color: var(--ok);   background: var(--ok-tint); }
+.chip.warn { color: var(--warn); background: var(--warn-tint); }
+.chip.bad  { color: var(--bad);  background: var(--bad-tint); }
+.chip.info { color: var(--info); background: var(--info-tint); }
+.chip.none { color: var(--ink2); background: var(--surface2); }
+
+.table-foot {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 12px 16px; border-top: 1px solid var(--line);
+  font-size: 12.5px; color: var(--ink3);
+}
+.table-foot .grow { flex: 1; }
+.pager { display: flex; gap: 4px; }
+.pager button {
+  appearance: none; font: inherit; font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  min-width: 28px; height: 28px; padding-inline: 6px;
+  border: 1px solid transparent; border-radius: var(--rs); background: none; color: var(--ink2); cursor: pointer;
+  transition: border-color 120ms var(--ease), color 120ms var(--ease);
+}
+.pager button:hover { border-color: var(--line2); color: var(--ink); }
+.pager button[aria-current="page"] { border-color: var(--line2); background: var(--surface2); color: var(--ink); font-weight: 600; }
+.pager button:disabled { opacity: 0.4; cursor: not-allowed; }
+.pager button:disabled:hover { border-color: transparent; color: var(--ink2); }
+.pager svg { width: 13px; height: 13px; display: block; margin: auto; }
+
+/* ================= form panel: fine stationery ================= */
+.panel {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--rl);
+  position: sticky; top: 82px;
+}
+@media (max-width: 1279px) { .panel { position: static; max-width: 560px; } }
+.panel-head { padding: 18px 22px 16px; border-bottom: 1px solid var(--line); }
+.panel-head h2 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+.panel-head .ctx { font-size: 12.5px; color: var(--ink3); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.panel-head .ctx .cno { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink2); font-weight: 500; }
+.panel-body { padding: 18px 22px 6px; }
+.field { margin-bottom: 16px; }
+.field > label, .field > .grouplabel { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink2); margin-bottom: 6px; }
+.field .opt { font-weight: 400; color: var(--ink3); }
+.input, .textarea, .select-full {
+  width: 100%; font: inherit; font-size: 13.5px; color: var(--ink);
+  background: var(--bg); border: 1px solid var(--line2); border-radius: var(--r);
+  padding: 8px 11px; transition: border-color 150ms var(--ease), box-shadow 150ms var(--ease);
+}
+.input:hover, .textarea:hover, .select-full:hover { border-color: var(--ink3); }
+.input:focus, .textarea:focus, .select-full:focus {
+  outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+.select-full {
+  appearance: none; cursor: pointer; padding-inline-end: 32px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23667' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 11px center;
+}
+html[dir="rtl"] .select-full { background-position: left 11px center; }
+.textarea { resize: vertical; min-height: 70px; }
+.hint { font-size: 11.5px; color: var(--ink3); margin: 5px 0 0; }
+.qty-row { display: flex; gap: 8px; align-items: center; }
+.qty-row .input { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.qty-row .unit { font-size: 12.5px; color: var(--ink3); white-space: nowrap; }
+
+/* error state */
+.field.has-error .input { border-color: var(--bad); }
+.field.has-error .input:focus { box-shadow: 0 0 0 3px color-mix(in oklab, var(--bad) 16%, transparent); border-color: var(--bad); }
+.error-msg { display: flex; gap: 6px; align-items: flex-start; margin-top: 6px; font-size: 12px; font-weight: 500; color: var(--bad); }
+.error-msg svg { width: 13px; height: 13px; margin-top: 1.5px; }
+
+/* radios */
+.radio-row { display: flex; gap: 8px; }
+.radio-card {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  border: 1px solid var(--line2); border-radius: var(--r); padding: 8px 11px;
+  font-size: 13px; font-weight: 500; color: var(--ink2); cursor: pointer;
+  transition: border-color 150ms var(--ease), background-color 150ms var(--ease);
+}
+.radio-card:hover { border-color: var(--ink3); }
+.radio-card input { accent-color: var(--accent); margin: 0; width: 15px; height: 15px; }
+.radio-card:has(input:checked) { border-color: var(--accent); background: var(--accent-tint); color: var(--accent-ink); font-weight: 600; }
+.radio-card:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* upload */
+.upload {
+  width: 100%; appearance: none; font: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1.5px dashed var(--line2); border-radius: var(--r); background: var(--bg);
+  color: var(--ink2); padding: 12px;
+  transition: border-color 150ms var(--ease), color 150ms var(--ease);
+}
+.upload svg { width: 15px; height: 15px; }
+.upload:hover { border-color: var(--accent); color: var(--accent-ink); }
+.upload:disabled { opacity: 0.5; cursor: not-allowed; }
+.upload:disabled:hover { border-color: var(--line2); color: var(--ink2); }
+
+.panel-foot {
+  display: flex; gap: 8px; align-items: center;
+  padding: 14px 22px 18px; border-top: 1px solid var(--line);
+}
+.panel-foot .note { font-size: 11.5px; color: var(--ink3); margin-inline-start: auto; max-width: 16ch; text-align: end; }
+
+/* ================= responsive ================= */
+@media (max-width: 1023px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .rail {
+    position: fixed; inset-block: 0; inset-inline-start: 0; width: var(--rail-w);
+    border-inline-end: 1px solid var(--line2);
+    transform: translateX(-105%); transition: transform 220ms var(--ease);
+    z-index: var(--z-modal);
+  }
+  html[dir="rtl"] .rail { transform: translateX(105%); }
+  .rail.open, html[dir="rtl"] .rail.open { transform: none; }
+  .scrim.show { display: block; }
+  .menu-btn { display: inline-flex; }
+}
+@media (max-width: 700px) {
+  .topbar { padding-inline: 16px; gap: 8px; }
+  .topbar .search { display: none; }
+  .page { padding: 20px 16px 40px; }
+  .page-head .actions { width: 100%; margin-inline-start: 0; }
+  .stat { padding-inline: 14px; }
+  .panel-foot { flex-wrap: wrap; }
+  .panel-foot .note { margin-inline-start: 0; max-width: none; text-align: start; width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main"><span class="en">Skip to content</span><span class="ar">تخطٍّ إلى المحتوى</span></a>
+
+<div class="app">
+
+  <!-- ============ rail ============ -->
+  <nav class="rail" id="rail" aria-label="Primary">
+    <a class="rail-brand" id="dashLink" href="dashboard.html">
+      <span class="rail-mark" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 2v10h8" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <b>LC Monitor Pro<small><span class="en">Local Content compliance</span><span class="ar">الالتزام بالمحتوى المحلي</span></small></b>
+    </a>
+
+    <div class="nav-group">
+      <span><span class="en">Overview</span><span class="ar">نظرة عامة</span></span>
+      <a class="nav-item" id="dashNav" href="dashboard.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+        <span class="en">Dashboard</span><span class="ar">لوحة المتابعة</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 9a6 6 0 1 0-12 0c0 5-2 6-2 6h16s-2-1-2-6"/><path d="M10.3 19.5a2 2 0 0 0 3.4 0"/></svg>
+        <span class="en">Alerts</span><span class="ar">التنبيهات</span>
+        <span class="count num">5</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <span><span class="en">Procurement</span><span class="ar">المشتريات</span></span>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a1.5 1.5 0 0 0-1.5 1.5v15A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5V7.5z"/><path d="M14 3v4.5h4.5M9 12h6M9 16h6"/></svg>
+        <span class="en">RFP Preparation</span><span class="ar">إعداد المنافسات</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M8 20h8"/><path d="M6 7l-3 6.5a3.2 3.2 0 0 0 6 0L6 7l13-2M19 5l3 6.5a3.2 3.2 0 0 1-6 0z"/></svg>
+        <span class="en">Bid Evaluation</span><span class="ar">تقييم العروض</span>
+        <span class="count num">4</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M15.5 5.2a3.2 3.2 0 0 1 0 5.6M17.5 14.8c1.8.7 3 2.3 3 4.7"/></svg>
+        <span class="en">Suppliers</span><span class="ar">الموردون</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <span><span class="en">Compliance</span><span class="ar">الالتزام</span></span>
+      <a class="nav-item" href="#" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 6.5A1.5 1.5 0 0 1 5 5h4l2 2.5h8a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18z"/><path d="M9.5 14l2 2 3.5-3.5"/></svg>
+        <span class="en">Contracts &amp; Monitoring</span><span class="ar">العقود والمراقبة</span>
+        <span class="live-dot" aria-hidden="true"></span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8.5L12 4 3 8.5v7L12 20l9-4.5z"/><path d="M3 8.5l9 4.5 9-4.5M12 13v7"/></svg>
+        <span class="en">Receiving</span><span class="ar">الاستلام</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>
+        <span class="en">Reports Review</span><span class="ar">مراجعة التقارير</span>
+        <span class="count num">12</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9.5 16.5h-19z"/><path d="M12 10.5v4M12 17.6v.4"/></svg>
+        <span class="en">Penalties</span><span class="ar">الغرامات</span>
+        <span class="count num">7</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <span><span class="en">Records</span><span class="ar">السجلات</span></span>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9.5" r="5"/><path d="M9 13.5L7.5 21l4.5-2.5L16.5 21 15 13.5"/></svg>
+        <span class="en">Certificates</span><span class="ar">الشهادات</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 6l12 12"/></svg>
+        <span class="en">Blacklist</span><span class="ar">القائمة السوداء</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg>
+        <span class="en">Audit Log</span><span class="ar">سجل التدقيق</span>
+      </a>
+    </div>
+
+    <div class="nav-group">
+      <span><span class="en">System</span><span class="ar">النظام</span></span>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        <span class="en">Reminders</span><span class="ar">التذكيرات</span>
+      </a>
+      <a class="nav-item" href="#">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h10M18 8h2M4 16h2M10 16h10"/><circle cx="16" cy="8" r="2.2"/><circle cx="8" cy="16" r="2.2"/></svg>
+        <span class="en">Settings</span><span class="ar">الإعدادات</span>
+      </a>
+    </div>
+
+    <div class="rail-foot">
+      <span class="en">Riyadh HQ · v2.1 · Data 12 Jun 2026</span>
+      <span class="ar">المقر الرئيسي – الرياض · الإصدار 2.1 · البيانات 12 يونيو 2026</span>
+    </div>
+  </nav>
+
+  <button class="scrim" id="scrim" tabindex="-1" aria-hidden="true"></button>
+
+  <!-- ============ shell ============ -->
+  <div class="shell">
+    <header class="topbar">
+      <button class="ctl menu-btn" id="menuBtn" type="button" aria-controls="rail" aria-expanded="false"
+              aria-label="Open navigation" data-aria-en="Open navigation" data-aria-ar="فتح التنقل">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <h1 class="page-title"><span class="en">Contracts &amp; Monitoring</span><span class="ar">العقود والمراقبة</span></h1>
+      <div class="grow"></div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>
+        <input type="search" id="globalSearch" placeholder="Search contracts, suppliers…"
+               data-ph-en="Search contracts, suppliers…" data-ph-ar="بحث في العقود والموردين…"
+               aria-label="Search" data-aria-en="Search" data-aria-ar="بحث">
+        <kbd aria-hidden="true">⌘K</kbd>
+      </label>
+      <button class="ctl" id="langBtn" type="button"><span class="en">عربي</span><span class="ar">EN</span></button>
+      <button class="ctl" id="themeBtn" type="button" aria-label="Toggle theme" data-aria-en="Toggle theme" data-aria-ar="تبديل المظهر">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M19.1 4.9l-1.8 1.8M6.7 17.3l-1.8 1.8"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.5a7 7 0 0 0 11 11z"/></svg>
+      </button>
+      <span class="avatar" aria-hidden="true">MA</span>
+    </header>
+
+    <main class="page" id="main">
+
+      <div class="page-head">
+        <div>
+          <h1><span class="en">Contracts &amp; Monitoring</span><span class="ar">العقود والمراقبة</span></h1>
+        </div>
+        <span class="sub"><span class="en">Updated 09:00 AST · 12 June 2026</span><span class="ar">آخر تحديث 09:00 بتوقيت السعودية · 12 يونيو 2026</span></span>
+        <div class="actions">
+          <button class="btn btn-secondary" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5M4 19h16"/></svg>
+            <span class="en">Export</span><span class="ar">تصدير</span>
+          </button>
+          <button class="btn btn-primary" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="en">New contract</span><span class="ar">عقد جديد</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- summary strip -->
+      <dl class="strip">
+        <div class="stat">
+          <dt><span class="en">Contracts</span><span class="ar">العقود</span></dt>
+          <dd>47 <small><span class="en">31 active</span><span class="ar">31 نشطًا</span></small></dd>
+        </div>
+        <div class="stat">
+          <dt><span class="en">Weighted compliance</span><span class="ar">الالتزام المرجّح</span></dt>
+          <dd>86.2%</dd>
+        </div>
+        <div class="stat">
+          <dt><span class="en">Penalty exposure</span><span class="ar">الغرامات المحتملة</span></dt>
+          <dd><span class="en">SAR 19.6M</span><span class="ar">19.6 مليون ر.س</span> <small><span class="en">7 contracts</span><span class="ar">7 عقود</span></small></dd>
+        </div>
+        <div class="stat">
+          <dt><span class="en">Pending reviews</span><span class="ar">مراجعات معلّقة</span></dt>
+          <dd>12</dd>
+        </div>
+        <div class="stat">
+          <dt><span class="en">Overdue reports</span><span class="ar">تقارير متأخرة</span></dt>
+          <dd><span class="flag">4</span> <small><span class="en">of 6 missing</span><span class="ar">من 6 ناقصة</span></small></dd>
+        </div>
+      </dl>
+
+      <div class="work">
+
+        <!-- ============ table ============ -->
+        <section class="table-card" aria-labelledby="tableH">
+          <h2 id="tableH" style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);"><span class="en">Contracts table</span><span class="ar">جدول العقود</span></h2>
+          <div class="filters">
+            <label class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg>
+              <input type="search" placeholder="Filter by contract, supplier…"
+                     data-ph-en="Filter by contract, supplier…" data-ph-ar="تصفية حسب العقد أو المورّد…"
+                     aria-label="Filter table" data-aria-en="Filter table" data-aria-ar="تصفية الجدول">
+            </label>
+            <select class="select" aria-label="Status filter" data-aria-en="Status filter" data-aria-ar="تصفية حسب الحالة">
+              <option>Status: All</option>
+            </select>
+            <select class="select" aria-label="Entity filter" data-aria-en="Entity filter" data-aria-ar="تصفية حسب الجهة">
+              <option>Entity: All</option>
+            </select>
+            <div class="grow"></div>
+            <button class="btn btn-secondary" type="button" disabled
+                    title="Select rows to enable" data-title-en="Select rows to enable" data-title-ar="حدد صفوفًا للتفعيل">
+              <span class="en">Bulk actions</span><span class="ar">إجراءات جماعية</span>
+            </button>
+            <span class="chipcount"><span class="en">10 of 47 shown</span><span class="ar">معروض 10 من 47</span></span>
+          </div>
+
+          <div class="table-wrap" tabindex="0" role="region" aria-label="Contracts" data-aria-en="Contracts" data-aria-ar="العقود">
+            <table>
+              <thead>
+                <tr>
+                  <th class="c-no"><span class="en">Contract</span><span class="ar">العقد</span></th>
+                  <th><span class="en">Supplier</span><span class="ar">المورّد</span></th>
+                  <th><span class="en">Status</span><span class="ar">الحالة</span></th>
+                  <th class="t-num"><span class="en">Target</span><span class="ar">المستهدف</span></th>
+                  <th class="t-num"><span class="en">Achieved</span><span class="ar">المحقق</span></th>
+                  <th class="t-num sorted" aria-sort="descending">
+                    <span class="sort"><span class="en">Value (SAR)</span><span class="ar">القيمة (ر.س)</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10l6 6 6-6"/></svg></span>
+                  </th>
+                  <th class="t-num"><span class="en">Penalty</span><span class="ar">الغرامة</span></th>
+                  <th><span class="en">Next report</span><span class="ar">التقرير القادم</span></th>
+                  <th><span class="en">End-user entity</span><span class="ar">الجهة المستفيدة</span></th>
+                  <th><span style="position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);"><span class="en">Open</span><span class="ar">فتح</span></span></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="c-no"><a href="#">C-2025-0117</a></td>
+                  <td class="cell-2l"><span class="en">Alfanar<small>Switchgear</small></span><span class="ar">الفنار<small>لوحات كهربائية</small></span></td>
+                  <td><span class="chip ok"><span class="en">Compliant</span><span class="ar">ملتزم</span></span></td>
+                  <td class="t-num">42%</td>
+                  <td class="t-num"><span class="pct-over">44.6%</span></td>
+                  <td class="t-num">210.9M</td>
+                  <td class="t-num"><span class="muted">—</span></td>
+                  <td class="t-date"><span class="en">08 Aug 2026</span><span class="ar">08 أغسطس 2026</span></td>
+                  <td><span class="en">NEOM</span><span class="ar">نيوم</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2024-0142</a></td>
+                  <td class="cell-2l"><span class="en">National Industrialization Co.<small>Medical equipment</small></span><span class="ar">شركة التصنيع الوطنية<small>معدات طبية</small></span></td>
+                  <td><span class="chip warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></td>
+                  <td class="t-num">40%</td>
+                  <td class="t-num"><span class="pct-gap">36.2%</span></td>
+                  <td class="t-num">184.0M</td>
+                  <td class="t-num">3.1M</td>
+                  <td class="t-date"><span class="en">30 Jun 2026</span><span class="ar">30 يونيو 2026</span></td>
+                  <td><span class="en">Ministry of Health</span><span class="ar">وزارة الصحة</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2025-0031</a></td>
+                  <td class="cell-2l"><span class="en">Astra Industrial<small>Pharma supplies</small></span><span class="ar">أسترا الصناعية<small>مستلزمات صيدلانية</small></span></td>
+                  <td><span class="chip warn"><span class="en">Watch</span><span class="ar">مراقبة</span></span></td>
+                  <td class="t-num">45%</td>
+                  <td class="t-num"><span class="pct-gap">41.0%</span></td>
+                  <td class="t-num">142.7M</td>
+                  <td class="t-num"><span class="muted">—</span></td>
+                  <td class="t-date"><span class="en">21 Jun 2026<small>Final report</small></span><span class="ar">21 يونيو 2026<small>التقرير النهائي</small></span></td>
+                  <td><span class="en">Ministry of Health</span><span class="ar">وزارة الصحة</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2025-0203</a></td>
+                  <td class="cell-2l"><span class="en">Advanced Petrochemical<small>Polymer feedstock</small></span><span class="ar">المتقدمة للبتروكيماويات<small>مواد بوليمر أولية</small></span></td>
+                  <td><span class="chip warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></td>
+                  <td class="t-num">38%</td>
+                  <td class="t-num"><span class="pct-gap">35.9%</span></td>
+                  <td class="t-num">122.5M</td>
+                  <td class="t-num">1.9M</td>
+                  <td class="t-date"><span class="en">26 Jun 2026</span><span class="ar">26 يونيو 2026</span></td>
+                  <td><span class="en">Royal Commission for Jubail &amp; Yanbu</span><span class="ar">الهيئة الملكية للجبيل وينبع</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2023-0098</a></td>
+                  <td class="cell-2l"><span class="en">Zamil Industrial<small>HVAC systems</small></span><span class="ar">الزامل للصناعة<small>أنظمة تكييف</small></span></td>
+                  <td><span class="chip ok"><span class="en">Compliant</span><span class="ar">ملتزم</span></span></td>
+                  <td class="t-num">35%</td>
+                  <td class="t-num"><span class="pct-over">38.9%</span></td>
+                  <td class="t-num">96.5M</td>
+                  <td class="t-num"><span class="muted">—</span></td>
+                  <td class="t-date"><span class="en">15 Jul 2026</span><span class="ar">15 يوليو 2026</span></td>
+                  <td><span class="en">Royal Commission for Jubail &amp; Yanbu</span><span class="ar">الهيئة الملكية للجبيل وينبع</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2023-0154</a></td>
+                  <td class="cell-2l"><span class="en">Riyadh Cables<small>MV cables</small></span><span class="ar">كابلات الرياض<small>كابلات جهد متوسط</small></span></td>
+                  <td><span class="chip warn"><span class="en">At risk</span><span class="ar">معرّض للخطر</span></span></td>
+                  <td class="t-num">36%</td>
+                  <td class="t-num"><span class="pct-gap">31.5%</span></td>
+                  <td class="t-num">77.4M</td>
+                  <td class="t-num">2.2M</td>
+                  <td class="t-date"><span class="en">05 Jul 2026</span><span class="ar">05 يوليو 2026</span></td>
+                  <td><span class="en">Saudi Water Authority</span><span class="ar">هيئة المياه السعودية</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2024-0210</a></td>
+                  <td class="cell-2l"><span class="en">Saudi Cable Co.<small>Power cabling</small></span><span class="ar">شركة الكابلات السعودية<small>كابلات الطاقة</small></span></td>
+                  <td><span class="chip bad"><span class="en">Breach</span><span class="ar">مخالفة</span></span></td>
+                  <td class="t-num">30%</td>
+                  <td class="t-num"><span class="pct-gap">22.4%</span></td>
+                  <td class="t-num">58.3M</td>
+                  <td class="t-num">4.8M</td>
+                  <td class="t-date"><span class="due-bad"><span class="en">Overdue 21 days</span><span class="ar">متأخر 21 يومًا</span></span></td>
+                  <td><span class="en">Saudi Water Authority</span><span class="ar">هيئة المياه السعودية</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2024-0188</a></td>
+                  <td class="cell-2l"><span class="en">Al Yamamah Steel<small>Rebar supply</small></span><span class="ar">اليمامة للصلب<small>حديد تسليح</small></span></td>
+                  <td><span class="chip ok"><span class="en">Compliant</span><span class="ar">ملتزم</span></span></td>
+                  <td class="t-num">30%</td>
+                  <td class="t-num"><span class="pct-over">33.8%</span></td>
+                  <td class="t-num">49.0M</td>
+                  <td class="t-num"><span class="muted">—</span></td>
+                  <td class="t-date"><span class="en">19 Jul 2026</span><span class="ar">19 يوليو 2026</span></td>
+                  <td><span class="en">Royal Commission for Jubail &amp; Yanbu</span><span class="ar">الهيئة الملكية للجبيل وينبع</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2026-0009</a></td>
+                  <td class="cell-2l"><span class="en">Obeikan Investment Group<small>Packaging</small></span><span class="ar">مجموعة العبيكان<small>تغليف</small></span></td>
+                  <td><span class="chip none"><span class="en">No report</span><span class="ar">لا يوجد تقرير</span></span></td>
+                  <td class="t-num">33%</td>
+                  <td class="t-num"><span class="muted"><span class="en">— new</span><span class="ar">— جديد</span></span></td>
+                  <td class="t-num">31.2M</td>
+                  <td class="t-num"><span class="muted">—</span></td>
+                  <td class="t-date"><span class="en">30 Sep 2026<small>First report</small></span><span class="ar">30 سبتمبر 2026<small>أول تقرير</small></span></td>
+                  <td><span class="en">NEOM</span><span class="ar">نيوم</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+                <tr>
+                  <td class="c-no"><a href="#">C-2024-0077</a></td>
+                  <td class="cell-2l"><span class="en">Saudi Ceramics<small>Sanitary ware</small></span><span class="ar">الخزف السعودي<small>أدوات صحية</small></span></td>
+                  <td><span class="chip warn"><span class="en">Watch</span><span class="ar">مراقبة</span></span></td>
+                  <td class="t-num">28%</td>
+                  <td class="t-num"><span class="pct-gap">27.1%</span></td>
+                  <td class="t-num">23.8M</td>
+                  <td class="t-num"><span class="muted">—</span></td>
+                  <td class="t-date"><span class="en">11 Jul 2026</span><span class="ar">11 يوليو 2026</span></td>
+                  <td><span class="en">Ministry of Education</span><span class="ar">وزارة التعليم</span></td>
+                  <td class="row-go"><svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="table-foot">
+            <span><span class="en">Showing 1–10 of 47 contracts · sorted by value</span><span class="ar">عرض 1–10 من 47 عقدًا · مرتبة حسب القيمة</span></span>
+            <div class="grow"></div>
+            <nav class="pager" aria-label="Pagination" data-aria-en="Pagination" data-aria-ar="ترقيم الصفحات">
+              <button type="button" disabled aria-label="Previous page" data-aria-en="Previous page" data-aria-ar="الصفحة السابقة">
+                <svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+              </button>
+              <button type="button" aria-current="page">1</button>
+              <button type="button">2</button>
+              <button type="button">3</button>
+              <button type="button">4</button>
+              <button type="button">5</button>
+              <button type="button" aria-label="Next page" data-aria-en="Next page" data-aria-ar="الصفحة التالية">
+                <svg class="flip-rtl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+              </button>
+            </nav>
+          </div>
+        </section>
+
+        <!-- ============ form panel ============ -->
+        <aside class="panel" aria-labelledby="panelH">
+          <div class="panel-head">
+            <h2 id="panelH"><span class="en">Log goods receipt — exception letter</span><span class="ar">تسجيل استلام بضائع — خطاب استثناء</span></h2>
+            <div class="ctx">
+              <span class="cno">C-2024-0210</span>
+              <span><span class="en">Saudi Cable Co. · power cabling</span><span class="ar">شركة الكابلات السعودية · كابلات الطاقة</span></span>
+              <span class="chip bad"><span class="en">Breach</span><span class="ar">مخالفة</span></span>
+            </div>
+          </div>
+
+          <form class="panel-body" id="receiptForm" novalidate>
+            <div class="field">
+              <label for="boqLine"><span class="en">BoQ line</span><span class="ar">بند جدول الكميات</span></label>
+              <select class="select-full" id="boqLine">
+                <option selected>L-014 — MV cable 33kV · CU 3×240mm²</option>
+                <option>L-015 — LV cable 1kV · CU 4×95mm²</option>
+                <option>L-021 — Cable trays · HDG steel</option>
+              </select>
+              <p class="hint"><span class="en">Remaining balance on L-014: <span class="num">1,250</span> m of <span class="num">8,000</span> m</span><span class="ar">الرصيد المتبقي للبند L-014: <span class="num">1,250</span> م من <span class="num">8,000</span> م</span></p>
+            </div>
+
+            <div class="field has-error">
+              <label for="qty"><span class="en">Quantity received</span><span class="ar">الكمية المستلمة</span></label>
+              <div class="qty-row">
+                <input class="input" id="qty" type="text" inputmode="numeric" value="1,400"
+                       aria-invalid="true" aria-describedby="qtyErr">
+                <span class="unit"><span class="en">meters</span><span class="ar">متر</span></span>
+              </div>
+              <p class="error-msg" id="qtyErr">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V13M12 16.4v.1"/></svg>
+                <span class="en">Quantity exceeds the remaining BoQ balance (1,250 m).</span>
+                <span class="ar">تتجاوز الكمية الرصيد المتبقي في جدول الكميات (1,250 م).</span>
+              </p>
+            </div>
+
+            <fieldset class="field" style="border:0; padding:0; margin-inline:0;">
+              <legend class="grouplabel" style="padding:0;"><span class="en">Origin</span><span class="ar">المنشأ</span></legend>
+              <div class="radio-row">
+                <label class="radio-card"><input type="radio" name="origin" value="local">
+                  <span><span class="en">Local</span><span class="ar">محلي</span></span></label>
+                <label class="radio-card"><input type="radio" name="origin" value="foreign" checked>
+                  <span><span class="en">Foreign</span><span class="ar">أجنبي</span></span></label>
+              </div>
+            </fieldset>
+
+            <div class="field">
+              <span class="grouplabel" id="npLbl"><span class="en">National Product evidence</span><span class="ar">إثبات المنتج الوطني</span></span>
+              <button class="upload" type="button" disabled aria-describedby="npHint" aria-labelledby="npLbl">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M4 16.5v2A1.5 1.5 0 0 0 5.5 20h13a1.5 1.5 0 0 0 1.5-1.5v-2"/></svg>
+                <span class="en">Attach certificate (PDF)</span><span class="ar">إرفاق الشهادة (PDF)</span>
+              </button>
+              <p class="hint" id="npHint"><span class="en">Applies to Local origin only — disabled for Foreign receipts.</span><span class="ar">يخص المنشأ المحلي فقط — معطّل لاستلامات المنشأ الأجنبي.</span></p>
+            </div>
+
+            <div class="field">
+              <label for="excRef"><span class="en">Exception letter reference</span><span class="ar">مرجع خطاب الاستثناء</span></label>
+              <input class="input num" id="excRef" type="text" value="EXC-2026-0871">
+              <p class="hint"><span class="en">As issued by the end-user entity.</span><span class="ar">كما صدر عن الجهة المستفيدة.</span></p>
+            </div>
+
+            <div class="field">
+              <label for="note"><span class="en">Note <span class="opt">(optional)</span></span><span class="ar">ملاحظة <span class="opt">(اختياري)</span></span></label>
+              <textarea class="textarea" id="note" placeholder="Reason for exception, delivery context…"
+                        data-ph-en="Reason for exception, delivery context…" data-ph-ar="سبب الاستثناء، سياق التسليم…"></textarea>
+            </div>
+          </form>
+
+          <div class="panel-foot">
+            <button class="btn btn-primary" type="submit" form="receiptForm">
+              <span class="en">Submit receipt</span><span class="ar">تسجيل الاستلام</span>
+            </button>
+            <button class="btn btn-secondary" type="button">
+              <span class="en">Save draft</span><span class="ar">حفظ كمسودة</span>
+            </button>
+            <span class="note"><span class="en">Routed to Reports Review</span><span class="ar">يحال إلى مراجعة التقارير</span></span>
+          </div>
+        </aside>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+(function () {
+  var d = document.documentElement;
+
+  function param(k, v) {
+    var p = new URLSearchParams(location.search);
+    p.set(k, v);
+    history.replaceState(null, '', location.pathname + '?' + p.toString() + location.hash);
+  }
+  function syncDashLinks() {
+    var p = new URLSearchParams();
+    p.set('theme', d.getAttribute('data-theme') || 'light');
+    p.set('lang', d.lang || 'en');
+    var href = 'dashboard.html?' + p.toString();
+    document.getElementById('dashLink').href = href;
+    document.getElementById('dashNav').href = href;
+  }
+  function syncAttrs() {
+    var ar = d.lang === 'ar';
+    document.querySelectorAll('[data-aria-en]').forEach(function (el) {
+      el.setAttribute('aria-label', ar ? el.getAttribute('data-aria-ar') : el.getAttribute('data-aria-en'));
+    });
+    document.querySelectorAll('[data-ph-en]').forEach(function (el) {
+      el.setAttribute('placeholder', ar ? el.getAttribute('data-ph-ar') : el.getAttribute('data-ph-en'));
+    });
+    document.querySelectorAll('[data-title-en]').forEach(function (el) {
+      el.setAttribute('title', ar ? el.getAttribute('data-title-ar') : el.getAttribute('data-title-en'));
+    });
+    document.title = ar ? 'العقود والمراقبة — LC Monitor Pro' : 'Contracts & Monitoring — LC Monitor Pro';
+    /* select options (visual text only) */
+    var sel = document.querySelectorAll('.filters .select');
+    if (sel[0]) sel[0].options[0].text = ar ? 'الحالة: الكل' : 'Status: All';
+    if (sel[1]) sel[1].options[0].text = ar ? 'الجهة: الكل' : 'Entity: All';
+  }
+
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var t = d.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    d.setAttribute('data-theme', t); param('theme', t); syncDashLinks();
+  });
+  document.getElementById('langBtn').addEventListener('click', function () {
+    var ar = d.lang !== 'ar';
+    d.lang = ar ? 'ar' : 'en'; d.dir = ar ? 'rtl' : 'ltr';
+    param('lang', d.lang); syncAttrs(); syncDashLinks();
+  });
+
+  /* mobile rail */
+  var rail = document.getElementById('rail'),
+      scrim = document.getElementById('scrim'),
+      menuBtn = document.getElementById('menuBtn');
+  function setRail(open) {
+    rail.classList.toggle('open', open);
+    scrim.classList.toggle('show', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+  }
+  menuBtn.addEventListener('click', function () { setRail(!rail.classList.contains('open')); });
+  scrim.addEventListener('click', function () { setRail(false); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && rail.classList.contains('open')) { setRail(false); menuBtn.focus(); }
+  });
+
+  syncAttrs(); syncDashLinks();
+})();
+</script>
+</body>
+</html>

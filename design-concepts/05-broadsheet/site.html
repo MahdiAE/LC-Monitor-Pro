@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LC Monitor Pro — Contracts &amp; Monitoring</title>
+<script>
+/* Read URL params before first paint */
+(function(){
+  var p = new URLSearchParams(location.search);
+  var t = p.get('theme');
+  if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+  var l = p.get('lang') === 'ar' ? 'ar' : 'en';
+  document.documentElement.lang = l;
+  document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&family=Inter+Tight:wght@400..700&family=Noto+Naskh+Arabic:wght@400..700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg: oklch(1 0 0);
+  --surface: oklch(0.985 0.002 80);
+  --surface2: oklch(0.962 0.003 80);
+  --ink: oklch(0.185 0.008 75);
+  --ink2: oklch(0.40 0.012 75);
+  --ink3: oklch(0.50 0.012 75);
+  --line: oklch(0.87 0.004 80);
+  --line2: oklch(0.78 0.005 80);
+  --accent: oklch(0.45 0.15 25);
+  --accent-hover: oklch(0.38 0.14 25);
+  --accent-ink: oklch(1 0 0);
+  --ok: oklch(0.45 0.09 152);
+  --warn: oklch(0.47 0.095 70);
+  --bad: oklch(0.46 0.15 27);
+  --info: oklch(0.45 0.07 250);
+  --r: 2px; --rs: 1px; --rl: 4px;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 48px; --s8: 64px;
+  --font-display: 'Newsreader', 'Noto Naskh Arabic', Georgia, serif;
+  --font-ui: 'Inter Tight', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-ar: 'IBM Plex Sans Arabic', 'Inter Tight', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --z-nav: 30; --z-sticky: 20; --z-overlay: 40; --z-modal: 50; --z-toast: 60;
+  color-scheme: light;
+}
+[data-theme=dark]{
+  --bg: oklch(0.165 0.008 75);
+  --surface: oklch(0.20 0.008 75);
+  --surface2: oklch(0.235 0.008 75);
+  --ink: oklch(0.93 0.012 85);
+  --ink2: oklch(0.74 0.012 85);
+  --ink3: oklch(0.65 0.012 85);
+  --line: oklch(0.31 0.008 80);
+  --line2: oklch(0.40 0.008 80);
+  --accent: oklch(0.67 0.15 24);
+  --accent-hover: oklch(0.73 0.14 24);
+  --accent-ink: oklch(0.165 0.008 75);
+  --ok: oklch(0.72 0.10 152);
+  --warn: oklch(0.78 0.11 80);
+  --bad: oklch(0.70 0.14 25);
+  --info: oklch(0.72 0.08 250);
+  color-scheme: dark;
+}
+[lang=ar]{
+  --font-display: 'Noto Naskh Arabic', 'Newsreader', Georgia, serif;
+  --font-ui: 'IBM Plex Sans Arabic', 'Inter Tight', system-ui, sans-serif;
+}
+
+*{ box-sizing: border-box; }
+body{
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 14px/1.5 var(--font-ui);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+}
+:focus-visible{ outline: 2px solid var(--accent); outline-offset: 2px; border-radius: var(--rs); }
+::selection{ background: var(--accent); color: var(--accent-ink); }
+a{ color: var(--accent); text-decoration: none; }
+a:hover{ text-decoration: underline; text-underline-offset: 3px; }
+h1,h2,h3{ text-wrap: balance; margin: 0; }
+.num{ font-variant-numeric: tabular-nums lining-nums; }
+.skip{
+  position: absolute; inset-inline-start: var(--s4); top: -48px;
+  background: var(--ink); color: var(--bg); padding: var(--s2) var(--s4);
+  z-index: var(--z-toast); border-radius: var(--r); font-size: 13px; transition: top .15s ease-out;
+}
+.skip:focus-visible{ top: var(--s2); }
+.wrap{ max-width: 1320px; margin-inline: auto; padding-inline: var(--s6); }
+
+/* ====================== chrome: masthead bar ====================== */
+.deck1{ border-bottom: 1px solid var(--line); }
+.deck1-in{ display: flex; align-items: center; gap: var(--s4); height: 54px; }
+.brand{ font-family: var(--font-display); font-weight: 600; font-size: 21px; color: var(--ink); letter-spacing: -0.01em; white-space: nowrap; }
+.brand:hover{ text-decoration: none; }
+[lang=ar] .brand{ letter-spacing: 0; }
+.deck1 .grow{ flex: 1; }
+.searchbox{ position: relative; }
+.searchbox input{
+  width: 230px; padding: 7px 10px; padding-inline-end: 34px;
+  border: 1px solid var(--line2); border-radius: var(--r); background: var(--bg); color: var(--ink);
+  font: 400 13px var(--font-ui); transition: border-color .15s ease-out;
+}
+.searchbox input:hover{ border-color: var(--ink3); }
+.searchbox input::placeholder{ color: var(--ink3); }
+.searchbox kbd{
+  position: absolute; inset-inline-end: 8px; top: 50%; transform: translateY(-50%);
+  font: 500 10.5px var(--font-ui); color: var(--ink3); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 1px 5px; pointer-events: none;
+}
+.furn{
+  appearance: none; background: none; border: 1px solid transparent; border-radius: var(--r);
+  color: var(--ink2); font: 500 12px/1 var(--font-ui); padding: 7px 9px; cursor: pointer;
+  white-space: nowrap; transition: color .15s ease-out, border-color .15s ease-out;
+}
+.furn:hover{ color: var(--ink); border-color: var(--line2); }
+.furn .glyph{ margin-inline-end: 5px; }
+.sep{ width: 1px; height: 16px; background: var(--line2); flex: none; }
+.user{ font: 600 12px var(--font-ui); color: var(--ink2); white-space: nowrap; }
+
+/* nav deck */
+.navbar{ position: sticky; top: 0; z-index: var(--z-nav); background: var(--bg); border-bottom: 1px solid var(--ink); }
+.navlinks{ display: flex; align-items: stretch; gap: var(--s5); margin: 0; padding: 0; list-style: none; overflow-x: auto; }
+.navlinks a, .navlinks .more > summary{
+  display: inline-block; padding: 11px 0 9px; font: 500 13px/1.4 var(--font-ui); color: var(--ink2);
+  border-bottom: 2px solid transparent; white-space: nowrap; cursor: pointer;
+  transition: color .15s ease-out;
+}
+.navlinks a:hover, .navlinks .more > summary:hover{ color: var(--ink); text-decoration: none; }
+.navlinks a[aria-current=page]{ color: var(--ink); font-weight: 700; border-bottom-color: var(--accent); }
+.more{ position: relative; }
+.more > summary{ list-style: none; }
+.more > summary::-webkit-details-marker{ display: none; }
+.more > summary::after{ content: ' ▾'; font-size: 10px; color: var(--ink3); }
+.more-menu{
+  position: absolute; inset-inline-end: 0; top: calc(100% + 1px); z-index: var(--z-overlay);
+  min-width: 190px; background: var(--bg); border: 1px solid var(--ink); border-radius: var(--r);
+  padding: var(--s2) 0; box-shadow: 0 8px 24px oklch(0.185 0.008 75 / .12);
+}
+.more-menu a{ display: block; padding: 8px var(--s4); border-bottom: none; font-weight: 500; color: var(--ink2); }
+.more-menu a:hover{ background: var(--surface); color: var(--ink); }
+/* mobile sections menu */
+.sections{ display: none; }
+
+/* ====================== page head ====================== */
+.pagehead{ padding-block: var(--s6) var(--s4); display: flex; align-items: flex-end; gap: var(--s5); flex-wrap: wrap; }
+.pagehead h1{
+  font-family: var(--font-display); font-weight: 500; font-size: 42px; line-height: 1.08; letter-spacing: -0.015em;
+}
+[lang=ar] .pagehead h1{ font-size: 38px; line-height: 1.35; letter-spacing: 0; font-weight: 600; }
+.pagehead .grow{ flex: 1; }
+.pagehead .actions{ display: flex; gap: var(--s2); align-items: center; }
+.sumstrip{
+  border-block: 1px solid var(--line); padding-block: var(--s2);
+  font-size: 13px; color: var(--ink2); display: flex; flex-wrap: wrap; column-gap: var(--s2); row-gap: 2px;
+}
+.sumstrip strong{ color: var(--ink); font-weight: 600; }
+.sumstrip .dot{ color: var(--line2); }
+
+/* ====================== buttons ====================== */
+.btn{
+  display: inline-block; appearance: none; font: 600 13px/1 var(--font-ui); padding: 10px 16px;
+  border-radius: var(--r); border: 1px solid transparent; cursor: pointer; text-align: center;
+  transition: background-color .15s ease-out, border-color .15s ease-out, color .15s ease-out;
+}
+.btn:hover{ text-decoration: none; }
+.btn-primary{ background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn-primary:hover{ background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn-secondary{ background: transparent; color: var(--ink); border-color: var(--line2); }
+.btn-secondary:hover{ border-color: var(--ink3); background: var(--surface); }
+.btn:disabled, .btn[aria-disabled=true]{
+  background: var(--surface2); color: var(--ink3); border-color: var(--line); cursor: not-allowed;
+}
+.btn:disabled:hover{ background: var(--surface2); border-color: var(--line); }
+.linkbtn{ background: none; border: none; font: 600 13px var(--font-ui); color: var(--accent); cursor: pointer; padding: 10px 4px; }
+.linkbtn:hover{ text-decoration: underline; text-underline-offset: 3px; }
+
+/* ====================== toolbar ====================== */
+.toolbar{ display: flex; align-items: center; gap: var(--s3); padding-block: var(--s4); flex-wrap: wrap; }
+.toolbar input[type=search], .toolbar select{
+  padding: 8px 10px; border: 1px solid var(--line2); border-radius: var(--r);
+  background: var(--bg); color: var(--ink); font: 400 13px var(--font-ui);
+  transition: border-color .15s ease-out;
+}
+.toolbar input[type=search]{ width: 300px; }
+.toolbar input[type=search]::placeholder{ color: var(--ink3); }
+.toolbar input[type=search]:hover, .toolbar select:hover{ border-color: var(--ink3); }
+.toolbar select{ cursor: pointer; }
+.toolbar .grow{ flex: 1; }
+.resultcount{ font-size: 12.5px; color: var(--ink2); white-space: nowrap; }
+
+/* ====================== the register (table) ====================== */
+.tablewrap{
+  overflow: auto; max-height: min(64vh, 660px);
+  border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink);
+}
+.tbl{ width: 100%; min-width: 1120px; border-collapse: separate; border-spacing: 0; font-size: 13.5px; }
+.tbl th{
+  position: sticky; top: 0; z-index: 2; background: var(--bg);
+  font: 600 11px/1.3 var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--ink2);
+  text-align: start; padding: 0; border-bottom: 1.5px solid var(--ink);
+}
+[lang=ar] .tbl th{ letter-spacing: 0; font-size: 12px; text-transform: none; }
+.tbl th .sort{
+  appearance: none; background: none; border: none; display: block; width: 100%; cursor: pointer;
+  font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; text-align: start;
+  padding: 11px 12px; transition: color .15s ease-out;
+}
+.tbl th .sort:hover{ color: var(--ink); }
+.tbl th .si{ color: var(--ink3); font-size: 10px; margin-inline-start: 4px; }
+.tbl th .sort:hover .si{ color: var(--accent); }
+.tbl th[aria-sort] .sort{ color: var(--ink); font-weight: 700; }
+.tbl th[aria-sort] .si{ color: var(--accent); }
+.tbl th.end .sort{ text-align: end; }
+.tbl td{ padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: top; background: var(--bg); transition: background-color .15s ease-out; }
+.tbl tbody tr:last-child td{ border-bottom: none; }
+.tbl tbody tr:hover td{ background: var(--surface); }
+.tbl tr.sel td{ background: var(--surface2); }
+.tbl tbody tr:hover.sel td{ background: var(--surface2); }
+.tbl th:first-child, .tbl td:first-child{ position: sticky; inset-inline-start: 0; z-index: 1; }
+.tbl th:first-child{ z-index: 3; }
+.tbl .end{ text-align: end; }
+.cno{ font-weight: 600; white-space: nowrap; }
+.cno a{ color: var(--ink); }
+.cno a:hover{ color: var(--accent); }
+tr.sel .cno a{ color: var(--accent); }
+.tbl .sub{ display: block; font-size: 11.5px; color: var(--ink3); margin-top: 1px; }
+.tbl .supplier{ font-weight: 500; }
+.tbl .muted{ color: var(--ink2); }
+.tbl .pen{ font-weight: 600; color: var(--bad); white-space: nowrap; }
+.tbl .none{ color: var(--ink3); }
+.tbl .due-bad{ color: var(--bad); font-weight: 600; white-space: nowrap; }
+.tbl td.date{ white-space: nowrap; }
+
+/* status designations */
+.st{ font: 600 10.5px/1.6 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+[lang=ar] .st{ letter-spacing: 0; font-size: 11.5px; text-transform: none; }
+.st .g{ margin-inline-end: 4px; font-size: 10px; }
+.st-ok{ color: var(--ok); } .st-warn{ color: var(--warn); } .st-bad{ color: var(--bad); } .st-none{ color: var(--ink3); }
+
+.tablefoot{
+  display: flex; align-items: center; gap: var(--s4); padding-block: var(--s3); flex-wrap: wrap;
+  font-size: 12.5px; color: var(--ink2);
+}
+.tablefoot .grow{ flex: 1; }
+.pager{ display: flex; align-items: center; gap: 2px; }
+.pager button{
+  appearance: none; background: none; border: 1px solid transparent; border-radius: var(--r);
+  font: 500 12.5px var(--font-ui); color: var(--ink2); min-width: 28px; padding: 5px 8px; cursor: pointer;
+  font-variant-numeric: tabular-nums; transition: color .15s ease-out, border-color .15s ease-out;
+}
+.pager button:hover{ color: var(--ink); border-color: var(--line2); }
+.pager button[aria-current=page]{ color: var(--accent); font-weight: 700; border-color: var(--accent); }
+.pager button:disabled{ color: var(--line2); cursor: not-allowed; }
+.pager button:disabled:hover{ border-color: transparent; }
+
+/* ====================== receipt form panel ====================== */
+.panel{ margin-block: var(--s6) var(--s7); border-top: 2px solid var(--ink); position: relative; }
+.panel::before{ content: ''; position: absolute; top: 3px; left: 0; right: 0; border-top: 1px solid var(--ink); }
+.panel-head{ display: flex; align-items: baseline; gap: var(--s4); flex-wrap: wrap; padding-top: var(--s4); }
+.panel-head h2{ font-family: var(--font-display); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; }
+[lang=ar] .panel-head h2{ font-size: 24px; letter-spacing: 0; font-weight: 600; }
+.panel-head .grow{ flex: 1; }
+.panel-head .ctx{ font-size: 12.5px; color: var(--ink2); }
+.panel-head .ctx strong{ color: var(--ink); }
+.formgrid{ display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--s4) var(--s5); padding-block: var(--s5); }
+.f-boq{ grid-column: span 5; } .f-qty{ grid-column: span 3; } .f-origin{ grid-column: span 4; }
+.f-evi{ grid-column: span 4; } .f-ref{ grid-column: span 4; } .f-note{ grid-column: span 4; }
+.field label, .field .grouplabel{ display: block; font: 600 12px/1.4 var(--font-ui); color: var(--ink2); margin-bottom: 6px; }
+.field input[type=text], .field select, .field textarea{
+  width: 100%; padding: 9px 10px; border: 1px solid var(--line2); border-radius: var(--r);
+  background: var(--bg); color: var(--ink); font: 400 13.5px/1.5 var(--font-ui);
+  transition: border-color .15s ease-out;
+}
+.field input[type=text]:hover, .field select:hover, .field textarea:hover{ border-color: var(--ink3); }
+.field input::placeholder, .field textarea::placeholder{ color: var(--ink3); }
+.field textarea{ resize: vertical; min-height: 76px; }
+.field .help{ font-size: 12px; color: var(--ink3); margin: 5px 0 0; }
+.field.invalid input{ border-color: var(--bad); }
+.field .err{ font: 500 12.5px/1.45 var(--font-ui); color: var(--bad); margin: 5px 0 0; }
+.field .err .g{ font-weight: 700; margin-inline-end: 4px; }
+.qtyrow{ display: flex; align-items: center; gap: var(--s2); }
+.qtyrow input{ flex: 1; min-width: 0; }
+.qtyrow .unit{ font: 500 12.5px var(--font-ui); color: var(--ink2); flex: none; }
+.radios{ display: flex; gap: var(--s5); padding-block: 9px; }
+.radios label{ display: inline-flex; align-items: center; gap: 7px; font: 400 13.5px var(--font-ui); color: var(--ink); cursor: pointer; }
+.radios input{ accent-color: var(--accent); width: 15px; height: 15px; margin: 0; cursor: pointer; }
+.formfoot{
+  display: flex; align-items: center; gap: var(--s3); border-top: 1px solid var(--line);
+  padding-block: var(--s4); flex-wrap: wrap;
+}
+.formfoot .grow{ flex: 1; }
+.audit{ font-size: 12px; color: var(--ink3); }
+
+/* colophon */
+.colophon{
+  border-top: 1px solid var(--ink); padding-block: var(--s4) var(--s7);
+  display: flex; justify-content: space-between; gap: var(--s3); flex-wrap: wrap;
+  font-size: 12px; color: var(--ink3);
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+}
+
+/* ====================== responsive ====================== */
+@media (max-width: 1100px){
+  .wrap{ padding-inline: var(--s5); }
+  .f-boq{ grid-column: span 6; } .f-qty{ grid-column: span 3; } .f-origin{ grid-column: span 3; }
+  .f-evi, .f-ref{ grid-column: span 6; } .f-note{ grid-column: span 12; }
+}
+@media (max-width: 900px){
+  .navlinks{ display: none; }
+  .sections{ display: block; position: relative; }
+  .sections > summary{
+    list-style: none; display: inline-block; padding: 11px 0 9px; cursor: pointer;
+    font: 600 13px var(--font-ui); color: var(--ink);
+  }
+  .sections > summary::-webkit-details-marker{ display: none; }
+  .sections > summary::after{ content: ' ▾'; font-size: 10px; color: var(--ink3); }
+  .secpanel{
+    position: absolute; inset-inline: calc(-1 * var(--s5)); top: calc(100% + 1px); z-index: var(--z-overlay);
+    background: var(--bg); border-bottom: 1px solid var(--ink); padding: var(--s2) var(--s5) var(--s4);
+    display: grid;
+  }
+  .secpanel a{
+    padding: 10px 0; font: 500 14px var(--font-ui); color: var(--ink2); border-bottom: 1px solid var(--line);
+  }
+  .secpanel a:hover{ color: var(--ink); text-decoration: none; }
+  .secpanel a[aria-current=page]{ color: var(--ink); font-weight: 700; }
+  .secpanel a[aria-current=page]::after{ content: ' •'; color: var(--accent); }
+  .searchbox{ display: none; }
+}
+@media (max-width: 700px){
+  .wrap{ padding-inline: var(--s4); }
+  .secpanel{ inset-inline: calc(-1 * var(--s4)); padding-inline: var(--s4); }
+  .deck1-in{ height: auto; min-height: 50px; flex-wrap: wrap; padding-block: var(--s2); row-gap: 2px; column-gap: var(--s3); }
+  .deck1-in .grow{ display: none; }
+  .brand{ font-size: 19px; }
+  .user{ display: none; }
+  .pagehead{ padding-block: var(--s5) var(--s3); }
+  .pagehead h1{ font-size: 32px; }
+  [lang=ar] .pagehead h1{ font-size: 29px; }
+  .toolbar input[type=search]{ width: 100%; order: -1; }
+  .formgrid > .field{ grid-column: span 12 !important; }
+  .formfoot .btn{ flex: 1; }
+  .colophon{ flex-direction: column; gap: var(--s2); }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-ar="تخطّي إلى المحتوى">Skip to content</a>
+
+<header>
+  <div class="deck1">
+    <div class="wrap deck1-in">
+      <a class="brand" href="#" data-ar="مرصد المحتوى المحلي">LC Monitor Pro</a>
+      <span class="grow"></span>
+      <div class="searchbox">
+        <input type="search" aria-label="Search contracts, suppliers, reports" data-ar-aria="البحث في العقود والموردين والتقارير" placeholder="Search…" data-ar-ph="بحث…">
+        <kbd aria-hidden="true">/</kbd>
+      </div>
+      <button class="furn" id="themeBtn" type="button" aria-pressed="false"><span class="glyph" aria-hidden="true">◐</span><span id="themeLbl">Night print</span></button>
+      <span class="sep" aria-hidden="true"></span>
+      <button class="furn" id="langBtn" type="button" lang="ar">العربية</button>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="user" data-ar="م. كامل — مكتب الالتزام">M. Kamil — Compliance Office</span>
+    </div>
+  </div>
+  <nav class="navbar" aria-label="Primary" data-ar-aria="التنقل الرئيسي">
+    <div class="wrap">
+      <ul class="navlinks">
+        <li><a href="#" data-ar="لوحة المتابعة">Dashboard</a></li>
+        <li><a href="#" data-ar="إعداد المنافسات">RFP Preparation</a></li>
+        <li><a href="#" data-ar="تقييم العروض">Bid Evaluation</a></li>
+        <li><a href="#" aria-current="page" data-ar="العقود والمراقبة">Contracts &amp; Monitoring</a></li>
+        <li><a href="#" data-ar="الاستلام">Receiving</a></li>
+        <li><a href="#" data-ar="مراجعة التقارير">Reports Review</a></li>
+        <li><a href="#" data-ar="الغرامات">Penalties</a></li>
+        <li><a href="#" data-ar="الموردون">Suppliers</a></li>
+        <li>
+          <details class="more">
+            <summary aria-haspopup="true"><span data-ar="المزيد">More</span></summary>
+            <div class="more-menu">
+              <a href="#" data-ar="الشهادات">Certificates</a>
+              <a href="#" data-ar="القائمة السوداء">Blacklist</a>
+              <a href="#" data-ar="سجل التدقيق">Audit Log</a>
+              <a href="#" data-ar="التذكيرات">Reminders</a>
+              <a href="#" data-ar="الإعدادات">Settings</a>
+            </div>
+          </details>
+        </li>
+      </ul>
+      <details class="sections">
+        <summary><span data-ar="الأقسام">Sections</span></summary>
+        <div class="secpanel">
+          <a href="#" data-ar="لوحة المتابعة">Dashboard</a>
+          <a href="#" data-ar="إعداد المنافسات">RFP Preparation</a>
+          <a href="#" data-ar="تقييم العروض">Bid Evaluation</a>
+          <a href="#" aria-current="page" data-ar="العقود والمراقبة">Contracts &amp; Monitoring</a>
+          <a href="#" data-ar="الاستلام">Receiving</a>
+          <a href="#" data-ar="مراجعة التقارير">Reports Review</a>
+          <a href="#" data-ar="الغرامات">Penalties</a>
+          <a href="#" data-ar="الموردون">Suppliers</a>
+          <a href="#" data-ar="الشهادات">Certificates</a>
+          <a href="#" data-ar="القائمة السوداء">Blacklist</a>
+          <a href="#" data-ar="سجل التدقيق">Audit Log</a>
+          <a href="#" data-ar="التذكيرات">Reminders</a>
+          <a href="#" data-ar="الإعدادات">Settings</a>
+        </div>
+      </details>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap" id="main">
+  <div class="pagehead">
+    <h1 data-ar="العقود والمراقبة">Contracts &amp; Monitoring</h1>
+    <span class="grow"></span>
+    <div class="actions">
+      <button class="btn btn-secondary" type="button" data-ar="تصدير">Export</button>
+      <a class="btn btn-primary" href="#receipt" data-ar="تسجيل استلام ↓">Log receipt ↓</a>
+    </div>
+  </div>
+
+  <p class="sumstrip num">
+    <span><strong>47</strong> <span data-ar="عقداً">contracts</span></span><span class="dot">·</span>
+    <span><strong>31</strong> <span data-ar="نشطاً">active</span></span><span class="dot">·</span>
+    <span><span data-ar="قيمة المحفظة">portfolio</span> <strong data-ar="2.84 مليار ريال">SAR 2.84B</strong></span><span class="dot">·</span>
+    <span><span data-ar="الغرامات المحتملة">penalty exposure</span> <strong data-ar="19.6 مليون ريال">SAR 19.6M</strong> <span data-ar="في 7 عقود">across 7 contracts</span></span><span class="dot">·</span>
+    <span><strong>12</strong> <span data-ar="مراجعة أدلة معلّقة">evidence reviews pending</span></span>
+  </p>
+
+  <div class="toolbar" role="search" aria-label="Filter contracts" data-ar-aria="تصفية العقود">
+    <input type="search" aria-label="Search by contract number or supplier" data-ar-aria="البحث برقم العقد أو المورد" placeholder="Contract no., supplier, scope…" data-ar-ph="رقم العقد، المورد، النطاق…">
+    <select aria-label="Filter by status" data-ar-aria="تصفية حسب الحالة">
+      <option data-ar="كل الحالات">All statuses</option>
+      <option data-ar="ملتزم">Compliant</option>
+      <option data-ar="مراقبة">Watch</option>
+      <option data-ar="معرّض للخطر">At risk</option>
+      <option data-ar="مخالفة">Breach</option>
+      <option data-ar="لا يوجد تقرير">No report</option>
+    </select>
+    <select aria-label="Filter by end-user entity" data-ar-aria="تصفية حسب الجهة المستفيدة">
+      <option data-ar="كل الجهات">All entities</option>
+      <option data-ar="وزارة الصحة">Ministry of Health</option>
+      <option data-ar="الهيئة الملكية للجبيل وينبع">Royal Commission J&amp;Y</option>
+      <option data-ar="هيئة المياه السعودية">Saudi Water Authority</option>
+      <option data-ar="نيوم">NEOM</option>
+      <option data-ar="وزارة التعليم">Ministry of Education</option>
+    </select>
+    <button class="linkbtn" type="button" data-ar="إعادة تعيين المرشحات">Reset filters</button>
+    <span class="grow"></span>
+    <span class="resultcount num" data-ar="عرض العقود النشطة، مرتبة حسب القيمة">Active contracts, ordered by value</span>
+  </div>
+
+  <div class="tablewrap" tabindex="0" role="region" aria-label="Contracts register" data-ar-aria="سجل العقود">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th scope="col"><button class="sort" type="button"><span data-ar="العقد">Contract</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col"><button class="sort" type="button"><span data-ar="المورد">Supplier</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col"><span class="sort" style="cursor:default" data-ar="النطاق">Scope</span></th>
+          <th scope="col"><button class="sort" type="button"><span data-ar="الجهة المستفيدة">End user</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col" class="end" aria-sort="descending"><button class="sort" type="button"><span data-ar="القيمة">Value</span> <span class="si" aria-hidden="true">↓</span></button></th>
+          <th scope="col" class="end"><button class="sort" type="button"><span data-ar="المستهدف">Target</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col" class="end"><button class="sort" type="button"><span data-ar="المحقق">Achieved</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col"><button class="sort" type="button"><span data-ar="الحالة">Status</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col"><button class="sort" type="button"><span data-ar="التقرير القادم">Next report</span> <span class="si" aria-hidden="true">↕</span></button></th>
+          <th scope="col" class="end"><button class="sort" type="button"><span data-ar="الغرامة">Penalty</span> <span class="si" aria-hidden="true">↕</span></button></th>
+        </tr>
+      </thead>
+      <tbody class="num">
+        <tr>
+          <td class="cno"><a href="#">C-2025-0117</a></td>
+          <td class="supplier" data-ar="الفنار">Alfanar</td>
+          <td class="muted" data-ar="لوحات توزيع كهربائية">Switchgear</td>
+          <td class="muted" data-ar="نيوم">NEOM</td>
+          <td class="end">210.9</td>
+          <td class="end">42%</td><td class="end">44.6%</td>
+          <td><span class="st st-ok"><span class="g" aria-hidden="true">✓</span><span data-ar="ملتزم">Compliant</span></span></td>
+          <td class="date" data-ar="31 يوليو 2026">31 Jul 2026</td>
+          <td class="end none">—</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2024-0142</a></td>
+          <td class="supplier" data-ar="شركة التصنيع الوطنية">National Industrialization Co.</td>
+          <td class="muted" data-ar="معدات طبية">Medical equipment</td>
+          <td class="muted" data-ar="وزارة الصحة">Ministry of Health</td>
+          <td class="end">184.0</td>
+          <td class="end">40%</td><td class="end">36.2%</td>
+          <td><span class="st st-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+          <td class="date" data-ar="30 يونيو 2026">30 Jun 2026</td>
+          <td class="end pen">3.1</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2025-0031</a></td>
+          <td class="supplier" data-ar="أسترا الصناعية">Astra Industrial</td>
+          <td class="muted" data-ar="مستلزمات صيدلانية">Pharma supplies</td>
+          <td class="muted" data-ar="وزارة الصحة">Ministry of Health</td>
+          <td class="end">142.7</td>
+          <td class="end">45%</td><td class="end">41.0%</td>
+          <td><span class="st st-warn"><span class="g" aria-hidden="true">○</span><span data-ar="مراقبة">Watch</span></span></td>
+          <td class="date" data-ar="21 يونيو 2026">21 Jun 2026</td>
+          <td class="end none">—</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2025-0203</a></td>
+          <td class="supplier" data-ar="المتقدمة للبتروكيماويات">Advanced Petrochemical</td>
+          <td class="muted" data-ar="لقيم البوليمرات">Polymer feedstock</td>
+          <td class="muted" data-ar="الهيئة الملكية للجبيل وينبع">Royal Commission J&amp;Y</td>
+          <td class="end">122.5</td>
+          <td class="end">38%</td><td class="end">35.9%</td>
+          <td><span class="st st-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+          <td class="date" data-ar="14 يوليو 2026">14 Jul 2026</td>
+          <td class="end pen">1.9</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2023-0098</a></td>
+          <td class="supplier" data-ar="الزامل للصناعة">Zamil Industrial</td>
+          <td class="muted" data-ar="أنظمة التكييف">HVAC systems</td>
+          <td class="muted" data-ar="الهيئة الملكية للجبيل وينبع">Royal Commission J&amp;Y</td>
+          <td class="end">96.5</td>
+          <td class="end">35%</td><td class="end">38.9%</td>
+          <td><span class="st st-ok"><span class="g" aria-hidden="true">✓</span><span data-ar="ملتزم">Compliant</span></span></td>
+          <td class="date" data-ar="15 يوليو 2026">15 Jul 2026</td>
+          <td class="end none">—</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2023-0154</a></td>
+          <td class="supplier" data-ar="كابلات الرياض">Riyadh Cables</td>
+          <td class="muted" data-ar="كابلات جهد متوسط">MV cables</td>
+          <td class="muted" data-ar="هيئة المياه السعودية">Saudi Water Authority</td>
+          <td class="end">77.4</td>
+          <td class="end">36%</td><td class="end">31.5%</td>
+          <td><span class="st st-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+          <td class="date" data-ar="28 يونيو 2026">28 Jun 2026</td>
+          <td class="end pen">2.2</td>
+        </tr>
+        <tr class="sel" aria-selected="true">
+          <td class="cno"><a href="#" aria-describedby="sel-note">C-2024-0210</a></td>
+          <td class="supplier" data-ar="شركة الكابلات السعودية">Saudi Cable Co.</td>
+          <td class="muted" data-ar="كابلات الطاقة">Power cabling</td>
+          <td class="muted" data-ar="هيئة المياه السعودية">Saudi Water Authority</td>
+          <td class="end">58.3</td>
+          <td class="end">30%</td><td class="end">22.4%</td>
+          <td><span class="st st-bad"><span class="g" aria-hidden="true">✕</span><span data-ar="مخالفة">Breach</span></span></td>
+          <td class="due-bad" data-ar="متأخر 21 يوماً">Overdue 21 days</td>
+          <td class="end pen">4.8</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2024-0188</a></td>
+          <td class="supplier" data-ar="اليمامة للصلب">Al Yamamah Steel</td>
+          <td class="muted" data-ar="حديد تسليح">Rebar supply</td>
+          <td class="muted" data-ar="وزارة التعليم">Ministry of Education</td>
+          <td class="end">49.0</td>
+          <td class="end">30%</td><td class="end">33.8%</td>
+          <td><span class="st st-ok"><span class="g" aria-hidden="true">✓</span><span data-ar="ملتزم">Compliant</span></span></td>
+          <td class="date" data-ar="05 أغسطس 2026">05 Aug 2026</td>
+          <td class="end none">—</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2026-0009</a></td>
+          <td class="supplier" data-ar="مجموعة العبيكان">Obeikan Investment Group</td>
+          <td class="muted" data-ar="تغليف">Packaging</td>
+          <td class="muted" data-ar="نيوم">NEOM</td>
+          <td class="end">31.2</td>
+          <td class="end">33%</td>
+          <td class="end none">— <span class="sub" data-ar="عقد جديد">new</span></td>
+          <td><span class="st st-none"><span class="g" aria-hidden="true">—</span><span data-ar="لا يوجد تقرير">No report</span></span></td>
+          <td class="date" data-ar="15 أغسطس 2026">15 Aug 2026</td>
+          <td class="end none">—</td>
+        </tr>
+        <tr>
+          <td class="cno"><a href="#">C-2024-0077</a></td>
+          <td class="supplier" data-ar="الخزف السعودي">Saudi Ceramics</td>
+          <td class="muted" data-ar="أدوات صحية">Sanitary ware</td>
+          <td class="muted" data-ar="وزارة التعليم">Ministry of Education</td>
+          <td class="end">23.8</td>
+          <td class="end">28%</td><td class="end">27.1%</td>
+          <td><span class="st st-warn"><span class="g" aria-hidden="true">○</span><span data-ar="مراقبة">Watch</span></span></td>
+          <td class="date" data-ar="10 يوليو 2026">10 Jul 2026</td>
+          <td class="end none">—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tablefoot">
+    <span class="num" id="sel-note" data-ar="عرض 1–10 من 31 عقداً نشطاً · القيم بملايين الريالات · المحدد: C-2024-0210">Showing 1–10 of 31 active contracts · Values in SAR millions · Selected: C-2024-0210</span>
+    <span class="grow"></span>
+    <nav class="pager num" aria-label="Pagination" data-ar-aria="ترقيم الصفحات">
+      <button type="button" disabled aria-label="Previous page" data-ar-aria="الصفحة السابقة">‹</button>
+      <button type="button" aria-current="page">1</button>
+      <button type="button">2</button>
+      <button type="button">3</button>
+      <button type="button">4</button>
+      <button type="button" aria-label="Next page" data-ar-aria="الصفحة التالية">›</button>
+    </nav>
+  </div>
+
+  <!-- receipt form fragment: visible by default -->
+  <section class="panel" id="receipt" aria-labelledby="receipt-h">
+    <div class="panel-head">
+      <h2 id="receipt-h" data-ar="تسجيل استلام بضائع — خطاب استثناء">Log goods receipt — exception letter</h2>
+      <span class="grow"></span>
+      <p class="ctx num"><strong>C-2024-0210</strong> · <span data-ar="شركة الكابلات السعودية · كابلات الطاقة · هيئة المياه السعودية ·">Saudi Cable Co. · Power cabling · Saudi Water Authority ·</span> <span class="st st-bad"><span class="g" aria-hidden="true">✕</span><span data-ar="مخالفة">Breach</span></span> · <a href="#" data-ar="عرض العقد ←">View contract →</a></p>
+    </div>
+
+    <form novalidate>
+      <div class="formgrid">
+        <div class="field f-boq">
+          <label for="boq" data-ar="بند جدول الكميات">BoQ line</label>
+          <select id="boq" name="boq">
+            <option selected data-ar="BOQ-114 — كابل جهد متوسط 33 ك.ف XLPE (كم)">BOQ-114 — MV cable, 33 kV XLPE (km)</option>
+            <option data-ar="BOQ-087 — كابل ضغط منخفض 1 ك.ف (كم)">BOQ-087 — LV power cable, 1 kV (km)</option>
+            <option data-ar="BOQ-021 — حوامل كابلات مجلفنة (م)">BOQ-021 — Cable trays, HDG (m)</option>
+          </select>
+          <p class="help num" data-ar="المطلوب 4,200 كم · المستلم سابقاً 3,020 كم · المتبقي 1,180 كم">Ordered 4,200 km · previously received 3,020 km · remaining 1,180 km</p>
+        </div>
+
+        <div class="field f-qty invalid">
+          <label for="qty" data-ar="الكمية المستلمة">Quantity received</label>
+          <div class="qtyrow">
+            <input type="text" id="qty" name="qty" inputmode="decimal" value="1,250" class="num" aria-invalid="true" aria-describedby="qty-err">
+            <span class="unit" data-ar="كم">km</span>
+          </div>
+          <p class="err" id="qty-err"><span class="g" aria-hidden="true">✕</span><span class="num" data-ar="تتجاوز الرصيد المتبقي في جدول الكميات البالغ 1,180 كم.">Exceeds the remaining BoQ balance of 1,180 km.</span></p>
+        </div>
+
+        <fieldset class="field f-origin" style="border:none;margin:0;padding:0">
+          <legend class="grouplabel" style="padding:0" data-ar="المنشأ">Origin</legend>
+          <div class="radios">
+            <label><input type="radio" name="origin" value="local"> <span data-ar="محلي">Local</span></label>
+            <label><input type="radio" name="origin" value="foreign" checked> <span data-ar="أجنبي">Foreign</span></label>
+          </div>
+          <p class="help" data-ar="المنشأ الأجنبي يستوجب خطاب استثناء معتمداً.">Foreign origin requires an approved exception letter.</p>
+        </fieldset>
+
+        <div class="field f-evi">
+          <span class="grouplabel" id="evi-lbl" data-ar="إثبات المنتج الوطني">National Product evidence</span>
+          <button class="btn btn-secondary" type="button" disabled aria-describedby="evi-help" data-ar="إرفاق شهادة (PDF)">Attach certificate (PDF)</button>
+          <p class="help" id="evi-help" data-ar="لا ينطبق — المنشأ المحدد أجنبي.">Not applicable — origin is marked Foreign.</p>
+        </div>
+
+        <div class="field f-ref">
+          <label for="exref" data-ar="مرجع خطاب الاستثناء">Exception letter reference</label>
+          <input type="text" id="exref" name="exref" value="EXL-2026-0042" class="num">
+          <p class="help" data-ar="كما صدر عن الجهة المستفيدة.">As issued by the end-user entity.</p>
+        </div>
+
+        <div class="field f-note">
+          <label for="note" data-ar="ملاحظات">Note</label>
+          <textarea id="note" name="note" rows="3" placeholder="Reason for exception, inspection remarks…" data-ar-ph="سبب الاستثناء، ملاحظات الفحص…"></textarea>
+        </div>
+      </div>
+
+      <div class="formfoot">
+        <button class="btn btn-primary" type="submit" data-ar="تسجيل الاستلام">Submit receipt</button>
+        <button class="btn btn-secondary" type="button" data-ar="حفظ مسودة">Save draft</button>
+        <button class="linkbtn" type="button" data-ar="إلغاء">Cancel</button>
+        <span class="grow"></span>
+        <span class="audit num" data-ar="يُقيَّد في سجل التدقيق باسم م. كامل · 12 يونيو 2026، 09:00">Recorded in the audit log as M. Kamil · 12 Jun 2026, 09:00</span>
+      </div>
+    </form>
+  </section>
+
+  <footer class="colophon">
+    <span data-ar="مرصد المحتوى المحلي — سجل العقود والمراقبة">LC Monitor Pro — Contracts &amp; Monitoring register</span>
+    <span class="num" data-ar="البيانات حتى إقفال 11 يونيو 2026 · 47 عقداً · هيئة المحتوى المحلي والمشتريات الحكومية">Data as of 11 June 2026 close · 47 contracts · LCGPA</span>
+  </footer>
+</main>
+
+<script>
+(function(){
+  var html = document.documentElement;
+  var themeBtn = document.getElementById('themeBtn');
+  var themeLbl = document.getElementById('themeLbl');
+  var langBtn = document.getElementById('langBtn');
+  var TITLES = { en: 'LC Monitor Pro — Contracts & Monitoring', ar: 'مرصد المحتوى المحلي — العقود والمراقبة' };
+
+  function lang(){ return html.lang === 'ar' ? 'ar' : 'en'; }
+  function theme(){ return html.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+
+  function syncURL(){
+    var p = new URLSearchParams(location.search);
+    p.set('theme', theme()); p.set('lang', lang());
+    history.replaceState(null, '', location.pathname + '?' + p.toString());
+  }
+
+  function applyLang(l){
+    html.lang = l; html.dir = (l === 'ar') ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-ar]').forEach(function(el){
+      if (!('en' in el.dataset)) el.dataset.en = el.textContent;
+      el.textContent = (l === 'ar') ? el.dataset.ar : el.dataset.en;
+    });
+    document.querySelectorAll('[data-ar-ph]').forEach(function(el){
+      if (!el.dataset.enPh) el.dataset.enPh = el.placeholder;
+      el.placeholder = (l === 'ar') ? el.dataset.arPh : el.dataset.enPh;
+    });
+    document.querySelectorAll('[data-ar-aria]').forEach(function(el){
+      if (!el.dataset.enAria) el.dataset.enAria = el.getAttribute('aria-label') || '';
+      el.setAttribute('aria-label', (l === 'ar') ? el.dataset.arAria : el.dataset.enAria);
+    });
+    document.title = TITLES[l];
+    langBtn.textContent = (l === 'ar') ? 'English' : 'العربية';
+    langBtn.setAttribute('lang', l === 'ar' ? 'en' : 'ar');
+    updateThemeLbl();
+  }
+
+  function updateThemeLbl(){
+    var dark = theme() === 'dark';
+    themeLbl.textContent = (lang() === 'ar') ? (dark ? 'طبعة النهار' : 'الطبعة الليلية')
+                                             : (dark ? 'Day print' : 'Night print');
+    themeBtn.setAttribute('aria-pressed', String(dark));
+  }
+
+  themeBtn.addEventListener('click', function(){
+    html.setAttribute('data-theme', theme() === 'dark' ? 'light' : 'dark');
+    updateThemeLbl(); syncURL();
+  });
+  langBtn.addEventListener('click', function(){
+    applyLang(lang() === 'ar' ? 'en' : 'ar'); syncURL();
+  });
+
+  /* close the More menu on outside click / Escape */
+  document.addEventListener('click', function(e){
+    document.querySelectorAll('details[open]').forEach(function(d){
+      if (!d.contains(e.target)) d.removeAttribute('open');
+    });
+  });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') document.querySelectorAll('details[open]').forEach(function(d){ d.removeAttribute('open'); });
+    if (e.key === '/' && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)){
+      var s = document.querySelector('.searchbox input');
+      if (s && s.offsetParent){ e.preventDefault(); s.focus(); }
+    }
+  });
+
+  /* boot */
+  if (lang() === 'ar') applyLang('ar'); else updateThemeLbl();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contracts &amp; Monitoring — LC Monitor Pro</title>
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  var d = document.documentElement;
+  d.setAttribute('data-theme', p.get('theme') === 'dark' ? 'dark' : 'light');
+  if (p.get('lang') === 'ar') { d.lang = 'ar'; d.dir = 'rtl'; }
+})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --bg:            oklch(0.976 0.003 170);
+  --surface:       oklch(0.990 0.002 170);
+  --surface2:      oklch(0.946 0.005 170);
+  --ink:           oklch(0.215 0.020 170);
+  --ink2:          oklch(0.370 0.020 170);
+  --ink3:          oklch(0.455 0.020 170);
+  --line:          oklch(0.860 0.010 170);
+  --line2:         oklch(0.640 0.018 170);
+  --rule:          oklch(0.300 0.030 170);
+  --accent:        oklch(0.355 0.070 170);
+  --accent-hover:  oklch(0.300 0.065 170);
+  --accent-ink:    oklch(0.985 0.003 170);
+  --accent-tint:   oklch(0.940 0.014 170);
+  --chrome:        oklch(0.305 0.062 172);
+  --chrome2:       oklch(0.262 0.056 172);
+  --chrome-ink:    oklch(0.965 0.006 170);
+  --chrome-ink2:   oklch(0.825 0.022 170);
+  --chrome-line:   oklch(0.420 0.050 172);
+  --gold:          oklch(0.640 0.110 88);   /* single keyline under the band */
+  --ok:            oklch(0.430 0.095 162);
+  --ok-bg:         oklch(0.930 0.028 162);
+  --warn:          oklch(0.480 0.105 70);
+  --warn-bg:       oklch(0.938 0.040 85);
+  --bad:           oklch(0.450 0.150 27);
+  --bad-bg:        oklch(0.932 0.030 27);
+  --info:          oklch(0.430 0.065 225);
+  --info-bg:       oklch(0.930 0.018 225);
+  --r: 3px; --rs: 2px; --rl: 6px;
+  --z-nav: 100; --z-sticky: 200; --z-overlay: 300; --z-modal: 400; --z-toast: 500;
+  --font-display: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-ui: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  --font-ar: 'IBM Plex Sans Arabic', 'Segoe UI', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --ease: cubic-bezier(.22,1,.36,1);
+}
+[data-theme="dark"]{
+  --bg:            oklch(0.182 0.012 172);
+  --surface:       oklch(0.212 0.014 172);
+  --surface2:      oklch(0.252 0.016 172);
+  --ink:           oklch(0.930 0.008 170);
+  --ink2:          oklch(0.790 0.014 170);
+  --ink3:          oklch(0.690 0.014 170);
+  --line:          oklch(0.320 0.020 172);
+  --line2:         oklch(0.460 0.020 172);
+  --rule:          oklch(0.800 0.020 170);
+  --accent:        oklch(0.740 0.085 168);
+  --accent-hover:  oklch(0.800 0.085 168);
+  --accent-ink:    oklch(0.170 0.030 172);
+  --accent-tint:   oklch(0.265 0.030 170);
+  --chrome:        oklch(0.240 0.045 172);
+  --chrome2:       oklch(0.205 0.040 172);
+  --chrome-ink:    oklch(0.950 0.008 170);
+  --chrome-ink2:   oklch(0.800 0.020 170);
+  --chrome-line:   oklch(0.360 0.040 172);
+  --gold:          oklch(0.780 0.118 88);
+  --ok:            oklch(0.760 0.105 162);
+  --ok-bg:         oklch(0.282 0.030 162);
+  --warn:          oklch(0.800 0.115 80);
+  --warn-bg:       oklch(0.290 0.040 80);
+  --bad:           oklch(0.760 0.120 27);
+  --bad-bg:        oklch(0.282 0.040 27);
+  --info:          oklch(0.770 0.075 225);
+  --info-bg:       oklch(0.272 0.028 225);
+}
+html[lang="ar"]{ --font-display: 'Amiri', 'Source Serif 4', serif; }
+
+/* ============ BASE ============ */
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; }
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--font-ui); font-size:13.5px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2{ font-family:var(--font-display); margin:0; font-weight:600; }
+p{ margin:0; }
+a{ color:var(--accent); }
+svg{ display:block; }
+.mono, .ref{ font-family:var(--font-mono); font-variant-numeric:tabular-nums; }
+.ref{ direction:ltr; unicode-bidi:isolate; }
+.num{ font-variant-numeric:tabular-nums; direction:ltr; unicode-bidi:isolate; }
+:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--rs); }
+.band :focus-visible, .drawer :focus-visible{ outline-color:var(--chrome-ink); }
+.skip{
+  position:absolute; inset-inline-start:-9999px; z-index:var(--z-toast);
+  background:var(--surface); color:var(--ink); padding:8px 14px; border:1px solid var(--rule);
+}
+.skip:focus{ inset-inline-start:12px; top:12px; }
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap; }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{ transition:none !important; animation:none !important; }
+}
+
+/* ============ TOPBAR (letterhead, slim) ============ */
+.band{
+  background:var(--chrome); color:var(--chrome-ink);
+  border-bottom:2px solid var(--gold);                 /* the single gold rule */
+  position:sticky; top:0; z-index:var(--z-nav);
+}
+.band-inner{
+  display:flex; align-items:center; gap:16px; padding:0 20px; height:58px;
+}
+.brand{ display:flex; align-items:center; gap:12px; min-width:0; }
+.brand .wordmark{ font-weight:600; font-size:14px; letter-spacing:.02em; white-space:nowrap; }
+.brand .authority{ font-size:11px; color:var(--chrome-ink2); white-space:nowrap; }
+.bctl.menu-btn{ display:none; }
+.band-search{ position:relative; flex:0 1 340px; margin-inline-start:24px; }
+.band-search svg{
+  position:absolute; inset-inline-start:10px; top:50%; transform:translateY(-50%);
+  color:var(--chrome-ink2); pointer-events:none;
+}
+.band-search input{
+  width:100%; height:34px; padding:0 12px; padding-inline-start:32px;
+  font:inherit; font-size:12.5px; color:var(--chrome-ink);
+  background:var(--chrome2); border:1px solid var(--chrome-line); border-radius:var(--r);
+  transition:border-color .15s var(--ease), background-color .15s var(--ease);
+}
+.band-search input::placeholder{ color:var(--chrome-ink2); opacity:1; }
+.band-search input:hover{ border-color:var(--chrome-ink2); }
+.band-search input:focus{ outline:2px solid var(--chrome-ink); outline-offset:1px; }
+.band-controls{ display:flex; align-items:center; gap:8px; margin-inline-start:auto; }
+.bctl{
+  appearance:none; cursor:pointer; font-family:var(--font-ui); font-size:12px; font-weight:500;
+  background:transparent; color:var(--chrome-ink); border:1px solid var(--chrome-line);
+  border-radius:var(--r); padding:6px 10px; display:inline-flex; align-items:center; gap:6px;
+  transition:background-color .15s var(--ease), border-color .15s var(--ease);
+}
+.bctl:hover{ background:var(--chrome2); border-color:var(--chrome-ink2); }
+.theme-icon{ width:13px; height:13px; }
+[data-theme="light"] .icon-sun{ display:none; }
+[data-theme="dark"] .icon-moon{ display:none; }
+.user{
+  display:flex; align-items:center; gap:9px; padding-inline-start:14px;
+  border-inline-start:1px solid var(--chrome-line);
+}
+.user-init{
+  width:30px; height:30px; border-radius:var(--r); background:var(--chrome2);
+  border:1px solid var(--chrome-line); display:grid; place-items:center;
+  font-size:11px; font-weight:600; letter-spacing:.04em;
+}
+.user-meta{ line-height:1.25; }
+.user-meta .n{ font-size:12px; font-weight:600; }
+.user-meta .r{ font-size:10.5px; color:var(--chrome-ink2); }
+
+/* ============ SHELL ============ */
+.shell{ display:grid; grid-template-columns:248px minmax(0,1fr); min-height:calc(100vh - 60px); }
+
+/* ============ NAV — formal index ============ */
+.index-nav{
+  border-inline-end:1px solid var(--line); background:var(--surface);
+  padding:22px 0 18px; display:flex; flex-direction:column; gap:0;
+}
+.index-title{
+  font-family:var(--font-display); font-size:14px; font-weight:600; color:var(--ink2);
+  padding:0 20px 12px; border-bottom:1px solid var(--line); margin-bottom:10px;
+}
+.nav-group{ padding:8px 12px 4px; }
+.nav-group + .nav-group{ margin-top:4px; border-top:1px solid var(--line); padding-top:12px; }
+.nav-group-label{
+  display:flex; gap:8px; align-items:baseline; padding:0 8px 6px;
+  font-size:11px; font-weight:600; color:var(--ink3);
+}
+.nav-group-label .rn{ font-family:var(--font-mono); font-size:10.5px; }
+.nav-group ul{ list-style:none; margin:0; padding:0; }
+.nav-item{
+  display:flex; align-items:center; gap:8px; padding:7px 8px; margin:1px 0;
+  font-size:13px; color:var(--ink2); text-decoration:none; border-radius:var(--r);
+  transition:background-color .15s var(--ease), color .15s var(--ease);
+}
+.nav-item:hover{ background:var(--surface2); color:var(--ink); }
+.nav-item[aria-current="page"]{
+  background:var(--accent); color:var(--accent-ink); font-weight:600;
+}
+.nav-count{
+  margin-inline-start:auto; font-size:11px; font-variant-numeric:tabular-nums;
+  color:var(--ink3); background:var(--surface2); border:1px solid var(--line);
+  padding:0 6px; border-radius:var(--r); line-height:1.5;
+}
+.nav-item[aria-current="page"] .nav-count{
+  color:var(--accent-ink); background:transparent; border-color:color-mix(in oklch, var(--accent-ink) 40%, transparent);
+}
+.nav-foot{
+  margin-top:auto; padding:14px 20px 0; border-top:1px solid var(--line);
+  font-size:11px; color:var(--ink3);
+}
+
+/* drawer mode (collapsed nav) */
+.scrim{
+  display:none; position:fixed; inset:0; background:oklch(0.15 0.02 172 / .45);
+  z-index:var(--z-overlay); border:none; padding:0; margin:0; cursor:default;
+}
+@media (max-width: 1100px){
+  .shell{ grid-template-columns:minmax(0,1fr); }
+  .index-nav{
+    position:fixed; inset-block:0; inset-inline-start:0; width:280px; z-index:var(--z-modal);
+    transform:translateX(calc(-100% - 2px)); transition:transform .22s var(--ease);
+    border-inline-end:1px solid var(--line2); overflow-y:auto; box-shadow:0 0 0 transparent;
+  }
+  html[dir="rtl"] .index-nav{ transform:translateX(calc(100% + 2px)); }
+  .index-nav.open{ transform:translateX(0); box-shadow:0 12px 40px oklch(0.15 0.02 172 / .3); }
+  html[dir="rtl"] .index-nav.open{ transform:translateX(0); }
+  body.drawer-open .scrim{ display:block; }
+  .bctl.menu-btn{ display:inline-flex; }
+}
+
+/* ============ MAIN ============ */
+.main{ padding:24px 32px 56px; min-width:0; }
+.doc-line{
+  display:flex; gap:10px; align-items:baseline; flex-wrap:wrap;
+  font-size:12px; color:var(--ink3); margin-bottom:10px;
+}
+.doc-line .sep{ color:var(--line2); }
+.page-head{
+  display:flex; align-items:baseline; gap:18px; flex-wrap:wrap;
+  border-bottom:2px solid var(--rule); padding-bottom:14px;
+}
+.page-head h1{ font-size:27px; font-weight:600; }
+html[lang="ar"] .page-head h1{ font-size:30px; }
+.page-head .count{ font-size:13px; color:var(--ink3); }
+
+/* summary strip */
+.summary{ display:flex; flex-wrap:wrap; border-bottom:1px solid var(--line); }
+.sum-item{
+  padding:12px 26px 12px 0; margin-inline-end:26px; border-inline-end:1px solid var(--line);
+  display:flex; align-items:baseline; gap:8px;
+}
+html[dir="rtl"] .sum-item{ padding:12px 0 12px 26px; }
+.sum-item:last-child{ border-inline-end:none; }
+.sum-item .v{ font-size:16px; font-weight:600; font-variant-numeric:tabular-nums; }
+.sum-item .k{ font-size:12px; color:var(--ink3); }
+.sum-item .v.bad-v{ color:var(--bad); }
+
+/* toolbar */
+.toolbar{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; padding:16px 0 14px; }
+.field-search{ position:relative; flex:0 1 300px; min-width:200px; }
+.field-search svg{
+  position:absolute; inset-inline-start:10px; top:50%; transform:translateY(-50%);
+  color:var(--ink3); pointer-events:none;
+}
+.input, .select{
+  font:inherit; font-size:12.5px; color:var(--ink); height:34px;
+  background:var(--surface); border:1px solid var(--line2); border-radius:var(--r);
+  padding:0 10px; transition:border-color .15s var(--ease), background-color .15s var(--ease);
+}
+.field-search .input{ width:100%; padding-inline-start:32px; }
+.input::placeholder{ color:var(--ink3); opacity:1; }
+.input:hover, .select:hover{ border-color:var(--ink3); }
+.input:focus-visible, .select:focus-visible{ outline-offset:0; outline-width:2px; border-color:var(--accent); }
+.select{ padding-inline-end:6px; }
+.btn{
+  appearance:none; cursor:pointer; font-family:var(--font-ui); font-size:12.5px; font-weight:600;
+  height:34px; padding:0 14px; border-radius:var(--r); display:inline-flex; align-items:center; gap:7px;
+  transition:background-color .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease);
+}
+.btn-primary{ background:var(--accent); color:var(--accent-ink); border:1px solid var(--accent); }
+.btn-primary:hover{ background:var(--accent-hover); border-color:var(--accent-hover); }
+.btn-secondary{ background:var(--surface); color:var(--ink); border:1px solid var(--line2); }
+.btn-secondary:hover{ border-color:var(--ink3); background:var(--surface2); }
+.btn:disabled{
+  cursor:not-allowed; background:var(--surface2); color:var(--ink3); border:1px solid var(--line);
+}
+.toolbar-spacer{ flex:1; }
+
+/* ============ REGISTER TABLE ============ */
+.table-wrap{
+  overflow:auto; max-height:64vh; border:1px solid var(--line);
+  border-radius:var(--rs); background:var(--surface);
+}
+table.register{ border-collapse:separate; border-spacing:0; width:100%; min-width:1080px; font-size:13px; }
+.register th{
+  position:sticky; top:0; z-index:var(--z-sticky);
+  background:var(--surface); text-align:start; font-weight:600; font-size:11.5px; color:var(--ink2);
+  padding:9px 12px; border-bottom:2px solid var(--rule); white-space:nowrap;
+}
+.register th .sort{ color:var(--ink3); font-size:10px; margin-inline-start:4px; }
+.register td{
+  padding:9px 12px; border-bottom:1px solid var(--line);
+  background:var(--surface); vertical-align:top;
+}
+.register tbody tr:last-child td{ border-bottom:none; }
+.register tbody tr:hover td{ background:var(--surface2); }
+.register tr.row-linked td{ background:var(--accent-tint); }
+.register tr.row-linked .stick2{ font-weight:600; }
+.register .ref{ white-space:nowrap; }
+.register .num-cell{ text-align:end; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.register th.num-cell{ text-align:end; }
+.rowno{ color:var(--ink3); font-family:var(--font-mono); font-size:11.5px; }
+.cell-sub{ display:block; font-size:11.5px; color:var(--ink3); margin-top:1px; font-weight:400; }
+.supplier-name{ font-weight:500; }
+.overdue-text{ color:var(--bad); font-weight:600; }
+/* sticky first columns for horizontal scroll */
+.register th.stick1, .register td.stick1{ position:sticky; inset-inline-start:0; z-index:calc(var(--z-sticky) - 1); width:44px; min-width:44px; }
+.register th.stick2, .register td.stick2{ position:sticky; inset-inline-start:44px; z-index:calc(var(--z-sticky) - 1); }
+.register th.stick1, .register th.stick2{ z-index:var(--z-sticky); }
+.register td.stick2, .register th.stick2{
+  border-inline-end:1px solid var(--line);
+}
+
+/* designation chips */
+.des{
+  display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:600;
+  padding:2px 8px; border-radius:var(--r); border:1px solid; white-space:nowrap;
+}
+.des .g{ font-size:9.5px; line-height:1; }
+.des-ok{   color:var(--ok);   background:var(--ok-bg);   border-color:color-mix(in oklch, var(--ok) 40%, transparent); }
+.des-warn{ color:var(--warn); background:var(--warn-bg); border-color:color-mix(in oklch, var(--warn) 40%, transparent); }
+.des-bad{  color:var(--bad);  background:var(--bad-bg);  border-color:color-mix(in oklch, var(--bad) 40%, transparent); }
+.des-info{ color:var(--info); background:var(--info-bg); border-color:color-mix(in oklch, var(--info) 40%, transparent); }
+.des-mute{ color:var(--ink2); background:var(--surface2); border-color:var(--line2); }
+
+/* pagination */
+.pager{
+  display:flex; align-items:center; gap:10px; padding:12px 2px; flex-wrap:wrap;
+  font-size:12.5px; color:var(--ink3); border-bottom:1px solid var(--line);
+}
+.pager .btn{ height:30px; padding:0 12px; font-size:12px; }
+.pager-count{ margin-inline-end:auto; }
+
+/* ============ OFFICIAL FORM ============ */
+.form-panel{
+  margin-top:30px; border:1px solid var(--line2); border-radius:var(--rs); background:var(--surface);
+}
+.form-head{
+  display:flex; align-items:flex-start; gap:16px; flex-wrap:wrap;
+  padding:16px 22px 14px; border-bottom:2px solid var(--rule); background:var(--surface2);
+  border-start-start-radius:var(--rs); border-start-end-radius:var(--rs);
+}
+.form-head h2{ font-size:18px; font-weight:600; }
+html[lang="ar"] .form-head h2{ font-size:20px; }
+.form-head .form-sub{ font-size:12.5px; color:var(--ink2); margin-top:3px; }
+.form-head-side{ margin-inline-start:auto; display:flex; align-items:center; gap:10px; }
+.form-id{ font-family:var(--font-mono); font-size:11.5px; color:var(--ink3); }
+.form-legend{
+  padding:10px 22px; font-size:12px; color:var(--ink3); border-bottom:1px solid var(--line);
+}
+.req{ color:var(--bad); font-weight:700; }
+.form-body{ padding:4px 22px 0; }
+.frow{
+  display:grid; grid-template-columns:40px 250px minmax(0,1fr); gap:6px 20px;
+  padding:16px 0; border-bottom:1px solid var(--line); align-items:start;
+}
+.frow:last-of-type{ border-bottom:none; }
+.fno{
+  font-family:var(--font-mono); font-size:13px; color:var(--ink3); padding-top:7px;
+  border-inline-end:1px solid var(--line); align-self:stretch;
+}
+.flabel{ padding-top:7px; }
+.flabel label, .flabel .lbl{ font-weight:600; font-size:13px; display:block; }
+.flabel .hint{ font-size:11.5px; color:var(--ink3); margin-top:2px; }
+.fctl{ min-width:0; }
+.fctl .input, .fctl .select, .fctl textarea{ width:100%; max-width:520px; }
+.fctl textarea{
+  font:inherit; font-size:12.5px; color:var(--ink); background:var(--surface);
+  border:1px solid var(--line2); border-radius:var(--r); padding:8px 10px; resize:vertical;
+  min-height:74px; transition:border-color .15s var(--ease);
+}
+.fctl textarea:hover{ border-color:var(--ink3); }
+.fctl textarea:focus-visible{ outline-offset:0; border-color:var(--accent); }
+.qty-row{ display:flex; gap:8px; align-items:center; }
+.qty-row .input{ width:140px; }
+.unit{ font-size:12.5px; color:var(--ink2); }
+.ordered-note{ font-size:11.5px; color:var(--ink3); margin-top:6px; }
+/* radios — native, enlarged */
+.radio-row{ display:flex; gap:22px; padding-top:6px; flex-wrap:wrap; }
+.radio-row label{ display:inline-flex; gap:8px; align-items:center; font-size:13px; cursor:pointer; }
+.radio-row input[type="radio"]{ width:16px; height:16px; accent-color:var(--accent); margin:0; }
+/* upload */
+.upload{
+  border:1px dashed var(--line2); border-radius:var(--r); background:var(--bg);
+  padding:16px 18px; display:flex; align-items:center; gap:14px; flex-wrap:wrap; max-width:520px;
+  transition:border-color .15s var(--ease);
+}
+.upload:hover{ border-color:var(--accent); }
+.upload .up-ico{ color:var(--ink3); flex:0 0 auto; }
+.upload .up-txt{ flex:1 1 180px; font-size:12.5px; color:var(--ink2); }
+.upload .up-txt small{ display:block; color:var(--ink3); font-size:11.5px; margin-top:1px; }
+.file-btn{ position:relative; overflow:hidden; }
+.file-btn input[type="file"]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+.file-btn:focus-within{ outline:2px solid var(--accent); outline-offset:2px; }
+/* error state */
+.is-error .input{ border-color:var(--bad); background:color-mix(in oklch, var(--bad-bg) 45%, var(--surface)); }
+.is-error .input:focus-visible{ outline-color:var(--bad); }
+.err-msg{
+  display:flex; gap:7px; align-items:baseline; margin-top:7px;
+  font-size:12px; font-weight:500; color:var(--bad); max-width:520px;
+}
+.err-msg .g{ font-size:11px; }
+/* actions */
+.form-actions{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  padding:16px 22px 18px; border-top:2px solid var(--rule); margin-top:0; background:var(--surface);
+  border-end-start-radius:var(--rs); border-end-end-radius:var(--rs);
+}
+.audit-note{ margin-inline-start:auto; font-size:11.5px; color:var(--ink3); }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1100px){
+  .main{ padding:20px 24px 48px; }
+  .brand .authority{ display:none; }
+}
+@media (max-width: 760px){
+  .band-inner{ padding:0 14px; gap:10px; }
+  .band-search{ display:none; }
+  .user-meta{ display:none; }
+  .user{ padding-inline-start:10px; }
+  .brand > div{ display:none; }   /* seal alone carries the mark; Index button gives context */
+  .main{ padding:16px 14px 40px; }
+  .page-head h1{ font-size:22px; }
+  html[lang="ar"] .page-head h1{ font-size:25px; }
+  .sum-item{ padding-inline-end:16px; margin-inline-end:16px; }
+  .frow{ grid-template-columns:32px minmax(0,1fr); }
+  .fno{ grid-row:1 / span 2; }
+  .flabel{ padding-top:4px; }
+  .fctl{ grid-column:2; }
+  .form-head, .form-legend, .form-body, .form-actions{ padding-inline:14px; }
+  .audit-note{ flex-basis:100%; margin-inline-start:0; }
+  .table-wrap{ max-height:none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-ar="تخطّ إلى المحتوى">Skip to content</a>
+
+<!-- ============ TOPBAR ============ -->
+<header class="band">
+  <div class="band-inner">
+    <button type="button" class="bctl menu-btn" id="menuBtn" aria-expanded="false" aria-controls="indexNav" aria-label="Open index" data-ar-label="فتح الفهرس">
+      <svg width="14" height="14" viewBox="0 0 14 14" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M1 3h12M1 7h12M1 11h12"/></svg>
+      <span data-ar="الفهرس">Index</span>
+    </button>
+    <div class="brand">
+      <svg width="34" height="34" viewBox="0 0 58 58" aria-hidden="true" style="color:var(--chrome-ink)">
+        <circle cx="29" cy="29" r="27.5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <circle cx="29" cy="29" r="21" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="1.5 3.5"/>
+        <text x="29" y="35.5" text-anchor="middle" font-family="Source Serif 4, Georgia, serif" font-size="17" font-weight="600" fill="currentColor">LC</text>
+      </svg>
+      <div style="min-width:0">
+        <div class="wordmark">LC Monitor Pro</div>
+        <div class="authority" data-ar="هيئة المحتوى المحلي والمشتريات الحكومية">Local Content &amp; Government Procurement Authority</div>
+      </div>
+    </div>
+    <div class="band-search">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="6" cy="6" r="4.5"/><path d="m9.5 9.5 3 3"/></svg>
+      <input type="search" placeholder="Search the register — contracts, suppliers, reports…" data-ar-ph="ابحث في السجل — العقود والموردون والتقارير…" aria-label="Search the register" data-ar-label="ابحث في السجل">
+    </div>
+    <div class="band-controls">
+      <button type="button" class="bctl" id="langToggle" lang="ar">العربية</button>
+      <button type="button" class="bctl" id="themeToggle" aria-label="Switch colour theme" data-ar-label="تبديل نمط الألوان">
+        <svg class="theme-icon icon-moon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13.5 9.5A6 6 0 0 1 6.5 2.5a6 6 0 1 0 7 7Z"/></svg>
+        <svg class="theme-icon icon-sun" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M13 3l-1.4 1.4M4.4 11.6 3 13"/></svg>
+      </button>
+      <div class="user">
+        <span class="user-init" aria-hidden="true">MQ</span>
+        <span class="user-meta">
+          <span class="n" data-ar="م. القحطاني">M. Al-Qahtani</span><br>
+          <span class="r" data-ar="مسؤول الالتزام">Compliance Officer</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<button type="button" class="scrim" id="scrim" aria-label="Close index" data-ar-label="إغلاق الفهرس" tabindex="-1"></button>
+
+<div class="shell">
+  <!-- ============ INDEX NAV ============ -->
+  <nav class="index-nav" id="indexNav" aria-label="Register index">
+    <div class="index-title" data-ar="فهرس السجل">Register Index</div>
+    <div class="nav-group">
+      <div class="nav-group-label"><span class="rn" aria-hidden="true">I.</span><span data-ar="الإشراف">Oversight</span></div>
+      <ul>
+        <li><a class="nav-item" href="dashboard.html" data-keep-params><span data-ar="لوحة المتابعة التنفيذية">Executive Dashboard</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="التنبيهات والتذكيرات">Alerts &amp; Reminders</span><span class="nav-count num">5</span></a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label"><span class="rn" aria-hidden="true">II.</span><span data-ar="التعاقد">Procurement</span></div>
+      <ul>
+        <li><a class="nav-item" href="#"><span data-ar="إعداد المنافسات">RFP Preparation</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="تقييم العروض">Bid Evaluation</span><span class="nav-count num">4</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="الموردون">Suppliers</span></a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label"><span class="rn" aria-hidden="true">III.</span><span data-ar="الالتزام">Compliance</span></div>
+      <ul>
+        <li><a class="nav-item" href="#" aria-current="page"><span data-ar="العقود والمراقبة">Contracts &amp; Monitoring</span><span class="nav-count num">47</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="الاستلام">Receiving</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="مراجعة التقارير">Reports Review</span><span class="nav-count num">12</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="الغرامات">Penalties</span><span class="nav-count num">7</span></a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label"><span class="rn" aria-hidden="true">IV.</span><span data-ar="السجلات">Records</span></div>
+      <ul>
+        <li><a class="nav-item" href="#"><span data-ar="الشهادات">Certificates</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="القائمة السوداء">Blacklist</span></a></li>
+        <li><a class="nav-item" href="#"><span data-ar="سجل التدقيق">Audit Log</span></a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label"><span class="rn" aria-hidden="true">V.</span><span data-ar="الإدارة">Administration</span></div>
+      <ul>
+        <li><a class="nav-item" href="#"><span data-ar="الإعدادات">Settings</span></a></li>
+      </ul>
+    </div>
+    <div class="nav-foot">
+      <span data-ar="نسخة السجل — 12 يونيو 2026">Register edition — 12 June 2026</span>
+    </div>
+  </nav>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main" id="main">
+    <p class="doc-line">
+      <span data-ar="السجل — الباب الثالث: الالتزام">Register — Part III: Compliance</span>
+      <span class="sep" aria-hidden="true">·</span>
+      <span class="ref">LCMP/REG/2026-163</span>
+    </p>
+    <header class="page-head">
+      <h1 data-ar="العقود والمراقبة">Contracts &amp; Monitoring</h1>
+      <span class="count"><span class="num">47</span> <span data-ar="عقدًا مسجّلًا · آخر قيد 12 يونيو 2026">contracts on register · last entry 12 June 2026</span></span>
+    </header>
+
+    <!-- summary strip -->
+    <div class="summary" role="list">
+      <div class="sum-item" role="listitem"><span class="v num">47</span><span class="k" data-ar="عقدًا">contracts</span></div>
+      <div class="sum-item" role="listitem"><span class="v num">31</span><span class="k" data-ar="نشطًا">active</span></div>
+      <div class="sum-item" role="listitem"><span class="v num">SAR 2.84B</span><span class="k" data-ar="قيمة المحفظة">portfolio value</span></div>
+      <div class="sum-item" role="listitem"><span class="v bad-v num">SAR 19.6M</span><span class="k" data-ar="غرامات محتملة — 7 عقود">penalty exposure — 7 contracts</span></div>
+      <div class="sum-item" role="listitem"><span class="v num">12</span><span class="k" data-ar="أدلة قيد المراجعة">evidence pending review</span></div>
+    </div>
+
+    <!-- toolbar -->
+    <div class="toolbar">
+      <div class="field-search">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="6" cy="6" r="4.5"/><path d="m9.5 9.5 3 3"/></svg>
+        <input type="search" class="input" placeholder="Filter by contract no., supplier…" data-ar-ph="تصفية برقم العقد أو المورد…" aria-label="Filter contracts" data-ar-label="تصفية العقود">
+      </div>
+      <select class="select" aria-label="Filter by status" data-ar-label="تصفية حسب الحالة">
+        <option data-ar="كل الحالات">All statuses</option>
+        <option data-ar="ملتزم">Compliant</option>
+        <option data-ar="مراقبة">Watch</option>
+        <option data-ar="معرّض للخطر">At risk</option>
+        <option data-ar="مخالفة">Breach</option>
+        <option data-ar="لا يوجد تقرير">No report</option>
+      </select>
+      <select class="select" aria-label="Filter by end-user entity" data-ar-label="تصفية حسب الجهة المستفيدة">
+        <option data-ar="كل الجهات">All entities</option>
+        <option data-ar="وزارة الصحة">Ministry of Health</option>
+        <option data-ar="الهيئة الملكية للجبيل وينبع">Royal Commission Jubail &amp; Yanbu</option>
+        <option data-ar="هيئة المياه السعودية">Saudi Water Authority</option>
+        <option data-ar="نيوم">NEOM</option>
+        <option data-ar="وزارة التعليم">Ministry of Education</option>
+      </select>
+      <span class="toolbar-spacer"></span>
+      <button type="button" class="btn btn-secondary">
+        <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M7 1v8M3.5 6 7 9.5 10.5 6M1.5 12.5h11"/></svg>
+        <span data-ar="تصدير">Export</span>
+      </button>
+    </div>
+
+    <!-- register table -->
+    <div class="table-wrap" role="region" aria-label="Contracts register" data-ar-label="سجل العقود" tabindex="0">
+      <table class="register">
+        <thead>
+          <tr>
+            <th scope="col" class="stick1"><span aria-hidden="true">#</span><span class="sr-only" data-ar="رقم الصف">Row number</span></th>
+            <th scope="col" class="stick2"><span data-ar="العقد">Contract</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col"><span data-ar="المورد / النطاق">Supplier / Scope</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col"><span data-ar="الجهة المستفيدة">End-user entity</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col" class="num-cell"><span data-ar="القيمة (مليون ر.س)">Value (SAR M)</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col" class="num-cell"><span data-ar="المستهدف">Target</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col" class="num-cell"><span data-ar="المحقق">Achieved</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col"><span data-ar="الحالة">Status</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col"><span data-ar="التقرير القادم">Next report</span><span class="sort" aria-hidden="true">↕</span></th>
+            <th scope="col" class="num-cell"><span data-ar="الغرامة (مليون ر.س)">Penalty (SAR M)</span><span class="sort" aria-hidden="true">↕</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="stick1 rowno">1</td>
+            <td class="stick2 ref">C-2024-0142</td>
+            <td><span class="supplier-name" data-ar="شركة التصنيع الوطنية">National Industrialization Co.</span><span class="cell-sub" data-ar="معدات طبية">Medical equipment</span></td>
+            <td data-ar="وزارة الصحة">Ministry of Health</td>
+            <td class="num-cell">184.0</td>
+            <td class="num-cell">40%</td>
+            <td class="num-cell">36.2%</td>
+            <td><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+            <td><span class="num">30</span> <span data-ar="يونيو 2026">Jun 2026</span></td>
+            <td class="num-cell">3.1</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">2</td>
+            <td class="stick2 ref">C-2023-0098</td>
+            <td><span class="supplier-name" data-ar="الزامل للصناعة">Zamil Industrial</span><span class="cell-sub" data-ar="أنظمة تكييف">HVAC systems</span></td>
+            <td data-ar="وزارة التعليم">Ministry of Education</td>
+            <td class="num-cell">96.5</td>
+            <td class="num-cell">35%</td>
+            <td class="num-cell">38.9%</td>
+            <td><span class="des des-ok"><span class="g" aria-hidden="true">✓</span><span data-ar="ملتزم">Compliant</span></span></td>
+            <td><span class="num">15</span> <span data-ar="يوليو 2026">Jul 2026</span></td>
+            <td class="num-cell">—</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">3</td>
+            <td class="stick2 ref">C-2025-0031</td>
+            <td><span class="supplier-name" data-ar="أسترا الصناعية">Astra Industrial</span><span class="cell-sub" data-ar="مستلزمات صيدلانية">Pharma supplies</span></td>
+            <td data-ar="وزارة الصحة">Ministry of Health</td>
+            <td class="num-cell">142.7</td>
+            <td class="num-cell">45%</td>
+            <td class="num-cell">41.0%</td>
+            <td><span class="des des-info"><span class="g" aria-hidden="true">◆</span><span data-ar="مراقبة">Watch</span></span></td>
+            <td><span class="num">21</span> <span data-ar="يونيو 2026">Jun 2026</span></td>
+            <td class="num-cell">—</td>
+          </tr>
+          <tr class="row-linked">
+            <td class="stick1 rowno">4</td>
+            <td class="stick2 ref">C-2024-0210<span class="sr-only" data-ar="— معروض في النموذج أدناه">— open in the form below</span></td>
+            <td><span class="supplier-name" data-ar="شركة الكابلات السعودية">Saudi Cable Co.</span><span class="cell-sub" data-ar="كابلات الطاقة">Power cabling</span></td>
+            <td data-ar="هيئة المياه السعودية">Saudi Water Authority</td>
+            <td class="num-cell">58.3</td>
+            <td class="num-cell">30%</td>
+            <td class="num-cell">22.4%</td>
+            <td><span class="des des-bad"><span class="g" aria-hidden="true">✕</span><span data-ar="مخالفة">Breach</span></span></td>
+            <td><span class="overdue-text"><span data-ar="متأخر 21 يومًا">Overdue 21 days</span></span><span class="cell-sub"><span data-ar="استحق 22 مايو 2026">due 22 May 2026</span></span></td>
+            <td class="num-cell">4.8</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">5</td>
+            <td class="stick2 ref">C-2025-0117</td>
+            <td><span class="supplier-name" data-ar="الفنار">Alfanar</span><span class="cell-sub" data-ar="لوحات كهربائية">Switchgear</span></td>
+            <td data-ar="نيوم">NEOM</td>
+            <td class="num-cell">210.9</td>
+            <td class="num-cell">42%</td>
+            <td class="num-cell">44.6%</td>
+            <td><span class="des des-ok"><span class="g" aria-hidden="true">✓</span><span data-ar="ملتزم">Compliant</span></span></td>
+            <td><span class="num">31</span> <span data-ar="يوليو 2026">Jul 2026</span></td>
+            <td class="num-cell">—</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">6</td>
+            <td class="stick2 ref">C-2024-0077</td>
+            <td><span class="supplier-name" data-ar="الخزف السعودي">Saudi Ceramics</span><span class="cell-sub" data-ar="أدوات صحية">Sanitary ware</span></td>
+            <td data-ar="الهيئة الملكية للجبيل وينبع">Royal Commission Jubail &amp; Yanbu</td>
+            <td class="num-cell">23.8</td>
+            <td class="num-cell">28%</td>
+            <td class="num-cell">27.1%</td>
+            <td><span class="des des-info"><span class="g" aria-hidden="true">◆</span><span data-ar="مراقبة">Watch</span></span></td>
+            <td><span class="num">10</span> <span data-ar="يوليو 2026">Jul 2026</span></td>
+            <td class="num-cell">—</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">7</td>
+            <td class="stick2 ref">C-2026-0009</td>
+            <td><span class="supplier-name" data-ar="مجموعة العبيكان">Obeikan Investment Group</span><span class="cell-sub" data-ar="تغليف">Packaging</span></td>
+            <td data-ar="وزارة التعليم">Ministry of Education</td>
+            <td class="num-cell">31.2</td>
+            <td class="num-cell">33%</td>
+            <td class="num-cell">— <span class="cell-sub" style="display:inline" data-ar="(جديد)">(new)</span></td>
+            <td><span class="des des-mute"><span class="g" aria-hidden="true">○</span><span data-ar="لا يوجد تقرير">No report</span></span></td>
+            <td><span class="num">15</span> <span data-ar="أغسطس 2026">Aug 2026</span></td>
+            <td class="num-cell">—</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">8</td>
+            <td class="stick2 ref">C-2023-0154</td>
+            <td><span class="supplier-name" data-ar="كابلات الرياض">Riyadh Cables</span><span class="cell-sub" data-ar="كابلات جهد متوسط">MV cables</span></td>
+            <td data-ar="هيئة المياه السعودية">Saudi Water Authority</td>
+            <td class="num-cell">77.4</td>
+            <td class="num-cell">36%</td>
+            <td class="num-cell">31.5%</td>
+            <td><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+            <td><span class="num">28</span> <span data-ar="يونيو 2026">Jun 2026</span></td>
+            <td class="num-cell">2.2</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">9</td>
+            <td class="stick2 ref">C-2024-0188</td>
+            <td><span class="supplier-name" data-ar="اليمامة للصلب">Al Yamamah Steel</span><span class="cell-sub" data-ar="حديد تسليح">Rebar supply</span></td>
+            <td data-ar="نيوم">NEOM</td>
+            <td class="num-cell">49.0</td>
+            <td class="num-cell">30%</td>
+            <td class="num-cell">33.8%</td>
+            <td><span class="des des-ok"><span class="g" aria-hidden="true">✓</span><span data-ar="ملتزم">Compliant</span></span></td>
+            <td><span class="num">20</span> <span data-ar="يوليو 2026">Jul 2026</span></td>
+            <td class="num-cell">—</td>
+          </tr>
+          <tr>
+            <td class="stick1 rowno">10</td>
+            <td class="stick2 ref">C-2025-0203</td>
+            <td><span class="supplier-name" data-ar="المتقدمة للبتروكيماويات">Advanced Petrochemical</span><span class="cell-sub" data-ar="مواد بوليمرية">Polymer feedstock</span></td>
+            <td data-ar="الهيئة الملكية للجبيل وينبع">Royal Commission Jubail &amp; Yanbu</td>
+            <td class="num-cell">122.5</td>
+            <td class="num-cell">38%</td>
+            <td class="num-cell">35.9%</td>
+            <td><span class="des des-warn"><span class="g" aria-hidden="true">▲</span><span data-ar="معرّض للخطر">At risk</span></span></td>
+            <td><span class="num">5</span> <span data-ar="يوليو 2026">Jul 2026</span></td>
+            <td class="num-cell">1.9</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- pagination -->
+    <div class="pager">
+      <span class="pager-count"><span data-ar="الصفوف 1–10 من 47">Rows 1–10 of 47</span></span>
+      <button type="button" class="btn btn-secondary" disabled aria-disabled="true"><span data-ar="السابق">Previous</span></button>
+      <button type="button" class="btn btn-secondary"><span data-ar="التالي">Next</span></button>
+    </div>
+
+    <!-- ============ OFFICIAL FORM ============ -->
+    <section class="form-panel" aria-labelledby="formh">
+      <header class="form-head">
+        <div>
+          <h2 id="formh" data-ar="تسجيل استلام بضائع — خطاب استثناء">Log Goods Receipt — Exception Letter</h2>
+          <p class="form-sub">
+            <span class="ref">C-2024-0210</span> — <span data-ar="شركة الكابلات السعودية · كابلات الطاقة · هيئة المياه السعودية">Saudi Cable Co. · Power cabling · Saudi Water Authority</span>
+          </p>
+        </div>
+        <div class="form-head-side">
+          <span class="des des-bad"><span class="g" aria-hidden="true">✕</span><span data-ar="مخالفة">Breach</span></span>
+          <span class="form-id" data-ar="نموذج LC-7">FORM LC-7</span>
+        </div>
+      </header>
+      <p class="form-legend"><span class="req" aria-hidden="true">*</span> <span data-ar="الحقول الموسومة إلزامية. يُقيّد هذا النموذج في سجل التدقيق عند الإرسال.">Marked fields are required. This form is entered in the audit log upon submission.</span></p>
+
+      <form class="form-body" id="form-lc7" novalidate>
+        <!-- 1 -->
+        <div class="frow">
+          <div class="fno" aria-hidden="true">1</div>
+          <div class="flabel">
+            <label for="f-boq"><span data-ar="بند جدول الكميات">BoQ line</span> <span class="req" aria-hidden="true">*</span></label>
+            <p class="hint" data-ar="البند التعاقدي الذي يُسجَّل الاستلام مقابله">Contract line the receipt is logged against</p>
+          </div>
+          <div class="fctl">
+            <select id="f-boq" class="select" required>
+              <option data-ar="BL-0210-014 — كابل جهد متوسط 33 ك.ف، نحاس 240مم² (المطلوب 1,200 م)">BL-0210-014 — MV cable 33 kV, 240 mm² Cu (ordered 1,200 m)</option>
+              <option data-ar="BL-0210-015 — كابل جهد متوسط 33 ك.ف، نحاس 300مم² (المطلوب 800 م)">BL-0210-015 — MV cable 33 kV, 300 mm² Cu (ordered 800 m)</option>
+              <option data-ar="BL-0210-021 — وصلات كابلات، طقم (المطلوب 64)">BL-0210-021 — Cable joints, kit (ordered 64)</option>
+            </select>
+          </div>
+        </div>
+        <!-- 2 -->
+        <div class="frow">
+          <div class="fno" aria-hidden="true">2</div>
+          <div class="flabel">
+            <label for="f-qty"><span data-ar="الكمية المستلمة">Quantity received</span> <span class="req" aria-hidden="true">*</span></label>
+          </div>
+          <div class="fctl">
+            <div class="qty-row">
+              <input id="f-qty" class="input num" type="number" inputmode="decimal" value="850" min="0" step="1" required>
+              <span class="unit"><span data-ar="متر">metres</span></span>
+            </div>
+            <p class="ordered-note"><span data-ar="المطلوب 1,200 م · سبق استلام 0 م">Ordered 1,200 m · previously received 0 m</span></p>
+          </div>
+        </div>
+        <!-- 3 -->
+        <div class="frow">
+          <div class="fno" aria-hidden="true">3</div>
+          <div class="flabel">
+            <span class="lbl" id="lbl-origin"><span data-ar="المنشأ">Origin</span> <span class="req" aria-hidden="true">*</span></span>
+            <p class="hint" data-ar="يُحتسب المنشأ المحلي ضمن المحتوى المحلي">Local origin counts toward Local Content</p>
+          </div>
+          <div class="fctl">
+            <div class="radio-row" role="radiogroup" aria-labelledby="lbl-origin">
+              <label><input type="radio" name="origin" checked> <span data-ar="محلي">Local</span></label>
+              <label><input type="radio" name="origin"> <span data-ar="أجنبي">Foreign</span></label>
+            </div>
+          </div>
+        </div>
+        <!-- 4 -->
+        <div class="frow">
+          <div class="fno" aria-hidden="true">4</div>
+          <div class="flabel">
+            <span class="lbl"><span data-ar="شهادة المنتج الوطني">National Product evidence</span></span>
+            <p class="hint" data-ar="مطلوبة عند اختيار المنشأ المحلي">Required when origin is Local</p>
+          </div>
+          <div class="fctl">
+            <div class="upload">
+              <svg class="up-ico" width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M13 2H5.5A1.5 1.5 0 0 0 4 3.5v15A1.5 1.5 0 0 0 5.5 20h11a1.5 1.5 0 0 0 1.5-1.5V7z"/><path d="M13 2v5h5"/></svg>
+              <span class="up-txt">
+                <span data-ar="أرفق شهادة المنتج الوطني">Attach the National Product certificate</span>
+                <small data-ar="PDF حتى 10 م.ب — تُربط بالأدلة">PDF up to 10 MB — linked to evidence</small>
+              </span>
+              <span class="btn btn-secondary file-btn">
+                <span data-ar="استعراض…">Browse…</span>
+                <input type="file" accept="application/pdf" aria-label="Attach National Product certificate" data-ar-label="إرفاق شهادة المنتج الوطني">
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- 5 — error state -->
+        <div class="frow">
+          <div class="fno" aria-hidden="true">5</div>
+          <div class="flabel">
+            <label for="f-exc"><span data-ar="مرجع خطاب الاستثناء">Exception letter reference</span> <span class="req" aria-hidden="true">*</span></label>
+            <p class="hint" data-ar="خطاب الجهة المستفيدة المعتمد للاستلام الاستثنائي">End-user entity letter authorising exceptional receipt</p>
+          </div>
+          <div class="fctl is-error">
+            <input id="f-exc" class="input ref" type="text" value="EXC-210" required aria-invalid="true" aria-describedby="f-exc-err" style="max-width:280px">
+            <p class="err-msg" id="f-exc-err">
+              <span class="g" aria-hidden="true">⚠</span>
+              <span data-ar="يجب أن يطابق المرجع الصيغة EXC-YYYY-NNNN — مثال: EXC-2026-0042.">Reference must match the format EXC-YYYY-NNNN — e.g. EXC-2026-0042.</span>
+            </p>
+          </div>
+        </div>
+        <!-- 6 -->
+        <div class="frow">
+          <div class="fno" aria-hidden="true">6</div>
+          <div class="flabel">
+            <label for="f-note" data-ar="ملاحظة">Note</label>
+            <p class="hint" data-ar="تظهر للمراجع في قائمة المراجعة">Shown to the reviewer in the review queue</p>
+          </div>
+          <div class="fctl">
+            <textarea id="f-note" data-ar-ph="سبب الاستلام الاستثنائي وأي تفاصيل للمراجع…" placeholder="Reason for exceptional receipt and any details for the reviewer…"></textarea>
+          </div>
+        </div>
+      </form>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary" form="form-lc7"><span data-ar="إرسال الاستلام">Submit receipt</span></button>
+        <button type="button" class="btn btn-secondary"><span data-ar="حفظ مسودة">Save draft</span></button>
+        <button type="button" class="btn btn-secondary" disabled aria-disabled="true" title="Available after submission" data-ar-label="متاح بعد الإرسال"><span data-ar="طباعة السند">Print voucher</span></button>
+        <span class="audit-note" data-ar="يُقيّد الإرسال في سجل التدقيق باسم م. القحطاني.">Submission is recorded in the audit log under M. Al-Qahtani.</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+(function(){
+  var D = document.documentElement;
+  var EN_TITLE = 'Contracts & Monitoring — LC Monitor Pro';
+  var AR_TITLE = 'العقود والمراقبة — LC Monitor Pro';
+
+  function syncParams(){
+    var p = new URLSearchParams(location.search);
+    p.set('theme', D.getAttribute('data-theme'));
+    p.set('lang', D.lang);
+    try{ history.replaceState(null, '', '?' + p.toString()); }catch(e){}
+    document.querySelectorAll('a[data-keep-params]').forEach(function(a){
+      var base = a.getAttribute('href').split('?')[0];
+      a.setAttribute('href', base + '?' + p.toString());
+    });
+  }
+
+  function applyLang(lang){
+    D.lang = lang;
+    D.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+    document.querySelectorAll('[data-ar]').forEach(function(el){
+      if (el.dataset.en == null) el.dataset.en = el.textContent;
+      el.textContent = (lang === 'ar') ? el.dataset.ar : el.dataset.en;
+    });
+    document.querySelectorAll('[data-ar-ph]').forEach(function(el){
+      if (el.dataset.enPh == null) el.dataset.enPh = el.getAttribute('placeholder') || '';
+      el.setAttribute('placeholder', (lang === 'ar') ? el.dataset.arPh : el.dataset.enPh);
+    });
+    document.querySelectorAll('[data-ar-label]').forEach(function(el){
+      if (el.dataset.enLabel == null) el.dataset.enLabel = el.getAttribute('aria-label') || el.getAttribute('title') || '';
+      var v = (lang === 'ar') ? el.dataset.arLabel : el.dataset.enLabel;
+      if (el.hasAttribute('aria-label') || !el.hasAttribute('title')) el.setAttribute('aria-label', v);
+      if (el.hasAttribute('title')) el.setAttribute('title', v);
+    });
+    var lt = document.getElementById('langToggle');
+    if (lt){ lt.textContent = (lang === 'ar') ? 'English' : 'العربية'; lt.setAttribute('lang', lang === 'ar' ? 'en' : 'ar'); }
+    document.title = (lang === 'ar') ? AR_TITLE : EN_TITLE;
+    syncParams();
+  }
+
+  document.getElementById('langToggle').addEventListener('click', function(){
+    applyLang(D.lang === 'ar' ? 'en' : 'ar');
+  });
+  document.getElementById('themeToggle').addEventListener('click', function(){
+    D.setAttribute('data-theme', D.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+    syncParams();
+  });
+
+  /* drawer */
+  var nav = document.getElementById('indexNav');
+  var menuBtn = document.getElementById('menuBtn');
+  var scrim = document.getElementById('scrim');
+  function setDrawer(open){
+    nav.classList.toggle('open', open);
+    document.body.classList.toggle('drawer-open', open);
+    menuBtn.setAttribute('aria-expanded', String(open));
+    if (open) nav.querySelector('a').focus();
+  }
+  menuBtn.addEventListener('click', function(){ setDrawer(!nav.classList.contains('open')); });
+  scrim.addEventListener('click', function(){ setDrawer(false); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape' && nav.classList.contains('open')){ setDrawer(false); menuBtn.focus(); }
+  });
+
+  if (D.lang === 'ar') applyLang('ar'); else syncParams();
+})();
+</script>
+</body>
+</html>
