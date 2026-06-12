@@ -1435,6 +1435,31 @@ body.rtl #page-dashboard .dc-flag{right:auto;left:13px}
 @media(prefers-reduced-motion:reduce){
   #page-dashboard .g-fill,#page-dashboard .vt-bar>div,#page-dashboard .vt-meter>div{animation:none!important;transition:none!important}
 }
+
+/* ===== MLNP Mandatory-List top-5 picker ===== */
+#mlnpNomModal .md{max-width:840px}
+.mlgrp{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:12px;background:var(--surface2)}
+.mlgrp-hd{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px}
+.mlgrp-no{flex:none;width:22px;height:22px;border-radius:7px;background:var(--accent);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;font-family:var(--fm)}
+.mlgrp-desc{font-size:12.5px;font-weight:700;color:var(--text);line-height:1.35;padding-top:2px}
+.mlgrp-search{font-size:11px;padding:6px 9px;margin-bottom:9px;width:100%}
+.mlgrp-cands{display:flex;flex-direction:column;gap:6px}
+.mlcand{display:flex;gap:9px;align-items:flex-start;padding:9px 11px;border:1px solid var(--border);border-radius:9px;background:var(--surface);cursor:pointer;transition:border-color .15s,background .15s}
+.mlcand:hover{border-color:var(--border2)}
+.mlcand input[type=radio]{margin-top:3px;width:15px;height:15px;flex:none;accent-color:var(--accent)}
+.mlcand:has(input:checked){border-color:var(--accent);background:var(--al)}
+.mlcand-none:has(input:checked){border-color:var(--border2);background:var(--surface2)}
+.mlcand-b{flex:1;min-width:0}
+.mlcand-t{font-size:12px;font-weight:700;color:var(--text);line-height:1.3}
+.mlcand-d{font-size:10.5px;color:var(--text2);margin-top:2px;line-height:1.35}
+.mlcand-m{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:5px}
+.mlcand-m span{font-size:9.5px;font-weight:700;border-radius:20px;padding:1px 7px;white-space:nowrap}
+.mlcand-code{background:var(--al);color:var(--accent);font-family:var(--fm)}
+.mlcand-cat{background:var(--surface3);color:var(--text2)}
+.mlcand-base{background:rgba(13,148,136,.10);color:var(--accent3)}
+.mlcand-score{background:var(--surface3);color:var(--text3);margin-left:auto;font-family:var(--fm)}
+body.rtl .mlcand-score{margin-left:0;margin-right:auto}
+.mlcand-empty{font-size:11px;color:var(--text3);padding:8px 4px}
 </style>
 </head>
 <body>
@@ -2437,8 +2462,6 @@ body.rtl #page-dashboard .dc-flag{right:auto;left:13px}
     <div class="md-hd"><div><div class="md-title">📋 Mandatory List — Nominated Items</div><div class="md-sub" id="mlnpNomSub">Matched against your uploaded LCGPA Mandatory List</div></div><button class="md-close" onclick="closeModal('mlnpNomModal')">✕</button></div>
     <div class="md-body" id="mlnpNomBody"></div>
     <div class="fa-row" style="padding:12px 20px;position:sticky;bottom:0;background:var(--surface)">
-      <button class="btn btn-s btn-sm" type="button" onclick="mlnpNomToggleAll(true)">Select All</button>
-      <button class="btn btn-s btn-sm" type="button" onclick="mlnpNomToggleAll(false)">Deselect All</button>
       <div style="flex:1"></div>
       <button class="btn btn-s" type="button" onclick="closeModal('mlnpNomModal')">Cancel</button>
       <button class="btn btn-p" type="button" onclick="mlnpApplyNominations()">✓ Apply Selected</button>
@@ -4045,8 +4068,66 @@ function renderAIControlsList(){var _ac=document.getElementById('aiControlsList'
 function addAIControl(){var _nac=document.getElementById('newAICtrl');if(!_nac)return;const v=_nac.value.trim();if(!v){toast('Enter control rule','err');return;}AI_CONTROLS.push(v);lsSet('lcAICtrl',JSON.stringify(AI_CONTROLS));document.getElementById('newAICtrl').value='';renderAIControlsList();toast('Control added','ok');}
 function removeAIControl(i){if(!confirm('Remove?'))return;AI_CONTROLS.splice(i,1);lsSet('lcAICtrl',JSON.stringify(AI_CONTROLS));renderAIControlsList();toast('Removed','info');}
 
-// MLNP IMPORT
-function importMLNP(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:''});if(!rows.length){toast('No rows found in spreadsheet','err');return;}MLNP_LIST=rows;lsSet('lcMLNP',JSON.stringify(MLNP_LIST));document.getElementById('mlnpPreview').innerHTML=`<div class="badge bg" style="font-size:11px;padding:5px 10px">✓ ${MLNP_LIST.length} items loaded from ${file.name}</div>`;toast(`MLNP list loaded: ${MLNP_LIST.length} items`,'ok');}catch(err){toast('Error reading file: '+err.message,'err');}};r.readAsBinaryString(file);}
+// MLNP IMPORT — multi-tab LCGPA Mandatory List parser (all category tabs)
+function importMLNP(file){
+  if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const wb=XLSX.read(e.target.result,{type:'binary'});
+      // normalize a header cell: lowercase, drop newlines + Arabic tashkeel/tatweel, collapse spaces
+      function hn(s){return String(s==null?'':s).toLowerCase().replace(/[\r\n]+/g,' ').replace(/[ً-ْٰـ]/g,'').replace(/\s+/g,' ').trim();}
+      var hasAr=function(v){return /[ء-ي]/.test(v);};
+      var recs=[], cats={};
+      wb.SheetNames.forEach(function(sn){
+        var nm=String(sn||'');
+        if(/نظرة|overview/i.test(nm))return;     // skip نظرة عامة (overview)
+        if(/استثناء|exception/i.test(nm))return; // skip ضوابط الاستثناء (exception rules)
+        var ws=wb.Sheets[sn]; if(!ws)return;
+        var rows=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+        if(!rows.length)return;
+        var hi=-1; for(var i=0;i<Math.min(rows.length,8);i++){ if(rows[i].filter(function(c){return String(c).trim();}).length>=3){hi=i;break;} }
+        if(hi<0)return;
+        var hdr=rows[hi].map(hn);
+        var cCode=-1,cBase=-1,cCeil=-1,cNote=-1,titleCols=[],defCols=[],segCols=[];
+        hdr.forEach(function(h,ci){
+          if(cCode<0 && /(منصة اعتماد|اعتماد|etimad)/.test(h)) cCode=ci;
+          if(/(اسم المنتج|اسم البند|commodity title|commidity title|commedty|item title)/.test(h)) titleCols.push(ci);
+          if(/(وصف المنتج|تعريف المنتج|وصف البند|commodity definition|item definition|product \/ item definition|definition)/.test(h)) defCols.push(ci);
+          if(/(اسم القطاع|إسم القطاع|segment title)/.test(h)) segCols.push(ci);
+          if(cBase<0 && /(خط الأساس|خط الاساس|baseline|local content minimum)/.test(h)) cBase=ci;
+          if(cCeil<0 && /(السقف|price ceiling|ceiling)/.test(h)) cCeil=ci;
+          if(cNote<0 && /(ملاحظات|notes|remarks)/.test(h)) cNote=ci;
+        });
+        if(cCode<0 || (!titleCols.length && !defCols.length))return; // not a product tab
+        var catLabel=nm.trim();
+        for(var ri=hi+1;ri<rows.length;ri++){
+          var row=rows[ri]; if(!row||!row.length)continue;
+          var code=String(row[cCode]==null?'':row[cCode]).trim();
+          if(!code)continue;
+          var tAr='',tEn='',dAr='',dEn='',sAr='',sEn='';
+          titleCols.forEach(function(ci){var v=String(row[ci]==null?'':row[ci]).trim();if(!v)return;if(hasAr(v)){if(!tAr)tAr=v;}else if(!tEn)tEn=v;});
+          defCols.forEach(function(ci){var v=String(row[ci]==null?'':row[ci]).trim();if(!v)return;if(hasAr(v)){if(!dAr)dAr=v;}else if(!dEn)dEn=v;});
+          segCols.forEach(function(ci){var v=String(row[ci]==null?'':row[ci]).trim();if(!v)return;if(hasAr(v)){if(!sAr)sAr=v;}else if(!sEn)sEn=v;});
+          if(!tAr&&!tEn&&!dAr&&!dEn)continue;
+          recs.push({code:code,cat:catLabel,segAr:sAr,segEn:sEn,
+            tAr:tAr.slice(0,160),tEn:tEn.slice(0,160),
+            dAr:String(dAr).slice(0,480),dEn:String(dEn).slice(0,480),
+            base:(cBase>=0?row[cBase]:''),ceil:(cCeil>=0?row[cCeil]:''),
+            note:(cNote>=0?String(row[cNote]||'').trim():'').slice(0,200),tab:catLabel});
+          cats[catLabel]=1;
+        }
+      });
+      if(!recs.length){toast('No mandatory-list items found in the workbook tabs','err');return;}
+      MLNP_LIST=recs;
+      lsSet('lcMLNP',JSON.stringify(MLNP_LIST));
+      var ncat=Object.keys(cats).length;
+      document.getElementById('mlnpPreview').innerHTML='<div class="badge bg" style="font-size:11px;padding:5px 10px">✓ '+recs.length+' items from '+ncat+' categories loaded</div>';
+      toast('Mandatory List loaded: '+recs.length+' items · '+ncat+' categories','ok');
+    }catch(err){toast('Error reading file: '+err.message,'err');}
+  };
+  r.readAsBinaryString(file);
+}
 
 // POPULATE SELECTS
 function populateEUSelectFor(id){const s=document.getElementById(id);if(!s)return;const cur=s.value;s.innerHTML='<option value="">Select end-user…</option>'+ENDUSERS.map(eu=>`<option value="${eu.name}">${eu.name}${eu.frozen?' 🔒':''}</option>`).join('');if(cur)s.value=cur;}
@@ -6584,138 +6665,164 @@ window.addBoQRows=addBoQRows;
 //   on accept, the item's Etimad code is written into rfpBoQ[i].mlCode.
 // ============================================================
 (function(){
-  // --- Text normalisation (Latin + Arabic) ---
-  function normML(s){
+  function _L(en,ar){return (typeof lang!=='undefined'&&lang==='ar')?ar:en;}
+  function escML(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
+  // --- bilingual normalisation (Latin + Arabic) ---
+  function mlNorm(s){
     s=(s==null?'':String(s)).toLowerCase();
-    s=s.replace(/[ً-ْٰـ]/g,'')        // tashkeel + superscript alef + tatweel
-       .replace(/[آأإٱ]/g,'ا')   // آ أ إ ٱ -> ا
-       .replace(/ى/g,'ي')                        // ى -> ي
-       .replace(/ة/g,'ه')                        // ة -> ه
-       .replace(/[ؤئ]/g,'ء');               // ؤ ئ -> ء
+    s=s.replace(/[ً-ْٰـ]/g,'').replace(/[آأإٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[ؤئ]/g,'ء');
     s=s.replace(/[^0-9a-zء-ي\s]/g,' ').replace(/\s+/g,' ').trim();
     return s;
   }
-  var STOP={};['the','and','for','with','of','to','in','on','a','an','or','by','from','at','is','are','services','service','goods','supply','supplies','provision','project','works','work','system','systems','equipment','من','الى','إلى','على','في','عن','مع','او','أو','ال','هذا','تلك','عدد','توريد','خدمات','خدمة','مشروع','نظام','اعمال','أعمال','معدات'].forEach(function(w){STOP[w]=1;});
-  function tokens(s){return normML(s).split(' ').filter(function(t){return t.length>=2 && !/^\d+$/.test(t) && !STOP[t];});}
+  var STOP={};('the and for with of to in on a an or by from at is are as be this that services service goods supply supplies provision project works work system systems equipment type used use product item including includes include other various من الى إلى على في عن مع او أو هذا تلك عدد توريد خدمات خدمة مشروع نظام اعمال أعمال معدات هذه التي الذي يشمل يتم باستثناء يستخدم').split(' ').forEach(function(w){STOP[w]=1;});
+  function artStrip(t){return (t.length>4&&t.indexOf('ال')===0)?t.slice(2):t;}            // drop Arabic definite article
+  function mlToks(s){return mlNorm(s).split(' ').map(artStrip).filter(function(t){return t.length>=2&&!/^\d+$/.test(t)&&!STOP[t];});}
+  function bigrams(s){var n=mlNorm(s).replace(/\s+/g,'');var b={},c=0;for(var i=0;i<n.length-1;i++){if(!b[n.substr(i,2)]){b[n.substr(i,2)]=1;c++;}}b._n=c;return b;}
+  function dice(a,b){if(!a._n||!b._n)return 0;var inter=0;for(var k in a){if(k!=='_n'&&b[k])inter++;}return (2*inter)/(a._n+b._n);}
 
-  // --- Column detection on a raw MLNP (Mandatory List) row ---
-  var RE_CODE=/(etimad|eitmad|اعتماد|إعتماد|code|كود|رمز|الرقم|رقم|no\.?|^id$|id$)/i;
-  var RE_NAME=/(name|item|product|desc|description|english|en|الاسم|اسم|البند|الصنف|المنتج|الوصف|وصف|بيان|عربي|arabic|ar)/i;
-  function mlnpFields(row){
-    var code='', texts=[], best='';
-    Object.keys(row||{}).forEach(function(k){
-      var v=row[k]; if(v==null) return; v=String(v).trim(); if(!v) return;
-      if(!code && RE_CODE.test(k) && /[0-9]/.test(v)) code=v;
-      if(RE_NAME.test(k)) texts.push(v);
-      if(v.length>best.length && !RE_CODE.test(k)) best=v;
-    });
-    if(!texts.length){ Object.keys(row||{}).forEach(function(k){var v=row[k];if(v==null)return;v=String(v).trim();if(v&&!RE_CODE.test(k))texts.push(v);}); }
-    if(!code){ Object.keys(row||{}).forEach(function(k){var v=row[k];if(code||v==null)return;v=String(v).trim();if(/^[A-Za-z0-9][A-Za-z0-9\-\/.]{1,18}$/.test(v)&&/[0-9]/.test(v))code=v;}); }
-    return {code:code, label:texts[0]||best||'', texts:texts};
-  }
+  // --- index (IDF-weighted), cached on MLNP_LIST identity ---
+  var _idx=null,_idxFor=null;
   function buildIndex(){
-    return (typeof MLNP_LIST!=='undefined'?MLNP_LIST:[]).map(function(row){
-      var f=mlnpFields(row);
-      return {code:f.code, label:f.label, fields:f.texts.map(function(t){return {norm:normML(t), toks:tokens(t)};})};
-    }).filter(function(e){return e.fields.length;});
-  }
-  // best match of one BoQ description against the index
-  function matchOne(desc, idx){
-    var bn=normML(desc); if(bn.length<2) return null;
-    var bt=tokens(desc); var bset={}; bt.forEach(function(t){bset[t]=1;});
-    var best=null;
-    idx.forEach(function(e){
-      e.fields.forEach(function(fld){
-        if(!fld.norm) return;
-        var score=0, type='';
-        if(bn===fld.norm){score=1;type='exact';}
-        else{
-          var shorter=bn.length<=fld.norm.length?bn:fld.norm;
-          var longer =bn.length<=fld.norm.length?fld.norm:bn;
-          if(shorter.length>=4 && longer.indexOf(shorter)>=0){score=0.9;type='contains';}
-          else if(fld.toks.length){
-            var inter=fld.toks.filter(function(t){return bset[t];}).length;
-            if(inter>=1){
-              var cov=inter/fld.toks.length;
-              var bcov=bt.length?inter/bt.length:0;
-              var sc=Math.max(cov,(cov+bcov)/2);
-              if(sc>=0.5){score=0.5+sc*0.39;type='keyword';}
-            }
-          }
-        }
-        if(score>0 && (!best||score>best.score)) best={score:score,type:type,code:e.code,label:e.label};
-      });
+    var list=(typeof MLNP_LIST!=='undefined')?MLNP_LIST:[];
+    if(_idx&&_idxFor===list)return _idx;
+    var df={},N=list.length||1;
+    var recs=list.map(function(r){
+      var titleTxt=(((r.tAr||'')+' '+(r.tEn||''))||r.label||'').trim();
+      var defTxt=((r.dAr||'')+' '+(r.dEn||'')).trim();
+      var tT=mlToks(titleTxt),dT=mlToks(defTxt);
+      var tset={};tT.forEach(function(t){tset[t]=1;});
+      var dset={};dT.forEach(function(t){dset[t]=1;});
+      var seen={};tT.concat(dT).forEach(function(t){if(!seen[t]){seen[t]=1;df[t]=(df[t]||0)+1;}});
+      return {r:r,tset:tset,dset:dset,tnorm:mlNorm(titleTxt),tbg:bigrams(titleTxt)};
     });
-    return best;
+    var idf={};Object.keys(df).forEach(function(t){idf[t]=Math.log(1+N/df[t]);});
+    _idx={recs:recs,idf:idf};_idxFor=list;return _idx;
   }
-  function escML(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});}
-  function pillType(t){
-    var map={exact:['Exact','var(--accent3)'],contains:['Contains','var(--info)'],keyword:['Keyword','var(--warn)']};
-    var m=map[t]||['Match','var(--text3)'];
-    return '<span class="badge" style="background:rgba(0,0,0,.04);color:'+m[1]+';font-size:9px;padding:2px 7px;border:1px solid '+m[1]+'">'+m[0]+'</span>';
+  function fieldScore(qToks,qIdf,fset,idf){
+    if(!qToks.length)return 0;
+    var shared=0,qSum=0,fSum=0;
+    Object.keys(fset).forEach(function(t){fSum+=(idf[t]||0.2);});
+    qToks.forEach(function(t){var w=qIdf[t]||0.2;qSum+=w;if(fset[t])shared+=w;});
+    if(qSum<=0)return 0;
+    var coverage=shared/qSum, precision=fSum>0?shared/fSum:0;
+    return 0.75*coverage+0.25*precision;
+  }
+  // rank the whole list for one query → top-N candidates
+  function mlRank(desc,topN){
+    topN=topN||5;
+    var ix=buildIndex();if(!ix.recs.length)return [];
+    var qToks=mlToks(desc),qnorm=mlNorm(desc),qbg=bigrams(desc);
+    if(!qToks.length&&qnorm.length<2)return [];
+    var qIdf={};qToks.forEach(function(t){qIdf[t]=ix.idf[t]||0.4;});
+    var out=ix.recs.map(function(e){
+      var ts=fieldScore(qToks,qIdf,e.tset,ix.idf);
+      var ds=fieldScore(qToks,qIdf,e.dset,ix.idf);
+      var titleScore=Math.max(ts,0.6*dice(qbg,e.tbg));
+      var score=0.75*titleScore+0.25*ds;
+      if(qnorm&&e.tnorm){if(qnorm===e.tnorm)score=1;else if(qnorm.length>=4&&(e.tnorm.indexOf(qnorm)>=0||qnorm.indexOf(e.tnorm)>=0))score=Math.max(score,0.82);}
+      return {r:e.r,score:Math.max(0,Math.min(score,1))};
+    });
+    out.sort(function(a,b){return b.score-a.score;});
+    return out.slice(0,topN).filter(function(o){return o.score>0.01;});
+  }
+  window.mlRank=mlRank; // expose for tests/manual use
+
+  // --- display helpers ---
+  function dispTitle(r){return (typeof lang!=='undefined'&&lang==='ar')?(r.tAr||r.tEn||r.label||'—'):(r.tEn||r.tAr||r.label||'—');}
+  function dispDef(r){var d=(typeof lang!=='undefined'&&lang==='ar')?(r.dAr||r.dEn):(r.dEn||r.dAr);d=String(d||'').replace(/\s+/g,' ').trim();return d.length>120?d.slice(0,118)+'…':d;}
+  function dispCat(r){return (typeof lang!=='undefined'&&lang==='ar')?(r.segAr||r.cat||r.tab||''):(r.segEn||r.cat||r.tab||'');}
+  function basePct(r){var b=r.base;if(b===''||b==null)return '';var n=parseFloat(b);if(!isFinite(n))return '';if(n>0&&n<=1)n=n*100;return Math.round(n)+'%';}
+  function tipText(r){var t=[];var bp=basePct(r);if(bp)t.push(_L('LC baseline','خط الأساس')+': '+bp);if(r.ceil!==''&&r.ceil!=null)t.push(_L('Price ceiling','السقف السعري')+': '+r.ceil);if(r.note)t.push(r.note);return escML(t.join(' · '));}
+
+  function candHTML(k,o){
+    var r=o.r, code=r.code||'', cat=dispCat(r), bp=basePct(r);
+    return '<label class="mlcand" title="'+tipText(r)+'">'
+      +'<input type="radio" name="mlpick_'+k+'" data-k="'+k+'" data-code="'+escML(code)+'"/>'
+      +'<div class="mlcand-b">'
+        +'<div class="mlcand-t">'+escML(dispTitle(r))+'</div>'
+        +(dispDef(r)?'<div class="mlcand-d">'+escML(dispDef(r))+'</div>':'')
+        +'<div class="mlcand-m">'
+          +'<span class="mlcand-code">'+_L('Etimad','اعتماد')+' '+escML(code||'—')+'</span>'
+          +(cat?'<span class="mlcand-cat">'+escML(cat)+'</span>':'')
+          +(bp?'<span class="mlcand-base">'+_L('baseline','خط أساس')+' '+bp+'</span>':'')
+          +'<span class="mlcand-score">'+Math.round(o.score*100)+'%</span>'
+        +'</div>'
+      +'</div></label>';
+  }
+  function noneHTML(k){
+    return '<label class="mlcand mlcand-none"><input type="radio" name="mlpick_'+k+'" data-k="'+k+'" checked/>'
+      +'<div class="mlcand-b"><div class="mlcand-t" style="color:var(--text3)">'+_L('None — skip this line','لا شيء — تخطّ هذا البند')+'</div></div></label>';
+  }
+  function groupHTML(k,cands){
+    var h='';
+    if(cands.length){cands.forEach(function(o){h+=candHTML(k,o);});}
+    else{h+='<div class="mlcand-empty">'+_L('No similar items found — refine the search above.','لا توجد عناصر مشابهة — عدّل البحث بالأعلى.')+'</div>';}
+    h+=noneHTML(k);
+    return h;
   }
   function renderMLNPNominations(noms){
     var sub=document.getElementById('mlnpNomSub'), body=document.getElementById('mlnpNomBody');
     if(!noms.length){
-      if(sub)sub.textContent='No matches found';
-      body.innerHTML='<div class="empty" style="padding:24px"><div class="ei">🔍</div><p>None of the current BoQ line items matched the uploaded Mandatory List.<br>You can still tick “Mandatory List” manually on any row.</p></div>';
+      if(sub)sub.textContent=_L('No BoQ line items to match','لا توجد بنود كمية للمطابقة');
+      body.innerHTML='<div class="empty" style="padding:24px"><div class="ei">🔍</div><p>'+_L('Add BoQ line items with descriptions first.','أضف بنود الكمية مع الوصف أولاً.')+'</p></div>';
       return;
     }
-    if(sub)sub.textContent=noms.length+' BoQ line item(s) matched — tick the ones to mark as Mandatory. The Etimad code is filled automatically.';
-    var h='<div class="md-sec"><div style="display:flex;flex-direction:column;gap:8px">';
+    if(sub)sub.textContent=_L(noms.length+' line item(s) — pick the best Etimad match for each, or leave on None.',noms.length+' بند — اختر أنسب رمز اعتماد لكل بند أو اتركه بدون.');
+    var h='';
     noms.forEach(function(n,k){
-      h+='<label style="display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;background:var(--surface2)">'
-        +'<input type="checkbox" class="mlnpNomChk" data-k="'+k+'" checked style="margin-top:3px;width:16px;height:16px;flex:0 0 auto"/>'
-        +'<div style="flex:1;min-width:0">'
-          +'<div style="font-size:12px;font-weight:700;color:var(--text)">'+escML(n.desc)+'</div>'
-          +'<div style="font-size:11px;color:var(--text2);margin-top:3px">↳ Mandatory match: <b>'+escML(n.label||'—')+'</b></div>'
-          +'<div style="display:flex;gap:8px;align-items:center;margin-top:5px;flex-wrap:wrap">'+pillType(n.type)
-            +'<span style="font-size:10px;color:var(--text3)">Confidence '+Math.round(n.score*100)+'%</span>'
-            +'<span style="font-size:10px;color:var(--text3)">Etimad code: <b style="color:var(--accent)">'+escML(n.code||'—')+'</b></span>'
-          +'</div>'
-        +'</div></label>';
+      h+='<div class="mlgrp">'
+        +'<div class="mlgrp-hd"><span class="mlgrp-no">'+(k+1)+'</span><div class="mlgrp-desc">'+escML(n.desc)+'</div></div>'
+        +'<input class="fi mlgrp-search" placeholder="'+_L('Search the Mandatory List…','ابحث في القائمة الإلزامية…')+'" oninput="mlNomSearch('+k+',this.value)"/>'
+        +'<div class="mlgrp-cands" id="mlgrp_'+k+'">'+groupHTML(k,n.cands)+'</div>'
+      +'</div>';
     });
-    h+='</div></div>';
     body.innerHTML=h;
   }
+  var _searchT=null;
+  window.mlNomSearch=function(k,q){
+    if(_searchT)clearTimeout(_searchT);
+    _searchT=setTimeout(function(){
+      var noms=window._mlNoms||[];var n=noms[k];if(!n)return;
+      var query=(q||'').trim()||n.desc;
+      n.cands=mlRank(query,5);
+      var c=document.getElementById('mlgrp_'+k);if(c){c.innerHTML=groupHTML(k,n.cands);if(typeof lang!=='undefined'&&lang==='ar'&&typeof applyLang==='function')applyLang('ar');}
+    },220);
+  };
   window.runMLNPMatch=function(){
-    if(typeof rfpBoQ==='undefined'){toast('Open an RFP first','err');return;}
-    if(!(typeof MLNP_LIST!=='undefined'&&MLNP_LIST.length)){toast('Upload the LCGPA Mandatory List in Settings → Mandatory List first','err');return;}
-    if(!rfpBoQ.filter(function(r){return (r.desc||'').trim();}).length){toast('Add BoQ line items with descriptions first','err');return;}
-    var idx=buildIndex();
-    if(!idx.length){toast('Mandatory List has no readable name/description columns','err');return;}
-    var noms=[];
-    rfpBoQ.forEach(function(r,i){
-      if(!(r.desc||'').trim()) return;
-      var m=matchOne(r.desc, idx);
-      if(m) noms.push({boqIdx:i, desc:r.desc, code:m.code, label:m.label, score:m.score, type:m.type});
-    });
-    window._mlnpNoms=noms;
+    if(typeof rfpBoQ==='undefined'){toast(_L('Open an RFP first','افتح طلب عروض أولاً'),'err');return;}
+    if(!(typeof MLNP_LIST!=='undefined'&&MLNP_LIST.length)){toast(_L('Upload the LCGPA Mandatory List in Settings first','حمّل القائمة الإلزامية من الإعدادات أولاً'),'err');return;}
+    var items=rfpBoQ.map(function(r,i){return {r:r,i:i};}).filter(function(o){return (o.r.desc||'').trim();});
+    if(!items.length){toast(_L('Add BoQ line items with descriptions first','أضف بنود الكمية مع الوصف أولاً'),'err');return;}
+    var ix=buildIndex();
+    if(!ix.recs.length){toast(_L('Mandatory List has no readable item columns — re-upload the Excel','القائمة لا تحتوي أعمدة قابلة للقراءة — أعد رفع الملف'),'err');return;}
+    var noms=items.map(function(o){return {boqIdx:o.i, desc:o.r.desc, cands:mlRank(o.r.desc,5)};});
+    window._mlNoms=noms;
     renderMLNPNominations(noms);
     document.getElementById('mlnpNomModal').classList.add('open');
+    if(typeof lang!=='undefined'&&lang==='ar'&&typeof applyLang==='function')setTimeout(function(){applyLang('ar');},0);
     var res=document.getElementById('mlnpResults');
-    if(res) res.innerHTML='<div style="font-size:11px;color:var(--text2)">'+(noms.length?('✓ '+noms.length+' line item(s) matched the Mandatory List — review the popup to confirm.'):'No BoQ line items matched the Mandatory List.')+'</div>';
+    if(res)res.innerHTML='<div style="font-size:11px;color:var(--text2)">'+_L('Top-5 Mandatory List matches per line — review and apply in the popup.','أفضل 5 مطابقات لكل بند — راجع وطبّق في النافذة.')+'</div>';
   };
-  window.mlnpNomToggleAll=function(v){var l=document.querySelectorAll('.mlnpNomChk');for(var i=0;i<l.length;i++)l[i].checked=v;};
   window.mlnpApplyNominations=function(){
-    var noms=window._mlnpNoms||[], applied=0;
-    var l=document.querySelectorAll('.mlnpNomChk');
-    for(var i=0;i<l.length;i++){
-      if(!l[i].checked) continue;
-      var n=noms[+l[i].getAttribute('data-k')]; if(!n||typeof rfpBoQ==='undefined'||!rfpBoQ[n.boqIdx]) continue;
+    var noms=window._mlNoms||[], applied=0;
+    noms.forEach(function(n,k){
+      var sel=document.querySelector('input[name="mlpick_'+k+'"]:checked');
+      if(!sel)return;
+      var code=sel.getAttribute('data-code'); // None radio has no data-code → skip (non-destructive)
+      if(!code)return;
+      if(typeof rfpBoQ==='undefined'||!rfpBoQ[n.boqIdx])return;
       rfpBoQ[n.boqIdx].isMandatory=true;
-      rfpBoQ[n.boqIdx].mlCode=n.code||rfpBoQ[n.boqIdx].mlCode||'';
+      rfpBoQ[n.boqIdx].mlCode=code;
       applied++;
-    }
-    if(typeof curRFP!=='undefined'&&curRFP){
-      curRFP.mlnpItems=noms.map(function(n){return {name:n.label,code:n.code,relevance:(n.type==='keyword'?'Medium':'High'),reason:'Matched BoQ item: '+n.desc};});
+    });
+    if(typeof curRFP!=='undefined'&&curRFP&&typeof rfpBoQ!=='undefined'){
+      curRFP.mlnpItems=rfpBoQ.filter(function(r){return r.isMandatory&&r.mlCode;}).map(function(r){return {name:r.desc,code:r.mlCode,relevance:'High',reason:'Mandatory BoQ item'};});
     }
     if(typeof renderBoQ==='function')renderBoQ();
     closeModal('mlnpNomModal');
-    toast(applied?(applied+' line item(s) marked as Mandatory & Etimad code filled'):'No items selected','ok');
+    toast(applied?_L(applied+' line(s) marked Mandatory & Etimad code filled',applied+' بند تم تحديده كإلزامي مع رمز اعتماد'):_L('No line selected','لم يتم اختيار أي بند'),applied?'ok':'info');
   };
-  // keep the old AI entry-point name working in case anything references it
-  window.runMLNPAdvisor=window.runMLNPMatch;
+  window.runMLNPAdvisor=window.runMLNPMatch; // legacy alias
 })();
 
 // ============================================================
