@@ -1152,7 +1152,28 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 input[type=number]{-moz-appearance:textfield}
 
 /* configurable KPI grid (dashboard) */
-.dr-kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:13px}
+.dr-kpi{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+
+/* ---- KPI card v2: distinct gradient-tinted cards ---- */
+#page-dashboard .dr-kpi .dc{flex-direction:column;align-items:stretch;gap:0;padding:16px 16px 14px!important;border:1px solid var(--border)!important;border-radius:18px!important;min-height:118px;justify-content:space-between;background:var(--surface)!important}
+#page-dashboard .dr-kpi .dc .dc-icon{position:absolute;top:13px;right:13px;width:36px;height:36px;border-radius:11px;font-size:17px;opacity:.95;margin:0!important}
+body.rtl #page-dashboard .dr-kpi .dc .dc-icon{right:auto;left:13px}
+#page-dashboard .dr-kpi .dc .dc-body{order:2;margin-top:auto}
+#page-dashboard .dr-kpi .dc .dc-lbl{font-size:10px;letter-spacing:.4px;max-width:75%;white-space:normal;line-height:1.25;margin-bottom:8px}
+#page-dashboard .dr-kpi .dc .dc-val{font-size:25px;font-weight:900;letter-spacing:-.6px;line-height:1}
+#page-dashboard .dr-kpi .dc .dc-sub{margin-top:5px;font-size:9.5px}
+#page-dashboard .dr-kpi .dc::before{height:0}
+#page-dashboard .dr-kpi .dc::after{display:none}
+/* per-color tint + accent (light) */
+#page-dashboard .dr-kpi .dc.dc-blue{background:linear-gradient(165deg,rgba(37,99,235,.09),var(--surface) 62%)!important;box-shadow:inset 3px 0 0 #2563eb}
+#page-dashboard .dr-kpi .dc.dc-green{background:linear-gradient(165deg,rgba(22,163,74,.10),var(--surface) 62%)!important;box-shadow:inset 3px 0 0 #16a34a}
+#page-dashboard .dr-kpi .dc.dc-red{background:linear-gradient(165deg,rgba(220,38,38,.09),var(--surface) 62%)!important;box-shadow:inset 3px 0 0 #dc2626}
+#page-dashboard .dr-kpi .dc.dc-amber{background:linear-gradient(165deg,rgba(217,119,6,.10),var(--surface) 62%)!important;box-shadow:inset 3px 0 0 #d97706}
+#page-dashboard .dr-kpi .dc.dc-purple{background:linear-gradient(165deg,rgba(124,58,237,.10),var(--surface) 62%)!important;box-shadow:inset 3px 0 0 #7c3aed}
+#page-dashboard .dr-kpi .dc.dc-teal{background:linear-gradient(165deg,rgba(8,145,178,.10),var(--surface) 62%)!important;box-shadow:inset 3px 0 0 #0891b2}
+body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .dc.dc-green,body.rtl #page-dashboard .dr-kpi .dc.dc-red,body.rtl #page-dashboard .dr-kpi .dc.dc-amber,body.rtl #page-dashboard .dr-kpi .dc.dc-purple,body.rtl #page-dashboard .dr-kpi .dc.dc-teal{box-shadow:inset -3px 0 0 currentColor}
+#page-dashboard .dr-kpi .dc:hover{transform:translateY(-5px) scale(1.015);box-shadow:0 20px 40px -14px rgba(15,30,70,.3)!important}
+#page-dashboard .dr-kpi .dc .dc-prog{margin-top:7px}
 @media(max-width:620px){.dr-kpi{grid-template-columns:1fr 1fr}}
 @media(max-width:400px){.dr-kpi{grid-template-columns:1fr}}
 </style>
@@ -1558,6 +1579,17 @@ input[type=number]{-moz-appearance:textfield}
       <input type="file" id="fFile" multiple="" style="display:none" onchange="addFiles(this.files)">
       <div class="alist" id="attachList"></div>
     </div>
+    <div class="fsec">
+      <div class="fsec-title" style="display:flex;justify-content:space-between;align-items:center">📦 Bill of Quantities (BoQ)
+        <span style="font-size:10px;font-weight:600;color:var(--text3)">Auto-filled when you Import from an awarded evaluation</span></div>
+      <div style="overflow-x:auto"><table class="cboq-tbl" id="entryBoQTable"><thead><tr>
+        <th>#</th><th>Description</th><th>Nature</th><th>Unit Price (SAR)</th><th>QTY</th><th>Total</th><th>UoM</th><th>Origin</th><th>Mandatory</th><th>VAT 15%</th><th>Total+VAT</th><th></th>
+      </tr></thead><tbody id="entryBoQBody"></tbody></table></div>
+      <div style="margin-top:7px;display:flex;gap:7px;align-items:center;flex-wrap:wrap">
+        <button type="button" class="btn btn-s btn-sm" onclick="addEntryBoQRow()">+ Add Item</button>
+        <div class="cboq-summary" id="entryBoQSummary" style="margin:0"></div>
+      </div>
+    </div>
     <div class="fsec"><div class="fsec-title">📝 Notes</div><textarea class="fta" id="fNotes" placeholder="Additional notes…"></textarea></div>
     <div class="fa-row"><button type="button" class="btn btn-s" onclick="resetForm()">✕ Clear</button><button type="submit" class="btn btn-p" id="saveContractBtn">✓ Save Contract</button></div>
   </form>
@@ -1961,7 +1993,7 @@ input[type=number]{-moz-appearance:textfield}
       <div class="fg"><label class="fl2">SME?</label><select class="fsel2" id="supSME"><option value="">No</option><option value="1">Yes</option></select></div>
       <div class="fg"><label class="fl2">Tadawul Listed?</label><select class="fsel2" id="supTadawul"><option value="">No</option><option value="1">Yes</option></select></div>
     </div>
-    <div class="fa-row"><button class="btn btn-s" onclick="closeModal('supplierModal')">Cancel</button><button class="btn btn-p" onclick="saveSupplier()">✓ Save Supplier</button></div>
+    <div class="fa-row"><button class="btn btn-s" type="button" onclick="closeModal('supplierModal')">Cancel</button><button class="btn btn-a" type="button" onclick="generateSupplierCardPDF()">📄 Card PDF</button><button class="btn btn-p" onclick="saveSupplier()">✓ Save Supplier</button></div>
   </div></div>
 </div>
 <!-- SUBMISSION MODAL -->
@@ -2254,6 +2286,7 @@ function renderCurrentPage(){
   else if(curPage==='supreq')renderSupReq();
   updateBadges();
   if(curPage==='entry'&&typeof refreshAwardImportSel==='function')refreshAwardImportSel();
+  if(curPage==='entry'&&typeof renderEntryBoQ==='function')renderEntryBoQ();
   if(typeof lang!=='undefined')setTimeout(function(){applyLang(lang);},20);
 }
 
@@ -2963,6 +2996,7 @@ function openContractModal(id){
   h+='<button class="btn btn-s btn-sm" onclick="toggleContractEditInfo()">&#9998; Edit Info</button>';
   h+='<button class="btn btn-p btn-sm" onclick="saveAndRecalc('+c.id+')">&#9889; Save &amp; Recalculate</button>';
   h+='<button class="btn btn-s btn-sm" onclick="generateReport('+c.id+')">&#128196; PDF</button>';
+  h+='<button class="btn btn-a btn-sm" onclick="generatePenaltyPDF('+c.id+')">&#9888; Penalty Letter</button>';
   h+='</div>';
 
   h+='<div id="editInfoSection" style="display:none;margin-bottom:12px">';
@@ -3258,7 +3292,7 @@ function renderReview(){
     Object.keys(grouped).forEach(function(rt){
       var files=grouped[rt];
       html+='<div style="margin-bottom:6px">'
-        +'<div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+(REPORT_LABELS[rt]||rt)+'</div>';
+        +'<div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+evLabel(rt,c)+'</div>';
       files.forEach(function(f){
         var realFi=(ev[rt]||[]).findIndex(function(x){return x.name===f.name&&x.uploaded===f.uploaded;});
         var st=f.status||'pending'; var isPend=st==='pending';
@@ -3639,10 +3673,37 @@ function submitContract(e){
   const blR=parseFloat(document.getElementById('fBL').value);const bl=isNaN(blR)?null:blR/100;
   const endDt=new Date(start);endDt.setMonth(endDt.getMonth()+dur);
   DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,name,mechanism:mech,amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),evidence:{},notes:document.getElementById('fNotes').value});
-  var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;window._importedFromBidId=null;}if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;_newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
+  var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;window._importedFromBidId=null;}if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;_newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
   saveDB();logAudit('create','Contract #'+num,num);var _bn=document.createElement('div');_bn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;background:#059669;color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px';_bn.textContent='\u2705 Contract #'+num+' saved!';document.body.appendChild(_bn);setTimeout(function(){_bn.remove();},3500);toast('Saved #'+num,'ok');resetForm();setTimeout(function(){nav('contracts',null);},800);
 }
-function resetForm(){document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');pendingFiles=[];document.getElementById('attachList').innerHTML='';}
+function resetForm(){document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');pendingFiles=[];document.getElementById('attachList').innerHTML='';entryBoQ=[];renderEntryBoQ();}
+var entryBoQ=[];
+function renderEntryBoQ(){
+  var tb=document.getElementById('entryBoQBody');if(!tb)return;
+  var NAT=['Goods','Service'],UOMS=(typeof BOQ_UOM!=='undefined')?BOQ_UOM:['Unit','Lump Sum','Each','Set','Kg','Ton','Meter','Lot','Hour','Day','Month'];
+  var sub=0,vat=0;
+  tb.innerHTML=entryBoQ.map(function(item,i){
+    var tp=(item.unitPrice||0)*(item.qty||0),v=tp*0.15;sub+=tp;vat+=v;
+    var h='<tr><td>'+(i+1)+'</td>';
+    h+='<td><input value="'+((item.desc||'').replace(/"/g,'&quot;'))+'" onchange="updateEntryBoQ('+i+',\'desc\',this.value)" style="min-width:120px"/></td>';
+    h+='<td><select onchange="updateEntryBoQ('+i+',\'nature\',this.value)">'+NAT.map(function(n){return '<option'+(item.nature===n?' selected':'')+'>'+n+'</option>';}).join('')+'</select></td>';
+    h+='<td><input type="number" value="'+(item.unitPrice||0)+'" onchange="updateEntryBoQ('+i+',\'unitPrice\',parseFloat(this.value)||0)" style="width:90px"/></td>';
+    h+='<td><input type="number" value="'+(item.qty||0)+'" onchange="updateEntryBoQ('+i+',\'qty\',parseFloat(this.value)||0)" style="width:60px"/></td>';
+    h+='<td style="font-weight:700">'+fSAR(tp)+'</td>';
+    h+='<td><select onchange="updateEntryBoQ('+i+',\'uom\',this.value)">'+UOMS.map(function(u){return '<option'+(item.uom===u?' selected':'')+'>'+u+'</option>';}).join('')+'</select></td>';
+    h+='<td><select onchange="updateEntryBoQ('+i+',\'origin\',this.value)"><option value="Local"'+(item.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(item.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>';
+    h+='<td style="text-align:center"><input type="checkbox" '+(item.isMandatoryRFP?'checked':'')+' onchange="updateEntryBoQ('+i+',\'isMandatoryRFP\',this.checked)"/></td>';
+    h+='<td style="color:var(--text3)">'+fSAR(v)+'</td>';
+    h+='<td style="font-weight:700;color:var(--accent2)">'+fSAR(tp+v)+'</td>';
+    h+='<td><button type="button" class="ev-btn rej" style="font-size:8px;padding:1px 4px" onclick="removeEntryBoQRow('+i+')">✕</button></td></tr>';
+    return h;
+  }).join('')||'<tr><td colspan="12" style="text-align:center;color:var(--text3);padding:10px">No BoQ items — add manually or Import from an awarded evaluation.</td></tr>';
+  var sm=document.getElementById('entryBoQSummary');if(sm)sm.innerHTML='<span>Subtotal: '+fSAR(sub)+'</span><span>VAT 15%: '+fSAR(vat)+'</span><span style="color:var(--accent2)">Grand Total: '+fSAR(sub+vat)+'</span>';
+}
+function addEntryBoQRow(){entryBoQ.push({desc:'',nature:'Goods',unitPrice:0,qty:0,uom:'Unit',origin:'Local',isMandatoryRFP:false,isMandatoryResp:false,evidenceName:'',evidenceData:''});renderEntryBoQ();}
+function updateEntryBoQ(i,f,v){if(entryBoQ[i]){entryBoQ[i][f]=v;if(f==='unitPrice'||f==='qty'||f==='isMandatoryRFP')renderEntryBoQ();}}
+function removeEntryBoQRow(i){entryBoQ.splice(i,1);renderEntryBoQ();}
+window.renderEntryBoQ=renderEntryBoQ;window.addEntryBoQRow=addEntryBoQRow;window.updateEntryBoQ=updateEntryBoQ;window.removeEntryBoQRow=removeEntryBoQRow;
 
 // IMPORT/EXPORT
 function importExcel(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets['Project X']||wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:null});let added=0,updated=0;const prev=[];rows.forEach(r=>{const num=String(r['Contract Number']||r['Contract #']||'').trim();if(!num)return;const amt=parseFloat(r['Amount']||0)||0;const name=String(r['Contract Name']||r['Name']||'').trim();const mech=String(r['Mechanisim']||r['Mechanism']||'').trim();const start=r['Start Date']?new Date(r['Start Date']).toISOString().split('T')[0]:null;const dur=parseInt(r['Duration']||0)||0;const apR=r['Agreed %']?parseFloat(r['Agreed %']):null;const ap=apR&&apR>1?apR/100:apR;const endDate=r['Contract End Date']?new Date(r['Contract End Date']).toISOString().split('T')[0]:null;const ex=DB.find(c=>c.num===num);if(ex){ex.name=name||ex.name;ex.mechanism=mech||ex.mechanism;ex.amount=amt||ex.amount;if(start)ex.start=start;if(dur)ex.duration=dur;if(endDate)ex.end=endDate;if(ap)ex.agreedPct=ap;updated++;prev.push(`<span class="badge ba">Updated</span> #${num} ${name.substring(0,28)}`);}else{DB.push({id:uid(),num,endUser:'',contractor:'',name,mechanism:mech,amount:amt,start:start||'',duration:dur,end:endDate||'',agreedPct:ap,lcAmount:ap&&amt?amt*ap:null,baseline:null,natProdAmount:0,mandatoryListAmount:0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:[],evidence:{},notes:''});added++;prev.push(`<span class="badge bg">Added</span> #${num} ${name.substring(0,28)}`);}});if(added+updated===0){toast('No valid contract rows found — check the sheet has a "Contract Number" column','err');return;}saveDB();document.getElementById('importPreview').innerHTML=`<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">Import Done</div><div class="badge bg">${added} added · ${updated} updated</div></div><div style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto">${prev.map(p=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)">${p}</div>`).join('')}</div></div>`;toast(`${added} added, ${updated} updated`,'ok');}catch(err){toast('Error: '+err.message,'err');}};r.readAsBinaryString(file);}
@@ -4847,6 +4908,7 @@ function importFromAward(){
   window._importedFromBidId=b.id;
   // Carry the winning bidder's BoQ line items into the new contract
   window._importedBoQ=(w.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;var lineTotal=parseFloat(r.price)||0;return {desc:r.desc||'',nature:r.nature||'Goods',unitPrice:q?+(lineTotal/q).toFixed(2):lineTotal,qty:q,uom:r.uom||'Unit',origin:r.origin||'Local',isMandatoryRFP:!!r.isMandatoryRFP,isMandatoryResp:!!r.isMandatoryResp,mlCode:r.mlCode||'',evidenceName:'',evidenceData:''};});
+  entryBoQ=JSON.parse(JSON.stringify(window._importedBoQ));if(typeof renderEntryBoQ==='function')renderEntryBoQ();
   var _bq=window._importedBoQ.length?' · '+window._importedBoQ.length+' BoQ item(s)':'';
   toast('Imported from "'+(b.title||'evaluation')+'"'+_bq+' — review then save','ok');
 }
@@ -4890,6 +4952,68 @@ function openSupplierModal(id){
   document.getElementById('supCRFileName').textContent=s&&s.crFile?'📎 '+s.crFile.name:'';
   document.getElementById('supLCFileName').textContent=s&&s.lcFile?'📎 '+s.lcFile.name:'';
   openModal('supplierModal');
+}
+function _openPrintDoc(html){
+  var w=window.open('','_blank','width=1000,height=800');
+  if(w){w.document.write(html);w.document.close();setTimeout(function(){try{w.print();}catch(e){}},500);}
+  else{var ifr=document.createElement('iframe');ifr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';document.body.appendChild(ifr);var d=ifr.contentWindow.document;d.open();d.write(html);d.close();setTimeout(function(){try{ifr.contentWindow.focus();ifr.contentWindow.print();}catch(e){}},600);}
+}
+function generatePenaltyPDF(cid){
+  var c=DB.find(function(x){return x.id===cid;});if(!c){toast('Contract not found','err');return;}
+  var pens=(c.penalties||[]).filter(function(p){return (p.amount||0)>0&&!(p.type==='Periodic'&&p.year&&typeof PPEN!=='undefined'&&PPEN[p.year]===false);});
+  if(!pens.length){toast('This contract has no active penalties','info');return;}
+  var AR_MODE=(typeof lang!=='undefined'&&lang==='ar');function L(en,ar){return AR_MODE?ar:en;}
+  var bi=(typeof brandInfo==='function')?brandInfo():{org:(S&&S.org)||'LC Monitor Pro',logo:''};
+  var total=pens.reduce(function(s,p){return s+(p.amount||0);},0);
+  var now=new Date().toLocaleDateString(AR_MODE?'ar-SA':'en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  var typeName=function(t){var m={Periodic:L('Periodic LC Report shortfall/non-submission','نقص/عدم تقديم التقرير الدوري'),FinalSub:L('Final Report non-submission','عدم تقديم التقرير النهائي'),Deviation:L('LC achievement deviation','الانحراف عن نسبة المحتوى المحلي'),NPP:L('NPP delivery shortfall','نقص توريد المنتجات الوطنية'),MLNP:L('Mandatory List (MLNP) shortfall','نقص القائمة الإلزامية')};return m[t]||t;};
+  var meth={Deviation:L('Penalty = (Agreed LC% − Achieved LC%) × Contract Value × '+((S.dev||0.30)*100)+'% deduction factor, applied only when the shortfall exceeds the '+ (S.gap||5) +'% tolerance gap.','الغرامة = (النسبة المتفق عليها − النسبة المحققة) × قيمة العقد × عامل خصم '+((S.dev||0.30)*100)+'٪، وتُطبَّق فقط عند تجاوز النقص حد التسامح البالغ '+(S.gap||5)+'٪.'),
+    Periodic:L('Each missing or late periodic LC report incurs a fixed deduction as set in the penalty rules.','يترتب على كل تقرير دوري مفقود أو متأخر خصم ثابت وفق قواعد الغرامات.'),
+    FinalSub:L('Non-submission of the Final LC Report incurs a '+(S.fin||10)+'% deduction of the LC value.','يترتب على عدم تقديم التقرير النهائي خصم بنسبة '+(S.fin||10)+'٪ من قيمة المحتوى المحلي.'),
+    NPP:L('NPP shortfall = (Committed − Delivered) × '+((S.npp||0.30)*100)+'% deduction factor.','غرامة المنتجات الوطنية = (الملتزم − المورّد) × عامل خصم '+((S.npp||0.30)*100)+'٪.'),
+    MLNP:L('Mandatory List shortfall = (Committed − Delivered) × '+((S.ml||0.30)*100)+'% deduction factor.','غرامة القائمة الإلزامية = (الملتزم − المورّد) × عامل خصم '+((S.ml||0.30)*100)+'٪.')};
+  var seen={};
+  var css='@page{size:A4;margin:16mm}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'+(AR_MODE?"\'IBM Plex Sans Arabic\',":'')+'Segoe UI,Roboto,sans-serif;color:#0b1324;padding:26px;line-height:1.6;'+(AR_MODE?'direction:rtl;':'')+'}'
+    +'.hd{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #dc2626;padding-bottom:12px;margin-bottom:16px}.hd h1{font-size:21px;color:#b91c1c}.hd .org{font-size:13px;font-weight:800}'
+    +'h2{font-size:14px;color:#b91c1c;border-'+(AR_MODE?'right':'left')+':4px solid #dc2626;padding-'+(AR_MODE?'right':'left')+':8px;margin:16px 0 8px}'
+    +'table{width:100%;border-collapse:collapse;margin:8px 0;font-size:12px}th{background:#b91c1c;color:#fff;padding:7px 9px;text-align:'+(AR_MODE?'right':'left')+'}td{padding:6px 9px;border-bottom:1px solid #eee}tr:nth-child(even) td{background:#fef2f2}'
+    +'.tot{font-size:16px;font-weight:800;color:#b91c1c}.box{border:1.5px solid #fecaca;background:#fef2f2;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:12px}.sig{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px;font-size:12px}.foot{margin-top:22px;font-size:10px;color:#94a3b8;text-align:center}';
+  var h='<!DOCTYPE html><html'+(AR_MODE?' dir="rtl"':'')+'><head><meta charset="utf-8"><title>Penalty Notice</title><style>'+css+'</style></head><body>';
+  h+='<div class="hd"><div><h1>'+L('Local Content Penalty Notice','إشعار غرامة المحتوى المحلي')+'</h1><div class="org">'+bi.org+'</div></div>'+(bi.logo?'<img src="'+bi.logo+'" style="height:44px"/>':'')+'</div>';
+  h+='<p>'+L('To','إلى')+': <b>'+(c.contractor||L('Contractor','المقاول'))+'</b> &nbsp; | &nbsp; '+L('Contract','العقد')+': <b>#'+c.num+' — '+(c.name||'')+'</b> &nbsp; | &nbsp; '+L('Date','التاريخ')+': '+now+'</p>';
+  h+='<h2>'+L('1. Penalty Breakdown','1. تفاصيل الغرامة')+'</h2>';
+  h+='<table><thead><tr><th>#</th><th>'+L('Penalty Type','نوع الغرامة')+'</th><th>'+L('Reason','السبب')+'</th><th>'+L('Amount (SAR)','المبلغ (ريال)')+'</th></tr></thead><tbody>';
+  pens.forEach(function(p,i){seen[p.type]=true;h+='<tr><td>'+(i+1)+'</td><td>'+typeName(p.type)+'</td><td>'+(p.reason||'—')+'</td><td>'+fSAR(p.amount)+'</td></tr>';});
+  h+='<tr><td colspan="3" style="text-align:'+(AR_MODE?'left':'right')+';font-weight:800">'+L('Total Penalty','إجمالي الغرامة')+'</td><td class="tot">'+fSAR(total)+'</td></tr>';
+  h+='</tbody></table>';
+  h+='<h2>'+L('2. Calculation Methodology','2. منهجية الاحتساب')+'</h2>';
+  Object.keys(seen).forEach(function(t){if(meth[t])h+='<div class="box"><b>'+typeName(t)+':</b> '+meth[t]+'</div>';});
+  h+='<h2>'+L('3. Remedy','3. الإجراء التصحيحي')+'</h2><div class="box">'+L('The contractor is requested to submit the outstanding evidence/reports and remedy the local-content shortfall within the period stipulated in the contract. Penalties are recalculated upon receipt and approval of valid evidence.','يُطلب من المقاول تقديم المستندات/التقارير المتأخرة ومعالجة النقص في المحتوى المحلي خلال المدة المنصوص عليها في العقد. ويُعاد احتساب الغرامات عند استلام واعتماد الإثباتات الصحيحة.')+'</div>';
+  h+='<div class="sig"><div>'+L('Issued by','صادر عن')+'<br/><br/>__________________</div><div>'+L('Acknowledged by (Contractor)','إقرار المقاول')+'<br/><br/>__________________</div></div>';
+  h+='<div class="foot">'+bi.org+' — '+L('Generated by LC Monitor Pro','تم إنشاؤه بواسطة LC Monitor Pro')+' · '+now+'</div></body></html>';
+  _openPrintDoc(h);
+  if(typeof logAudit==='function')logAudit('create','Penalty letter generated for contract #'+c.num);
+  toast(L('Penalty letter generated','تم إنشاء إشعار الغرامة'),'ok');
+}
+function generateSupplierCardPDF(){
+  var AR_MODE=(typeof lang!=='undefined'&&lang==='ar');function L(en,ar){return AR_MODE?ar:en;}
+  var bi=(typeof brandInfo==='function')?brandInfo():{org:(S&&S.org)||'LC Monitor Pro',logo:''};
+  var g=function(id){var e=document.getElementById(id);return e?e.value:'';};
+  var name=g('supName');if(!name){toast('Enter a supplier name first','err');return;}
+  var sme=g('supSME')==='1',tad=g('supTadawul')==='1';
+  var rows=[[L('Commercial Registration (CR)','السجل التجاري'),g('supCR')],[L('VAT Number','الرقم الضريبي'),g('supVAT')],[L('LC Certificate ID','رقم شهادة المحتوى المحلي'),g('supLCID')],[L('LC Certified %','نسبة المحتوى المحلي المعتمدة'),g('supLCPct')?g('supLCPct')+'%':''],[L('LC Issue Date','تاريخ الإصدار'),g('supLCIssue')],[L('LC Expiry Date','تاريخ الانتهاء'),g('supLCExp')],[L('Contact Person','مسؤول التواصل'),g('supContact')],[L('Email','البريد الإلكتروني'),g('supEmail')],[L('Phone','الهاتف'),g('supPhone')],[L('City','المدينة'),g('supCity')]];
+  var now=new Date().toLocaleDateString(AR_MODE?'ar-SA':'en-GB',{day:'2-digit',month:'long',year:'numeric'});
+  var css='@page{size:A4;margin:16mm}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'+(AR_MODE?"\'IBM Plex Sans Arabic\',":'')+'Segoe UI,Roboto,sans-serif;color:#0b1324;padding:26px;'+(AR_MODE?'direction:rtl;':'')+'}'
+    +'.hd{display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #2563eb;padding-bottom:14px;margin-bottom:18px}.hd h1{font-size:22px;color:#1d4ed8}.hd .org{font-size:13px;font-weight:800}'
+    +'.card{border:1.5px solid #e2e8f0;border-radius:14px;overflow:hidden}.card .top{background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;padding:18px 20px}.card .top .nm{font-size:20px;font-weight:800}.card .top .tags{margin-top:6px}.tag{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:700;margin-'+(AR_MODE?'left':'right')+':6px}'
+    +'table{width:100%;border-collapse:collapse}td{padding:10px 16px;border-bottom:1px solid #eef1f6;font-size:13px}td.k{color:#64748b;width:45%;font-weight:600}td.v{font-weight:700;color:#0b1324}'
+    +'.foot{margin-top:22px;font-size:10px;color:#94a3b8;text-align:center}';
+  var h='<!DOCTYPE html><html'+(AR_MODE?' dir="rtl"':'')+'><head><meta charset="utf-8"><title>Supplier Card</title><style>'+css+'</style></head><body>';
+  h+='<div class="hd"><div><h1>'+L('Supplier Card','بطاقة المورّد')+'</h1><div class="org">'+bi.org+'</div></div>'+(bi.logo?'<img src="'+bi.logo+'" style="height:48px"/>':'')+'</div>';
+  h+='<div class="card"><div class="top"><div class="nm">'+name+'</div><div class="tags">'+(sme?'<span class="tag">'+L('SME','منشأة صغيرة/متوسطة')+'</span>':'')+(tad?'<span class="tag">'+L('Tadawul Listed','مدرجة في تداول')+'</span>':'')+'</div></div><table>';
+  rows.forEach(function(r){if(r[1])h+='<tr><td class="k">'+r[0]+'</td><td class="v">'+r[1]+'</td></tr>';});
+  h+='</table></div><div class="foot">'+bi.org+' — '+L('Generated by LC Monitor Pro','تم إنشاؤه بواسطة LC Monitor Pro')+' · '+now+'</div></body></html>';
+  _openPrintDoc(h);toast(L('Supplier card generated','تم إنشاء بطاقة المورّد'),'ok');
 }
 function saveSupplier(){
   var name=document.getElementById('supName').value.trim();
@@ -5031,23 +5155,52 @@ function renderSupReq(){
   var h='';
   contracts.forEach(function(c){
     var due=(c.reports||[]).filter(function(r){return r.received!==true;});
-    h+='<div class="card" style="margin-bottom:10px"><div class="card-hd"><div class="card-title">#'+c.num+' — '+(c.name||'')+'</div><span class="badge '+(due.length?'ba':'bg')+'">'+(due.length?due.length+' due':'All submitted')+'</span></div>';
-    if(!due.length){h+='<div style="font-size:11px;color:var(--text3)">All requirements submitted ✓</div></div>';return;}
-    due.forEach(function(r){
-      var key=r.type==='period'?'period_'+r.year:r.type;
-      var lbl=r.type==='period'?(r.year+(r.year===1?'st':r.year===2?'nd':r.year===3?'rd':'th')+' Periodic Report'):r.type==='final'?'Final Report':r.type==='npp'?'NPP Report':'MLNP Report';
-      var evCount=((c.evidence||{})[key]||[]).length;
-      h+='<div class="rv-file-row" style="margin-bottom:5px">'
-       +'<div class="rv-file-info"><span class="rv-file-name">📋 '+lbl+'</span>'
-       +'<span class="rv-file-meta"> &nbsp;'+(r.due?'Due '+fD(r.due):'')+(r.target!=null?' · Target '+pct(r.target):'')+' · '+evCount+' file(s) attached</span></div>'
-       +'<div class="rv-file-actions">'
-       +'<label class="ev-btn" for="supReqFile_'+c.id+'_'+key+'" style="cursor:pointer">📎 Attach Evidence</label>'
-       +'<input type="file" id="supReqFile_'+c.id+'_'+key+'" style="display:none" onchange="supReqUpload(this,'+c.id+',\''+key+'\')"/>'
-       +'</div></div>';
-    });
+    var liItems=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return o.it.isMandatoryRFP||(o.it.origin==='Local');});
+    var totalReq=due.length+liItems.length;
+    h+='<div class="card" style="margin-bottom:10px"><div class="card-hd"><div class="card-title">#'+c.num+' — '+(c.name||'')+'</div><span class="badge '+(totalReq?'ba':'bg')+'">'+(totalReq?totalReq+' requirement(s)':'All submitted')+'</span></div>';
+    if(due.length){
+      h+='<div style="font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin:4px 0 5px">📋 Periodic / Final Reports</div>';
+      due.forEach(function(r){
+        var key=r.type==='period'?'period_'+r.year:r.type;
+        var lbl=r.type==='period'?(r.year+(r.year===1?'st':r.year===2?'nd':r.year===3?'rd':'th')+' Periodic Report'):r.type==='final'?'Final Report':r.type==='npp'?'NPP Report':'MLNP Report';
+        var evs=((c.evidence||{})[key]||[]);
+        h+='<div class="rv-file-row" style="margin-bottom:5px">'
+         +'<div class="rv-file-info"><span class="rv-file-name">📋 '+lbl+'</span>'
+         +'<span class="rv-file-meta"> &nbsp;'+(r.due?'Due '+fD(r.due):'')+(r.target!=null?' · Target '+pct(r.target):'')+' · '+evs.length+' file(s)</span></div>'
+         +'<div class="rv-file-actions">'+_evStatusBadge(evs)
+         +'<label class="ev-btn" for="supReqFile_'+c.id+'_'+key+'" style="cursor:pointer">📎 Attach</label>'
+         +'<input type="file" id="supReqFile_'+c.id+'_'+key+'" style="display:none" onchange="supReqUpload(this,'+c.id+',\''+key+'\')"/>'
+         +'</div></div>';
+      });
+    }
+    if(liItems.length){
+      h+='<div style="font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin:10px 0 5px">📦 Local-Content Line-Item Evidence</div>';
+      liItems.forEach(function(o){
+        var idx=o.idx,it=o.it,key='li_'+idx,evs=((c.evidence||{})[key]||[]);
+        var tags=(it.isMandatoryRFP?'<span class="badge br" style="font-size:8px;padding:1px 6px">Mandatory</span> ':'')+((it.origin==='Local')?'<span class="badge bb" style="font-size:8px;padding:1px 6px">Local</span>':'');
+        h+='<div class="rv-file-row" style="margin-bottom:5px">'
+         +'<div class="rv-file-info"><span class="rv-file-name">📦 '+(it.desc||('Item #'+(idx+1)))+' '+tags+'</span>'
+         +'<span class="rv-file-meta"> &nbsp;'+(it.nature||'')+' · Qty '+(it.qty||0)+' '+(it.uom||'')+' · '+evs.length+' file(s)</span></div>'
+         +'<div class="rv-file-actions">'+_evStatusBadge(evs)
+         +'<label class="ev-btn" for="liFile_'+c.id+'_'+idx+'" style="cursor:pointer">📎 Attach</label>'
+         +'<input type="file" id="liFile_'+c.id+'_'+idx+'" style="display:none" onchange="supReqUpload(this,'+c.id+',\''+key+'\')"/>'
+         +'</div></div>';
+      });
+    }
+    if(!totalReq)h+='<div style="font-size:11px;color:var(--text3)">No outstanding requirements ✓</div>';
     h+='</div>';
   });
   el.innerHTML=h;
+}
+function _evStatusBadge(evs){
+  if(!evs||!evs.length)return '<span class="badge bgy" style="font-size:9px">No evidence</span>';
+  if(evs.every(function(f){return f.status==='approved';}))return '<span class="badge bg" style="font-size:9px">✓ Approved</span>';
+  if(evs.some(function(f){return f.status==='rejected';}))return '<span class="badge br" style="font-size:9px">Rejected</span>';
+  return '<span class="badge ba" style="font-size:9px">'+evs.filter(function(f){return (f.status||"pending")==="pending";}).length+' pending</span>';
+}
+function evLabel(rt,c){
+  if(typeof rt==='string'&&rt.indexOf('li_')===0){var idx=+rt.slice(3);var it=c&&c.boqItems&&c.boqItems[idx];return 'Line Item: '+(it?(it.desc||('#'+(idx+1))):('#'+(idx+1)));}
+  return (typeof REPORT_LABELS!=='undefined'&&REPORT_LABELS[rt])||rt;
 }
 function supReqUpload(inp,cid,key){
   var f=inp.files[0];if(!f)return;
