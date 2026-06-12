@@ -954,12 +954,24 @@ body:not([data-theme=dark])::before{opacity:.0 !important}
 #page-dashboard .dc,#page-dashboard .dhv-card,#page-dashboard .al-item,.fun-step{cursor:pointer}
 
 /* ---- Reports Review: compact action buttons that never clip ---- */
-#page-review .rv-file-row{display:flex;align-items:center;gap:10px;min-height:40px;padding:8px 12px;flex-wrap:wrap}
-#page-review .rv-file-info{flex:1;min-width:0}
-#page-review .rv-file-actions{flex-wrap:wrap;gap:6px;max-width:none;overflow:visible;justify-content:flex-end;flex-shrink:0}
+#page-review .rv-file-row{display:flex!important;align-items:center;justify-content:space-between;gap:12px;min-height:42px;max-height:none!important;height:auto!important;overflow:visible!important;padding:8px 12px;flex-wrap:nowrap!important}
+#page-review .rv-file-info{flex:1 1 auto;min-width:0}
+#page-review .rv-file-actions{display:flex!important;flex-wrap:nowrap!important;gap:6px;max-width:none;height:auto!important;align-content:center;overflow:visible;justify-content:flex-end;flex:0 0 auto;align-items:center}
 #page-review .rv-file-actions .ev-btn,#page-review .rv-file-actions button{
-  width:30px;height:30px;min-width:30px!important;padding:0!important;font-size:14px!important;line-height:1!important;
-  display:inline-flex;align-items:center;justify-content:center;border-radius:8px;flex:0 0 auto}
+  height:28px!important;min-height:0!important;min-width:0!important;padding:0 11px!important;font-size:11px!important;font-weight:700;line-height:1!important;
+  display:inline-flex;align-items:center;gap:4px;border-radius:8px;flex:0 0 auto;border:1.5px solid var(--border);white-space:nowrap}
+#page-review .ev-btn.view{background:rgba(37,99,235,.12);border-color:#2563eb;color:#2563eb}
+#page-review .ev-btn.dl{background:rgba(8,145,178,.12);border-color:#0891b2;color:#0891b2}
+#page-review .ev-btn.app{background:rgba(22,163,74,.14);border-color:#16a34a;color:#16a34a}
+#page-review .ev-btn.rej{background:rgba(220,38,38,.12);border-color:#dc2626;color:#dc2626}
+#page-review .ev-btn.view:hover{background:#2563eb;color:#fff}
+#page-review .ev-btn.dl:hover{background:#0891b2;color:#fff}
+#page-review .ev-btn.app:hover{background:#16a34a;color:#fff}
+#page-review .ev-btn.rej:hover{background:#dc2626;color:#fff}
+[data-theme=dark] #page-review .ev-btn.view{color:#7eb0ff}
+[data-theme=dark] #page-review .ev-btn.dl{color:#3fd0e0}
+[data-theme=dark] #page-review .ev-btn.app{color:#5fe08a}
+[data-theme=dark] #page-review .ev-btn.rej{color:#ff8a95}
 #page-review .rv-status{font-size:10px;white-space:nowrap;align-self:center;padding:0 2px}
 
 /* ---- Contract details popup: larger so BoQ + info fit comfortably ---- */
@@ -1023,32 +1035,47 @@ body:not([data-theme=dark])::before{opacity:0 !important}
 /* ---- page transition ---- */
 .page.active{animation:dsIn .34s cubic-bezier(.22,1,.36,1)}
 
-/* ---- SIDEBAR ---- */
-.sidebar{background:var(--grad-side)!important;border-right:none!important;box-shadow:4px 0 30px -12px rgba(8,12,30,.5)}
-body.rtl .sidebar{box-shadow:-4px 0 30px -12px rgba(8,12,30,.5)}
-.sidebar .sl{border-bottom:1px solid rgba(255,255,255,.07)!important}
-.sidebar .slt{color:#fff!important}
-.sidebar .sls{color:#8da2c8!important}
-.sidebar .sli{background:var(--grad-accent)!important;box-shadow:0 6px 18px -4px rgba(37,99,235,.6);color:#fff!important}
-.sidebar .ns{color:#5f73a0!important;font-weight:800!important}
-.ni-wrap{color:#c2cde4!important;border-radius:11px;margin:1px 9px;padding:8px 11px!important;border-left:none!important;position:relative;transition:all var(--tr)}
+/* ---- SIDEBAR (theme-aware: light in light mode, navy in dark mode) ---- */
+.sidebar .sli{background:var(--grad-accent)!important;box-shadow:0 6px 18px -4px rgba(37,99,235,.4);color:#fff!important}
+.ni-wrap{border-radius:11px;margin:1px 9px;padding:8px 11px!important;border-left:none!important;position:relative;transition:all var(--tr)}
 body.rtl .ni-wrap{border-right:none!important}
 .ni-wrap .ni{transition:transform var(--tr)}
-.ni-wrap:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;transform:translateX(3px)}
+.ni-wrap:hover{transform:translateX(3px)}
 body.rtl .ni-wrap:hover{transform:translateX(-3px)}
 .ni-wrap:hover .ni{transform:scale(1.18)}
-.ni-wrap.active{background:linear-gradient(100deg,rgba(37,99,235,.30),rgba(124,58,237,.16))!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.10),0 8px 20px -10px rgba(37,99,235,.7)}
-.ni-wrap.active::before{content:'';position:absolute;left:-9px;top:50%;transform:translateY(-50%);width:4px;height:62%;border-radius:0 4px 4px 0;background:var(--grad-accent);box-shadow:0 0 12px rgba(37,99,235,.9)}
+.ni-wrap.active::before{content:'';position:absolute;left:-9px;top:50%;transform:translateY(-50%);width:4px;height:62%;border-radius:0 4px 4px 0;background:var(--grad-accent);box-shadow:0 0 10px rgba(37,99,235,.6)}
 body.rtl .ni-wrap.active::before{left:auto;right:-9px;border-radius:4px 0 0 4px}
-[data-theme=dark] .ni-wrap.active{background:linear-gradient(100deg,rgba(79,140,255,.18),rgba(255,180,0,.08))!important}
-[data-theme=dark] .ni-wrap.active::before{background:var(--accent)}
-.sidebar .nbadge{box-shadow:0 3px 8px -2px rgba(220,38,38,.7);animation:dsGlow 2.4s ease-in-out infinite}
+.sidebar .nbadge{box-shadow:0 3px 8px -2px rgba(220,38,38,.5);animation:dsGlow 2.4s ease-in-out infinite}
 #settSubNav .ni-wrap{font-size:11.5px}
-.sbtm{border-top:1px solid rgba(255,255,255,.07)!important}
-.sbtm .cl{color:#8da2c8!important}
-.sbtm .tg{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.10)!important}
-.sbtm .tb{color:#c2cde4!important}
+/* LIGHT theme sidebar */
+.sidebar{background:var(--surface)!important;border-right:1px solid var(--border)!important;box-shadow:4px 0 24px -18px rgba(15,30,70,.25)}
+.sidebar .sl{border-bottom:1px solid var(--border)!important}
+.sidebar .slt{color:var(--text)!important}
+.sidebar .sls{color:var(--text3)!important}
+.sidebar .ns{color:var(--text3)!important;font-weight:800!important}
+.ni-wrap{color:var(--text2)!important}
+.ni-wrap:hover{background:var(--surface2)!important;color:var(--text)!important}
+.ni-wrap.active{background:var(--al)!important;color:var(--accent)!important;font-weight:700}
+.sbtm{border-top:1px solid var(--border)!important}
+.sbtm .cl{color:var(--text3)!important}
+.sbtm .tg{background:var(--surface2)!important;border-color:var(--border)!important}
+.sbtm .tb{color:var(--text2)!important}
 .sbtm .tb.active{background:var(--grad-accent)!important;color:#fff!important}
+/* DARK theme sidebar — navy gradient to match content */
+[data-theme=dark] .sidebar{background:var(--grad-side)!important;border-right:none!important;box-shadow:4px 0 30px -12px rgba(8,12,30,.5)}
+[data-theme=dark] body.rtl .sidebar{box-shadow:-4px 0 30px -12px rgba(8,12,30,.5)}
+[data-theme=dark] .sidebar .sl{border-bottom:1px solid rgba(255,255,255,.07)!important}
+[data-theme=dark] .sidebar .slt{color:#fff!important}
+[data-theme=dark] .sidebar .sls{color:#8da2c8!important}
+[data-theme=dark] .sidebar .ns{color:#6e7ca6!important}
+[data-theme=dark] .ni-wrap{color:#c2cde4!important}
+[data-theme=dark] .ni-wrap:hover{background:rgba(255,255,255,.07)!important;color:#fff!important}
+[data-theme=dark] .ni-wrap.active{background:linear-gradient(100deg,rgba(79,140,255,.22),rgba(124,58,237,.12))!important;color:#fff!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.10),0 8px 20px -10px rgba(79,140,255,.6)}
+[data-theme=dark] .ni-wrap.active::before{background:var(--accent)}
+[data-theme=dark] .sbtm{border-top:1px solid rgba(255,255,255,.07)!important}
+[data-theme=dark] .sbtm .cl{color:#8da2c8!important}
+[data-theme=dark] .sbtm .tg{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.10)!important}
+[data-theme=dark] .sbtm .tb{color:#c2cde4!important}
 
 /* ---- TOPBAR ---- */
 .topbar{background:rgba(255,255,255,.70)!important;backdrop-filter:blur(20px) saturate(1.4)!important;border-bottom:1px solid var(--border)!important;box-shadow:0 6px 24px -18px rgba(15,30,70,.5)}
@@ -1099,6 +1126,7 @@ td{border-bottom:1px solid var(--border)!important}
 [data-theme=dark] .mo.open{background:rgba(0,0,0,.66)!important}
 .md{border-radius:var(--rl)!important;box-shadow:var(--shl)!important;border:1px solid var(--border)!important;overflow:hidden auto;animation:dsIn .3s cubic-bezier(.22,1,.36,1)}
 #pdfModal{z-index:700!important}
+#awardModal,#awardFinModal{z-index:760!important}
 #pdfModal .md{max-width:920px;width:96%}
 #kpiDrillModal{z-index:680!important}
 .md-hd{border-bottom:1px solid var(--border)!important}
@@ -3298,10 +3326,10 @@ function renderReview(){
         var st=f.status||'pending'; var isPend=st==='pending';
         var stLabel=st.charAt(0).toUpperCase()+st.slice(1);
         var stColor=st==='approved'?'var(--accent3)':st==='rejected'?'var(--danger)':'var(--warn)';
-        var vB=f.dataUrl?'<button class="ev-btn" title="View" onclick="viewEvFile('+c.id+',' + "'" + rt + "'" + ','+realFi+')">&#128065;</button>':'';
-        var dB=f.dataUrl?'<button class="ev-btn" title="Download" onclick="downloadEvFile('+c.id+',' + "'" + rt + "'" + ','+realFi+')">&#11015;</button>':'';
-        var aB=isPend?'<button class="ev-btn app" title="Approve" onclick="reviewEvidence('+c.id+',' + "'" + rt + "'" + ','+realFi+',' + "'approved'" + ')">&#10003;</button>':'';
-        var rB=isPend?'<button class="ev-btn rej" title="Reject" onclick="reviewEvidence('+c.id+',' + "'" + rt + "'" + ','+realFi+',' + "'rejected'" + ')">&#10007;</button>':'';
+        var vB=f.dataUrl?'<button class="ev-btn view" title="View" onclick="viewEvFile('+c.id+',' + "'" + rt + "'" + ','+realFi+')">&#128065; View</button>':'';
+        var dB=f.dataUrl?'<button class="ev-btn dl" title="Download" onclick="downloadEvFile('+c.id+',' + "'" + rt + "'" + ','+realFi+')">&#11015; Download</button>':'';
+        var aB=isPend?'<button class="ev-btn app" title="Approve" onclick="reviewEvidence('+c.id+',' + "'" + rt + "'" + ','+realFi+',' + "'approved'" + ')">&#10003; Approve</button>':'';
+        var rB=isPend?'<button class="ev-btn rej" title="Reject" onclick="reviewEvidence('+c.id+',' + "'" + rt + "'" + ','+realFi+',' + "'rejected'" + ')">&#10007; Reject</button>':'';
         html+='<div class="rv-file-row">'
           +'<div class="rv-file-info">'
           +'<span class="rv-file-name">&#128206; '+f.name+'</span>'
@@ -4363,7 +4391,7 @@ var pendingCertFile=null;
 function handleCertFileUpload(fl){if(!fl||!fl.length)return;var ff=fl[0];var rd=new FileReader();rd.onload=function(ev){pendingCertFile={name:ff.name,size:fSize(ff.size),dataUrl:ev.target.result,mimeType:ff.type};var pv=document.getElementById("certFilePreview");if(pv)pv.innerHTML='<div style="font-size:11px;color:var(--accent)">Attached: '+ff.name+'</div>';toast("Certificate attached","ok");};rd.readAsDataURL(ff);}
 function viewCertFile(idx){var c=CERTS[idx];if(!c||!c.file||!c.file.dataUrl)return;var t=document.getElementById("fvTitle");if(t)t.textContent=c.file.name;var dl=document.getElementById("fvDownload");if(dl){dl.href=c.file.dataUrl;dl.download=c.file.name;}var body=document.getElementById("fvBody");if(!body)return;var mime=c.file.mimeType||"";if(mime.indexOf("image/")===0)body.innerHTML='<img src="'+c.file.dataUrl+'" style="max-width:100%;margin:auto;display:block;padding:12px"/>';else if(mime==="application/pdf")body.innerHTML='<iframe src="'+c.file.dataUrl+'" style="width:100%;height:75vh;border:none"></iframe>';else body.innerHTML='<div style="padding:32px;text-align:center"><b>'+c.file.name+'</b><br><a href="'+c.file.dataUrl+'" download="'+c.file.name+'" class="btn btn-p" style="margin-top:12px">Download</a></div>';openModal("fileViewerModal");}
 function downloadCertFile(idx){var c=CERTS[idx];if(!c||!c.file||!c.file.dataUrl)return;var a=document.createElement('a');a.href=c.file.dataUrl;a.download=c.file.name||'certificate';a.click();toast('Downloading '+(c.file.name||'certificate'),'ok');}
-function handleTCFile(mEnc,type,fl){if(!fl||!fl.length)return;var m=decodeURIComponent(mEnc);var ff=fl[0];if(!MECH_TC[m])MECH_TC[m]={};MECH_TC[m][type+"File"]=ff.name;var rd=new FileReader();rd.onload=function(ev){MECH_TC[m][type+"FileData"]=ev.target.result;localStorage.setItem("lcMechTC",JSON.stringify(MECH_TC));renderMechTCList();toast("T&C file: "+ff.name,"ok");};rd.readAsDataURL(ff);}
+function handleTCFile(mEnc,type,fl){if(!fl||!fl.length)return;var m=decodeURIComponent(mEnc);var ff=fl[0];if(!MECH_TC[m])MECH_TC[m]={};MECH_TC[m][type+"File"]=ff.name;var rd=new FileReader();rd.onload=function(ev){MECH_TC[m][type+"FileData"]=ev.target.result;var ok=true;try{localStorage.setItem("lcMechTC",JSON.stringify(MECH_TC));}catch(e){ok=false;delete MECH_TC[m][type+"FileData"];try{localStorage.setItem("lcMechTC",JSON.stringify(MECH_TC));}catch(e2){}}renderMechTCList();toast(ok?("T&C file attached: "+ff.name):("Attached: "+ff.name+" (too large to store the file content — name saved)"),ok?"ok":"err");};rd.onerror=function(){toast("Could not read file","err");};rd.readAsDataURL(ff);}
 function showBidChoiceModal(){
   var readyRFPs=RFPS.filter(function(r){return r.status==='ready';});
   var ro="";for(var ri=0;ri<readyRFPs.length;ri++){var rr=readyRFPs[ri];ro+='<option value="'+rr.id+'">'+((rr.ref||"")+" "+(rr.title||""))+"</option>";}
@@ -4667,6 +4695,10 @@ function confirmAward(){
   document.body.appendChild(_ab);
   setTimeout(function(){_ab.style.transition='opacity .5s';_ab.style.opacity='0';setTimeout(function(){_ab.remove();},500);},4000);
   toast('🏆 Awarded to '+pendingAwardName+(override?' (override recorded)':''),'ok');
+  // persistent on-page confirmation so the result is obvious
+  var _br=document.getElementById('bidResults');
+  if(_br){var _wb=document.createElement('div');_wb.className='award-banner';_wb.style.cssText='background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:13px 16px;border-radius:12px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 22px -8px rgba(5,150,105,.6)';_wb.innerHTML='🏆 Awarded to <strong>'+pendingAwardName+'</strong>'+(override?' <span style="font-weight:500;opacity:.9">(override recorded)</span>':'');var _old=_br.querySelector('.award-banner');if(_old)_old.remove();_br.insertBefore(_wb,_br.firstChild);}
+  if(typeof renderBiddersList==='function')renderBiddersList();
   pendingAwardName=null;awardEvBuf=[];
 }
 
