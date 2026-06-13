@@ -1667,7 +1667,6 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-decisionTree&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🌳 Decision Tree</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-tc&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>📜 Mechanism T&amp;Cs</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-mlnp&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>📋 Mandatory List</span></div>
-  <div class="ni-wrap" onclick="navSettSec(&#39;settSec-formulas&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>⚖️ Bid Formulas</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-evaluation&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🎛 Bid Controls</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-exclusions&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🚫 Bid Exclusions</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-mechanisms&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🔧 Mechanisms</span></div>
@@ -1694,6 +1693,7 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
   </div>
   <div class="tbr">
     <div class="profile-chip" id="profileChip" onclick="showLogin()" title="Switch user / sign in"></div>
+    <button class="tbtn" id="mobileToggleBtn" onclick="toggleMobileMode()" title="Toggle mobile-optimized view">📱</button>
     <div class="sw"><span class="sic">🔍</span><input class="si" id="gSearch" placeholder="Search…" oninput="onSearch(this.value)"></div>
     
     
@@ -1758,6 +1758,15 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
         <div class="fg"><label class="fl2">Estimated Value (SAR) <span class="req">*</span></label><input class="fi" id="rfpValue" type="number" placeholder="0" oninput="runMechWizard()"></div>
         <div class="fg"><label class="fl2">Contract Duration (months) <span class="req">*</span></label><input class="fi" id="rfpDuration" type="number" min="1" placeholder="e.g. 36" title="Tender contract period — shown to suppliers &amp; evaluators, imported into the contract"></div>
         <div class="fg full"><label class="fl2">Scope of Work</label><textarea class="fta" id="rfpScope" rows="3" placeholder="Describe the scope..."></textarea></div>
+      </div>
+      <div class="fsec" style="margin-top:14px;padding:14px;background:var(--surface2);border:1.5px solid var(--border)">
+        <div class="fsec-title" style="border:none;margin-bottom:8px;padding-bottom:0">📣 Tendering Style</div>
+        <div class="fg2" style="gap:10px"><div class="fg"><label class="fl2">Tendering Style</label><select class="fsel2" id="rfpTenderStyle" onchange="rfpToggleClosed()"><option value="open">Open Tender — visible to all suppliers</option><option value="closed">Closed Tender — invited suppliers only</option></select></div></div>
+        <div id="rfpClosedPanel" style="display:none;margin-top:10px">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><div style="font-size:11px;font-weight:700">Invite registered suppliers</div><div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><span id="rfpInviteFilters" style="display:flex;gap:5px;flex-wrap:wrap"></span><button type="button" class="btn btn-s btn-sm" onclick="openSupplierModal()">+ Register supplier</button></div></div>
+          <div id="rfpSupplierPick" style="max-height:170px;overflow:auto;border:1px solid var(--border);border-radius:8px;padding:6px"></div>
+          <div style="font-size:10px;color:var(--text3);margin-top:6px">Invited suppliers: <b id="rfpInvitedCount">0</b></div>
+        </div>
       </div>
       <div class="fsec" style="margin-top:14px;padding:14px;background:var(--al);border:1.5px solid var(--accent)">
         <div class="fsec-title" style="border:none;margin-bottom:8px;padding-bottom:0">🧙 Smart Mechanism Wizard</div>
@@ -2227,8 +2236,15 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
     </div>
     <input type="file" id="mlnpFile" accept=".xlsx,.xls" style="display:none" onchange="importMLNP(this.files[0])">
     <div id="mlnpPreview" style="margin-top:10px"></div>
+    <div class="fsec-title" style="margin-top:16px">🗂 Mandatory List Sectors</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:8px;line-height:1.5">Sectors are the Excel tabs (auto-updated whenever a new Mandatory List is imported). Each is one combined "Arabic — English" entry. Drag ⠿ to reorder, ❄ to freeze (hide from new pickers), edit the English, or add your own.</div>
+    <div id="sectorsList" style="margin-bottom:8px"></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap"><input class="fi" id="newSectorAr" placeholder="Arabic name" style="font-size:11px;flex:1;min-width:120px"/><input class="fi" id="newSectorEn" placeholder="English name" style="font-size:11px;flex:1;min-width:120px"/><button class="btn btn-p btn-sm" onclick="addSector()">+ Add Sector</button></div>
+    <div class="fsec-title" style="margin-top:16px">🔎 Closed-Tender Invite Filters</div>
+    <div style="font-size:11px;color:var(--text2);margin-bottom:8px">Enable or disable the filters a user can apply when inviting suppliers to a Closed Tender (RFP Preparation).</div>
+    <div id="tenderFiltersList"></div>
   </div>
-  <div class="fsec" id="settSec-formulas">
+  <div class="fsec" id="settSec-formulas" style="display:none">
     <div class="fsec-title">⚖️ Bid Evaluation — Formulas Per Mechanism</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Define evaluation formulas and scoring weights for each mechanism. These are used in the Bid Evaluation page.</div>
     <div id="mechFormulaList"><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Small &amp; Medium Enterprises</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Small%20%26%20Medium%20Enterprises&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">Score = (LC% × weight) + SME_Bonus<br><span style="color:var(--text3);font-size:10px">SME contracts: LC score based on declared SME status and percentage</span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Local Content Weight in Commercial Evaluation - Project Level</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Local%20Content%20Weight%20in%20Commercial%20Evaluation%20-%20Project%20Level&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">Adjusted Price = Bid Price × (1 - LC_Preference_Factor)<br><span style="color:var(--text3);font-size:10px">Project-level: LC weighted in commercial bid evaluation</span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">LC Weight + NPP - Company Level</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;LC%20Weight%20%2B%20NPP%20-%20Company%20Level&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">Final Score = (LC_Score × LC_Weight) + NPP_Bonus<br><span style="color:var(--text3);font-size:10px">Company-level LC with NPP preference combined</span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">National Product Preferencing</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;National%20Product%20Preferencing&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">Evaluated Price = Bid Price × (1 - NPP_Preference) if NPP% ≥ Min<br><span style="color:var(--text3);font-size:10px">Price preference for bids using national products</span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">National Product Preferencing + Mandatory list</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;National%20Product%20Preferencing%20%2B%20Mandatory%20list&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">Score = NPP_Score + MLNP_Compliance_Score<br><span style="color:var(--text3);font-size:10px">NPP + mandatory list compliance required</span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Local Content Minimum Threshold</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Local%20Content%20Minimum%20Threshold&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">No formula defined<br><span style="color:var(--text3);font-size:10px"></span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Local Content Weight in Commercial Evaluation - Company Level</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Local%20Content%20Weight%20in%20Commercial%20Evaluation%20-%20Company%20Level&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">No formula defined<br><span style="color:var(--text3);font-size:10px"></span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Local Content Minimum Threshold + NPP + MLNP</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Local%20Content%20Minimum%20Threshold%20%2B%20NPP%20%2B%20MLNP&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">No formula defined<br><span style="color:var(--text3);font-size:10px"></span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Small &amp; Medium Enterprises + NPP + MLNP</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Small%20%26%20Medium%20Enterprises%20%2B%20NPP%20%2B%20MLNP&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">No formula defined<br><span style="color:var(--text3);font-size:10px"></span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Local Content Weight in Commercial Evaluation + NPP + MLNP - Company Level</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Local%20Content%20Weight%20in%20Commercial%20Evaluation%20%2B%20NPP%20%2B%20MLNP%20-%20Company%20Level&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">No formula defined<br><span style="color:var(--text3);font-size:10px"></span></div></div><div class="mech-tc-item"><div class="mech-tc-hd"><div class="mech-tc-name">Local Content Weight in Commercial Evaluation + NPP + MLNP -  Project Level</div><button class="btn btn-s btn-sm" onclick="editFormula(&#39;Local%20Content%20Weight%20in%20Commercial%20Evaluation%20%2B%20NPP%20%2B%20MLNP%20-%20%20Project%20Level&#39;)">✏️ Edit Formula</button></div><div class="mech-tc-body">No formula defined<br><span style="color:var(--text3);font-size:10px"></span></div></div></div>
@@ -2309,9 +2325,12 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
     <div style="display:flex;gap:7px"><button class="btn btn-p" onclick="saveSettings()">💾 Save</button><button class="btn btn-s" onclick="resetSettings()">↺ Reset</button></div>
   </div>
   <div class="fsec" id="settSec-periodic">
-    <div class="fsec-title">📋 Periodic Report Penalties — Toggle Per Year</div>
-    <div id="ppenGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px"><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year 1 Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_1" onchange="PPEN[1]=this.checked;renderPPENGrid()"><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">SAR&nbsp;504,000</span><span style="font-size:9px;font-weight:700;color:var(--text3)">⊘ OFF</span></div></div><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year 2 Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_2" onchange="PPEN[2]=this.checked;renderPPENGrid()"><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">No penalty</span><span style="font-size:9px;font-weight:700;color:var(--text3)">⊘ OFF</span></div></div><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year 3 Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_3" onchange="PPEN[3]=this.checked;renderPPENGrid()"><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">No penalty</span><span style="font-size:9px;font-weight:700;color:var(--text3)">⊘ OFF</span></div></div><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year 4 Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_4" onchange="PPEN[4]=this.checked;renderPPENGrid()"><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">SAR&nbsp;2,310,000</span><span style="font-size:9px;font-weight:700;color:var(--text3)">⊘ OFF</span></div></div><div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year 5 Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_5" onchange="PPEN[5]=this.checked;renderPPENGrid()"><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">No penalty</span><span style="font-size:9px;font-weight:700;color:var(--text3)">⊘ OFF</span></div></div></div>
-    <div style="display:flex;gap:7px"><button class="btn btn-p btn-sm" onclick="savePPENConfig()">Apply</button><button class="btn btn-s btn-sm" onclick="enableAllPPEN()">Enable All</button><button class="btn btn-s btn-sm" onclick="disableAllPPEN()">Disable All</button></div>
+    <div class="fsec-title">📋 Periodic Report Penalties</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">One switch for non-submission penalties on <b>all</b> periodic LC reports (any year, any contract — periodic reports now scale with contract duration). Deviation / shortfall penalties on other report types are unaffected.</div>
+    <div style="display:flex;align-items:center;gap:12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:13px 15px;margin-bottom:6px">
+      <label class="sw-toggle"><input type="checkbox" id="ppenAll" onchange="togglePeriodicPen(this.checked)"><span class="sw-slider"></span></label>
+      <div><div style="font-size:12px;font-weight:700" id="ppenAllLbl">Periodic Report Penalties: ON</div><div style="font-size:10px;color:var(--text3)">When OFF, no periodic non-submission penalty is charged anywhere. 'Missing' status still shows.</div></div>
+    </div>
   </div>
   <div class="fsec" id="settSec-emailjs">
     <div class="fsec-title">📧 EmailJS Configuration</div>
@@ -2493,14 +2512,15 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
   <div class="md" style="max-width:900px"><div class="md-hd"><div class="md-title">📨 Supplier Bid Submission</div><button class="md-close" onclick="closeModal('subModal')">✕</button></div>
   <div class="md-body" style="max-height:75vh;overflow-y:auto">
     <div class="fg2" style="gap:8px">
-      <div class="fg"><label class="fl2">Supplier *</label><select class="fsel2" id="subSupplier"></select></div>
-      <div class="fg"><label class="fl2">RFP *</label><select class="fsel2" id="subRFP" onchange="v55_extractRFPBoQ()"></select></div>
+      <div class="fg full"><label class="fl2">Supplier *</label><select class="fsel2" id="subSupplier" onchange="var _sr=document.getElementById('subRFP');if(_sr)_sr.value='';renderSubCompetitions()"></select></div>
+      <input type="hidden" id="subRFP"/>
     </div>
+    <div id="subCompetitions" style="margin-bottom:10px"></div>
     <div id="subRFPInfo" style="display:none;margin:10px 0;padding:10px 14px;background:rgba(37,99,235,.05);border:1.5px solid var(--accent);border-radius:var(--rs);font-size:11px"></div>
     <div id="subBoQSection" style="display:none;margin-top:10px">
       <div style="font-weight:700;font-size:12px;margin-bottom:6px">📋 BoQ Line Items</div>
       <div style="overflow-x:auto"><table class="cboq-tbl" id="subBoQTable"><thead><tr>
-        <th>#</th><th>Description</th><th style="background:#6b7280">Mandatory (RFP)</th><th style="background:#6b7280">Mandatory List Code</th><th>Mandatory Response</th><th>Nature</th><th>Unit Price (SAR)</th><th>QTY</th><th>UoM</th><th>Origin</th><th style="background:#b45309">Mandatory List Exception</th><th>Total</th>
+        <th>#</th><th>Description</th><th style="background:#6b7280">Mandatory (RFP)</th><th style="background:#6b7280">Mandatory List Code</th><th style="background:#6b7280">Sector</th><th>Mandatory Response</th><th>Nature</th><th>Unit Price (SAR)</th><th>QTY</th><th>UoM</th><th>Origin</th><th style="background:#b45309">Mandatory List Exception</th><th>Total</th>
       </tr></thead><tbody id="subBoQTbody"></tbody></table></div>
       <div id="subBoQSummary" class="cboq-summary" style="margin-top:8px"></div>
     </div>
@@ -2642,6 +2662,7 @@ body.rtl #page-blacklist .eu-card{border-right:1px solid var(--border)!important
 </div><!-- /app -->
 
 <!-- MODALS -->
+<div class="mo" id="cFullEditModal"><div class="md"><div class="md-hd"><div><div class="md-title">🛠 Full Edit Contract</div><div class="md-sub">Top-manager override — edits every field (locks bypassed)</div></div><button class="md-close" onclick="closeModal(&#39;cFullEditModal&#39;)">✕</button></div><div class="md-body" id="cfeBody"></div></div></div>
 <div class="mo" id="cModal"><div class="md"><div class="md-hd"><div><div class="md-title" id="mT">#1 — إعداد دراسات السعة والطلب والدراسات الخمس لعدد من مشاريع القوات الخاصة للأمن البيئي</div><div class="md-sub" id="mS">Small &amp; Medium Enterprises</div></div><button class="md-close" onclick="closeModal(&#39;cModal&#39;)">✕</button></div><div class="md-body" id="mB"><div class="md-sec"><div class="md-sec-title">Contract Info</div><div class="ig">
     <div><div class="ik">End-User</div><div class="iv">Ministry of Environment</div></div>
     <div><div class="ik">Amount</div><div class="iv">SAR&nbsp;55,000,000</div></div>
@@ -2711,7 +2732,9 @@ let DB=JSON.parse(localStorage.getItem('lcDB')||JSON.stringify(SEED_CONTRACTS));
 let MECHS=JSON.parse(localStorage.getItem('lcMechs')||JSON.stringify(SEED_MECHS));
 let ENDUSERS=JSON.parse(localStorage.getItem('lcEU')||JSON.stringify(SEED_EU));
 let S=JSON.parse(localStorage.getItem('lcS')||JSON.stringify({dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,graceLCMonths:7,graceNPPDays:30,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10}));
-if(S.graceLCMonths==null)S.graceLCMonths=7;if(S.graceNPPDays==null)S.graceNPPDays=30;
+if(S.graceLCMonths==null)S.graceLCMonths=7;if(S.graceNPPDays==null)S.graceNPPDays=30;if(S.periodicPenOn==null)S.periodicPenOn=true;
+// Single global switch for periodic-report non-submission penalties (replaces the old per-year PPEN grid).
+function _pPenOff(){return typeof S!=='undefined'&&S.periodicPenOn===false;}
 let KPICFG=JSON.parse(localStorage.getItem('lcKPI')||JSON.stringify({total:true,active:true,portfolio:true,compliance:true,complianceScore:true,penalties:true,withPen:true,missing:true,reportsReceived:true,reviews:true,npp:true,mlnp:true,rfps:true,bids:true,awarded:true,awardCycle:true,supplierRisk:true,avgSupScore:true}));
 let PPEN=JSON.parse(localStorage.getItem('lcPPEN')||JSON.stringify({1:true,2:true,3:true,4:true,5:true}));
 let FORMULAS=JSON.parse(localStorage.getItem('lcFormulas')||JSON.stringify(SEED_FORMULAS));
@@ -2727,6 +2750,46 @@ function lsSet(k,v){try{_ls.setItem(k,v);return true;}catch(e){if(e&&(e.name==='
 window.lsSet=lsSet;
 const saveDB=()=>lsSet('lcDB',JSON.stringify(DB));
 const saveMechs=()=>lsSet('lcMechs',JSON.stringify(MECHS));
+let MECH_FROZEN=JSON.parse(localStorage.getItem('lcMechFrozen')||'{}');
+var SME_LOG=JSON.parse(localStorage.getItem('lcSMELog')||'[]');
+// ===== Mandatory List Sectors (Excel tabs) — managed in Settings; one combined Arabic — English field per sector =====
+var SEED_SECTORS=[
+ {ar:'الأدوية و المستحضرات الطبية',en:'Pharmaceuticals & Medical Preparations'},
+ {ar:'البناء و التشييد',en:'Construction & Building'},
+ {ar:'المستلزمات الطبية',en:'Medical Supplies'},
+ {ar:'مستهلكات النظافة',en:'Cleaning Consumables'},
+ {ar:'الأعمال الفنية',en:'Technical Works'},
+ {ar:'الأغذية و المنتجات الزراعية',en:'Food & Agricultural Products'},
+ {ar:'المواد الكيميائية و الاسمدة',en:'Chemicals & Fertilizers'},
+ {ar:'الأثاث',en:'Furniture'},
+ {ar:'معدات ولوازم شخصية ومنزلية',en:'Personal & Household Equipment'},
+ {ar:'المنتجات الاستهلاكية الورقية',en:'Paper Consumer Products'},
+ {ar:'الأمن السيبراني',en:'Cybersecurity'},
+ {ar:'تقنية المعلومات',en:'Information Technology'},
+ {ar:'المنتجات الاستهلاكيةالبلاستيكية',en:'Plastic Consumer Products'},
+ {ar:'القرطاسية والأدوات المكتبية',en:'Stationery & Office Supplies'},
+ {ar:'النقل و الخدمات اللوجستية',en:'Transport & Logistics Services'},
+ {ar:'المعدات و اللوازم الرياضية',en:'Sports Equipment & Supplies'}
+];
+var MLNP_SECTORS=JSON.parse(localStorage.getItem('lcSectors')||'null')||SEED_SECTORS.map(function(s){return {ar:s.ar,en:s.en,frozen:false};});
+// Closed-tender invite filters (enable/disable per filter in Settings)
+var TENDER_FILTERS=JSON.parse(localStorage.getItem('lcTenderFilters')||'null')||[{key:'sme',label:'SME',on:true},{key:'tadawul',label:'Tadawul Listed',on:true},{key:'cert',label:'Has LC Certificate',on:true},{key:'local',label:'Local supplier',on:false}];
+function saveTenderFilters(){lsSet('lcTenderFilters',JSON.stringify(TENDER_FILTERS));}
+function saveSectors(){lsSet('lcSectors',JSON.stringify(MLNP_SECTORS));}
+function sectorLabel(s){if(!s)return '';return (s.ar||'')+((s.ar&&s.en)?' — ':'')+(s.en||'');}
+function sectorForCat(cat){var k=String(cat==null?'':cat).trim();if(!k)return null;return MLNP_SECTORS.find(function(s){return String(s.ar||'').trim()===k||sectorLabel(s).trim()===k;})||null;}
+// Merge any new Excel tabs (from a freshly imported Mandatory List) into the sector list, preserving edits.
+function mergeSectorsFromMLNP(){
+  if(typeof MLNP_LIST==='undefined'||!MLNP_LIST.length)return;
+  var seen={};MLNP_SECTORS.forEach(function(s){seen[String(s.ar||'').trim()]=1;});
+  var added=0;
+  MLNP_LIST.forEach(function(r){var cat=String(r.cat||r.tab||'').trim();if(cat&&!seen[cat]){MLNP_SECTORS.push({ar:cat,en:'',frozen:false});seen[cat]=1;added++;}});
+  if(added){saveSectors();if(typeof logAudit==='function')logAudit('edit',added+' new Mandatory List sector(s) added from imported Excel');}
+}
+const saveMechFrozen=()=>lsSet('lcMechFrozen',JSON.stringify(MECH_FROZEN));
+function mechFrozen(m){return !!MECH_FROZEN[m];}
+function toggleMechFreeze(i){var m=MECHS[i];if(m==null)return;if(MECH_FROZEN[m])delete MECH_FROZEN[m];else MECH_FROZEN[m]=true;saveMechFrozen();renderMechList();if(typeof populateMechSelects==='function')populateMechSelects();if(typeof logAudit==='function')logAudit('edit','Mechanism '+(MECH_FROZEN[m]?'frozen':'unfrozen')+': '+m);}
+window.toggleMechFreeze=toggleMechFreeze;
 const saveEU=()=>lsSet('lcEU',JSON.stringify(ENDUSERS));
 const saveS=()=>lsSet('lcS',JSON.stringify(S));
 const savePPEN=()=>lsSet('lcPPEN',JSON.stringify(PPEN));
@@ -2748,9 +2811,9 @@ const fSAR=n=>n==null?'—':new Intl.NumberFormat('en-SA',{style:'currency',curr
 const _loc=()=>(typeof lang!=='undefined'&&lang==='ar')?'ar-SA':'en-GB';
 const fD=d=>d?new Date(d).toLocaleDateString(_loc(),{day:'2-digit',month:'short',year:'numeric'}):'—';
 const pct=v=>v!=null?(v*100).toFixed(1)+'%':'—';
-const tPen=c=>(c.penalties||[]).reduce((s,p)=>{if(p.type==='Periodic'&&p.year&&PPEN[p.year]===false)return s;return s+(p.amount||0);},0);
+const tPen=c=>(c.penalties||[]).reduce((s,p)=>{if(p.type==='Periodic'&&p.year&&_pPenOff())return s;return s+(p.amount||0);},0);
 // Missing = unreceived AND past its grace deadline (overdue), excluding penalty-disabled periodics.
-const mCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&(typeof reportState==='function'?reportState(c,r)==='overdue':r.received===false)&&!(r.type==='period'&&r.year&&PPEN[r.year]===false)&&(typeof reportCountsForKPI!=='function'||reportCountsForKPI(c,r))).length;
+const mCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&(typeof reportState==='function'?reportState(c,r)==='overdue':r.received===false)&&!(r.type==='period'&&r.year&&_pPenOff())&&(typeof reportCountsForKPI!=='function'||reportCountsForKPI(c,r))).length;
 // Due = unreceived and currently within its grace window (shown as "Due" everywhere, not yet penalised).
 const dueCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&typeof reportState==='function'&&reportState(c,r)==='due'&&(typeof reportCountsForKPI!=='function'||reportCountsForKPI(c,r))).length;
 const isExp=c=>c.end&&new Date(c.end)<TODAY;
@@ -2762,6 +2825,9 @@ const uid=()=>Date.now()+Math.floor(Math.random()*10000);
 function setTheme(t,btn){document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'');['btnL','btnD'].forEach(id=>document.getElementById(id).classList.remove('active'));btn.classList.add('active');setTimeout(()=>{destroyCharts();renderCurrentPage();},80);}
 function setLang(l,btn){lang=l;document.body.classList.toggle('rtl',l==='ar');['btnEN','btnAR'].forEach(id=>document.getElementById(id).classList.remove('active'));btn.classList.add('active');applyLang(l);}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+function toggleMobileMode(){var on=!document.body.classList.contains('mobile-mode');document.body.classList.toggle('mobile-mode',on);try{localStorage.setItem('lcMobile',on?'1':'0');}catch(e){}var b=document.getElementById('mobileToggleBtn');if(b)b.classList.toggle('on',on);if(!on)document.getElementById('sidebar').classList.remove('open');toast(on?'📱 Mobile view ON':'Mobile view off','info');}
+window.toggleMobileMode=toggleMobileMode;
+(function(){try{var pref=localStorage.getItem('lcMobile');var on=(pref==='1')||(pref==null&&window.innerWidth<768);if(on){document.body.classList.add('mobile-mode');var b=document.getElementById('mobileToggleBtn');if(b)b.classList.add('on');}}catch(e){}})();
 
 // NAV
 const PT={dashboard:'Executive Dashboard',rfp:'RFP Preparation',bids:'Bid Evaluation',contracts:'Contracts & Monitoring',entry:'New Contract',import:'Import / Export Excel',review:'Reports Review',penalties:'Penalties',alerts:'Alerts',settings:'Settings & Admin',reminders:'Email Reminders',audit:'Audit Trail',portfolio:'Portfolio by Entity',certs:'Certificate Tracker',supeval:'Supplier Evaluation',blacklist:'Supplier Blacklisting',contractadmin:'Contract Administration',receiving:'Receiving',permissions:'Roles & Permissions',suppliers:'Suppliers Registry',subs:'Supplier Submissions',supreq:'Supplier LC Requirements'};
@@ -2923,8 +2989,9 @@ function fDays(d){return d==null?'—':(d<1?(d*24).toFixed(1)+'h':d.toFixed(1)+'
 function _dashEntityOptions(){
   var cur=window.dashEntity||'';
   var ent=window._allDashEntities||((typeof ENDUSERS!=='undefined'?ENDUSERS:[]).map(function(e){return e.name;}));
-  var opts='<option value=""'+(cur===''?' selected':'')+'>🏢 All Entities</option>';
-  ent.forEach(function(n){if(!n)return;opts+='<option value="'+String(n).replace(/"/g,'&quot;')+'"'+(cur===n?' selected':'')+'>'+n+'</option>';});
+  var _os='style="color:#0b1324;background:#fff;font-weight:600"';
+  var opts='<option '+_os+' value=""'+(cur===''?' selected':'')+'>🏢 All Entities</option>';
+  ent.forEach(function(n){if(!n)return;opts+='<option '+_os+' value="'+String(n).replace(/"/g,'&quot;')+'"'+(cur===n?' selected':'')+'>'+n+'</option>';});
   return opts;
 }
 function setDashEntity(v){window.dashEntity=v||'';if(typeof renderDashboard==='function')renderDashboard();}
@@ -3021,9 +3088,10 @@ function renderDashboard(){
 
   // ---- 1. VERDICT HERO ----
   h+='<div class="brd-hero">';
-  h+='<div class="brd-hero-top"><p class="brd-kicker"><strong>'+tot+' '+(tot===1?B('contract','عقد'):B('contracts','عقد'))+'</strong> · '+fSAR(portV)+' '+B('under monitoring','قيد المراقبة')+' · '+_bi.org+'</p>';
-  h+='<select id="dashEntitySel" onchange="setDashEntity(this.value)" title="'+B('Focus the dashboard on one end-user portfolio','تركيز اللوحة على جهة واحدة')+'" style="font-size:12px;padding:7px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.28);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;max-width:220px;margin-inline-end:8px">'+_dashEntityOptions()+'</select>';
+  h+='<div class="brd-hero-top"><div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><p class="brd-kicker" style="margin:0"><strong>'+tot+' '+(tot===1?B('contract','عقد'):B('contracts','عقد'))+'</strong> · '+fSAR(portV)+' '+B('under monitoring','قيد المراقبة')+' · '+_bi.org+'</p>';
   h+='<button class="brd-export" onclick="exportDashPDF()">'+ic('export')+'<span>'+B('Export PDF','تصدير PDF')+'</span></button></div>';
+  h+='<div style="margin-inline-start:auto;display:flex;flex-direction:column;gap:3px;align-items:flex-end"><label for="dashEntitySel" style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.72)">'+B('Portfolio','المحفظة')+'</label>';
+  h+='<select id="dashEntitySel" onchange="setDashEntity(this.value)" title="'+B('Focus the dashboard on one end-user portfolio','تركيز اللوحة على جهة واحدة')+'" style="font-size:12px;font-weight:600;padding:7px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.16);color:#fff;cursor:pointer;max-width:220px">'+_dashEntityOptions()+'</select></div></div>';
   h+='<h2 class="brd-verdict">';
   if(_hasLC){h+=B('Portfolio compliance stands at ','التزام المحفظة بالمحتوى المحلي عند ')+'<span class="brd-vnum">'+_compPct.toFixed(1)+'%</span> — <span class="brd-vword st-'+_verdictSt+'">'+_verdictWordB+'</span>';}
   else{h+=B('Portfolio under setup — ','المحفظة قيد الإعداد — ')+'<span class="brd-vword st-neutral">'+_verdictWordB+'</span>';}
@@ -3193,6 +3261,8 @@ function saveRFP(status){
   curRFP.value=parseFloat(document.getElementById('rfpValue').value)||0;
   curRFP.duration=parseInt(document.getElementById('rfpDuration').value)||0;
   curRFP.files=rfpPendingFiles.slice();
+  // Log the Mandatory List sectors used on this RFP (for future sector reports)
+  try{if(typeof rfpBoQ!=='undefined'){var _secs={};rfpBoQ.forEach(function(r){if(r.isMandatory&&r.mlSector)_secs[r.mlSector]=1;});curRFP.mlSectors=Object.keys(_secs);if(curRFP.mlSectors.length&&typeof logAudit==='function')logAudit('edit','RFP "'+(curRFP.ref||curRFP.title||'')+'" Mandatory List sectors: '+curRFP.mlSectors.join(' | '));}}catch(e){}
   var _complete=!!(curRFP.title&&curRFP.title!=='Untitled RFP'&&curRFP.ref&&curRFP.endUser&&curRFP.scope&&curRFP.value>0);
   if(status==='ready'&&!_complete){
     var _miss=[];
@@ -3559,7 +3629,7 @@ function openContractModal(id){
     periods.forEach(function(r){
       var rtKey='period_'+r.year;
       var ok=r.received===true;
-      var penOff=r.year&&PPEN[r.year]===false;
+      var penOff=r.year&&_pPenOff();
       h+='<div class="ev-row" style="margin-bottom:6px;padding:8px 10px">';
       h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
       h+='<span style="font-size:12px;font-weight:700">'+reportTitle(r)+'</span>';
@@ -3572,7 +3642,7 @@ function openContractModal(id){
       h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
       h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Target:</span><span style="font-size:11px;font-weight:700">'+pct(r.target)+'</span></div>';
       h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Actual%:</label><input class="fi" type="number" step="0.1" id="minput_'+rtKey+'" value="'+(r.actual!=null?+(r.actual*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
-      if(r.penalty>0&&!(r.type==='period'&&r.year&&PPEN[r.year]===false))h+='<span class="badge br" style="font-size:9px">'+fSAR(r.penalty)+'</span>';
+      if(r.penalty>0&&!(r.type==='period'&&r.year&&_pPenOff()))h+='<span class="badge br" style="font-size:9px">'+fSAR(r.penalty)+'</span>';
       h+='</div>';
       h+=evSection(rtKey);
       h+='</div>';
@@ -4026,7 +4096,7 @@ function renderPenalties(){
   const bk=[{l:'Periodic LC',v:per,c:'var(--accent2)'},{l:'Final Submission',v:fs,c:'var(--danger)'},{l:'LC Deviation',v:dv,c:'var(--warn)'},{l:'National Products Price Preferencing',v:np,c:'var(--info)'},{l:'Mandatory List',v:ml,c:'var(--accent3)'}].filter(x=>x.v>0);
   document.getElementById('penBreak').innerHTML=bk.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">${b.l}</span><span style="font-size:11px;font-weight:700;color:${b.c};font-family:var(--fm)">${fSAR(b.v)}</span></div><div class="pg-b"><div class="pg-f" style="width:${pt?b.v/pt*100:0}%;background:${b.c}"></div></div></div>`).join('')||'<div class="empty"><div class="ei">✅</div><p>No penalties</p></div>';
   const pdEl=document.getElementById('cPenD');if(pdEl){if(charts.penD)charts.penD.destroy();const _pmax=Math.max.apply(null,DB.map(c=>tPen(c)).concat([0]));const _useM=_pmax>=1000000;const _div=_useM?1000000:1000;const _suf=_useM?'M':'K';const pv=DB.map(c=>+(tPen(c)/_div).toFixed(_useM?2:0));charts.penD=new Chart(pdEl,{type:'bar',data:{labels:DB.map(c=>`#${c.num}`),datasets:[{data:pv,backgroundColor:pv.map(v=>v>0?'rgba(220,38,38,.45)':'rgba(16,185,129,.2)'),borderColor:pv.map(v=>v>0?'#dc2626':'#10b981'),borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:function(evt,elems){if(elems.length>0){var idx=elems[0].index;var cc=DB[idx];if(cc)openContractModal(cc.id);}},plugins:{tooltip:{callbacks:{label:function(ctx){return 'SAR '+ctx.parsed.y+_suf;}},backgroundColor:'rgba(15,23,42,.92)',titleColor:'#f1f5f9',bodyColor:'#e2e8f0',titleFont:{size:12,weight:'700'},bodyFont:{size:11},padding:10,cornerRadius:8,displayColors:true,boxPadding:4},legend:{display:false}},scales:{x:{ticks:{color:gc()},grid:{color:gg()}},y:{ticks:{color:gc(),callback:v=>v+_suf},grid:{color:gg()}}}}});}
-  const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&PPEN[p.year]===false);rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis});}));
+  const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&_pPenOff());rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis});}));
   document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':(r.type==='Deviation'||r.type==='GoodsDeviation')?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button>`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
 }
 
@@ -4048,7 +4118,7 @@ function renderAlerts(){
 function renderSettings(){setTimeout(function(){renderColorPalette();var sl=localStorage.getItem("lcLogo");var pv=document.getElementById("logoPreview");if(pv&&sl)pv.innerHTML='<img src="'+sl+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px"/>';},120);
   renderEmailTplList();
   document.getElementById('pDev').value=S.dev;document.getElementById('pGap').value=S.gap;document.getElementById('pFin').value=S.fin;document.getElementById('pNPP').value=S.npp;document.getElementById('pML').value=S.ml;document.getElementById('pRem').value=S.rem;var _gl=document.getElementById('pGraceLC');if(_gl)_gl.value=(S.graceLCMonths!=null?S.graceLCMonths:7);var _gn=document.getElementById('pGraceNPP');if(_gn)_gn.value=(S.graceNPPDays!=null?S.graceNPPDays:30);document.getElementById('orgN').value=S.org;document.getElementById('orgP').value=S.proj;
-  renderKPICfg();renderPPENGrid();renderMechFormulaList();renderExclusionList();renderMechList();renderMechTCList();renderEUList();renderAIControlsList();renderBidEvalSettings();
+  renderKPICfg();renderPPENGrid();renderExclusionList();renderMechList();renderSectorsList();renderTenderFilters();renderMechTCList();renderEUList();renderAIControlsList();renderBidEvalSettings();
 }
 function renderKPICfg(){document.getElementById('kpiCfg').innerHTML=KPI_DEFS.map((k,i)=>`<div class="kpi-cfg-item"><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3);font-size:13px;cursor:grab" title="Drag to reorder">⠿</span><div class="kpi-cfg-lbl">${k.label}</div></div><label class="sw-toggle"><input type="checkbox" ${KPICFG[k.key]!==false?'checked':''} onchange="KPICFG['${k.key}']=this.checked"/><span class="sw-slider"></span></label></div>`).join('');attachDnD('kpiCfg','KPI_DEFS',function(){lsSet('lcKPIDefsOrder',JSON.stringify(KPI_DEFS.map(function(k){return k.key;})));renderKPICfg();});}
 function saveKPIConfig(){lsSet('lcKPI',JSON.stringify(KPICFG));toast('KPI layout saved','ok');if(curPage==='dashboard')renderDashboard();}
@@ -4233,7 +4303,7 @@ function recalcContractPenalties(c){
     var overdue=(typeof reportState==='function')?(reportState(c,r)==='overdue'):(r.received===false);
     var rTitle=(typeof reportTitle==='function')?reportTitle(r):r.type;
     if(r.type==='period'){
-      if(PPEN[r.year]===false){r.penalty=0;}
+      if(_pPenOff()){r.penalty=0;}
       else if(r.received===true&&r.target!=null&&r.actual!=null){
         var diff=r.target-r.actual;
         if(diff>=gapThreshold){
@@ -4314,12 +4384,19 @@ function recalcAllPenalties(){
 function saveSettings(){function _num(id,dflt){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?dflt:v;}function _int(id,dflt){var v=parseInt(document.getElementById(id).value);return isNaN(v)?dflt:v;}S.dev=_num('pDev',0.30);S.gap=_num('pGap',5);S.fin=_num('pFin',10);S.npp=_num('pNPP',0.30);S.ml=_num('pML',0.30);S.rem=_int('pRem',15);S.graceLCMonths=_int('pGraceLC',7);S.graceNPPDays=_int('pGraceNPP',30);S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();toast('Settings saved — penalties recalculated','ok');}
 function resetSettings(){S={dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10};saveS();renderSettings();toast('Reset','info');}
 function renderPPENGrid(){
-  const yt={1:0,2:0,3:0,4:0,5:0};DB.forEach(c=>(c.penalties||[]).forEach(p=>{if(p.type==='Periodic'&&p.year)yt[p.year]=(yt[p.year]||0)+p.amount;}));
-  document.getElementById('ppenGrid').innerHTML=[1,2,3,4,5].map(y=>`<div style="background:var(--surface2);border:1.5px solid ${PPEN[y]===false?'var(--border)':'var(--accent)'};border-radius:var(--rs);padding:10px 12px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px"><div style="font-size:11px;font-weight:700;color:var(--text)">Year ${y} Periodic</div><label class="sw-toggle"><input type="checkbox" id="ppen_${y}" ${PPEN[y]!==false?'checked':''} onchange="PPEN[${y}]=this.checked;renderPPENGrid()"/><span class="sw-slider"></span></label></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;color:var(--text3)">${yt[y]>0?fSAR(yt[y]):'No penalty'}</span><span style="font-size:9px;font-weight:700;color:${PPEN[y]===false?'var(--text3)':'var(--accent3)'}">${PPEN[y]===false?'⊘ OFF':'✓ ON'}</span></div></div>`).join('');
+  var on=(typeof S!=='undefined'&&S.periodicPenOn!==false);
+  var cb=document.getElementById('ppenAll');if(cb)cb.checked=on;
+  var lbl=document.getElementById('ppenAllLbl');if(lbl)lbl.textContent='Periodic Report Penalties: '+(on?'ON':'OFF');
 }
-function savePPENConfig(){savePPEN();recalcAllPenalties();renderCurrentPage();updateBadges();toast('Penalty toggles applied — recalculated','ok');}
-function enableAllPPEN(){[1,2,3,4,5].forEach(y=>PPEN[y]=true);renderPPENGrid();toast('All periodic penalties enabled — press Apply to recalculate','info');}
-function disableAllPPEN(){[1,2,3,4,5].forEach(y=>PPEN[y]=false);renderPPENGrid();toast('All periodic penalties disabled — press Apply to recalculate','info');}
+function togglePeriodicPen(on){
+  S.periodicPenOn=!!on;saveS();renderPPENGrid();recalcAllPenalties();renderCurrentPage();updateBadges();
+  toast('Periodic penalties '+(on?'enabled':'disabled')+' — recalculated','ok');
+}
+window.togglePeriodicPen=togglePeriodicPen;
+// legacy no-ops (the per-year grid was replaced by a single switch)
+function savePPENConfig(){togglePeriodicPen(S.periodicPenOn!==false);}
+function enableAllPPEN(){togglePeriodicPen(true);}
+function disableAllPPEN(){togglePeriodicPen(false);}
 
 // MECHANISM FORMULA SETTINGS
 function renderMechFormulaList(){
@@ -4337,7 +4414,20 @@ function addExclusion(){const v=document.getElementById('newExcl').value.trim();
 function removeExclusion(i){if(!confirm('Remove?'))return;EXCLUSIONS.splice(i,1);lsSet('lcExcl',JSON.stringify(EXCLUSIONS));renderExclusionList();toast('Removed','info');}
 
 // MECHANISM LIST
-function renderMechList(){document.getElementById('mechList').innerHTML=MECHS.map((m,i)=>`<div class="mi"><div class="mi-n" title="${m}"><span style="color:var(--text3);cursor:grab;margin-right:6px" title="Drag to reorder">⠿</span>${m}</div><div class="ma"><button class="mb del" onclick="removeMech(${i})">✕</button></div></div>`).join('');attachDnD('mechList','MECHS',function(){lsSet('lcMechs',JSON.stringify(MECHS));renderMechList();if(typeof populateMechSelects==='function')populateMechSelects();});}
+function renderMechList(){document.getElementById('mechList').innerHTML=MECHS.map((m,i)=>{var fr=mechFrozen(m);return `<div class="mi"${fr?' style="opacity:.6"':''}><div class="mi-n" title="${m}" style="display:flex;align-items:center;gap:8px"><span style="color:var(--accent);cursor:grab;font-size:16px;line-height:1;user-select:none" title="Drag to reorder">⠿</span><span>${m}${fr?' <span class="badge bgy" style="font-size:8px">❄ Frozen</span>':''}</span></div><div class="ma"><button class="mb" title="${fr?'Unfreeze (show in new pickers)':'Freeze (hide from new pickers, keep existing)'}" onclick="toggleMechFreeze(${i})">${fr?'❄ Unfreeze':'❄ Freeze'}</button><button class="mb del" onclick="removeMech(${i})">✕</button></div></div>`;}).join('');attachDnD('mechList','MECHS',function(){lsSet('lcMechs',JSON.stringify(MECHS));renderMechList();if(typeof populateMechSelects==='function')populateMechSelects();});}
+function renderSectorsList(){
+  var el=document.getElementById('sectorsList');if(!el)return;
+  el.innerHTML=MLNP_SECTORS.map(function(s,i){var fr=!!s.frozen;return '<div class="mi"'+(fr?' style="opacity:.6"':'')+'><div class="mi-n" style="display:flex;align-items:center;gap:8px;flex:1;min-width:0"><span style="color:var(--accent);cursor:grab;font-size:16px;line-height:1;user-select:none" title="Drag to reorder">⠿</span><span style="flex:1;min-width:0"><span style="font-weight:600">'+(s.ar||'')+'</span> <input value="'+String(s.en||'').replace(/"/g,'&quot;')+'" onchange="editSectorEn('+i+',this.value)" placeholder="English" style="font-size:10px;padding:1px 5px;width:150px;border:1px solid var(--border);border-radius:5px"/>'+(fr?' <span class="badge bgy" style="font-size:8px">❄ Frozen</span>':'')+'</span></div><div class="ma"><button class="mb" title="'+(fr?'Unfreeze':'Freeze')+'" onclick="toggleSectorFreeze('+i+')">'+(fr?'❄ Unfreeze':'❄ Freeze')+'</button><button class="mb del" onclick="removeSector('+i+')">✕</button></div></div>';}).join('')||'<div style="font-size:11px;color:var(--text3)">No sectors — import a Mandatory List or add one.</div>';
+  if(typeof attachDnD==='function'&&MLNP_SECTORS.length)attachDnD('sectorsList','MLNP_SECTORS',function(){saveSectors();renderSectorsList();});
+}
+function addSector(){var ar=(document.getElementById('newSectorAr')||{}).value||'';var en=(document.getElementById('newSectorEn')||{}).value||'';ar=ar.trim();en=en.trim();if(!ar&&!en){toast('Enter an Arabic or English sector name','err');return;}MLNP_SECTORS.push({ar:ar,en:en,frozen:false});saveSectors();document.getElementById('newSectorAr').value='';document.getElementById('newSectorEn').value='';renderSectorsList();if(typeof logAudit==='function')logAudit('edit','Sector added: '+sectorLabel({ar:ar,en:en}));toast('Sector added','ok');}
+function removeSector(i){if(!MLNP_SECTORS[i])return;if(!confirm('Remove sector "'+sectorLabel(MLNP_SECTORS[i])+'"?'))return;MLNP_SECTORS.splice(i,1);saveSectors();renderSectorsList();toast('Removed','info');}
+function toggleSectorFreeze(i){if(!MLNP_SECTORS[i])return;MLNP_SECTORS[i].frozen=!MLNP_SECTORS[i].frozen;saveSectors();renderSectorsList();}
+function editSectorEn(i,v){if(MLNP_SECTORS[i]){MLNP_SECTORS[i].en=(v||'').trim();saveSectors();}}
+window.renderSectorsList=renderSectorsList;window.addSector=addSector;window.removeSector=removeSector;window.toggleSectorFreeze=toggleSectorFreeze;window.editSectorEn=editSectorEn;
+function renderTenderFilters(){var el=document.getElementById('tenderFiltersList');if(!el)return;el.innerHTML=(typeof TENDER_FILTERS!=='undefined'?TENDER_FILTERS:[]).map(function(f,i){return '<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--border)"><label class="sw-toggle"><input type="checkbox" '+(f.on?'checked':'')+' onchange="toggleTenderFilter('+i+',this.checked)"><span class="sw-slider"></span></label><span style="font-size:12px;font-weight:600">'+f.label+'</span><span style="font-size:9px;color:var(--text3);font-family:var(--fm)">'+f.key+'</span></div>';}).join('');}
+function toggleTenderFilter(i,on){if(TENDER_FILTERS[i]){TENDER_FILTERS[i].on=!!on;saveTenderFilters();}}
+window.renderTenderFilters=renderTenderFilters;window.toggleTenderFilter=toggleTenderFilter;
 function addMech(){const v=document.getElementById('newMech').value.trim();if(!v){toast('Enter mechanism','err');return;}MECHS.push(v);saveMechs();document.getElementById('newMech').value='';renderMechList();renderMechTCList();renderMechFormulaList();populateMechSelects();toast('Mechanism added','ok');}
 function removeMech(i){if(!confirm('Remove?'))return;MECHS.splice(i,1);saveMechs();renderMechList();renderMechTCList();renderMechFormulaList();populateMechSelects();toast('Removed','info');}
 
@@ -4461,6 +4551,7 @@ function importMLNP(file){
       if(!recs.length){toast('No mandatory-list items found in the workbook tabs','err');return;}
       MLNP_LIST=recs;
       lsSet('lcMLNP',JSON.stringify(MLNP_LIST));
+      if(typeof mergeSectorsFromMLNP==='function')mergeSectorsFromMLNP();
       var ncat=Object.keys(cats).length;
       document.getElementById('mlnpPreview').innerHTML='<div class="badge bg" style="font-size:11px;padding:5px 10px">✓ '+recs.length+' items from '+ncat+' categories loaded</div>';
       toast('Mandatory List loaded: '+recs.length+' items · '+ncat+' categories','ok');
@@ -4473,7 +4564,7 @@ function importMLNP(file){
 function populateEUSelectFor(id){const s=document.getElementById(id);if(!s)return;const cur=s.value;s.innerHTML='<option value="">Select end-user…</option>'+ENDUSERS.map(eu=>`<option value="${eu.name}">${eu.name}${eu.frozen?' 🔒':''}</option>`).join('');if(cur)s.value=cur;}
 function populateEUSelects(){['fEU','rfpEU'].forEach(id=>populateEUSelectFor(id));}
 function populateEUFilter(){const s=document.getElementById('fEUFilter');if(!s)return;const cur=s.value;s.innerHTML='<option value="">All End-Users</option>'+ENDUSERS.map(eu=>`<option value="${eu.name}">${eu.name}</option>`).join('');if(cur)s.value=cur;}
-function populateMechSelectFor(id){const s=document.getElementById(id);if(!s)return;const cur=s.value;s.innerHTML='<option value="">Select mechanism…</option>'+MECHS.map(m=>`<option value="${m}">${m}</option>`).join('');if(cur)s.value=cur;}
+function populateMechSelectFor(id){const s=document.getElementById(id);if(!s)return;const cur=s.value;var list=MECHS.filter(function(m){return !mechFrozen(m)||m===cur;});s.innerHTML='<option value="">Select mechanism…</option>'+list.map(m=>`<option value="${m}">${m}</option>`).join('');if(cur)s.value=cur;}
 function populateMechSelects(){['fMech2','bidMech'].forEach(id=>populateMechSelectFor(id));}
 
 // NEW CONTRACT FORM
@@ -4933,7 +5024,7 @@ function generateReport(cid){
     h+='<div class="pdf-sec"><div class="pdf-sec-title">Periodic Reports</div>'
       +'<table class="pdf-tbl"><thead><tr><th>Year</th><th>Due</th><th>Status</th><th>Target</th><th>Achieved</th><th>Penalty</th></tr></thead><tbody>';
     periods.forEach(function(r){
-      var penOff=r.year&&PPEN[r.year]===false;
+      var penOff=r.year&&_pPenOff();
       h+='<tr><td>Y'+r.year+'</td><td>'+fD(r.due)+'</td>'
         +'<td style="color:'+(r.received?'#16a34a':'#dc2626')+';font-weight:700">'+(r.received?'Received':'Missing')+'</td>'
         +'<td>'+pct(r.target)+'</td><td>'+(r.actual!=null?pct(r.actual):'--')+'</td>'
@@ -5294,7 +5385,7 @@ function newBidFromRFPChoice(){
   document.getElementById("newBidChoiceModal").remove();
   curBid={
     id:uid(),title:rfp.title||"",ref:rfp.ref||"",
-    mechanism:rfp.suggestedMech||"",rfpId:rfp.id,value:rfp.value||0,duration:rfp.duration||0,
+    mechanism:(typeof canonicalMechName==='function'?(canonicalMechName(rfp.suggestedMech||rfp.mechanism||'')||rfp.suggestedMech||rfp.mechanism||''):(rfp.suggestedMech||rfp.mechanism||"")),rfpId:rfp.id,value:rfp.value||0,duration:rfp.duration||0,
     endUser:rfp.endUser||"",nature:rfp.nature||"",expenditure:rfp.expenditure||"",
     boqItems:rfp.boqItems?JSON.parse(JSON.stringify(rfp.boqItems)):[],
     rfpBoQ:rfp.boq?JSON.parse(JSON.stringify(rfp.boq)):[],
@@ -5309,7 +5400,10 @@ function newBidFromRFPChoice(){
   var bt=document.getElementById("bidTitle");if(bt)bt.value=rfp.title||"";
   var br=document.getElementById("bidRef");if(br)br.value=rfp.ref||"";
   var bv=document.getElementById("bidValue");if(bv)bv.value=rfp.value||"";
-  var ms=document.getElementById("bidMech");if(ms&&rfp.suggestedMech)ms.value=rfp.suggestedMech;
+  var _bm=curBid.mechanism||'';
+  var ms=document.getElementById("bidMech");if(ms&&_bm){if(!Array.prototype.some.call(ms.options,function(o){return o.value===_bm;})){var _o=document.createElement('option');_o.value=_bm;_o.textContent=_bm;ms.appendChild(_o);}ms.value=_bm;}
+  var brf=document.getElementById("bidRFP");if(brf){if(typeof populateRFPSelect==='function')populateRFPSelect();brf.value=rfp.id;}
+  var bd=document.getElementById("bidDuration");if(bd)bd.value=rfp.duration||"";
   var beu=document.getElementById("bidEndUser");if(beu)beu.value=rfp.endUser||"";
   var bn=document.getElementById("bidNature");if(bn)bn.value=rfp.nature||"";
   var bx=document.getElementById("bidExpenditure")||document.getElementById("bidExp");
@@ -5561,6 +5655,18 @@ function confirmAward(){
   curBid.awardedOn=new Date().toISOString().split('T')[0];curBid.awardedAt=new Date().toISOString();
   var idx=BIDS.findIndex(function(b){return b.id===curBid.id;});
   if(idx>=0)BIDS[idx]=curBid;else BIDS.push(curBid);
+  // SME competition logging (for future reports: count + value of SME-participated and SME-won RFPs)
+  try{
+    var _bidders=curBid.bidders||curBidders||[];
+    var _hadSME=_bidders.some(function(b){return !!b.isSME;});
+    var _win=_bidders.find(function(b){return b.name===pendingAwardName;})||{};
+    var _smeWon=!!_win.isSME;
+    if(_hadSME){
+      SME_LOG.push({rfpId:curBid.rfpId||null,evalId:curBid.id,title:curBid.title||'',ref:curBid.ref||'',value:(curBid.value||_win.price||0),mechanism:curBid.mechanism||'',endUser:curBid.endUser||'',hadSME:true,smeWon:_smeWon,winner:pendingAwardName||'',awardedOn:curBid.awardedOn,smeBidders:_bidders.filter(function(b){return b.isSME;}).map(function(b){return b.name;})});
+      lsSet('lcSMELog',JSON.stringify(SME_LOG));
+      if(typeof logAudit==='function')logAudit('award','SME competed in RFP "'+(curBid.title||curBid.ref||'')+'" (value '+fSAR(curBid.value||0)+')'+(_smeWon?' — WON by SME "'+pendingAwardName+'"':''),null);
+    }
+  }catch(e){}
   saveAll();
   if(typeof logAudit==='function')logAudit('approve','Awarded "'+pendingAwardName+'" in evaluation "'+(curBid.title||'')+'"'+(override?' (OVERRIDE)':''));
   closeModal('awardModal');
@@ -5974,7 +6080,7 @@ function _openPrintDoc(html){
 }
 function generatePenaltyPDF(cid){
   var c=DB.find(function(x){return x.id===cid;});if(!c){toast('Contract not found','err');return;}
-  var pens=(c.penalties||[]).filter(function(p){return (p.amount||0)>0&&!(p.type==='Periodic'&&p.year&&typeof PPEN!=='undefined'&&PPEN[p.year]===false);});
+  var pens=(c.penalties||[]).filter(function(p){return (p.amount||0)>0&&!(p.type==='Periodic'&&p.year&&typeof PPEN!=='undefined'&&_pPenOff());});
   if(!pens.length){toast('This contract has no active penalties','info');return;}
   _openPenaltyLetter(c,pens,false);
 }
@@ -5982,7 +6088,7 @@ function generatePenaltyPDF(cid){
 function generatePenaltyLetterFor(cid,pidx){
   var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c){toast('Contract not found','err');return;}
   var p=(c.penalties||[])[pidx];if(!p){toast('Penalty not found','err');return;}
-  if(p.type==='Periodic'&&p.year&&typeof PPEN!=='undefined'&&PPEN[p.year]===false){toast('This penalty is currently disabled','info');return;}
+  if(p.type==='Periodic'&&p.year&&typeof PPEN!=='undefined'&&_pPenOff()){toast('This penalty is currently disabled','info');return;}
   _openPenaltyLetter(c,[p],true);
 }
 function _openPenaltyLetter(c,pens,single){
@@ -6157,13 +6263,41 @@ function viewSupFile(id,key){
 // ---- submissions ----
 function openSubModal(){
   var ss=document.getElementById('subSupplier');
-  ss.innerHTML=SUPPLIERS.map(function(s){return '<option value="'+s.id+'">'+s.name+'</option>';}).join('')||'<option value="">No suppliers — add one first</option>';
-  var sr=document.getElementById('subRFP');
-  sr.innerHTML=RFPS.map(function(r){return '<option value="'+r.id+'">'+(r.title||r.ref||('RFP '+r.id))+'</option>';}).join('')||'<option value="">No RFPs</option>';
+  ss.innerHTML='<option value="">Select supplier…</option>'+SUPPLIERS.map(function(s){return '<option value="'+s.id+'">'+s.name+'</option>';}).join('');
+  document.getElementById('subRFP').value='';
   document.getElementById('subPrice').value='';document.getElementById('subLC').value='';document.getElementById('subNPP').value='';
   document.getElementById('subFileName').textContent='';_supFiles.sub=null;
+  renderSubCompetitions();
   openModal('subModal');
 }
+// Open / Closed competition cards (replaces the RFP dropdown). Closed = only RFPs the chosen supplier is invited to.
+function renderSubCompetitions(){
+  var escSub=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});};
+  var el=document.getElementById('subCompetitions');if(!el)return;
+  var sel=document.getElementById('subSupplier');var supId=sel?sel.value:'';
+  var ready=(typeof RFPS!=='undefined'?RFPS:[]).filter(function(r){return r.status==='ready';});
+  var open=ready.filter(function(r){return (r.tenderStyle||'open')!=='closed';});
+  var closed=ready.filter(function(r){return r.tenderStyle==='closed'&&supId&&(r.invitedSuppliers||[]).map(String).indexOf(String(supId))>=0;});
+  function card(r){
+    var picked=String(document.getElementById('subRFP').value)===String(r.id);
+    var tc=(r.tcText||(typeof MECH_TC!=='undefined'&&MECH_TC[r.suggestedMech||r.mechanism]&&(MECH_TC[r.suggestedMech||r.mechanism].rfp||MECH_TC[r.suggestedMech||r.mechanism].contract))||'');
+    var h='<div style="border:1.5px solid '+(picked?'var(--accent)':'var(--border)')+';border-radius:10px;padding:9px 11px;margin-bottom:7px;background:var(--surface)">';
+    h+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:center"><div style="font-weight:700;font-size:12px">'+escSub(r.title||r.ref||('RFP '+r.id))+'</div><div style="font-size:10px;color:var(--text3)">'+escSub(r.ref||'')+'</div></div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin:3px 0">'+escSub(r.suggestedMech||r.mechanism||'—')+' · '+fSAR(r.value||0)+' · '+(r.duration?r.duration+' months':'—')+'</div>';
+    if(r.scope)h+='<div style="font-size:10px;color:var(--text2);margin-bottom:4px"><b>Scope:</b> '+escSub(r.scope)+'</div>';
+    if(typeof _subRfpDocs==='function')h+='<div style="margin:3px 0">'+_subRfpDocs(r)+'</div>';
+    if(tc)h+='<details style="margin:3px 0"><summary style="font-size:10px;cursor:pointer;color:var(--accent)">📜 Terms &amp; Conditions</summary><div style="font-size:10px;color:var(--text2);white-space:pre-wrap;max-height:120px;overflow:auto;border:1px solid var(--border);border-radius:6px;padding:6px;margin-top:4px">'+escSub(tc)+'</div></details>';
+    h+='<div style="margin-top:6px"><button type="button" class="btn '+(picked?'btn-p':'btn-s')+' btn-sm" onclick="pickSubRFP('+JSON.stringify(r.id)+')">'+(picked?'✓ Selected — fill BoQ below':'Bid on this RFP')+'</button></div>';
+    h+='</div>';return h;
+  }
+  var h='<div style="font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.6px;margin:2px 0 5px">🌐 '+escSub(((typeof S!=='undefined'&&S.org)||'Organization'))+' — Open Competitions you can participate in</div>';
+  h+=open.length?open.map(card).join(''):'<div style="font-size:10px;color:var(--text3);margin-bottom:8px">No open competitions available.</div>';
+  h+='<div style="font-size:11px;font-weight:800;color:var(--accent2);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 5px">🔒 Closed Competitions — you are invited</div>';
+  h+=(!supId?'<div style="font-size:10px;color:var(--text3)">Select a supplier to see their invitations.</div>':(closed.length?closed.map(card).join(''):'<div style="font-size:10px;color:var(--text3)">No closed competitions you are invited to.</div>'));
+  el.innerHTML=h;
+}
+function pickSubRFP(id){document.getElementById('subRFP').value=id;if(typeof v55_extractRFPBoQ==='function')v55_extractRFPBoQ();renderSubCompetitions();}
+window.renderSubCompetitions=renderSubCompetitions;window.pickSubRFP=pickSubRFP;
 function saveSub(){
   var supId=document.getElementById('subSupplier').value;
   var rfpId=document.getElementById('subRFP').value;
@@ -6507,7 +6641,7 @@ function showKPIDrill(key){
     var pt=DB.reduce(function(s,c){return s+tPen(c);},0);
     title='Total Penalties';sub=fSAR(pt)+' total exposure';
     var rows='';DB.forEach(function(c){(c.penalties||[]).forEach(function(p){
-      var dis=p.type==='Periodic'&&p.year&&PPEN[p.year]===false;
+      var dis=p.type==='Periodic'&&p.year&&_pPenOff();
       rows+=tRow(['#'+c.num,'<span class="badge '+(p.type==='Periodic'?'bp':p.type==='FinalSub'?'br':(p.type==='Deviation'||p.type==='GoodsDeviation')?'ba':p.type==='NPP'?'bt':'bg')+'">'+(p.type==='GoodsDeviation'?'Goods Dev.':p.type)+'</span>','<span style="color:var(--danger);font-weight:700'+(dis?';text-decoration:line-through':'')+'">'+ fSAR(p.amount)+'</span>',p.reason||'\u2014']);
     });});
     body=rows?tWrap(['Contract','Type','Amount','Reason'],rows):'<div class="empty"><p>No penalties</p></div>';
@@ -7029,6 +7163,78 @@ window.viewBLEv=viewBLEv;
 PT.contractadmin="Contracts Administration";
 var _orcpCA=renderCurrentPage;
 renderCurrentPage=function(){_orcpCA();if(curPage==="contractadmin")renderContractAdmin();};
+// ===== Contracts Admin: full edit (top-manager override of every field) =====
+function openContractFullEdit(id){
+  if(typeof requirePerm==='function'&&!requirePerm('con.admin'))return;
+  var c=DB.find(function(x){return x.id===id;});if(!c)return;
+  var euOpts=(typeof ENDUSERS!=='undefined'?ENDUSERS:[]).map(function(e){return '<option value="'+e.name+'"'+(e.name===c.endUser?' selected':'')+'>'+e.name+'</option>';}).join('');
+  var mOpts=MECHS.map(function(m){return '<option value="'+m+'"'+(m===c.mechanism?' selected':'')+'>'+m+'</option>';}).join('');
+  if(c.mechanism&&MECHS.indexOf(c.mechanism)<0)mOpts='<option value="'+c.mechanism+'" selected>'+c.mechanism+'</option>'+mOpts;
+  function fld(lbl,id2,val,type){return '<div class="fg"><label class="fl2">'+lbl+'</label><input class="fi" id="'+id2+'" type="'+(type||'text')+'" value="'+(val==null?'':String(val).replace(/"/g,'&quot;'))+'" style="font-size:11px;padding:5px 8px"/></div>';}
+  var h='<div class="fg2" style="gap:8px">';
+  h+=fld('Contract #','cfe_num',c.num);
+  h+='<div class="fg"><label class="fl2">End-User</label><select class="fsel2" id="cfe_eu" style="font-size:11px;padding:5px 8px">'+euOpts+'</select></div>';
+  h+='<div class="fg full"><label class="fl2">Name</label><input class="fi" id="cfe_name" value="'+(c.name||'').replace(/"/g,'&quot;')+'" style="font-size:11px;padding:5px 8px"/></div>';
+  h+=fld('Contractor','cfe_cont',c.contractor);
+  h+='<div class="fg"><label class="fl2">Mechanism</label><select class="fsel2" id="cfe_mech" style="font-size:11px;padding:5px 8px">'+mOpts+'</select></div>';
+  h+=fld('Amount (SAR)','cfe_amt',c.amount,'number');
+  h+=fld('Agreed LC %','cfe_ap',(c.agreedPct!=null?+(c.agreedPct*100).toFixed(2):''),'number');
+  h+=fld('LCGPA Baseline %','cfe_bl',(c.baseline!=null?+(c.baseline*100).toFixed(2):''),'number');
+  h+=fld('National Products Amount','cfe_np',c.natProdAmount||0,'number');
+  h+=fld('Mandatory List Amount','cfe_ml',c.mandatoryListAmount||0,'number');
+  h+=fld('NPP %','cfe_nppct',c.nppPct||0,'number');
+  h+=fld('Start Date','cfe_start',c.start,'date');
+  h+=fld('Duration (months)','cfe_dur',c.duration,'number');
+  h+=fld('End Date','cfe_end',c.end,'date');
+  h+=fld('Awarding Date','cfe_award',c.awardDate,'date');
+  h+='<div class="fg full"><label class="fl2">Notes</label><textarea class="fta" id="cfe_notes" style="font-size:11px;min-height:48px">'+(c.notes||'')+'</textarea></div>';
+  h+='</div>';
+  // editable BoQ
+  h+='<div class="md-sec-title" style="margin-top:12px">BoQ Line Items</div><div id="cfeBoQWrap"></div>';
+  h+='<div class="fa-row" style="border-top:2px solid var(--border);padding-top:12px;margin-top:12px">';
+  h+='<button class="btn btn-p" onclick="saveContractFullEdit('+c.id+',false)">💾 Save (no recalc)</button>';
+  h+='<button class="btn btn-a" onclick="saveContractFullEdit('+c.id+',true)">⚡ Save & Recalculate</button>';
+  h+='<button class="btn btn-s" onclick="closeModal(\'cFullEditModal\')">Cancel</button></div>';
+  document.getElementById('cfeBody').innerHTML=h;
+  _cfeBoQ=JSON.parse(JSON.stringify(c.boqItems||[]));_cfeRenderBoQ();
+  openModal('cFullEditModal');
+}
+var _cfeBoQ=[];
+function _cfeRenderBoQ(){
+  var w=document.getElementById('cfeBoQWrap');if(!w)return;
+  var NAT=['Goods','Service'];
+  var h='<table style="width:100%;font-size:10px;border-collapse:collapse"><thead><tr style="background:var(--surface2)"><th>#</th><th>Description</th><th>Nature</th><th>Unit Price</th><th>QTY</th><th>UoM</th><th>Origin</th><th>Mand.</th><th></th></tr></thead><tbody>';
+  h+=_cfeBoQ.map(function(it,i){return '<tr>'
+    +'<td>'+(i+1)+'</td>'
+    +'<td><input value="'+((it.desc||'').replace(/"/g,'&quot;'))+'" onchange="_cfeBoQ['+i+'].desc=this.value" style="min-width:110px"/></td>'
+    +'<td><select onchange="_cfeBoQ['+i+'].nature=this.value">'+NAT.map(function(n){return '<option'+((it.nature||'Goods')===n?' selected':'')+'>'+n+'</option>';}).join('')+'</select></td>'
+    +'<td><input type="number" value="'+(it.unitPrice||0)+'" onchange="_cfeBoQ['+i+'].unitPrice=parseFloat(this.value)||0" style="width:80px"/></td>'
+    +'<td><input type="number" value="'+(it.qty||0)+'" onchange="_cfeBoQ['+i+'].qty=parseFloat(this.value)||0" style="width:55px"/></td>'
+    +'<td><input value="'+(it.uom||'Unit')+'" onchange="_cfeBoQ['+i+'].uom=this.value" style="width:70px"/></td>'
+    +'<td><select onchange="_cfeBoQ['+i+'].origin=this.value"><option value="Local"'+(it.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(it.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'
+    +'<td style="text-align:center"><input type="checkbox" '+(it.isMandatoryRFP||it.isMandatory?'checked':'')+' onchange="_cfeBoQ['+i+'].isMandatoryRFP=this.checked"/></td>'
+    +'<td><button class="ev-btn rej" style="font-size:8px;padding:1px 4px" onclick="_cfeBoQ.splice('+i+',1);_cfeRenderBoQ()">✕</button></td></tr>';}).join('');
+  h+='</tbody></table><button class="btn btn-s btn-sm" style="font-size:10px;margin-top:5px" onclick="_cfeBoQ.push({desc:\'\',nature:\'Goods\',unitPrice:0,qty:0,uom:\'Unit\',origin:\'Local\',isMandatoryRFP:false});_cfeRenderBoQ()">+ Add Item</button>';
+  w.innerHTML=h;
+}
+window._cfeRenderBoQ=_cfeRenderBoQ;
+function saveContractFullEdit(id,recalc){
+  if(typeof requirePerm==='function'&&!requirePerm('con.admin'))return;
+  var c=DB.find(function(x){return x.id===id;});if(!c)return;
+  function gv(i){var e=document.getElementById(i);return e?e.value:'';}
+  c.num=gv('cfe_num').trim()||c.num;c.endUser=gv('cfe_eu');c.name=gv('cfe_name').trim();c.contractor=gv('cfe_cont').trim();c.mechanism=gv('cfe_mech');
+  c.amount=parseFloat(gv('cfe_amt'))||0;
+  var ap=parseFloat(gv('cfe_ap'));c.agreedPct=isNaN(ap)?null:ap/100;c.lcAmount=c.agreedPct?c.amount*c.agreedPct:null;
+  var bl=parseFloat(gv('cfe_bl'));c.baseline=isNaN(bl)?null:bl/100;
+  c.natProdAmount=parseFloat(gv('cfe_np'))||0;c.mandatoryListAmount=parseFloat(gv('cfe_ml'))||0;c.nppPct=parseFloat(gv('cfe_nppct'))||0;
+  c.start=gv('cfe_start')||c.start;c.duration=parseInt(gv('cfe_dur'))||c.duration;c.end=gv('cfe_end')||c.end;c.awardDate=gv('cfe_award')||'';c.notes=gv('cfe_notes');
+  c.boqItems=JSON.parse(JSON.stringify(_cfeBoQ));
+  if(recalc){if(typeof regenerateReports==='function')regenerateReports(c);}
+  saveDB();if(typeof logAudit==='function')logAudit('edit','Full-edit (admin) contract #'+c.num+(recalc?' + recalculated':''),c.num);
+  closeModal('cFullEditModal');if(typeof renderContractAdmin==='function')renderContractAdmin();if(typeof updateBadges==='function')updateBadges();
+  toast('Contract saved'+(recalc?' & recalculated':' (reports/penalties unchanged)'),'ok');
+}
+window.openContractFullEdit=openContractFullEdit;window.saveContractFullEdit=saveContractFullEdit;
 function renderContractAdmin(){
   var q=(document.getElementById("cadminSearch")||{value:""}).value.toLowerCase();
   var d=DB.filter(function(c){
@@ -7052,7 +7258,8 @@ function renderContractAdmin(){
       +(c.contractor||'No contractor')+' \u2022 '+(c.endUser||'No end-user')+' \u2022 '+fSAR(c.amount)+' \u2022 LC '+pct(c.agreedPct)
       +'</div></div>'
       +'<div style="display:flex;gap:6px;flex-shrink:0">'
-      +'<button class="btn btn-s btn-sm" onclick="openContractModal('+c.id+')">\u270F View</button>'
+      +'<button class="btn btn-s btn-sm" onclick="openContractModal('+c.id+')">\uD83D\uDC41 View</button>'
+      +'<button class="btn btn-p btn-sm" onclick="openContractFullEdit('+c.id+')">\uD83D\uDEE0 Full Edit</button>'
       +'<button class="btn btn-d btn-sm" onclick="deleteContract('+c.id+')">\uD83D\uDDD1 Delete</button>'
       +'</div></div>';
   }).join('');
@@ -7104,10 +7311,20 @@ function addBoQRows(n){for(var i=0;i<n;i++)rfpBoQ.push({desc:"",nature:"",qty:1,
 function removeBoQRow(i){rfpBoQ.splice(i,1);renderBoQ();}
 function renderBoQ(){var el=document.getElementById("boqBody");if(!el)return;var nat=curRFP&&curRFP._boqNature||"mixed";el.innerHTML=rfpBoQ.map(function(r,i){var no="";if(nat==="services")no="<option value=\"services\" selected>Services</option>";else if(nat==="goods")no="<option value=\"goods\" selected>Goods</option>";else no="<option value=\"services\""+(r.nature==="services"?" selected":"")+">Services</option><option value=\"goods\""+(r.nature==="goods"?" selected":"")+">Goods</option>";return "<tr><td>"+(i+1)+"</td><td><input class=\"fi\" style=\"font-size:11px;padding:4px 7px\" value=\""+((r.desc||"").replace(/\"/g,"&quot;"))+"\" onchange=\"rfpBoQ["+i+"].desc=this.value\"/></td><td><select class=\"fsel2\" style=\"font-size:11px;padding:4px\" onchange=\"rfpBoQ["+i+"].nature=this.value\">"+no+"</select></td><td><input class=\"fi\" type=\"number\" style=\"width:60px;font-size:11px;padding:4px\" value=\""+(r.qty||1)+"\" onchange=\"rfpBoQ["+i+"].qty=parseFloat(this.value)||1\"/></td><td><select class=\"fsel2\" style=\"font-size:11px;padding:4px\" onchange=\"rfpBoQ["+i+"].uom=this.value\">"+UOM_LIST.map(function(u){return "<option"+(u===r.uom?" selected":"")+">"+u+"</option>";}).join("")+"</select></td><td><input class=\"fi\" type=\"number\" style=\"width:100px;font-size:11px;padding:4px\" value=\""+(r.cost||0)+"\" onchange=\"rfpBoQ["+i+"].cost=parseFloat(this.value)||0\"/></td><td><button class=\"mb del\" onclick=\"removeBoQRow("+i+")\">X</button></td></tr>";}).join("");}
 window.addBoQRow=addBoQRow;window.addBoQRows=addBoQRows;window.removeBoQRow=removeBoQRow;window.renderBoQ=renderBoQ;
-var _oSR=saveRFP;saveRFP=function(s){if(curRFP)curRFP.boq=rfpBoQ.filter(function(r){return r.desc;});_oSR(s);};window.saveRFP=saveRFP;
+// ===== Tendering style (Open / Closed) + closed-tender invite picker =====
+function rfpToggleClosed(){var sel=document.getElementById('rfpTenderStyle');var closed=sel&&sel.value==='closed';var pn=document.getElementById('rfpClosedPanel');if(pn)pn.style.display=closed?'block':'none';if(closed){rfpRenderInviteFilters();rfpRenderSupplierPick();}}
+function rfpRenderInviteFilters(){var el=document.getElementById('rfpInviteFilters');if(!el)return;window._rfpFilters=window._rfpFilters||{};el.innerHTML=(typeof TENDER_FILTERS!=='undefined'?TENDER_FILTERS:[]).filter(function(f){return f.on;}).map(function(f){var act=!!window._rfpFilters[f.key];return '<button type="button" class="fc'+(act?' on':'')+'" style="font-size:9px;padding:3px 9px" onclick="rfpToggleFilter(\''+f.key+'\')">'+f.label+'</button>';}).join('');}
+function rfpToggleFilter(k){window._rfpFilters=window._rfpFilters||{};window._rfpFilters[k]=!window._rfpFilters[k];rfpRenderInviteFilters();rfpRenderSupplierPick();}
+function _supplierMatchesFilters(s){var f=window._rfpFilters||{};if(f.sme&&!s.isSME)return false;if(f.tadawul&&!s.isTadawul)return false;if(f.cert&&!(s.lcCertId||s.lcFile))return false;if(f.local&&!(/local/i.test(s.type||'')||s.isLocal))return false;return true;}
+function rfpRenderSupplierPick(){var el=document.getElementById('rfpSupplierPick');if(!el)return;window._rfpInvites=window._rfpInvites||[];var sl=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]).filter(_supplierMatchesFilters);el.innerHTML=sl.length?sl.map(function(s){var inv=window._rfpInvites.indexOf(String(s.id))>=0;return '<label style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid var(--border);font-size:11px;cursor:pointer"><input type="checkbox" '+(inv?'checked':'')+' onchange="rfpToggleInvite(\''+s.id+'\',this.checked)"/><span style="font-weight:600;flex:1">'+s.name+'</span>'+(s.isSME?'<span class="badge bb" style="font-size:8px">SME</span> ':'')+(s.isTadawul?'<span class="badge bp" style="font-size:8px">Tadawul</span>':'')+'</label>';}).join(''):'<div style="font-size:10px;color:var(--text3);padding:8px">No suppliers match the filters — adjust filters or register a supplier.</div>';var c=document.getElementById('rfpInvitedCount');if(c)c.textContent=window._rfpInvites.length;}
+function rfpToggleInvite(id,on){window._rfpInvites=window._rfpInvites||[];id=String(id);var idx=window._rfpInvites.indexOf(id);if(on&&idx<0)window._rfpInvites.push(id);else if(!on&&idx>=0)window._rfpInvites.splice(idx,1);var c=document.getElementById('rfpInvitedCount');if(c)c.textContent=window._rfpInvites.length;}
+window.rfpToggleClosed=rfpToggleClosed;window.rfpToggleFilter=rfpToggleFilter;window.rfpToggleInvite=rfpToggleInvite;window.rfpRenderSupplierPick=rfpRenderSupplierPick;
+var _oSR=saveRFP;saveRFP=function(s){if(curRFP){curRFP.boq=rfpBoQ.filter(function(r){return r.desc;});var ts=document.getElementById('rfpTenderStyle');curRFP.tenderStyle=ts?ts.value:(curRFP.tenderStyle||'open');curRFP.invitedSuppliers=(curRFP.tenderStyle==='closed')?((window._rfpInvites||[]).slice()):[];}_oSR(s);};window.saveRFP=saveRFP;
 var _oNR=newRFP;newRFP=function(){rfpBoQ=[];_oNR();var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="none";var cw=document.getElementById("rfpCapexWrap");if(cw)cw.style.display="none";var wr=document.getElementById("mechWizardResult");if(wr)wr.innerHTML="";populateEUSelectFor("rfpEU");};window.newRFP=newRFP;
-var _oER=editRFP;editRFP=function(id){_oER(id);if(curRFP&&curRFP.boq){rfpBoQ=JSON.parse(JSON.stringify(curRFP.boq));var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";renderBoQ();}};window.editRFP=editRFP;
-var _oRML=renderMechList;renderMechList=function(){document.getElementById("mechList").innerHTML=MECHS.map(function(m,i){return '<div class="mi"><div class="mi-n" title="'+m+'" style="max-width:280px;white-space:normal;line-height:1.3">'+m+'</div><div class="ma"><button class="mb" onclick="editMechName('+i+')">Edit</button><button class="mb del" onclick="removeMech('+i+')">X</button></div></div>';}).join("");};window.renderMechList=renderMechList;
+var _oER=editRFP;editRFP=function(id){_oER(id);if(curRFP&&curRFP.boq){rfpBoQ=JSON.parse(JSON.stringify(curRFP.boq));var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";renderBoQ();}var ts=document.getElementById('rfpTenderStyle');if(ts){ts.value=(curRFP&&curRFP.tenderStyle)||'open';}window._rfpInvites=(curRFP&&curRFP.invitedSuppliers||[]).map(String);window._rfpFilters={};if(typeof rfpToggleClosed==='function')rfpToggleClosed();};window.editRFP=editRFP;
+// reset tendering UI when starting a NEW RFP
+var _oNR=(typeof newRFP==='function')?newRFP:null;if(_oNR){newRFP=function(){_oNR.apply(this,arguments);window._rfpInvites=[];window._rfpFilters={};var ts=document.getElementById('rfpTenderStyle');if(ts)ts.value='open';if(typeof rfpToggleClosed==='function')rfpToggleClosed();};window.newRFP=newRFP;}
+var _oRML=renderMechList;renderMechList=function(){document.getElementById("mechList").innerHTML=MECHS.map(function(m,i){var fr=(typeof mechFrozen==='function'&&mechFrozen(m));return '<div class="mi"'+(fr?' style="opacity:.6"':'')+'><div class="mi-n" title="'+m+'" style="display:flex;align-items:center;gap:8px;max-width:300px;white-space:normal;line-height:1.3"><span style="color:var(--accent);cursor:grab;font-size:16px;line-height:1;user-select:none" title="Drag to reorder">⠿</span><span>'+m+(fr?' <span class="badge bgy" style="font-size:8px">❄ Frozen</span>':'')+'</span></div><div class="ma"><button class="mb" onclick="editMechName('+i+')">Edit</button><button class="mb" title="'+(fr?'Unfreeze (show in new pickers)':'Freeze (hide from new pickers, keep existing)')+'" onclick="toggleMechFreeze('+i+')">'+(fr?'❄ Unfreeze':'❄ Freeze')+'</button><button class="mb del" onclick="removeMech('+i+')">X</button></div></div>';}).join("");};window.renderMechList=renderMechList;
 function editMechName(i){var o=MECHS[i];var n=prompt("Edit mechanism name:",o);if(n===null||!n.trim())return;n=n.trim();DB.forEach(function(c){if(c.mechanism===o)c.mechanism=n;});if(FORMULAS[o]){FORMULAS[n]=FORMULAS[o];delete FORMULAS[o];}if(MECH_TC[o]){MECH_TC[n]=MECH_TC[o];delete MECH_TC[o];}MECHS[i]=n;saveMechs();saveDB();saveAll();renderMechList();renderMechTCList();renderMechFormulaList();populateMechSelects();logAudit("edit","Mech renamed: "+o+" -> "+n);toast("Renamed","ok");}
 window.editMechName=editMechName;
 // V39: Collapsible bidders, BoQ auto-sum, NPP calc, file attachments
@@ -7203,7 +7420,10 @@ renderBoQ=function(){
     else no='<option value="services"'+(r.nature==="services"?" selected":"")+'>Services</option><option value="goods"'+(r.nature==="goods"?" selected":"")+'>Goods</option>';
     var oo='<option value="Local"'+(r.origin==="Local"||!r.origin?" selected":"")+'>Local</option><option value="Foreign"'+(r.origin==="Foreign"?" selected":"")+'>Foreign</option>';
     var mc=r.isMandatory?"checked":"";
-    var mlc=r.isMandatory?'<input class="fi" style="font-size:10px;padding:2px 5px;width:95px;margin-top:3px" placeholder="Etimad Code" title="Etimad / Mandatory List code" value="'+((r.mlCode||"").replace(/"/g,"&quot;"))+'" onchange="rfpBoQ['+i+'].mlCode=this.value"/>':"";
+    var mlc=r.isMandatory?'<input class="fi" style="font-size:10px;padding:2px 5px;width:110px;margin-top:3px" placeholder="ML Code" title="Mandatory List code" value="'+((r.mlCode||"").replace(/"/g,"&quot;"))+'" onchange="rfpBoQ['+i+'].mlCode=this.value"/>':"";
+    var _secOpts='<option value="">— Sector —</option>'+(typeof MLNP_SECTORS!=='undefined'?MLNP_SECTORS:[]).filter(function(s){return !s.frozen||sectorLabel(s)===r.mlSector;}).map(function(s){var lbl=sectorLabel(s);return '<option value="'+lbl.replace(/"/g,'&quot;')+'"'+(r.mlSector===lbl?' selected':'')+'>'+lbl+'</option>';}).join('');
+    if(r.mlSector&&(typeof MLNP_SECTORS==='undefined'||!MLNP_SECTORS.some(function(s){return sectorLabel(s)===r.mlSector;})))_secOpts+='<option value="'+String(r.mlSector).replace(/"/g,'&quot;')+'" selected>'+r.mlSector+'</option>';
+    var mls=r.isMandatory?'<select class="fsel2" style="font-size:9px;padding:2px 4px;width:130px;margin-top:3px" title="Mandatory List Sector — auto-filled by the matcher, or pick" onchange="rfpBoQ['+i+'].mlSector=this.value">'+_secOpts+'</select>':"";
     return "<tr><td>"+(i+1)+"</td>"
       +'<td><input class="fi" style="font-size:11px;padding:4px 7px" value="'+((r.desc||"").replace(/"/g,"&quot;"))+'" onchange="rfpBoQ['+i+'].desc=this.value"/></td>'
       +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ['+i+'].nature=this.value">'+no+'</select></td>'
@@ -7211,7 +7431,7 @@ renderBoQ=function(){
       +'<td><input class="fi" type="number" style="width:60px;font-size:11px;padding:4px" value="'+(r.qty||1)+'" onchange="rfpBoQ['+i+'].qty=parseFloat(this.value)||1"/></td>'
       +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ['+i+'].uom=this.value">'+UOM_LIST.map(function(u){return "<option"+(u===r.uom?" selected":"")+">"+u+"</option>";}).join("")+'</select></td>'
       +'<td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.cost||0)+'" onchange="rfpBoQ['+i+'].cost=parseFloat(this.value)||0"/></td>'
-      +'<td style="text-align:center"><label style="display:flex;flex-direction:column;align-items:center;gap:2px"><input type="checkbox" '+mc+' onchange="rfpBoQ['+i+'].isMandatory=this.checked;renderBoQ()"/>'+mlc+'</label></td>'
+      +'<td style="text-align:center"><label style="display:flex;flex-direction:column;align-items:center;gap:2px"><input type="checkbox" '+mc+' onchange="rfpBoQ['+i+'].isMandatory=this.checked;renderBoQ()"/>'+mlc+mls+'</label></td>'
       +'<td><button class="mb del" onclick="removeBoQRow('+i+')">X</button></td></tr>';
   }).join("");
 };
@@ -7302,7 +7522,7 @@ window.addBoQRows=addBoQRows;
   function candHTML(k,o){
     var r=o.r, code=r.code||'', cat=dispCat(r), bp=basePct(r);
     return '<label class="mlcand" title="'+tipText(r)+'">'
-      +'<input type="radio" name="mlpick_'+k+'" data-k="'+k+'" data-code="'+escML(code)+'"/>'
+      +'<input type="radio" name="mlpick_'+k+'" data-k="'+k+'" data-code="'+escML(code)+'" data-cat="'+escML(r.cat||r.tab||'')+'"/>'
       +'<div class="mlcand-b">'
         +'<div class="mlcand-t">'+escML(dispTitle(r))+'</div>'
         +(dispDef(r)?'<div class="mlcand-d">'+escML(dispDef(r))+'</div>':'')
@@ -7378,6 +7598,7 @@ window.addBoQRows=addBoQRows;
       if(typeof rfpBoQ==='undefined'||!rfpBoQ[n.boqIdx])return;
       rfpBoQ[n.boqIdx].isMandatory=true;
       rfpBoQ[n.boqIdx].mlCode=code;
+      var _cat=sel.getAttribute('data-cat')||'';var _sec=(typeof sectorForCat==='function')?sectorForCat(_cat):null;rfpBoQ[n.boqIdx].mlSector=_sec?sectorLabel(_sec):(_cat||'');
       applied++;
     });
     if(typeof curRFP!=='undefined'&&curRFP&&typeof rfpBoQ!=='undefined'){
@@ -8496,13 +8717,13 @@ window.v55_extractRFPBoQ=function(){
   var boq=(rfp.boq||[]).filter(function(r){return r.desc;});
   if(boq.length){
     boqSec.style.display='block';
-    _subBoQItems=boq.map(function(b,i){var nat=(b.nature||'Goods');nat=(/serv/i.test(nat))?'Service':'Goods';return {desc:b.desc||'',mandatory:!!(b.isMandatory||b.mandatory),mlCode:(b.mlCode||b.etimadCode||''),mandatoryResponse:false,nature:nat,unitPrice:0,qty:b.qty||1,uom:b.uom||b.unit||'Unit',origin:b.origin||'Local'};});
+    _subBoQItems=boq.map(function(b,i){var nat=(b.nature||'Goods');nat=(/serv/i.test(nat))?'Service':'Goods';return {desc:b.desc||'',mandatory:!!(b.isMandatory||b.mandatory),mlCode:(b.mlCode||b.etimadCode||''),mlSector:(b.mlSector||''),mandatoryResponse:false,nature:nat,unitPrice:0,qty:b.qty||1,uom:b.uom||b.unit||'Unit',origin:b.origin||'Local'};});
     window._subBoQItems=_subBoQItems;v55_renderSubBoQ();
     var pp0=document.getElementById('subPrice');if(pp0){pp0.readOnly=true;}
   } else {
     // RFP has no BoQ — make it visible & actionable instead of silently hiding
     boqSec.style.display='block';
-    if(tbody)tbody.innerHTML='<tr><td colspan="12" style="text-align:center;padding:14px;color:var(--text3)">This RFP has no BoQ line items yet. Add them in <b>RFP Preparation → BoQ</b>, or enter the total bid price manually below.</td></tr>';
+    if(tbody)tbody.innerHTML='<tr><td colspan="13" style="text-align:center;padding:14px;color:var(--text3)">This RFP has no BoQ line items yet. Add them in <b>RFP Preparation → BoQ</b>, or enter the total bid price manually below.</td></tr>';
     var sm0=document.getElementById('subBoQSummary');if(sm0)sm0.innerHTML='';
     _subBoQItems=[];window._subBoQItems=_subBoQItems;
     var pp=document.getElementById('subPrice');if(pp){pp.readOnly=false;pp.style.background='';}
@@ -8532,6 +8753,7 @@ window.v55_renderSubBoQ=function(){
     var _mandCell=!item.mandatory?'<span style="color:#9aa3b3">-</span>':(_isForeign?'<span style="color:#f59e0b;font-weight:700">⚠ Mandatory · Attach exception letter</span>':'<span style="font-weight:700">Mandatory</span>');
     h+='<td style="background:'+(item.mandatory&&_isForeign?'rgba(245,158,11,.12)':'#f3f4f6')+';font-size:9px;text-align:center">'+_mandCell+'</td>';
     h+='<td style="text-align:center;font-size:10px;font-family:var(--fm);font-weight:700;color:#2563eb;white-space:nowrap" title="Mandatory List code (read-only)">'+(item.mlCode?escSub(item.mlCode):'<span style="color:#9aa3b3;font-weight:400">—</span>')+'</td>';
+    h+='<td style="font-size:9px;color:#475569;max-width:140px" title="Mandatory List Sector (read-only)">'+(item.mlSector?escSub(item.mlSector):'<span style="color:#9aa3b3">—</span>')+'</td>';
     h+='<td style="text-align:center"><input type="checkbox" '+(item.mandatoryResponse?'checked ':'')+' onchange="_subBoQItems['+i+'].mandatoryResponse=this.checked"/></td>';
     h+='<td style="font-size:10px;white-space:nowrap">'+(item.nature||'')+'</td>';
     h+='<td><input type="number" min="0" value="'+(item.unitPrice||'')+'" onchange="_subBoQItems['+i+'].unitPrice=parseFloat(this.value)||0;v55_subLine('+i+')" style="width:80px" placeholder="0"/></td>';
@@ -8786,6 +9008,22 @@ subItems.forEach(function(item){item.addEventListener('click',function(e){e.stop
 .profile-chip .pn{font-size:11px;font-weight:800;color:var(--text);line-height:1.15}
 .profile-chip .pr{font-size:9px;color:var(--text3);font-weight:600}
 body.rtl .profile-chip{padding:4px 5px 4px 10px}
+/* ===== Forced Mobile Mode (top-bar 📱 toggle) — applies the small-screen layout at any width ===== */
+#mobileToggleBtn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+body.mobile-mode .sidebar{transform:translateX(-100%)}
+body.mobile-mode.rtl .sidebar{transform:translateX(100%)}
+body.mobile-mode .sidebar.open{transform:translateX(0)!important}
+body.mobile-mode .main{margin-left:0!important;margin-right:0!important}
+body.mobile-mode #mobMenu{display:inline-flex!important}
+body.mobile-mode .content{padding:12px!important}
+body.mobile-mode .dr6,body.mobile-mode .dr4,body.mobile-mode .dr3,body.mobile-mode .dcharts,body.mobile-mode .dsplit,body.mobile-mode .dbottom,body.mobile-mode .kpi-grid,body.mobile-mode .fg2,body.mobile-mode .fg3,body.mobile-mode .g2,body.mobile-mode .g3,body.mobile-mode .g33,body.mobile-mode .dright-stack{grid-template-columns:1fr!important}
+body.mobile-mode .tbl-wrap,body.mobile-mode .cboq-body{overflow-x:auto;-webkit-overflow-scrolling:touch}
+body.mobile-mode table{min-width:560px}
+body.mobile-mode .md{max-width:96vw!important;width:96vw!important;max-height:92vh}
+body.mobile-mode .cmd-band,body.mobile-mode .brd-hero,body.mobile-mode .dash-hero,body.mobile-mode .cmd-id{flex-direction:column;align-items:stretch;gap:10px}
+body.mobile-mode .btn,body.mobile-mode .tbtn,body.mobile-mode .fsel,body.mobile-mode .fi,body.mobile-mode .fsel2{min-height:38px}
+body.mobile-mode #dashEntitySel{max-width:100%!important}
+body.mobile-mode .fb{flex-wrap:wrap}
 </style>
 <div id="loginOverlay"><div class="login-card">
   <div class="login-logo">LC</div>
