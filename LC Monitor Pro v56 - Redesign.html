@@ -11,6 +11,8 @@
 <script>window.Chart||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>');</script>
 <script src="vendor/xlsx.full.min.js"></script>
 <script>window.XLSX||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"><\/script>');</script>
+<script src="vendor/pdf-lib.min.js"></script>
+<script>window.PDFLib||document.write('<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');</script>
 <style>
 :root{
   --bg:#f4f6fb;--surface:#ffffff;--surface2:#f7f9fd;--surface3:#eef1f8;
@@ -1712,15 +1714,13 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div id="biddersList"><div class="empty"><div class="ei">👥</div><p>No bidders added yet</p></div></div>
       <div style="display:flex;gap:7px;margin-top:10px;flex-wrap:wrap">
         <button class="btn btn-s btn-sm" onclick="addBidderManual()">+ Add Bidder Manually</button>
-        <button class="btn btn-a btn-sm" onclick="document.getElementById(&#39;bidDoc&#39;).click()">🤖 Upload Bid Document (AI Read)</button>
-        <input type="file" id="bidDoc" accept=".pdf,.doc,.docx,.xlsx" style="display:none" onchange="uploadBidDoc(this.files[0])">
+        <button class="btn btn-s btn-sm" onclick="importSupplierBids()">📨 Import Supplier Bids</button>
       </div>
     </div>
     <div class="fsec">
       <div class="fsec-title">📊 Evaluation Results</div>
       <div id="bidResults"><div class="empty"><div class="ei">📊</div><p>Click Calculate to see results</p></div></div>
       <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">
-        <button class="btn btn-s btn-sm" onclick="importSupplierBids()">📨 Import Supplier Bids</button>
         <button class="btn btn-p" onclick="calcBids()">⚡ Calculate &amp; Rank</button>
         <button class="btn btn-sm" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:800" onclick="openAwardFinalize()">🏆 Award &amp; Finalize</button>
         <button class="btn btn-p btn-sm" onclick="exportBidMoMPDF()">📄 Export MoM PDF</button>
@@ -3073,7 +3073,8 @@ function renderRFPList(){
         <div><div class="bid-name">${r.title||'Untitled RFP'}</div><div style="font-size:10px;color:var(--text3);margin-top:2px">${r.ref||'No ref'} · ${r.endUser||'No end-user'} · ${fD(r.created)}</div></div>
         <div style="display:flex;gap:6px;align-items:center">
           <span class="badge ${r.status==='ready'?'bg':r.status==='inprocess'?'bb':r.status==='opened'?'bp':'ba'}">${({draft:'Draft',opened:'Opened',inprocess:'In Process',ready:'Ready'})[r.status]||r.status}</span>
-          ${r.suggestedMech?`<span class="badge bb" title="AI suggested">${(r.suggestedMech||'').substring(0,20)}…</span>`:''}
+          <span class="badge ${(r.tenderStyle==='closed')?'ba':'bt'}" title="Tendering style">${r.tenderStyle==='closed'?('🔒 Closed Tender'+((r.invitedSuppliers||[]).length?' ('+(r.invitedSuppliers||[]).length+' invited)':'')):'🌐 Open Tender'}</span>
+          ${r.suggestedMech?`<span class="badge bb" title="Mechanism">${(r.suggestedMech||'').substring(0,20)}…</span>`:''}
           <button class="btn btn-s btn-sm" onclick="editRFP(${r.id})">✏️ Edit</button>
           <button class="btn btn-d btn-sm" onclick="deleteRFP(${r.id})">🗑</button>
         </div>
@@ -3183,11 +3184,38 @@ function showMechResult(mech){
 function acceptMechanism(mech){if(curRFP){curRFP.suggestedMech=mech;}toast('Mechanism accepted: '+mech.substring(0,30),'ok');loadRFPTC(mech);}
 function loadRFPTC(mech){
   if(!mech)return;const tc=MECH_TC[mech];
-  const el=document.getElementById('rfpTCArea');
-  if(tc&&(tc.rfp||tc.contract)){
-    el.innerHTML=`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">📋 RFP Terms & Conditions</div><div style="font-size:12px;color:var(--text2);background:var(--surface2);border-radius:var(--rs);padding:10px;line-height:1.6;white-space:pre-wrap">${tc.rfp||'No RFP T&C defined for this mechanism.'}</div></div><div><div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">📑 Contract Terms & Conditions</div><div style="font-size:12px;color:var(--text2);background:var(--surface2);border-radius:var(--rs);padding:10px;line-height:1.6;white-space:pre-wrap">${tc.contract||'No Contract T&C defined.'}</div></div>`;
-  }else{el.innerHTML=`<div style="background:var(--surface2);border-radius:var(--rs);padding:12px;font-size:12px;color:var(--text2)">No T&C defined for <strong>${mech}</strong>. Go to Settings → Mechanism T&C to add them.</div>`;}
+  const el=document.getElementById('rfpTCArea');if(!el)return;
+  var hasText=tc&&(tc.rfp||tc.contract);
+  var hasFile=tc&&(tc.rfpFileData||tc.contractFileData);
+  if(!tc||(!hasText&&!hasFile)){el.innerHTML=`<div style="background:var(--surface2);border-radius:var(--rs);padding:12px;font-size:12px;color:var(--text2)">No T&C defined for <strong>${mech}</strong>. Go to Settings → Mechanism T&C to add them.</div>`;return;}
+  var enc=encodeURIComponent(mech);var out='';
+  if(tc.rfp)out+=`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">📋 RFP Terms & Conditions</div><div style="font-size:12px;color:var(--text2);background:var(--surface2);border-radius:var(--rs);padding:10px;line-height:1.6;white-space:pre-wrap">${tc.rfp}</div></div>`;
+  if(tc.contract)out+=`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:5px">📑 Contract Terms & Conditions</div><div style="font-size:12px;color:var(--text2);background:var(--surface2);border-radius:var(--rs);padding:10px;line-height:1.6;white-space:pre-wrap">${tc.contract}</div></div>`;
+  if(hasFile){
+    out+='<div style="border:1px solid var(--border);border-radius:var(--rs);padding:10px;background:var(--surface)"><div style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px">📎 Attached Terms & Conditions Document(s)</div><div style="display:flex;gap:7px;flex-wrap:wrap">';
+    if(tc.rfpFileData)out+=`<button class="btn btn-s btn-sm" onclick="_viewTCDoc('${enc}','rfp')" title="View the attached RFP Terms & Conditions document">👁 View RFP T&C — ${(tc.rfpFile||'document.pdf')}</button>`;
+    if(tc.contractFileData)out+=`<button class="btn btn-s btn-sm" onclick="_viewTCDoc('${enc}','contract')" title="View the attached Contract Terms & Conditions document">👁 View Contract T&C — ${(tc.contractFile||'document.pdf')}</button>`;
+    out+='</div><div style="font-size:9px;color:var(--text3);margin-top:6px">Attached PDF document(s) are merged after the RFP details in the exported PDF.</div></div>';
+  }
+  el.innerHTML=out;
 }
+// Open an attached mechanism Terms & Conditions document (data URL → Blob) in a new tab; falls back to download.
+function _viewTCDoc(mechEnc,which){
+  var mech=decodeURIComponent(mechEnc);
+  var tc=(typeof MECH_TC!=='undefined')?MECH_TC[mech]:null;if(!tc){toast('No T&C document','err');return;}
+  var data=which==='contract'?tc.contractFileData:tc.rfpFileData;
+  var nm=which==='contract'?tc.contractFile:tc.rfpFile;
+  if(!data){toast('No attached document','err');return;}
+  try{
+    var parts=String(data).split(',');var mime=((parts[0]||'').match(/data:([^;]+)/)||[])[1]||'application/octet-stream';
+    var bin=atob(parts[1]||'');var arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+    var url=URL.createObjectURL(new Blob([arr],{type:mime}));
+    var w=window.open(url,'_blank');
+    if(!w){var a=document.createElement('a');a.href=url;a.download=nm||'terms.pdf';a.click();}
+    setTimeout(function(){URL.revokeObjectURL(url);},60000);
+  }catch(e){toast('Could not open the document','err');}
+}
+window._viewTCDoc=_viewTCDoc;
 
 // MLNP Advisor
 async function runMLNPAdvisor(){
@@ -3319,7 +3347,7 @@ async function aiBidAnalysis(){
 function exportBidReport(){
   if(!curBidders||!curBidders.length){toast('No bidders to export','err');return;}
   const mech=document.getElementById('bidMech').value;
-  let csv='Rank,Bidder,Price (SAR),LC %,NPP %,Certificate,Score,Status\n';
+  let csv='Rank,Bidder,Price (SAR),Local Content %,National Products Price Preferencing %,Certificate,Score,Status\n';
   curBidders.forEach((b,i)=>{const excl=checkExclusions(b,mech);csv+=`${excl.length?'Excluded':i+1},"${b.name}",${b.price||0},${b.lcPct||0},${b.nppPct||0},${b.hasCert?'Yes':'No'},${b.score||0},"${excl.length?excl.join('; '):'Qualified'}"\n`;});
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=(brandInfo().org.replace(/[^\w]+/g,'_'))+'_bid_evaluation_'+Date.now()+'.csv';a.click();toast('Report exported','ok');
 }
@@ -3738,7 +3766,8 @@ function renderReview(){
       return (ev['li_'+o.idx]||[]).concat(ev['liexc_'+o.idx]||[]).some(function(f){return (f.status||'pending')===fs;});
     }
     var goodsShown=goods.filter(lineMatches);
-    if(!filtered.length&&!goodsShown.length)return;
+    var pushedPens=(rvMode==='all')?(c.penalties||[]).map(function(p,pi){return {p:p,pi:pi};}).filter(function(o){return o.p.pushedToSupplier;}):[];
+    if(!filtered.length&&!goodsShown.length&&!pushedPens.length)return;
     // counts
     var pendN=filtered.filter(function(f){return (f.status||'pending')==='pending';}).length;
     var appN=filtered.filter(function(f){return f.status==='approved';}).length;
@@ -3778,6 +3807,18 @@ function renderReview(){
       if(exFiles.length){html+='<div style="font-size:10px;font-weight:600;color:var(--text2);margin:4px 0 2px">&#128206; Exception Letter</div>';exFiles.forEach(function(f){html+=fileRow('liexc_'+idx,f);});}
       html+='</div>';
     });
+    // Penalty notices pushed to the supplier — view-only (no approval workflow)
+    if(pushedPens.length){
+      html+='<div style="margin-bottom:6px"><div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">&#9888;&#65039; Penalty Notices (view-only)</div>';
+      pushedPens.forEach(function(o){
+        var p=o.p;
+        html+='<div class="rv-file-row" style="flex-wrap:wrap"><div class="rv-file-info"><span class="rv-file-name">&#9888;&#65039; '+penTypeLabel(p.type)+' &mdash; '+fSAR(p.amount)+'</span>'
+          +'<span class="rv-file-meta"> &nbsp;'+(p.reason||'')+(p.pushedAt?' &middot; Issued '+fD(p.pushedAt):'')+(p.pushedSupplierName?' &middot; '+p.pushedSupplierName:'')+'</span></div>'
+          +'<div class="rv-file-actions"><span class="rv-status" style="font-weight:700;color:var(--info)">View only</span>'
+          +'<button class="ev-btn view" onclick="generatePenaltyLetterFor('+c.id+','+o.pi+')">&#128065; View Letter</button></div></div>';
+      });
+      html+='</div>';
+    }
     html+='</div>';
     rows.push(html);
   });
@@ -3930,8 +3971,24 @@ function renderPenalties(){
   const bk=[{l:'Periodic LC',v:per,c:'var(--accent2)'},{l:'Final Submission',v:fs,c:'var(--danger)'},{l:'LC Deviation',v:dv,c:'var(--warn)'},{l:'National Products Price Preferencing',v:np,c:'var(--info)'},{l:'Mandatory List',v:ml,c:'var(--accent3)'}].filter(x=>x.v>0);
   document.getElementById('penBreak').innerHTML=bk.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">${b.l}</span><span style="font-size:11px;font-weight:700;color:${b.c};font-family:var(--fm)">${fSAR(b.v)}</span></div><div class="pg-b"><div class="pg-f" style="width:${pt?b.v/pt*100:0}%;background:${b.c}"></div></div></div>`).join('')||'<div class="empty"><div class="ei">✅</div><p>No penalties</p></div>';
   const pdEl=document.getElementById('cPenD');if(pdEl){if(charts.penD)charts.penD.destroy();const _pmax=Math.max.apply(null,DB.map(c=>tPen(c)).concat([0]));const _useM=_pmax>=1000000;const _div=_useM?1000000:1000;const _suf=_useM?'M':'K';const pv=DB.map(c=>+(tPen(c)/_div).toFixed(_useM?2:0));charts.penD=new Chart(pdEl,{type:'bar',data:{labels:DB.map(c=>`#${c.num}`),datasets:[{data:pv,backgroundColor:pv.map(v=>v>0?'rgba(220,38,38,.45)':'rgba(16,185,129,.2)'),borderColor:pv.map(v=>v>0?'#dc2626':'#10b981'),borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:function(evt,elems){if(elems.length>0){var idx=elems[0].index;var cc=DB[idx];if(cc)openContractModal(cc.id);}},plugins:{tooltip:{callbacks:{label:function(ctx){return 'SAR '+ctx.parsed.y+_suf;}},backgroundColor:'rgba(15,23,42,.92)',titleColor:'#f1f5f9',bodyColor:'#e2e8f0',titleFont:{size:12,weight:'700'},bodyFont:{size:11},padding:10,cornerRadius:8,displayColors:true,boxPadding:4},legend:{display:false}},scales:{x:{ticks:{color:gc()},grid:{color:gg()}},y:{ticks:{color:gc(),callback:v=>v+_suf},grid:{color:gg()}}}}});}
-  const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&_pPenOff());rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis});}));
-  document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':(r.type==='Deviation'||r.type==='GoodsDeviation')?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button>`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
+  const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&_pPenOff());rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis,pushed:!!p.pushedToSupplier,pushedAt:p.pushedAt||''});}));
+  document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':(r.type==='Deviation'||r.type==='GoodsDeviation')?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center;white-space:nowrap">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button> ${r.pushed?`<span class="badge bg" style="font-size:9px" title="Sent to the supplier${r.pushedAt?' on '+r.pushedAt:''}">✓ Sent</span>`:`<button class="btn btn-s btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="sendPenaltyToSupplier(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Push this penalty + letter to the supplier's LC Requirements and Reports Review (view-only)">📨 Send to Supplier</button>`}`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
+}
+// Push a penalty (details + letter) to its supplier's LC Requirements + Reports Review (view-only).
+function sendPenaltyToSupplier(cid,pidx){
+  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c){toast('Contract not found','err');return;}
+  var p=(c.penalties||[])[pidx];if(!p){toast('Penalty not found','err');return;}
+  if(p.type==='Periodic'&&p.year&&typeof _pPenOff==='function'&&_pPenOff()){toast('This penalty is currently disabled','info');return;}
+  var sup=(typeof _supplierForContract==='function')?_supplierForContract(c):null;
+  if(!sup){toast('No registered supplier matches contractor "'+(c.contractor||'—')+'". Register the supplier first.','err');return;}
+  p.pushedToSupplier=true;
+  p.pushedAt=new Date().toISOString().split('T')[0];
+  p.pushedSupplierId=sup.id;
+  p.pushedSupplierName=sup.name;
+  saveDB();
+  if(typeof logAudit==='function')logAudit('Penalty → Supplier',penTypeLabel(p.type)+' '+fSAR(p.amount)+' sent to '+sup.name+' (Contract #'+c.num+')',c.num);
+  toast('Penalty sent to '+sup.name+' — now in their LC Requirements & Reports Review (view-only)','ok');
+  renderPenalties();
 }
 
 // ============================================================
@@ -4463,7 +4520,7 @@ window.renderEntryBoQ=renderEntryBoQ;window.addEntryBoQRow=addEntryBoQRow;window
 
 // IMPORT/EXPORT
 function importExcel(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets['Project X']||wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:null});let added=0,updated=0;const prev=[];rows.forEach(r=>{const num=String(r['Contract Number']||r['Contract #']||'').trim();if(!num)return;const amt=parseFloat(r['Amount']||0)||0;const name=String(r['Contract Name']||r['Name']||'').trim();const mech=String(r['Mechanisim']||r['Mechanism']||'').trim();const start=r['Start Date']?new Date(r['Start Date']).toISOString().split('T')[0]:null;const dur=parseInt(r['Duration']||0)||0;const apR=r['Agreed %']?parseFloat(r['Agreed %']):null;const ap=apR&&apR>1?apR/100:apR;const endDate=r['Contract End Date']?new Date(r['Contract End Date']).toISOString().split('T')[0]:null;const ex=DB.find(c=>c.num===num);if(ex){ex.name=name||ex.name;ex.mechanism=mech||ex.mechanism;ex.amount=amt||ex.amount;if(start)ex.start=start;if(dur)ex.duration=dur;if(endDate)ex.end=endDate;if(ap)ex.agreedPct=ap;updated++;prev.push(`<span class="badge ba">Updated</span> #${num} ${name.substring(0,28)}`);}else{DB.push({id:uid(),num,endUser:'',contractor:'',name,mechanism:mech,amount:amt,start:start||'',duration:dur,end:endDate||'',agreedPct:ap,lcAmount:ap&&amt?amt*ap:null,baseline:null,natProdAmount:0,mandatoryListAmount:0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:[],evidence:{},notes:''});added++;prev.push(`<span class="badge bg">Added</span> #${num} ${name.substring(0,28)}`);}});if(added+updated===0){toast('No valid contract rows found — check the sheet has a "Contract Number" column','err');return;}saveDB();document.getElementById('importPreview').innerHTML=`<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">Import Done</div><div class="badge bg">${added} added · ${updated} updated</div></div><div style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto">${prev.map(p=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)">${p}</div>`).join('')}</div></div>`;toast(`${added} added, ${updated} updated`,'ok');}catch(err){toast('Error: '+err.message,'err');}};r.readAsBinaryString(file);}
-function exportExcel(){if(typeof XLSX==='undefined'){toast('Excel library not loaded — check your connection','err');return;}if(!DB.length){toast('No contracts to export','err');return;}try{const rows=DB.map(c=>({'Contract Number':c.num,'Contract Name':c.name,'End User':c.endUser,'Contractor':c.contractor,'Mechanism':c.mechanism,'Amount (SAR)':c.amount,'Start Date':c.start,'Duration (months)':c.duration,'Contract End Date':c.end,'Agreed LC %':c.agreedPct?+(c.agreedPct*100).toFixed(2):null,'LC Amount':c.lcAmount,'Total Penalty':tPen(c),'Missing Reports':mCnt(c),'Notes':c.notes||''}));const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Project X',ws);XLSX.writeFile(wb,'LC_Monitor_Export_'+new Date().toISOString().split('T')[0]+'.xlsx');toast('Excel exported ('+rows.length+' contracts)','ok');}catch(err){toast('Excel export failed: '+err.message,'err');}}
+function exportExcel(){if(typeof XLSX==='undefined'){toast('Excel library not loaded — check your connection','err');return;}if(!DB.length){toast('No contracts to export','err');return;}try{const rows=DB.map(c=>({'Contract Number':c.num,'Contract Name':c.name,'End User':c.endUser,'Contractor':c.contractor,'Mechanism':c.mechanism,'Amount (SAR)':c.amount,'Start Date':c.start,'Duration (months)':c.duration,'Contract End Date':c.end,'Agreed Local Content %':c.agreedPct?+(c.agreedPct*100).toFixed(2):null,'Local Content Amount':c.lcAmount,'Total Penalty':tPen(c),'Missing Reports':mCnt(c),'Notes':c.notes||''}));const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Project X',ws);XLSX.writeFile(wb,'LC_Monitor_Export_'+new Date().toISOString().split('T')[0]+'.xlsx');toast('Excel exported ('+rows.length+' contracts)','ok');}catch(err){toast('Excel export failed: '+err.message,'err');}}
 function exportCSV(){if(!DB.length){toast('No contracts to export','err');return;}const h=['#','Name','End User','Mechanism','Amount','Start','End','Agreed%','Penalty','Missing'];const rows=DB.map(c=>[c.num,`"${c.name||''}"`,`"${c.endUser||''}"`,`"${c.mechanism||''}"`,c.amount,c.start,c.end,c.agreedPct?+(c.agreedPct*100).toFixed(1):'',tPen(c),mCnt(c)]);const csv=[h,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='contracts.csv';a.click();toast('CSV exported','ok');}
 function exportJSON(){const blob=new Blob([JSON.stringify({contracts:DB,settings:S,mechanisms:MECHS,endUsers:ENDUSERS,formulas:FORMULAS,exclusions:EXCLUSIONS,aiControls:AI_CONTROLS,mechTC:MECH_TC,rfps:RFPS,bids:BIDS},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lc_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();toast('JSON exported','ok');}
 function importJSON(file){const r=new FileReader();r.onload=e=>{try{const d=JSON.parse(e.target.result);if(d.contracts)DB=d.contracts;if(d.settings)Object.assign(S,d.settings);if(d.mechanisms)MECHS=d.mechanisms;if(d.endUsers)ENDUSERS=d.endUsers;if(d.formulas)Object.assign(FORMULAS,d.formulas);if(d.exclusions)EXCLUSIONS=d.exclusions;if(d.aiControls)AI_CONTROLS=d.aiControls;if(d.mechTC)Object.assign(MECH_TC,d.mechTC);if(d.rfps)RFPS=d.rfps;if(d.bids)BIDS=d.bids;saveAll();toast('Backup restored','ok');renderCurrentPage();}catch(err){toast('Invalid JSON','err');}};r.readAsText(file);}
@@ -5559,10 +5616,52 @@ function exportBidMoMPDF(){
     +(curBid.ref?' &nbsp;|&nbsp; '+L('RFP Ref','مرجع طلب العروض')+': '+curBid.ref:'')
     +' &nbsp;|&nbsp; '+L('Estimated Value','القيمة التقديرية')+': '+fSAR(curBid.value||0)+'</div>';
 
+  // ---- Scoring equations (full detail, full names) — rendered inside the Evaluation Methodology section ----
+  var _mc=mechClass(mech);
+  var _hasNPP=_mc.npp;
+  var _hasWt=(_mc.base==='company'||_mc.base==='project');
+  var _hasThr=(_mc.base==='threshold');
+  var _hasSME=(_mc.base==='sme')||mech.toLowerCase().indexOf('sme')>=0||mech.toLowerCase().indexOf('small')>=0;
+  var _hasMLNP=_mc.ml;
+  function _eqBox(inner){return '<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:8px 10px;margin:4px 0;font-family:monospace;font-size:11px'+(AR_MODE?';direction:ltr':'')+'">'+inner+'</div>';}
+  var _methodEq='<ul style="margin-'+(AR_MODE?'right':'left')+':18px;font-size:11px">';
+  if(_hasNPP){
+    _methodEq+='<li><b>'+L('National Products Price Preferencing — Price Adjustment','تفضيل أسعار المنتجات الوطنية — تعديل السعر')+':</b>'
+      +_eqBox('<b>'+L('Adjusted Price','السعر المعدّل')+'</b> = '+L('Bid Price','سعر العطاء')+' + '+(S.nppPref||10)+'% × '+L('Bid Price','سعر العطاء')+' × (1 − '+L('National Products Percentage','نسبة المنتجات الوطنية')+')<br/><b>'+L('Award','الترسية')+'</b>: '+L('the lowest <u>original</u> bid price among the qualified bidders','أقل سعر عطاء <u>أصلي</u> بين المتقدمين المؤهلين'))
+      +'</li>';
+  }
+  if(_hasWt){
+    var _pw=S.priceWeight||60,_lw=S.lcWeight||40,_ts=S.targetSplit||50,_bs=S.baselineSplit||50,_tad=(S.listedBonus?(S.listedBonusPct||5):0);
+    var _tadEN=S.listedBonus?(' + '+_tad+'% Tadawul-listed bonus'):'';
+    var _tadAR=S.listedBonus?(' + '+_tad+'% علاوة الإدراج في تداول'):'';
+    _methodEq+='<li><b>'+L('Local Content Weight in the Commercial Evaluation','وزن المحتوى المحلي في التقييم التجاري')+':</b>'
+      +_eqBox((_hasNPP?'<b>'+L('Adjusted Price','السعر المعدّل')+'</b> = '+L('Bid Price','سعر العطاء')+' + '+(S.nppPref||10)+'% × '+L('Bid Price','سعر العطاء')+' × (1 − '+L('National Products Percentage','نسبة المنتجات الوطنية')+') <i>'+L('(applied to every bidder first)','(يُطبَّق على كل متقدم أولًا)')+'</i><br/>':'')
+        +'<b>'+L('Price Score','درجة السعر')+'</b> = ( '+L('Lowest','أقل')+' '+(_hasNPP?L('Adjusted ','معدّل '):'')+L('Price','سعر')+' ÷ '+L('This','هذا')+' '+(_hasNPP?L('Adjusted ','المعدّل '):'')+L('Price','السعر')+' ) × '+_pw+'%<br/>'
+        +'<b>'+L('Local Content Score','درجة المحتوى المحلي')+'</b> = ( '+L('Baseline Percentage','نسبة خط الأساس')+' × '+_bs+'% + '+L('Target Percentage','نسبة المستهدف')+' × '+_ts+'%'+L(_tadEN,_tadAR)+' ) × '+_lw+'%<br/>'
+        +'<b>'+L('Final Score','الدرجة النهائية')+'</b> = '+L('Price Score','درجة السعر')+' + '+L('Local Content Score','درجة المحتوى المحلي')+' → '+L('the highest score wins','الأعلى يفوز'))
+      +'</li>';
+  }
+  if(_hasThr){
+    _methodEq+='<li><b>'+L('Local Content Minimum Threshold','الحد الأدنى للمحتوى المحلي')+':</b>'
+      +_eqBox('<b>'+L('Rule','القاعدة')+'</b>: '+L('If the Bidder Local Content Baseline','إذا كان خط أساس المحتوى المحلي للمتقدم')+' &lt; '+L('Minimum Required Percentage','الحد الأدنى المطلوب')+' → <span style="color:#dc2626">'+L('EXCLUDED','مستبعد')+'</span><br/>'+L('If the Bidder Local Content Target','إذا كان مستهدف المحتوى المحلي للمتقدم')+' &lt; '+L('Minimum Target Percentage','الحد الأدنى للمستهدف')+' → <span style="color:#dc2626">'+L('EXCLUDED','مستبعد')+'</span><br/>'+L('Qualified bidders are then ranked by the lowest price.','ثم يُرتَّب المتقدمون المؤهلون بأقل سعر.'))
+      +'</li>';
+  }
+  if(_hasSME){
+    _methodEq+='<li><b>'+L('Small &amp; Medium Enterprises Preference','تفضيل المنشآت الصغيرة والمتوسطة')+':</b> '+L('A '+(S.smePref||10)+'% loading is added to the price of bidders that are <b>not</b> Small &amp; Medium Enterprises; qualified Small &amp; Medium Enterprise bidders are evaluated at their actual price, then all qualified bidders are ranked by the lowest evaluated price.','يُضاف تحميل قدره '+(S.smePref||10)+'% على سعر المتقدمين من <b>غير</b> المنشآت الصغيرة والمتوسطة؛ وتُقيَّم المنشآت الصغيرة والمتوسطة المؤهلة بسعرها الفعلي، ثم يُرتَّب الجميع بأقل سعر مُقيَّم.')+'</li>';
+  }
+  if(_hasMLNP){
+    _methodEq+='<li><b>'+L('Mandatory List Compliance','الامتثال للقائمة الإلزامية')+':</b> '+L('Compliance with the LCGPA Mandatory List is verified for the required line items. Non-compliant items are penalized in scoring and may trigger exclusion.','يتم التحقق من الامتثال للقائمة الإلزامية لهيئة المحتوى المحلي للبنود المطلوبة. وتُخصم درجات على البنود غير الممتثلة وقد تؤدي إلى الاستبعاد.')+'</li>';
+  }
+  if(!_hasNPP&&!_hasWt&&!_hasThr&&!_hasSME){
+    _methodEq+='<li>'+L('Scores combine price competitiveness with the committed Local Content weighting. Exclusion conditions were applied before ranking.','تجمع الدرجات بين تنافسية السعر ووزن المحتوى المحلي الملتزم به. وطُبقت شروط الاستبعاد قبل الترتيب.')+'</li>';
+  }
+  _methodEq+='</ul>';
+
   // 1. Methodology
   h+='<h2>1. '+L('Evaluation Methodology','منهجية التقييم')+'</h2>';
   h+='<div class="box">'+L('Bids were evaluated under the mechanism','تم تقييم العطاءات وفق آلية')+' <b>'+mech+'</b>. '
-    +(mechClass(mech).npp?L('Per NPP rules, bids are ranked by Adjusted Bid Price = Bid + 10% × Bid × (1 − NPP%); award is based on the original bid price.','وفقًا لقواعد تفضيل المنتجات الوطنية، يتم ترتيب العطاءات حسب السعر المعدل = العطاء + 10% × العطاء × (1 − نسبة المنتجات الوطنية)؛ وتتم الترسية على السعر الأصلي.'):L('Scores combine price competitiveness with committed Local Content weighting and applicable SME bonuses. Exclusion conditions were applied before ranking.','تجمع الدرجات بين تنافسية السعر ووزن المحتوى المحلي الملتزم به ومكافآت المنشآت الصغيرة والمتوسطة عند الانطباق. وطُبقت شروط الاستبعاد قبل الترتيب.'))+'</div>';
+    +(_hasNPP?L('Under National Products Price Preferencing, bids are ranked by their Adjusted Bid Price, while the award is decided on the original bid price.','وفقًا لتفضيل أسعار المنتجات الوطنية، تُرتَّب العطاءات حسب السعر المعدّل، بينما تُحدَّد الترسية على السعر الأصلي.'):L('Scores combine price competitiveness with the committed Local Content weighting and any applicable Small &amp; Medium Enterprises bonus. Exclusion conditions were applied before ranking.','تجمع الدرجات بين تنافسية السعر ووزن المحتوى المحلي الملتزم به وأي علاوة للمنشآت الصغيرة والمتوسطة عند الانطباق. وطُبقت شروط الاستبعاد قبل الترتيب.'))
+    +'<div style="margin-top:8px;font-weight:700">'+L('Applicable scoring equations:','معادلات الاحتساب المطبقة:')+'</div>'+_methodEq+'</div>';
 
   // 2. Per-bidder detail
   h+='<h2>2. '+L('Bidder-by-Bidder Assessment','تقييم كل متقدم')+'</h2>';
@@ -5611,37 +5710,17 @@ function exportBidMoMPDF(){
   }
 
 
-  // v55 FIX 10: Enhanced Scoring Methodology for all mechanisms
-  h+='<h2>5. '+L('Scoring Methodology','منهجية الاحتساب')+'</h2>';
-  h+='<div class="box"><p>'+L('The scoring methodology applied follows LCGPA regulations under the <b>'+mech+'</b> mechanism:','تتبع منهجية الاحتساب المطبقة أنظمة هيئة المحتوى المحلي وفق آلية <b>'+mech+'</b>:')+'</p>';
-  h+='<ul style="margin-'+(AR_MODE?'right':'left')+':18px;font-size:11px">';
-  var _hasNPP=mechClass(mech).npp;
-  var _hasWt=mech.toLowerCase().indexOf('weight')>=0;
-  var _hasThr=mech.toLowerCase().indexOf('threshold')>=0;
-  var _hasSME=mech.toLowerCase().indexOf('sme')>=0||mech.toLowerCase().indexOf('small')>=0;
-  var _hasMLNP=mechClass(mech).ml;
-  if(_hasNPP){
-    h+='<li><b>'+L('NPP Price Adjustment','تعديل سعر المنتجات الوطنية')+':</b><br/>'+L('<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:6px 10px;margin:4px 0;font-family:monospace;font-size:11px"><b>Adjusted Price</b> = Bid Price + 10% \u00d7 Bid Price \u00d7 (1 \u2212 NPP%)<br/><b>Award</b>: Lowest <u>original</u> bid price among qualified bidders</div>','<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:6px 10px;margin:4px 0;font-family:monospace;font-size:11px;direction:ltr"><b>Adjusted Price</b> = Bid Price + 10% \u00d7 Bid Price \u00d7 (1 \u2212 NPP%)<br/><b>الترسية</b>: أقل سعر أصلي</div>')+'</li>';
-  }
-  if(_hasWt){
-    var _pw=S.priceWeight||60,_lw=S.lcWeight||40,_ts=S.targetSplit||50,_bs=S.baselineSplit||50,_tad=(S.listedBonus?(S.listedBonusPct||5):0);
-    var _tadEN=S.listedBonus?(' + '+_tad+'% Tadawul-listed bonus'):'';
-    var _tadAR=S.listedBonus?(' + '+_tad+'% علاوة الإدراج في تداول'):'';
-    h+='<li><b>'+L('Local Content Weight in Commercial Evaluation','وزن المحتوى المحلي في التقييم التجاري')+':</b><br/>'+L('<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:8px 10px;margin:4px 0;font-family:monospace;font-size:10.5px">'+(_hasNPP?'<b>Adjusted Price</b> = Bid Price + '+(S.nppPref||10)+'% \u00d7 Bid Price \u00d7 (1 \u2212 NPP%) <i>(every bidder first)</i><br/>':'')+'<b>Price Score</b> = (Lowest '+(_hasNPP?'Adjusted ':'')+'Price \u00f7 This '+(_hasNPP?'Adjusted ':'')+'Price) \u00d7 '+_pw+'%<br/><b>LC Score</b> = ( Baseline% \u00d7 '+_bs+'% + Target% \u00d7 '+_ts+'%'+_tadEN+' ) \u00d7 '+_lw+'%<br/><b>Final Score</b> = Price Score + LC Score \u2192 highest wins</div>','<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:8px 10px;margin:4px 0;font-family:monospace;font-size:10.5px;direction:ltr">'+(_hasNPP?'<b>السعر المعدّل</b> = '+(S.nppPref||10)+'% \u00d7 (1 \u2212 NPP%)<br/>':'')+'<b>درجة السعر</b> = (أقل سعر \u00f7 هذا السعر) \u00d7 '+_pw+'%<br/><b>درجة المحتوى</b> = ( '+_bs+'% + '+_ts+'%'+_tadAR+' ) \u00d7 '+_lw+'%</div>')+'</li>';
-  }
+  // 5. Exclusion rules & compliance checks (full scoring equations are in Section 1 — Evaluation Methodology)
+  h+='<h2>5. '+L('Exclusion Rules &amp; Compliance Checks','قواعد الاستبعاد وفحوصات الامتثال')+'</h2>';
+  h+='<div class="box"><ul style="margin-'+(AR_MODE?'right':'left')+':18px;font-size:11px">';
+  h+='<li>'+L('Exclusion rules applied before scoring: the minimum Local Content thresholds, missing Local Content certificates, and bid-validity checks.','قواعد الاستبعاد المطبقة قبل الاحتساب: الحد الأدنى للمحتوى المحلي، وشهادات المحتوى المحلي المفقودة، وفحوصات صلاحية العطاء.')+'</li>';
   if(_hasThr){
-    h+='<li><b>'+L('LC Minimum Threshold','الحد الأدنى للمحتوى المحلي')+':</b><br/>'+L('<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:6px 10px;margin:4px 0;font-family:monospace;font-size:11px"><b>Rule</b>: If Bidder LC Baseline &lt; Min Required % \u2192 <span style="color:#dc2626">EXCLUDED</span><br/>If Bidder LC Target &lt; Min Target % \u2192 <span style="color:#dc2626">EXCLUDED</span><br/>Qualified bidders ranked by lowest price.</div>','<div style="background:#eef2fb;border:1px solid #c9d6ee;color:#0b1324;border-radius:6px;padding:6px 10px;margin:4px 0;font-family:monospace;font-size:11px;direction:ltr"><b>القاعدة</b>: إذا خط الأساس &lt; الحد الأدنى % \u2192 <span style="color:#dc2626">مستبعد</span><br/>المؤهلون يُرتبون بأقل سعر.</div>')+'</li>';
-  }
-  if(_hasSME){
-    h+='<li><b>'+L('SME Preference','تفضيل المنشآت الصغيرة والمتوسطة')+':</b> '+L('A '+(S.smePref||10)+'% loading is added to the price of <b>non-SME</b> bidders; qualified SME bidders are evaluated at their actual price, then all qualified bidders are ranked by lowest evaluated price.','يُضاف تحميل قدره '+(S.smePref||10)+'% على سعر المتقدمين <b>من غير المنشآت الصغيرة والمتوسطة</b>؛ وتُقيَّم المنشآت الصغيرة والمتوسطة المؤهلة بسعرها الفعلي، ثم يُرتَّب الجميع بأقل سعر مُقيَّم.')+'</li>';
+    h+='<li>'+L('Under the Local Content Minimum Threshold mechanism, any bidder whose Local Content Baseline or Target falls below the required minimum is excluded before ranking.','وفق آلية الحد الأدنى للمحتوى المحلي، يُستبعد أي متقدم يقل خط أساسه أو مستهدفه للمحتوى المحلي عن الحد الأدنى المطلوب قبل الترتيب.')+'</li>';
   }
   if(_hasMLNP){
-    h+='<li><b>'+L('MLNP (Mandatory Local & National Products)','قائمة المنتجات الوطنية الإلزامية')+':</b> '+L('Mandatory list compliance is verified. Non-compliant items are penalized in scoring.','يتم التحقق من الامتثال للقائمة الإلزامية. تُخصم درجات على البنود غير الممتثلة.')+'</li>';
+    h+='<li>'+L('Mandatory List compliance was verified for the required line items; non-compliant items were penalized in scoring and may trigger exclusion.','تم التحقق من الامتثال للقائمة الإلزامية للبنود المطلوبة؛ وخُصمت درجات على البنود غير الممتثلة وقد تؤدي إلى الاستبعاد.')+'</li>';
   }
-  if(!_hasNPP&&!_hasWt&&!_hasThr&&!_hasSME){
-    h+='<li>'+L('Scores combine price competitiveness with committed Local Content weighting. Exclusion conditions were applied before ranking.','تجمع الدرجات بين تنافسية السعر ووزن المحتوى المحلي الملتزم به. وطُبقت شروط الاستبعاد قبل الترتيب.')+'</li>';
-  }
-  h+='<li>'+L('Exclusion rules: minimum LC thresholds, missing certificates, and bid validity checks applied before scoring.','قواعد الاستبعاد: الحد الأدنى للمحتوى المحلي، والشهادات المفقودة، وفحوصات صلاحية العطاء تُطبق قبل الاحتساب.')+'</li>';
+  h+='<li>'+L('The full scoring equations applied under this mechanism are presented in Section 1 — Evaluation Methodology.','المعادلات الكاملة للاحتساب المطبقة وفق هذه الآلية موضحة في القسم 1 — منهجية التقييم.')+'</li>';
   h+='</ul></div>';
   h+='<h2>6. '+L('Justification &amp; Rationale','المبررات والأسباب')+'</h2>';
   h+='<div class="box">';
@@ -5932,11 +6011,11 @@ function _openPenaltyLetter(c,pens,single){
   var bi=(typeof brandInfo==='function')?brandInfo():{org:(S&&S.org)||'LC Monitor Pro',logo:''};
   var total=pens.reduce(function(s,p){return s+(p.amount||0);},0);
   var now=new Date().toLocaleDateString(AR_MODE?'ar-SA':'en-GB',{day:'2-digit',month:'long',year:'numeric'});
-  var typeName=function(t){var m={Periodic:L('Periodic LC Report shortfall/non-submission','نقص/عدم تقديم التقرير الدوري'),FinalSub:L('Final Report non-submission','عدم تقديم التقرير النهائي'),Deviation:L('LC achievement deviation','الانحراف عن نسبة المحتوى المحلي'),GoodsDeviation:L('Local-content goods deviation (received Foreign instead of Local)','انحراف توطين السلع (استلام أجنبي بدلاً من وطني)'),NPP:L('NPP delivery shortfall','نقص توريد المنتجات الوطنية'),MLNP:L('Mandatory List (MLNP) shortfall','نقص القائمة الإلزامية')};return m[t]||t;};
-  var meth={Deviation:L('Penalty = (Agreed LC% − Achieved LC%) × Contract Value × '+((S.dev||0.30)*100)+'% deduction factor, applied only when the shortfall exceeds the '+ (S.gap||5) +'% tolerance gap.','الغرامة = (النسبة المتفق عليها − النسبة المحققة) × قيمة العقد × عامل خصم '+((S.dev||0.30)*100)+'٪، وتُطبَّق فقط عند تجاوز النقص حد التسامح البالغ '+(S.gap||5)+'٪.'),
-    Periodic:L('Each missing or late periodic LC report incurs a fixed deduction as set in the penalty rules.','يترتب على كل تقرير دوري مفقود أو متأخر خصم ثابت وفق قواعد الغرامات.'),
-    FinalSub:L('Non-submission of the Final LC Report incurs a '+(S.fin||10)+'% deduction of the LC value.','يترتب على عدم تقديم التقرير النهائي خصم بنسبة '+(S.fin||10)+'٪ من قيمة المحتوى المحلي.'),
-    NPP:L('NPP shortfall = (Committed − Delivered) × '+((S.npp||0.30)*100)+'% deduction factor.','غرامة المنتجات الوطنية = (الملتزم − المورّد) × عامل خصم '+((S.npp||0.30)*100)+'٪.'),
+  var typeName=function(t){var m={Periodic:L('Periodic Local Content Report shortfall / non-submission','نقص/عدم تقديم التقرير الدوري'),FinalSub:L('Final Report non-submission','عدم تقديم التقرير النهائي'),Deviation:L('Local Content achievement deviation','الانحراف عن نسبة المحتوى المحلي'),GoodsDeviation:L('Local-content goods deviation (received Foreign instead of Local)','انحراف توطين السلع (استلام أجنبي بدلاً من وطني)'),NPP:L('National Products Price Preferencing delivery shortfall','نقص توريد المنتجات الوطنية'),MLNP:L('Mandatory List shortfall','نقص القائمة الإلزامية')};return m[t]||t;};
+  var meth={Deviation:L('Penalty = (Agreed Local Content % − Achieved Local Content %) × Contract Value × '+((S.dev||0.30)*100)+'% deduction factor, applied only when the shortfall exceeds the '+ (S.gap||5) +'% tolerance gap.','الغرامة = (النسبة المتفق عليها − النسبة المحققة) × قيمة العقد × عامل خصم '+((S.dev||0.30)*100)+'٪، وتُطبَّق فقط عند تجاوز النقص حد التسامح البالغ '+(S.gap||5)+'٪.'),
+    Periodic:L('Each missing or late periodic Local Content report incurs a fixed deduction as set in the penalty rules.','يترتب على كل تقرير دوري مفقود أو متأخر خصم ثابت وفق قواعد الغرامات.'),
+    FinalSub:L('Non-submission of the Final Local Content Report incurs a '+(S.fin||10)+'% deduction of the Local Content value.','يترتب على عدم تقديم التقرير النهائي خصم بنسبة '+(S.fin||10)+'٪ من قيمة المحتوى المحلي.'),
+    NPP:L('National Products Price Preferencing shortfall = (Committed − Delivered) × '+((S.npp||0.30)*100)+'% deduction factor.','غرامة المنتجات الوطنية = (الملتزم − المورّد) × عامل خصم '+((S.npp||0.30)*100)+'٪.'),
     GoodsDeviation:L('Goods deviation = Line item total × (shortfall in Local QTY ÷ Local QTY ordered) × 30%, applied when Local goods are received as Foreign without an approved exception letter.','غرامة انحراف السلع = إجمالي البند × (النقص في الكمية الوطنية ÷ الكمية الوطنية المطلوبة) × ٣٠٪، وتُطبَّق عند استلام سلع وطنية كأجنبية دون خطاب استثناء معتمد.'),
     MLNP:L('Mandatory List shortfall = (Committed − Delivered) × '+((S.ml||0.30)*100)+'% deduction factor.','غرامة القائمة الإلزامية = (الملتزم − المورّد) × عامل خصم '+((S.ml||0.30)*100)+'٪.')};
   var seen={};
@@ -6109,9 +6188,9 @@ function renderSubCompetitions(){
   var escSub=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});};
   var el=document.getElementById('subCompetitions');if(!el)return;
   var sel=document.getElementById('subSupplier');var supId=sel?sel.value:'';
-  var ready=(typeof RFPS!=='undefined'?RFPS:[]).filter(function(r){return r.status==='ready';});
-  var open=ready.filter(function(r){return (r.tenderStyle||'open')!=='closed';});
-  var closed=ready.filter(function(r){return r.tenderStyle==='closed'&&supId&&(r.invitedSuppliers||[]).map(String).indexOf(String(supId))>=0;});
+  var all=(typeof RFPS!=='undefined'?RFPS:[]);
+  var open=all.filter(function(r){return (r.tenderStyle||'open')!=='closed';});
+  var closed=all.filter(function(r){return r.tenderStyle==='closed'&&supId&&(r.invitedSuppliers||[]).map(String).indexOf(String(supId))>=0;});
   function card(r){
     var picked=String(document.getElementById('subRFP').value)===String(r.id);
     var tc=(r.tcText||(typeof MECH_TC!=='undefined'&&MECH_TC[r.suggestedMech||r.mechanism]&&(MECH_TC[r.suggestedMech||r.mechanism].rfp||MECH_TC[r.suggestedMech||r.mechanism].contract))||'');
@@ -6303,6 +6382,19 @@ function renderSupReq(){
       });
     }
     if(!totalReq)h+='<div style="font-size:11px;color:var(--text3)">No outstanding requirements ✓</div>';
+    var pushedPens=(c.penalties||[]).map(function(p,pi){return {p:p,pi:pi};}).filter(function(o){return o.p.pushedToSupplier;});
+    if(pushedPens.length){
+      h+='<div style="font-size:10px;font-weight:800;color:var(--danger);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 5px">⚠ Penalties</div>';
+      pushedPens.forEach(function(o){
+        var p=o.p;
+        h+='<div class="rv-file-row" style="margin-bottom:5px">'
+         +'<div class="rv-file-info"><span class="rv-file-name">⚠ '+penTypeLabel(p.type)+' — '+fSAR(p.amount)+'</span>'
+         +'<span class="rv-file-meta"> &nbsp;'+(p.reason||'')+(p.pushedAt?' · Issued '+fD(p.pushedAt):'')+'</span></div>'
+         +'<div class="rv-file-actions"><span class="badge br" style="font-size:9px">Penalty</span>'
+         +'<button class="ev-btn view" onclick="generatePenaltyLetterFor('+c.id+','+o.pi+')" title="View / download the penalty letter">👁 View Letter</button>'
+         +'</div></div>';
+      });
+    }
     h+='</div>';
   });
   el.innerHTML=h;
@@ -7501,21 +7593,27 @@ window.saveAccountSettings=saveAccountSettings;
 // populate the account form whenever the Settings page renders
 (function(){var _rsAcct=renderSettings;renderSettings=function(){if(typeof _rsAcct==='function')_rsAcct.apply(this,arguments);try{renderAccountSettings();}catch(e){}};window.renderSettings=renderSettings;})();
 
-// RFP PDF with Origin + ML Code
+// RFP PDF with Origin + Mandatory List Code — true pdf-lib merge of attached T&C PDFs when available
 generateRFPPDF=function(){
   if(!curRFP){toast("No RFP open","err");return;}
   var r=curRFP,now=new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"long",year:"numeric"});
   var boq=r.boq||rfpBoQ.filter(function(b){return b.desc;});
   var tot=boq.reduce(function(s,b){return s+(b.cost||0);},0);
   var tc=MECH_TC[r.suggestedMech]||{};
+  // If a Terms & Conditions PDF is attached and the PDF engine is loaded, produce one true merged PDF.
+  var _rfpPdf=tc.rfpFileData&&(/pdf/i.test(tc.rfpFile||'')||/application\/pdf/i.test(tc.rfpFileData));
+  var _conPdf=tc.contractFileData&&(/pdf/i.test(tc.contractFile||'')||/application\/pdf/i.test(tc.contractFileData));
+  if((_rfpPdf||_conPdf)&&typeof PDFLib!=='undefined'&&PDFLib.PDFDocument){
+    _exportRFPMergedPDF(r,boq,tot,tc,now);return;
+  }
   var css="*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,sans-serif;color:#1e293b;padding:30px;font-size:11px}h1{font-size:20px;color:#1e3a5f;margin-bottom:4px}h2{font-size:13px;font-weight:800;color:#1e3a5f;margin:16px 0 8px;padding-bottom:4px;border-bottom:2px solid #e2e8f0}.hdr{text-align:center;border-bottom:3px solid #003087;padding-bottom:14px;margin-bottom:20px}.logo{font-size:18px;font-weight:800;color:#003087}.sub{font-size:10px;color:#666;margin-top:2px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;margin-bottom:10px}.fld .lbl{font-size:8px;color:#777;font-weight:700;text-transform:uppercase}.fld .val{font-size:10px;font-weight:600}table{width:100%;border-collapse:collapse;font-size:10px;margin-top:6px}th{background:#003087;color:#fff;padding:5px 7px;text-align:left}td{padding:4px 7px;border-bottom:1px solid #ddd}tr:nth-child(even) td{background:#f5f7fa}.mech{background:#f0f7ff;border:2px solid #003087;border-radius:6px;padding:10px 14px;margin:10px 0}.tcb{background:#f9f9f9;border:1px solid #ddd;border-radius:4px;padding:10px;margin-top:6px;font-size:10px;line-height:1.5;white-space:pre-wrap}.ft{border-top:1px solid #ccc;padding-top:8px;margin-top:20px;font-size:9px;color:#999;display:flex;justify-content:space-between}@media print{@page{size:A4;margin:12mm}body{padding:0}}";
   var htm='<!DOCTYPE html><html><head><meta charset="utf-8"><title>RFP</title><style>'+css+'</style>'+(typeof _pdfThemeCSS==='function'?'<style>'+_pdfThemeCSS()+'</style>':'')+'</head><body>';
   htm+='<div class="hdr"><div class="logo">'+(S.org&&S.org!=="My Organization"?S.org:"LC Monitor Pro")+'</div><h1>Request for Proposal (RFP)</h1><div class="sub">'+now+'</div></div>';
   htm+='<h2>1. RFP Information</h2><div class="grid"><div class="fld"><div class="lbl">Title</div><div class="val">'+(r.title||"--")+'</div></div><div class="fld"><div class="lbl">Ref #</div><div class="val">'+(r.ref||"--")+'</div></div><div class="fld"><div class="lbl">End-User</div><div class="val">'+(r.endUser||"--")+'</div></div><div class="fld"><div class="lbl">Value</div><div class="val">'+fSAR(r.value||0)+'</div></div></div>';
   if(r.scope)htm+='<h2>2. Scope of Work</h2><div style="font-size:11px;line-height:1.6;margin-bottom:10px">'+r.scope.replace(/\n/g,"<br/>")+'</div>';
-  if(r.suggestedMech)htm+='<h2>3. LC Mechanism</h2><div class="mech"><div style="font-size:10px;color:#003087;font-weight:700">APPLICABLE MECHANISM</div><div style="font-size:14px;font-weight:800;margin-top:4px">'+r.suggestedMech+'</div></div>';
+  if(r.suggestedMech)htm+='<h2>3. Local Content Mechanism</h2><div class="mech"><div style="font-size:10px;color:#003087;font-weight:700">APPLICABLE MECHANISM</div><div style="font-size:14px;font-weight:800;margin-top:4px">'+r.suggestedMech+'</div></div>';
   if(boq.length){
-    htm+='<h2>4. Bill of Quantities</h2><table><thead><tr><th>#</th><th>Description</th><th>Nature</th><th>Origin</th><th>Qty</th><th>UoM</th><th>Est. Cost</th><th>ML Code</th></tr></thead><tbody>';
+    htm+='<h2>4. Bill of Quantities</h2><table><thead><tr><th>#</th><th>Description</th><th>Nature</th><th>Origin</th><th>Qty</th><th>UoM</th><th>Est. Cost</th><th>Mandatory List Code</th></tr></thead><tbody>';
     boq.forEach(function(b,i){htm+='<tr><td>'+(i+1)+'</td><td>'+b.desc+'</td><td>'+(b.nature||"--")+'</td><td>'+(b.origin||"--")+'</td><td>'+(b.qty||1)+'</td><td>'+(b.uom||"--")+'</td><td>'+fSAR(b.cost||0)+'</td><td>'+(b.isMandatory&&b.mlCode?b.mlCode:"--")+'</td></tr>';});
     htm+='<tr style="font-weight:700"><td colspan="6">Total</td><td>'+fSAR(tot)+'</td><td></td></tr></tbody></table>';
   }
@@ -7524,11 +7622,98 @@ generateRFPPDF=function(){
   // T&C attached as a file in Settings → embed PDFs inline after the RFP details; other formats get a note
   if(tc.rfpFileData)htm+='<h2>RFP Terms &amp; Conditions — Attached Document</h2>'+(/pdf/i.test(tc.rfpFile||'')||/application\/pdf/i.test(tc.rfpFileData)?'<div style="font-size:9px;color:#888;margin-bottom:4px">📎 '+(tc.rfpFile||'document.pdf')+'</div><iframe src="'+tc.rfpFileData+'" style="width:100%;height:600px;border:1px solid #ddd;border-radius:6px"></iframe>':'<div class="tcb">📎 Attached as a separate document: <b>'+(tc.rfpFile||'document')+'</b> (non-PDF format — open it from the mechanism Terms &amp; Conditions in Settings).</div>');
   if(tc.contractFileData)htm+='<h2>Contract Terms &amp; Conditions — Attached Document</h2>'+(/pdf/i.test(tc.contractFile||'')||/application\/pdf/i.test(tc.contractFileData)?'<div style="font-size:9px;color:#888;margin-bottom:4px">📎 '+(tc.contractFile||'document.pdf')+'</div><iframe src="'+tc.contractFileData+'" style="width:100%;height:600px;border:1px solid #ddd;border-radius:6px"></iframe>':'<div class="tcb">📎 Attached as a separate document: <b>'+(tc.contractFile||'document')+'</b> (non-PDF format).</div>');
-  if(r.mlnpItems&&r.mlnpItems.length){htm+='<h2>7. MLNP Items</h2><table><thead><tr><th>Item</th><th>Code</th><th>Relevance</th></tr></thead><tbody>';r.mlnpItems.forEach(function(m){htm+='<tr><td>'+(m.name||"--")+'</td><td>'+(m.code||"--")+'</td><td>'+(m.relevance||"--")+'</td></tr>';});htm+='</tbody></table>';}
+  if(r.mlnpItems&&r.mlnpItems.length){htm+='<h2>7. Mandatory List Items</h2><table><thead><tr><th>Item</th><th>Code</th><th>Relevance</th></tr></thead><tbody>';r.mlnpItems.forEach(function(m){htm+='<tr><td>'+(m.name||"--")+'</td><td>'+(m.code||"--")+'</td><td>'+(m.relevance||"--")+'</td></tr>';});htm+='</tbody></table>';}
   htm+='<div class="ft"><span>LC Monitor Pro | Confidential</span><span>'+now+'</span></div></body></html>';
   var w=window.open("","_blank","width=900,height=700");if(!w){toast("Allow pop-ups","err");return;}w.document.write(htm);w.document.close();setTimeout(function(){w.print();},600);toast("RFP PDF generated","ok");
 };
 window.generateRFPPDF=generateRFPPDF;
+// Build the RFP details with pdf-lib and append the attached Terms & Conditions PDF page(s) → one combined PDF.
+async function _exportRFPMergedPDF(r,boq,tot,tc,now){
+  try{
+    var PDFDocument=PDFLib.PDFDocument,StandardFonts=PDFLib.StandardFonts,rgb=PDFLib.rgb;
+    var doc=await PDFDocument.create();
+    var font=await doc.embedFont(StandardFonts.Helvetica);
+    var fontB=await doc.embedFont(StandardFonts.HelveticaBold);
+    var PW=595.28,PH=841.89,M=48,navy=rgb(0,0.188,0.53),ink=rgb(0.118,0.161,0.231),gray=rgb(0.42,0.45,0.5),lineC=rgb(0.85,0.87,0.9),zebra=rgb(0.965,0.973,0.98),headFill=rgb(0,0.188,0.53);
+    var page,y;
+    function addPage(){page=doc.addPage([PW,PH]);y=PH-M;}
+    function san(s){return String(s==null?'':s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[–—]/g,'-').replace(/…/g,'...').replace(/[×]/g,'x').replace(/[^\x20-\x7E]/g,'');}
+    function wrap(text,f,size,maxW){text=san(text);var words=text.split(/\s+/),lines=[],cur='';for(var i=0;i<words.length;i++){var wd=words[i];var t=cur?cur+' '+wd:wd;if(f.widthOfTextAtSize(t,size)>maxW&&cur){lines.push(cur);cur=wd;}else cur=t;}if(cur)lines.push(cur);return lines.length?lines:[''];}
+    function ensure(h){if(y-h<M){addPage();}}
+    function para(text,opt){opt=opt||{};var f=opt.bold?fontB:font;var size=opt.size||10;var color=opt.color||ink;var x=opt.x||M;var maxW=opt.maxW||(PW-2*M-(x-M));var lh=size*1.42;var lines=wrap(text,f,size,maxW);for(var i=0;i<lines.length;i++){ensure(lh);page.drawText(lines[i],{x:x,y:y-size,size:size,font:f,color:color});y-=lh;}}
+    function heading(text){y-=10;ensure(24);page.drawText(san(text),{x:M,y:y-12,size:12.5,font:fontB,color:navy});y-=16;page.drawLine({start:{x:M,y:y},end:{x:PW-M,y:y},thickness:1.2,color:lineC});y-=12;}
+    addPage();
+    // Header band
+    page.drawText(san(S.org&&S.org!=="My Organization"?S.org:"LC Monitor Pro"),{x:M,y:y-15,size:15,font:fontB,color:navy});
+    page.drawText("Request for Proposal (RFP)",{x:M,y:y-34,size:11,font:fontB,color:ink});
+    page.drawText(san(now),{x:M,y:y-49,size:9,font:font,color:gray});
+    y-=58;page.drawLine({start:{x:M,y:y},end:{x:PW-M,y:y},thickness:2,color:navy});y-=6;
+    // 1. RFP Information (two-column key/value)
+    heading("1. RFP Information");
+    var info=[["Title",r.title||"--"],["Ref #",r.ref||"--"],["End-User",r.endUser||"--"],["Value",fSAR(r.value||0)]];
+    var colW=(PW-2*M)/2;
+    for(var ii=0;ii<info.length;ii+=2){
+      ensure(28);
+      for(var c=0;c<2&&ii+c<info.length;c++){var it=info[ii+c];var cx=M+c*colW;
+        page.drawText(san(it[0]).toUpperCase(),{x:cx,y:y-8,size:7.5,font:fontB,color:gray});
+        var vl=wrap(it[1],font,10,colW-12);page.drawText(vl[0],{x:cx,y:y-21,size:10,font:fontB,color:ink});
+      }
+      y-=30;
+    }
+    // 2. Scope of Work
+    if(r.scope){heading("2. Scope of Work");para(r.scope,{size:10,color:ink});}
+    // 3. Local Content Mechanism
+    if(r.suggestedMech){heading("3. Local Content Mechanism");ensure(40);page.drawRectangle({x:M,y:y-34,width:PW-2*M,height:34,color:rgb(0.941,0.969,1),borderColor:navy,borderWidth:1.4});page.drawText("APPLICABLE MECHANISM",{x:M+10,y:y-13,size:7.5,font:fontB,color:navy});var mw=wrap(r.suggestedMech,fontB,12,PW-2*M-20);page.drawText(mw[0],{x:M+10,y:y-28,size:12,font:fontB,color:ink});y-=44;}
+    // 4. Bill of Quantities (table with wrapped Description + Mandatory List Code)
+    if(boq.length){
+      heading("4. Bill of Quantities");
+      var cols=[{t:"#",w:22},{t:"Description",w:150},{t:"Nature",w:50},{t:"Origin",w:46},{t:"Qty",w:34},{t:"UoM",w:50},{t:"Est. Cost",w:74},{t:"Mandatory List Code",w:73}];
+      var cx0=M;function colX(idx){var x=cx0;for(var k=0;k<idx;k++)x+=cols[k].w;return x;}
+      function row(cells,opt){opt=opt||{};var f=opt.bold?fontB:font;var size=8.2;
+        // compute wrapped lines per cell, row height = max
+        var wrapped=cells.map(function(cell,ci){return wrap(cell,f,size,cols[ci].w-6);});
+        var maxLines=wrapped.reduce(function(mx,a){return Math.max(mx,a.length);},1);
+        var rh=maxLines*(size*1.3)+6;ensure(rh);
+        if(opt.head){page.drawRectangle({x:cx0,y:y-rh,width:PW-2*M,height:rh,color:headFill});}
+        else if(opt.zebra){page.drawRectangle({x:cx0,y:y-rh,width:PW-2*M,height:rh,color:zebra});}
+        for(var ci=0;ci<cells.length;ci++){var lines=wrapped[ci];var tx=colX(ci)+3;for(var li=0;li<lines.length;li++){page.drawText(lines[li],{x:tx,y:y-(size+2)-li*(size*1.3),size:size,font:f,color:opt.head?rgb(1,1,1):ink});}}
+        page.drawLine({start:{x:cx0,y:y-rh},end:{x:PW-M,y:y-rh},thickness:0.5,color:lineC});
+        y-=rh;
+      }
+      row(cols.map(function(c){return c.t;}),{head:true,bold:true});
+      boq.forEach(function(b,i){row([String(i+1),b.desc||"--",b.nature||"--",b.origin||"--",String(b.qty||1),b.uom||"--",fSAR(b.cost||0),(b.isMandatory&&b.mlCode?b.mlCode:"--")],{zebra:i%2===1});});
+      row(["","Total","","","","",fSAR(tot),""],{bold:true});
+    }
+    // 5/6. Terms & Conditions text
+    if(tc.rfp){heading("5. RFP Terms & Conditions");para(tc.rfp,{size:9.5,color:ink});}
+    if(tc.contract){heading("6. Contract Terms & Conditions");para(tc.contract,{size:9.5,color:ink});}
+    // 7. Mandatory List Items
+    if(r.mlnpItems&&r.mlnpItems.length){heading("7. Mandatory List Items");r.mlnpItems.forEach(function(m){para((san(m.name||"--"))+"  |  Code: "+(m.code||"--")+"  |  Relevance: "+(m.relevance||"--"),{size:9.5});});}
+    // Footer note on the last details page
+    ensure(20);y-=4;page.drawLine({start:{x:M,y:y},end:{x:PW-M,y:y},thickness:0.6,color:lineC});y-=12;page.drawText("LC Monitor Pro  |  Confidential",{x:M,y:y,size:8,font:font,color:gray});page.drawText(san(now),{x:PW-M-font.widthOfTextAtSize(san(now),8),y:y,size:8,font:font,color:gray});
+    // ---- Append attached Terms & Conditions PDF page(s) ----
+    function dataUrlBytes(d){var b=atob(String(d).split(',')[1]||'');var a=new Uint8Array(b.length);for(var i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a;}
+    async function appendDoc(dataUrl,fileName,label){
+      if(!dataUrl)return;
+      var isPdf=/pdf/i.test(fileName||'')||/application\/pdf/i.test(dataUrl);
+      if(!isPdf){addPage();heading(label+" — Attached Document");para("Attached as a separate non-PDF document: "+(fileName||"document")+". Open it from Settings → Mechanism Terms & Conditions.",{color:gray});return;}
+      try{
+        var src=await PDFDocument.load(dataUrlBytes(dataUrl),{ignoreEncryption:true});
+        // separator page introducing the appended document
+        addPage();heading(label);para("The following page(s) reproduce the attached Terms & Conditions document: "+(fileName||"document.pdf")+".",{color:gray});
+        var idxs=src.getPageIndices();var copied=await doc.copyPages(src,idxs);copied.forEach(function(p){doc.addPage(p);});
+      }catch(e){addPage();heading(label+" — Attached Document");para("Could not embed the attached PDF ("+(e&&e.message||e)+").",{color:gray});}
+    }
+    await appendDoc(tc.rfpFileData,tc.rfpFile,"RFP Terms & Conditions");
+    await appendDoc(tc.contractFileData,tc.contractFile,"Contract Terms & Conditions");
+    var bytes=await doc.save();
+    var url=URL.createObjectURL(new Blob([bytes],{type:'application/pdf'}));
+    var a=document.createElement('a');a.href=url;a.download=(String(r.ref||r.title||'RFP').replace(/[^\w]+/g,'_')||'RFP')+'.pdf';document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},60000);
+    toast('RFP PDF generated — Terms & Conditions merged','ok');
+  }catch(e){toast('PDF merge failed: '+(e&&e.message||e),'err');}
+}
+window._exportRFPMergedPDF=_exportRFPMergedPDF;
 
 // DT Rules settings UI
 var _editDTIdx=-1;
@@ -8735,9 +8920,8 @@ window._subBoQItems=_subBoQItems;
 (function(){
 window.openSubModal = function(){
   var ss=document.getElementById('subSupplier');
-  if(typeof SUPPLIERS!=='undefined'&&ss) ss.innerHTML=SUPPLIERS.map(function(s){return '<option value="'+s.id+'">'+s.name+'</option>';}).join('')||'<option value="">No suppliers</option>';
-  var sr=document.getElementById('subRFP');
-  if(typeof RFPS!=='undefined'&&sr) sr.innerHTML='<option value="">-- Select RFP --</option>'+RFPS.map(function(r){return '<option value="'+r.id+'">'+(r.title||r.ref||('RFP '+r.id))+'</option>';}).join('');
+  if(typeof SUPPLIERS!=='undefined'&&ss) ss.innerHTML='<option value="">Select supplier…</option>'+SUPPLIERS.map(function(s){return '<option value="'+s.id+'">'+s.name+'</option>';}).join('');
+  var sr=document.getElementById('subRFP');if(sr)sr.value='';
   ['subPrice','subLC','subNPP'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
   ['subFileNameTech','subFileNameFin','subFileNameMand'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent='';});
   ['subFileTech','subFileFin','subFileMand'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
@@ -8746,12 +8930,7 @@ window.openSubModal = function(){
   var tb=document.getElementById('subBoQTbody');if(tb)tb.innerHTML='';
   var sm=document.getElementById('subBoQSummary');if(sm)sm.innerHTML='';
   var pp=document.getElementById('subPrice');if(pp){pp.readOnly=false;pp.style.background='';}
-  // If an RFP was pre-selected in the page filter, carry it into the modal and load its BoQ
-  var pf=document.getElementById('subRFPFilter');
-  if(pf&&pf.value&&sr&&[].some.call(sr.options,function(o){return o.value===pf.value;})){
-    sr.value=pf.value;
-    if(typeof v55_extractRFPBoQ==='function')v55_extractRFPBoQ();
-  }
+  if(typeof renderSubCompetitions==='function')renderSubCompetitions();
   if(typeof openModal==='function')openModal('subModal');
 };
 })();
