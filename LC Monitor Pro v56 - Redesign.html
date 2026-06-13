@@ -1847,6 +1847,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div class="fg"><label class="fl2">Start Date <span class="req">*</span></label><input class="fi" id="fSD" type="date" required=""></div>
         <div class="fg"><label class="fl2">Duration (months) <span class="req">*</span></label><input class="fi" id="fDur" type="number" required=""></div>
         <div class="fg"><label class="fl2">End Date (auto)</label><input class="fi" id="fED" readonly="" style="color:var(--text3)"></div>
+        <div class="fg"><label class="fl2">Awarding Date</label><input class="fi" id="fAward" type="date" title="Required for Local-Content mechanisms — sets the Improvement Plan due date (award + 60 days)"></div>
       </div>
     </div>
     <div class="fsec">
@@ -2490,7 +2491,7 @@ let EMAIL_TPL=JSON.parse(localStorage.getItem('lcEmailTpl')||JSON.stringify({per
 let REM_LOG=JSON.parse(localStorage.getItem('lcRemLog')||'[]');
 let EJS=Object.assign({serviceId:'',templateId:'',publicKey:'',configured:false},JSON.parse(localStorage.getItem('lcEJS')||'{}'));
 var auditMode='all',pfMode='all',certMode='all',editEUIdx=-1,editCertIdx=-1;
-var RTYPE_LBL={period_1:'1st Year Periodic Report',period_2:'2nd Year Periodic Report',period_3:'3rd Year Periodic Report',period_4:'4th Year Periodic Report',period_5:'5th Year Periodic Report',final:'Final Report',npp:'National Products Price Preferencing Final Supply Report',mlnp:'Mandatory List Final Supply Report'};
+var RTYPE_LBL={period_1:'1st Year Periodic Report',period_2:'2nd Year Periodic Report',period_3:'3rd Year Periodic Report',period_4:'4th Year Periodic Report',period_5:'5th Year Periodic Report',final:'Final Report',npp:'National Products Price Preferencing Final Supply Report',mlnp:'Mandatory List Final Supply Report',improvement:'Improvement Plan'};
 function logAudit(type,desc,num){AUDIT_LOG.unshift({id:Date.now(),type:type,desc:desc,num:num||'',ts:new Date().toLocaleString('en-GB')});if(AUDIT_LOG.length>300)AUDIT_LOG.length=300;lsSet('lcAudit',JSON.stringify(AUDIT_LOG));}
 
 // ============================================================
@@ -2584,9 +2585,9 @@ const fD=d=>d?new Date(d).toLocaleDateString(_loc(),{day:'2-digit',month:'short'
 const pct=v=>v!=null?(v*100).toFixed(1)+'%':'—';
 const tPen=c=>(c.penalties||[]).reduce((s,p)=>{if(p.type==='Periodic'&&p.year&&PPEN[p.year]===false)return s;return s+(p.amount||0);},0);
 // Missing = unreceived AND past its grace deadline (overdue), excluding penalty-disabled periodics.
-const mCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&(typeof reportState==='function'?reportState(c,r)==='overdue':r.received===false)&&!(r.type==='period'&&r.year&&PPEN[r.year]===false)).length;
+const mCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&(typeof reportState==='function'?reportState(c,r)==='overdue':r.received===false)&&!(r.type==='period'&&r.year&&PPEN[r.year]===false)&&(typeof reportCountsForKPI!=='function'||reportCountsForKPI(c,r))).length;
 // Due = unreceived and currently within its grace window (shown as "Due" everywhere, not yet penalised).
-const dueCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&typeof reportState==='function'&&reportState(c,r)==='due').length;
+const dueCnt=c=>(c.reports||[]).filter(r=>r.received!==true&&typeof reportState==='function'&&reportState(c,r)==='due'&&(typeof reportCountsForKPI!=='function'||reportCountsForKPI(c,r))).length;
 const isExp=c=>c.end&&new Date(c.end)<TODAY;
 const hasPen=c=>tPen(c)>0;
 const fSize=b=>b<1024?b+'B':b<1048576?(b/1024).toFixed(1)+'KB':(b/1048576).toFixed(1)+'MB';
@@ -3349,6 +3350,7 @@ function openContractModal(id){
   h+='<div class="fg"><label class="fl2">Contractor</label><div style="display:flex;gap:6px;align-items:center"><input class="fi" id="meditCont" list="meditContDL" autocomplete="off" value="'+(c.contractor||'').replace(/"/g,'&quot;')+'" placeholder="Type to search registered suppliers…" style="font-size:11px;padding:4px 8px;flex:1"/><datalist id="meditContDL">'+_supDL+'</datalist><button type="button" class="btn btn-s btn-sm" style="white-space:nowrap;padding:4px 9px;font-size:10px" onclick="gotoSupplierRegistryFromContract()" title="Add a new supplier in the Supplier Registry">+ New Supplier</button></div></div>';
   h+='<div class="fg"><label class="fl2">Start Date</label><input class="fi" id="meditStart" type="date" value="'+(c.start||'')+'" style="font-size:11px;padding:4px 8px"/></div>';
   h+='<div class="fg"><label class="fl2">Duration (months)</label><input class="fi" id="meditDur" type="number" min="1" value="'+(c.duration||12)+'" style="font-size:11px;padding:4px 8px"/></div>';
+  h+='<div class="fg"><label class="fl2">Awarding Date <span style="color:var(--text3);font-weight:400">(Improvement Plan)</span></label><input class="fi" id="meditAward" type="date" value="'+(c.awardDate||'')+'" style="font-size:11px;padding:4px 8px" title="Drives the Improvement Plan due date (award + 60 days)"/></div>';
   h+='</div><div style="font-size:9px;color:var(--text3);margin-top:6px">\u26a0 Changing mechanism, start date or duration regenerates the required reports (received status, actuals and evidence are preserved where the same report still applies).</div></div></div>';
 
   h+='<div class="md-sec"><div class="md-sec-title">Contract Info</div><div class="ig">';
@@ -3444,6 +3446,22 @@ function openContractModal(id){
     h+='</div>';
   }
 
+  var _ip=(c.reports||[]).find(function(r){return r.type==='improvement';});
+  if(_ip){
+    h+='<div class="md-sec"><div class="md-sec-title">Improvement Plan</div>';
+    h+='<div class="ev-row" style="padding:8px 10px">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
+    h+='<span style="font-size:12px;font-weight:700">Improvement Plan</span>';
+    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; Approved &middot; targets applied</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; Set Awarding Date in Edit Info</span>')+'</div>';
+    h+='</div>';
+    if(typeof isHighValue==='function'&&!isHighValue(c))h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">Below the high-value threshold &mdash; tracked &amp; approvable, but not counted in KPIs.</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin:2px 0 3px">Yearly LC Targets ('+(_ip.planApproved?'approved':'proposed')+'):</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    (_ip.planTargets||[]).forEach(function(pt){h+='<span style="font-size:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px 8px"><b>'+pt.label+':</b> '+(pt.pct!=null&&pt.pct!==''?pt.pct+'%':'&mdash;')+'</span>';});
+    h+='</div>';
+    h+=evSection('improvement');
+    h+='</div></div>';
+  }
   if(c.boqItems&&c.boqItems.length){
     var _gl=c.boqItems.map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return !o.it.nature||/good/i.test(o.it.nature);});
     if(_gl.length){
@@ -3518,13 +3536,14 @@ function saveAndRecalc(cid){
     var amtEl=document.getElementById('meditAmt');if(amtEl)c.amount=parseFloat(amtEl.value)||c.amount;
     var lcEl=document.getElementById('meditLC');
     if(lcEl&&lcEl.value!==''){c.agreedPct=parseFloat(lcEl.value)/100;c.lcAmount=c.amount*c.agreedPct;}
-    var _oldMech=c.mechanism,_oldStart=c.start,_oldDur=c.duration;
+    var _oldMech=c.mechanism,_oldStart=c.start,_oldDur=c.duration,_oldAward=c.awardDate;
     var mechEl=document.getElementById('meditMech');if(mechEl)c.mechanism=mechEl.value;
     var contEl=document.getElementById('meditCont');if(contEl)c.contractor=contEl.value.trim();
     var stEl=document.getElementById('meditStart');if(stEl&&stEl.value)c.start=stEl.value;
     var duEl=document.getElementById('meditDur');if(duEl&&duEl.value)c.duration=parseInt(duEl.value)||c.duration;
+    var awEl=document.getElementById('meditAward');if(awEl)c.awardDate=awEl.value||'';
     if(c.start&&c.duration){var _e=new Date(c.start);_e.setMonth(_e.getMonth()+c.duration);c.end=_e.toISOString().split('T')[0];}
-    if(c.mechanism!==_oldMech||c.start!==_oldStart||c.duration!==_oldDur){
+    if(c.mechanism!==_oldMech||c.start!==_oldStart||c.duration!==_oldDur||c.awardDate!==_oldAward){
       regenerateReports(c);
       modalEditState={cid:c.id,reports:{}};
       (c.reports||[]).forEach(function(r,ri){var key=r.type==='period'?'period_'+r.year:r.type;modalEditState.reports[key]={idx:ri,received:r.received===true};});
@@ -3568,8 +3587,8 @@ function saveAndRecalc(cid){
 // ============================================================
 // REVIEW PAGE
 // ============================================================
-const REPORT_TYPES=['period_1','period_2','period_3','period_4','period_5','final','npp','mlnp'];
-const REPORT_LABELS={'period_1':'1st Year Periodic Report','period_2':'2nd Year Periodic Report','period_3':'3rd Year Periodic Report','period_4':'4th Year Periodic Report','period_5':'5th Year Periodic Report','final':'Final Report','npp':'National Products Price Preferencing Final Supply Report','mlnp':'Mandatory List Final Supply Report'};
+const REPORT_TYPES=['period_1','period_2','period_3','period_4','period_5','final','npp','mlnp','improvement'];
+const REPORT_LABELS={'period_1':'1st Year Periodic Report','period_2':'2nd Year Periodic Report','period_3':'3rd Year Periodic Report','period_4':'4th Year Periodic Report','period_5':'5th Year Periodic Report','final':'Final Report','npp':'National Products Price Preferencing Final Supply Report','mlnp':'Mandatory List Final Supply Report','improvement':'Improvement Plan'};
 function rvChip(m){rvMode=m;['rv-all','rv-pend','rv-app','rv-rej'].forEach(id=>document.getElementById(id)?.classList.remove('on'));document.getElementById('rv-'+m)?.classList.add('on');renderReview();}
 function renderReview(){
   var sel=document.getElementById('rvContract');
@@ -3634,6 +3653,7 @@ function renderReview(){
     var grouped={};filtered.forEach(function(f){if(!grouped[f.rt])grouped[f.rt]=[];grouped[f.rt].push(f);});
     Object.keys(grouped).forEach(function(rt){
       html+='<div style="margin-bottom:6px"><div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+evLabel(rt,c)+'</div>';
+      if(rt==='improvement')html+=_impReviewTargetsHTML(c);
       grouped[rt].forEach(function(f){html+=fileRow(rt,f);});
       html+='</div>';
     });
@@ -3665,6 +3685,7 @@ function renderReview(){
 function reviewEvidence(cid,rt,fi,status){
   if(typeof requirePerm==='function'&&!requirePerm(status==='rejected'?'ev.reject':'ev.approve'))return;
   const c=DB.find(x=>x.id===cid);if(!c||!c.evidence||!c.evidence[rt]||fi<0)return;
+  if(status==='approved'&&typeof _impApproveGuard==='function'&&!_impApproveGuard(c,rt))return;
   c.evidence[rt][fi].status=status;c.evidence[rt][fi].reviewedBy='Admin';c.evidence[rt][fi].reviewDate=new Date().toLocaleDateString('en-GB');
   if(status==='approved'&&typeof recvApplyApproval==='function')recvApplyApproval(c,rt);
   saveDB();renderReview();updateBadges();
@@ -3706,6 +3727,7 @@ function handleEvidenceUpload(cid,rt,files){
 function setEvStatus(cid,rt,fi,status){
   if(typeof requirePerm==='function'&&!requirePerm(status==='rejected'?'ev.reject':'ev.approve'))return;
   var c=DB.find(function(x){return x.id===cid;});if(!c||!(c.evidence||{})[rt])return;
+  if(status==='approved'&&typeof _impApproveGuard==='function'&&!_impApproveGuard(c,rt))return;
   c.evidence[rt][fi].status=status;c.evidence[rt][fi].reviewedBy='Admin';c.evidence[rt][fi].reviewDate=new Date().toLocaleDateString('en-GB');
   if(status==='approved'&&typeof recvApplyApproval==='function')recvApplyApproval(c,rt);
   saveAll();logAudit('approve','Evidence '+status+(status==='approved'?' → reflected on contract':'')+' for '+(typeof evLabel==='function'?evLabel(rt,c):rt)+' #'+c.num,c.num);updateBadges();toast('Evidence '+status,'ok');openContractModal(cid);
@@ -3853,6 +3875,11 @@ function buildReportsFor(c){
         reports.push({type:'final',achieved:null,received:false,penalty:0,devPenalty:0,due:dueISO,deadline:_addMonthsISO(dueISO,_graceLCm())});
       }
     }
+    // Improvement Plan — one per LC-base contract; due = award date + 60 days. No penalty attached.
+    var _lcReps=reports.filter(function(r){return r.type==='period'||r.type==='final';});
+    var _plan=_lcReps.map(function(r){return {key:(r.type==='period'?'period_'+r.year:'final'),label:reportTitle(r),pct:null};});
+    var _impDue=c.awardDate?_addDaysISO(c.awardDate,60):null;
+    reports.push({type:'improvement',received:false,penalty:0,planTargets:_plan,planBy:null,due:_impDue,deadline:_impDue});
   }
   // National Products Price Preferencing final supply report — due at contract end + 30-day grace.
   if(cl.npp){
@@ -3883,8 +3910,14 @@ function reportTitle(r){
   if(r.type==='final')return 'Final Report';
   if(r.type==='npp')return 'National Products Price Preferencing Final Supply Report';
   if(r.type==='mlnp')return 'Mandatory List Final Supply Report';
+  if(r.type==='improvement')return 'Improvement Plan';
   return r.type;
 }
+// Contract value meets the high-value threshold (Settings, in SAR millions) — gates Improvement-Plan KPI/log counting.
+function isHighValue(c){var thr=((typeof S!=='undefined'&&S.highValueThreshold)||25)*1000000;return (c&&c.amount||0)>=thr;}
+// Whether a report should be COUNTED in KPIs / requirement / overdue tallies.
+// The Improvement Plan is only counted on high-value contracts (it never carries a penalty either way).
+function reportCountsForKPI(c,r){if(r&&r.type==='improvement')return isHighValue(c);return true;}
 function reportStateBadge(c,r){
   var st=reportState(c,r);
   var m={received:['bg','✓ Received'],upcoming:['bt','○ Upcoming'],due:['ba','⏰ Due'],overdue:['br','⚠ Overdue'],pending:['bgy','—']};
@@ -3927,6 +3960,11 @@ function regenerateReports(c){
       if(o.achieved!=null)r.achieved=o.achieved;
       if(o.penalty)r.penalty=o.penalty;
       if(o.devPenalty)r.devPenalty=o.devPenalty;
+      if(r.type==='improvement'){
+        r.planBy=o.planBy||null;r.planApproved=o.planApproved===true;r._recvPending=o._recvPending===true;
+        var _obk={};(o.planTargets||[]).forEach(function(p){_obk[p.key]=p.pct;});
+        (r.planTargets||[]).forEach(function(p){if(_obk[p.key]!=null)p.pct=_obk[p.key];});
+      }
     }
   });
   c.reports=fresh;
@@ -4211,10 +4249,13 @@ function submitContract(e){
   const num=document.getElementById('fNum').value.trim();const name=document.getElementById('fName').value.trim();
   const mech=document.getElementById('fMech2').value;const amt=parseFloat(document.getElementById('fAmt').value)||0;
   const dur=parseInt(document.getElementById('fDur').value)||0;const start=document.getElementById('fSD').value;
+  const award=(document.getElementById('fAward')||{}).value||'';
   const apR=parseFloat(document.getElementById('fAP').value);const ap=isNaN(apR)?null:apR/100;
   const blR=parseFloat(document.getElementById('fBL').value);const bl=isNaN(blR)?null:blR/100;
+  // Awarding Date is required for Local-Content mechanisms (it drives the Improvement Plan due date).
+  if(typeof mechClass==='function'){var _b=mechClass(mech).base;if((_b==='company'||_b==='project'||_b==='threshold')&&!award){toast('Awarding Date is required for Local-Content mechanisms','err');var _af=document.getElementById('fAward');if(_af)_af.focus();return;}}
   const endDt=new Date(start);endDt.setMonth(endDt.getMonth()+dur);
-  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,name,mechanism:mech,amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),evidence:{},notes:document.getElementById('fNotes').value});
+  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,name,mechanism:mech,amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),evidence:{},notes:document.getElementById('fNotes').value});
   var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;window._importedFromBidId=null;}if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;_newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
   saveDB();logAudit('create','Contract #'+num,num);var _bn=document.createElement('div');_bn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;background:#059669;color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px';_bn.textContent='\u2705 Contract #'+num+' saved!';document.body.appendChild(_bn);setTimeout(function(){_bn.remove();},3500);toast('Saved #'+num,'ok');resetForm();setTimeout(function(){nav('contracts',null);},800);
 }
@@ -5516,6 +5557,7 @@ function importFromAward(){
   set('fCont',b.winner||'');
   set('fAmt',w.price||res.origPrice||b.value||'');
   set('fMech2',b.mechanism||'');
+  set('fAward',b.awardedOn||(b.awardedAt?String(b.awardedAt).split('T')[0]:''));
   var rfp=b.rfpId?RFPS.find(function(r){return r.id===b.rfpId;}):null;
   if(rfp){set('fEU',rfp.endUser||'');}
   var lc=(w.lcPct!=null?w.lcPct:res.lcPct);
@@ -5863,6 +5905,71 @@ function importSupplierBids(){
   toast(added+' supplier bid(s) imported','ok');
 }
 // ---- supplier LC requirements portal ----
+// ===== Improvement Plan entry (shared by Supplier LC Requirements + Receiving) =====
+function _impFinalTargetPct(ip){var ft=(ip&&ip.planTargets||[]).find(function(p){return p.key==='final';});return (ft&&ft.pct!=null&&ft.pct!=='')?+ft.pct:null;}
+// Reviewer must confirm before approving a Minimum-Threshold plan whose final target is below the LC target.
+function _impApproveGuard(c,rt){
+  if(rt!=='improvement'||!c)return true;
+  if(typeof mechClass!=='function'||mechClass(c.mechanism).base!=='threshold')return true;
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip)return true;
+  var ft=_impFinalTargetPct(ip),lc=(c.agreedPct!=null?+(c.agreedPct*100).toFixed(2):null);
+  if(ft!=null&&lc!=null&&ft<lc)return confirm('⚠ The Improvement Plan final target ('+ft+'%) is BELOW the contract LC target ('+lc+'%).\n\nApprove the plan anyway?');
+  return true;
+}
+// Read-only Target % display (+ threshold warning) shown to the reviewer in Reports Review.
+function _impReviewTargetsHTML(c){
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip)return '';
+  var h='<div style="margin:3px 0 5px">'+impThresholdWarn(c)+'<div style="display:flex;flex-wrap:wrap;gap:6px">';
+  (ip.planTargets||[]).forEach(function(pt){h+='<span style="font-size:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:3px 8px"><b>'+pt.label+':</b> '+(pt.pct!=null&&pt.pct!==''?pt.pct+'%':'—')+'</span>';});
+  h+='</div></div>';return h;
+}
+// Warn when a Minimum-Threshold contract's final improvement target is below the contract LC target.
+function impThresholdWarn(c){
+  if(!c||typeof mechClass!=='function'||mechClass(c.mechanism).base!=='threshold')return '';
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip)return '';
+  var ft=_impFinalTargetPct(ip);var lc=(c.agreedPct!=null?+(c.agreedPct*100).toFixed(2):null);
+  if(ft!=null&&lc!=null&&ft<lc)return '<div style="font-size:10px;color:#fff;background:var(--danger);border-radius:8px;padding:5px 9px;margin:4px 0;font-weight:700">&#9888; Final improvement target '+ft+'% is below the contract LC target '+lc+'% &mdash; review before approving.</div>';
+  return '';
+}
+function improvementPlanHTML(c,ctx){
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip)return '';
+  var approved=ip.planApproved===true,pending=ip._recvPending&&!approved;
+  var idp='ipp_'+ctx+'_'+c.id;
+  var due=ip.due?('Due '+fD(ip.due)+' (award + 60d)'):'&#9888; awaiting awarding date — set it on the contract';
+  var statusTxt=approved?'&#10003; Approved · targets applied':(pending?'Submitted · pending review':'Not submitted');
+  var notKpi=(typeof isHighValue==='function'&&!isHighValue(c))?' · not KPI-counted':'';
+  var h='<div style="border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:7px;background:var(--surface)">';
+  h+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:5px">';
+  h+='<span style="font-weight:700;font-size:12px">&#127919; Improvement Plan</span>';
+  h+='<span style="font-size:10px;color:var(--text3)">'+due+' · '+statusTxt+notKpi+'</span></div>';
+  h+=impThresholdWarn(c);
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:3px">Committed LC Target % for each report year'+(approved?' (approved — locked)':'')+':</div>';
+  h+='<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">';
+  (ip.planTargets||[]).forEach(function(pt,i){
+    h+='<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--text2);font-weight:600">'+pt.label+'</label>'
+      +'<input class="fi" type="number" step="0.1" id="'+idp+'_'+i+'" value="'+(pt.pct!=null?pt.pct:'')+'" '+(approved?'disabled':'')+' placeholder="%" style="width:96px;font-size:11px;padding:4px 6px"/></div>';
+  });
+  h+='</div>';
+  if(ctx==='recv'){h+=recvEvBlock(c,'improvement','Improvement Plan');}
+  else{var evs=((c.evidence||{})['improvement']||[]);h+='<div class="rv-file-actions" style="margin:2px 0 6px;display:flex;gap:5px;align-items:center;flex-wrap:wrap">'+_evStatusBadge(evs)+'<label class="ev-btn" for="'+idp+'_file" style="cursor:pointer">&#128206; Attach Plan</label><input type="file" id="'+idp+'_file" style="display:none" onchange="supReqUpload(this,'+c.id+',\'improvement\')"/></div>';}
+  if(!approved)h+='<button class="btn btn-p btn-sm" onclick="submitImprovementPlan('+c.id+',\''+ctx+'\')">&#10003; Submit Improvement Plan</button>';
+  h+='</div>';return h;
+}
+function submitImprovementPlan(cid,ctx){
+  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c)return;
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip){toast('No improvement plan on this contract','err');return;}
+  if(ip.planApproved){toast('Improvement Plan already approved','info');return;}
+  var idp='ipp_'+ctx+'_'+cid,any=false;
+  (ip.planTargets||[]).forEach(function(pt,i){var el=document.getElementById(idp+'_'+i);if(el){var v=el.value;pt.pct=(v===''||isNaN(parseFloat(v)))?null:parseFloat(v);if(pt.pct!=null)any=true;}});
+  if(!any){toast('Enter at least one yearly target %','err');return;}
+  ip.planBy=(ctx==='recv'?'End User':'Supplier');ip._recvPending=true;
+  if(typeof saveAll==='function')saveAll();else saveDB();
+  if(typeof logAudit==='function')logAudit('receive',ip.planBy+' submitted Improvement Plan targets — pending review · #'+c.num,c.num);
+  toast('Improvement Plan submitted — pending review','ok');
+  if(ctx==='recv'){if(typeof recvRenderContract==='function')recvRenderContract();}else{if(typeof renderSupReq==='function')renderSupReq();}
+  if(typeof updateBadges==='function')updateBadges();
+}
+window.submitImprovementPlan=submitImprovementPlan;
 function renderSupReq(){
   var sel=document.getElementById('supReqSel');
   if(sel&&!sel.dataset.init){sel.innerHTML='<option value="">Select supplier…</option>'+SUPPLIERS.map(function(s){return '<option value="'+s.name+'">'+s.name+'</option>';}).join('');sel.dataset.init='1';}
@@ -5880,6 +5987,7 @@ function renderSupReq(){
     if(due.length){
       h+='<div style="font-size:10px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin:4px 0 5px">📋 Periodic / Final Reports</div>';
       due.forEach(function(r){
+        if(r.type==='improvement'){h+=improvementPlanHTML(c,'supreq');return;}
         var key=r.type==='period'?'period_'+r.year:r.type;
         var lbl=(typeof reportTitle==='function')?reportTitle(r):(r.type==='period'?(r.year+(r.year===1?'st':r.year===2?'nd':r.year===3?'rd':'th')+' Year Periodic Report'):r.type==='final'?'Final Report':r.type);
         var evs=((c.evidence||{})[key]||[]);
@@ -8456,8 +8564,19 @@ function recvApplyApproval(c,key){
   if(!c||typeof key!=='string')return;
   if(key.indexOf('liexc_')===0){var eidx=+key.slice(6);var eit=c.boqItems&&c.boqItems[eidx];if(eit)eit.excApproved=true;}
   else if(key.indexOf('li_')===0){var idx=+key.slice(3);var it=c.boqItems&&c.boqItems[idx];if(it)it.recvApproved=true;}
+  else if(key==='improvement'){var ir=recvFindReport(c,key);if(ir){ir.received=true;ir._recvPending=false;ir.planApproved=true;applyImprovementTargets(c);}}
   else{var r=recvFindReport(c,key);if(r){r.received=true;r._recvPending=false;}}
   if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);
+}
+// On approval, write the Improvement Plan's Target % into each matching contract report (periodic target / final target), then lock.
+function applyImprovementTargets(c){
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip||!ip.planTargets)return;
+  ip.planTargets.forEach(function(pt){
+    if(pt.pct==null||pt.pct==='')return;
+    var rep=(pt.key&&pt.key.indexOf('period_')===0)?(c.reports||[]).find(function(r){return r.type==='period'&&('period_'+r.year)===pt.key;}):(c.reports||[]).find(function(r){return r.type===pt.key;});
+    if(rep)rep.target=(+pt.pct)/100;
+  });
+  if(typeof logAudit==='function')logAudit('approve','Improvement Plan approved — yearly LC targets applied to #'+c.num,c.num);
 }
 function _recvWho(){return (typeof CURRENT_USER!=='undefined'&&CURRENT_USER&&CURRENT_USER.name)?CURRENT_USER.name:'End User';}
 function recvEvBlock(c,key,label){
@@ -8511,6 +8630,7 @@ function recvRenderContract(){
   h+='<div class="card" style="margin-bottom:12px"><div class="card-hd"><div class="card-title">&#128203; Due Reports to Receive</div><span class="badge '+(due.length?'ba':'bg')+'">'+due.length+' due</span></div>';
   if(!due.length)h+='<div style="font-size:11px;color:var(--text3)">All reports received &#10003;</div>';
   else due.forEach(function(r){
+    if(r.type==='improvement'){h+=improvementPlanHTML(c,'recv');return;}
     var key=r.type==='period'?'period_'+r.year:r.type;
     var lbl=(typeof evLabel==='function'?evLabel(key,c):key);
     var isAmt=(r.type==='npp'||r.type==='mlnp');
