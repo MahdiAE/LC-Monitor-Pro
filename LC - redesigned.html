@@ -4788,6 +4788,21 @@ function generateReport(cid){
       +'<div class="pdf-f"><div class="lbl">Pending Review</div><div class="val" style="color:#d97706">'+(evAll.length-app)+'</div></div>'
       +'</div></div>';
   }
+  var _gl=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return !o.it.nature||/good/i.test(o.it.nature);});
+  if(_gl.length){
+    var _devTot=0;
+    h+='<div class="pdf-sec"><div class="pdf-sec-title">BoQ Line Items — Local-Content Receiving</div>'
+      +'<table class="pdf-tbl"><thead><tr><th>Item</th><th>Ordered</th><th>Promised</th><th>Received</th><th>Status / Penalty</th></tr></thead><tbody>';
+    _gl.forEach(function(o){
+      var it=o.it,rl=parseFloat(it.recvLocal)||0,rf=parseFloat(it.recvForeign)||0,dev=(it.recvDevPenalty||0);if(dev>0)_devTot+=dev;
+      var st=dev>0?('<span style="color:#dc2626;font-weight:700">Deviation — '+fSAR(dev)+'</span>'):(it.recvApproved?'<span style="color:#16a34a;font-weight:700">Compliant</span>':'<span style="color:#d97706">Pending receipt</span>');
+      h+='<tr><td>'+(it.desc||('Item #'+(o.idx+1)))+'</td><td>'+(it.qty||0)+' '+(it.uom||'')+'</td><td>'+(it.origin||'Local')+'</td><td>'+rl+' Local + '+rf+' Foreign</td><td>'+st+'</td></tr>';
+    });
+    if(_devTot>0)h+='<tr><td colspan="4" style="text-align:right;font-weight:700">Goods Deviation Penalty</td><td style="color:#dc2626;font-weight:800">'+fSAR(_devTot)+'</td></tr>';
+    h+='</tbody></table>';
+    if(_devTot>0)h+='<div style="font-size:11px;color:#64748b;margin-top:6px">A local-content deviation penalty is charged when goods promised as Local are received as Foreign — or below the ordered Local quantity — without an approved exception letter: line-item total × (Local shortfall ÷ Local ordered) × 30%.</div>';
+    h+='</div>';
+  }
   if(p>0)h+='<div class="pdf-pen"><div class="pdf-pen-lbl">TOTAL PENALTY EXPOSURE</div><div class="pdf-pen-amt">'+fSAR(p)+'</div></div>';
   var _b=brandInfo();
   h+='<div class="pdf-ft"><span>'+_b.org+' \u2014 '+((typeof lang!=='undefined'&&lang==='ar')?'\u0633\u0631\u064a':'Confidential')+'</span><span>'+((typeof lang!=='undefined'&&lang==='ar')?'\u0623\u0646\u0634\u0626 \u0641\u064a ':'Generated ')+now+'</span></div></div>';
