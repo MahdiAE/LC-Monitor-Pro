@@ -6,7 +6,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232563eb'/><text x='32' y='45' font-size='32' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'>LC</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap">
 <script src="vendor/chart.umd.min.js"></script>
 <script>window.Chart||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>');</script>
 <script src="vendor/xlsx.full.min.js"></script>
@@ -1552,27 +1552,18 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <button class="btn btn-p btn-sm" onclick="a1OpenWizard()">+ Start New Process</button>
     </div>
     <div style="font-size:11px;color:var(--text2);margin:2px 0 12px">Processed RFPs and their identified LCGPA mechanism. Click <b>Start New Process</b> to identify a mechanism for a new RFP. Each row links to the mechanism's <b>Terms &amp; Conditions</b> (from Settings → Mechanism T&amp;C) — view &amp; download.</div>
-    <div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Nature</th><th>Mechanism</th><th>Terms &amp; Conditions</th><th>Processed</th><th></th></tr></thead><tbody id="a1Tbody"></tbody></table></div>
+    <div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Nature</th><th>Mechanism</th><th>Thresholds</th><th>Terms &amp; Conditions</th><th>Processed</th><th></th></tr></thead><tbody id="a1Tbody"></tbody></table></div>
   </div>
 </div>
 <!-- ===== v57 A.2 · MANDATORY LIST IDENTIFIER ===== -->
 <div class="page" id="page-mlwiz">
-  <div class="card" style="max-width:1000px">
-    <div class="card-hd"><div class="card-title">📋 Mandatory List Identifier</div></div>
-    <div class="fg2" style="gap:10px">
-      <div class="fg"><label class="fl2">Load Processed RFP</label><select class="fsel2" id="a2Pick" onchange="a2LoadPick()"><option value="">— New / fresh entry —</option></select></div>
-      <div class="fg"><label class="fl2">RFP Name <span class="req">*</span></label><input class="fi" id="a2Name" placeholder="RFP title"></div>
-      <div class="fg"><label class="fl2">RFP Number</label><input class="fi" id="a2Num" placeholder="RFP-2026-001"></div>
-      <div class="fg"><label class="fl2">End-User</label><select class="fsel2" id="a2EU"><option value="">Select end-user…</option></select></div>
+  <div class="card">
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div class="card-title">📋 Mandatory List Identifier</div>
+      <button class="btn btn-p btn-sm" onclick="a2OpenWizard(null)">📋 + New Identification</button>
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px"><div class="fsec-title" style="border:none;margin:0;padding:0">Bill of Quantities</div><div style="display:flex;gap:6px"><button class="btn btn-s btn-sm" onclick="a2AddRow()">+ Add Row</button><button class="btn btn-s btn-sm" onclick="a2AddRows(5)">+ Add 5</button></div></div>
-    <div style="overflow-x:auto"><table style="width:100%;font-size:11px"><thead><tr><th>#</th><th>Item Description</th><th>Nature</th><th>Qty</th><th>UoM</th><th>Est. Cost</th><th>Mandatory List</th><th></th></tr></thead><tbody id="a2BoqBody"></tbody></table></div>
-    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-      <button class="btn btn-a" onclick="a2Identify()">🔍 Identify Mandatory List Items</button>
-      <button class="btn btn-s" id="a2AiBtn" disabled title="AI identification — coming soon" style="opacity:.55;cursor:not-allowed">✨ AI Identify (coming soon)</button>
-      <button class="btn btn-p" onclick="a2Save()">💾 Save to RFP</button>
-    </div>
-    <div id="a2Results" style="margin-top:12px"></div>
+    <div style="font-size:11px;color:var(--text2);margin:2px 0 12px">Processed RFPs and their identified Mandatory-List items. Click <b>+ New Identification</b> to map an RFP's BoQ to the Mandatory List. Each row's <b>📎 Attachments</b> shows every document linked to that RFP (view &amp; download).</div>
+    <div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Mandatory Items</th><th>Attachments</th><th>Processed</th><th></th></tr></thead><tbody id="a2Tbody"></tbody></table></div>
   </div>
 </div>
 <!-- ===== v57 B.1 · EVALUATION ASSISTANT ===== -->
@@ -1876,6 +1867,8 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div class="fg"><label class="fl2">End-User <span class="req">*</span></label><select class="fsel2" id="fEU" required=""><option value="">Select end-user…</option><option value="Ministry of Environment">Ministry of Environment</option><option value="Ministry of Defense">Ministry of Defense</option><option value="Ministry of Interior">Ministry of Interior</option><option value="ARAMCO">ARAMCO</option><option value="SABIC">SABIC</option><option value="NEOM">NEOM</option></select></div>
         <div class="fg full"><label class="fl2">Contract Name <span class="req">*</span></label><input class="fi" id="fName" type="text" required=""></div>
         <div class="fg"><label class="fl2">Contractor</label><input class="fi" id="fCont" type="text"></div>
+        <div class="fg"><label class="fl2">Contractor Contact Person</label><input class="fi" id="fContact" type="text" placeholder="Full name"></div>
+        <div class="fg"><label class="fl2">Contractor Contact Person Email</label><input class="fi" id="fContEmail" type="email" placeholder="name@company.com"></div>
         <div class="fg"><label class="fl2">Mechanism <span class="req">*</span></label><select class="fsel2" id="fMech2" required=""><option value="">Select mechanism…</option><option value="Small &amp; Medium Enterprises">Small &amp; Medium Enterprises</option><option value="Local Content Weight in Commercial Evaluation - Project Level">Local Content Weight in Commercial Evaluation - Project Level</option><option value="LC Weight + NPP - Company Level">LC Weight + NPP - Company Level</option><option value="National Product Preferencing">National Product Preferencing</option><option value="National Product Preferencing + Mandatory list">National Product Preferencing + Mandatory list</option><option value="Local Content Minimum Threshold">Local Content Minimum Threshold</option><option value="Local Content Weight in Commercial Evaluation - Company Level">Local Content Weight in Commercial Evaluation - Company Level</option><option value="Local Content Minimum Threshold + NPP + MLNP">Local Content Minimum Threshold + NPP + MLNP</option><option value="Small &amp; Medium Enterprises + NPP + MLNP">Small &amp; Medium Enterprises + NPP + MLNP</option><option value="Local Content Weight in Commercial Evaluation + NPP + MLNP - Company Level">Local Content Weight in Commercial Evaluation + NPP + MLNP - Company Level</option><option value="Local Content Weight in Commercial Evaluation + NPP + MLNP -  Project Level">Local Content Weight in Commercial Evaluation + NPP + MLNP -  Project Level</option></select></div>
       </div>
     </div>
@@ -2442,7 +2435,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         ⚠️ <b>You are not awarding the top-ranked bidder.</b> A written justification and supporting evidence are mandatory and will be recorded in the evaluation MoM.
       </div>
       <div class="fg full" id="awardJustWrap" style="display:none"><label class="fl2">Justification *</label><textarea class="fta" id="awardJust" style="min-height:80px" placeholder="Explain why this bidder is selected over the top-ranked bidder…"></textarea></div>
-      <div class="fg full" id="awardEvWrap" style="display:none;margin-top:8px"><label class="fl2">Supporting Evidence *</label>
+      <div class="fg full" id="awardEvWrap" style="display:none;margin-top:8px"><label class="fl2">Supporting Evidence (optional)</label>
         <label class="ev-add-btn" for="awardEvFiles" style="cursor:pointer;display:inline-flex">📎 Attach files</label>
         <input type="file" id="awardEvFiles" multiple style="display:none"/>
         <div id="awardEvList" style="margin-top:6px"></div>
@@ -4583,7 +4576,7 @@ function submitContract(e){
   // Awarding Date is required for Local-Content mechanisms (it drives the Improvement Plan due date).
   if(typeof mechClass==='function'){var _b=mechClass(mech).base;if((_b==='company'||_b==='project'||_b==='threshold')&&!award){toast('Awarding Date is required for Local-Content mechanisms','err');var _af=document.getElementById('fAward');if(_af)_af.focus();return;}}
   const endDt=new Date(start);endDt.setMonth(endDt.getMonth()+dur);
-  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,name,mechanism:mech,amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
+  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,contractorContact:((document.getElementById('fContact')||{}).value||'').trim(),contractorEmail:((document.getElementById('fContEmail')||{}).value||'').trim(),name,mechanism:mech,amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
   var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;var _srcB=BIDS.find(function(b){return String(b.id)===String(window._importedFromBidId);});if(_srcB){_srcB.status='contractCreated';_srcB.contractCreatedAt=new Date().toISOString();_srcB.contractId=_newC.id;}window._importedFromBidId=null;}window._importedDocs=null;if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;_newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
   saveDB();logAudit('create','Contract #'+num,num);var _bn=document.createElement('div');_bn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;background:#059669;color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px';_bn.textContent='\u2705 Contract #'+num+' saved!';document.body.appendChild(_bn);setTimeout(function(){_bn.remove();},3500);toast('Saved #'+num,'ok');resetForm();setTimeout(function(){nav('contracts',null);},800);
 }
@@ -5640,7 +5633,6 @@ function confirmAward(){
   if(override){
     var just=document.getElementById('awardJust').value.trim();
     if(!just){toast('Justification is required for override award','err');return;}
-    if(!awardEvBuf.length){toast('Attach at least one evidence file','err');return;}
     curBid.awardOverride=true;curBid.awardJustification=just;curBid.awardEvidence=awardEvBuf.slice();
   }else{
     curBid.awardOverride=false;curBid.awardJustification='';curBid.awardEvidence=[];
@@ -5678,6 +5670,9 @@ function confirmAward(){
   var _br=document.getElementById('bidResults');
   if(_br){var _wb=document.createElement('div');_wb.className='award-banner';_wb.style.cssText='background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:13px 16px;border-radius:12px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 22px -8px rgba(5,150,105,.6)';_wb.innerHTML='🏆 Awarded to <strong>'+pendingAwardName+'</strong>'+(override?' <span style="font-weight:500;opacity:.9">(override recorded)</span>':'');var _old=_br.querySelector('.award-banner');if(_old)_old.remove();_br.insertBefore(_wb,_br.firstChild);}
   if(typeof renderBiddersList==='function')renderBiddersList();
+  // refresh the Evaluation Assistant detail if it's the active view (so it shows the awarded state)
+  var _eaD=document.getElementById('ea-detail');
+  if(_eaD&&_eaD.style.display!=='none'&&typeof eaOpen==='function'){try{eaOpen(curBid.id);}catch(e){}}
   pendingAwardName=null;awardEvBuf=[];
 }
 
@@ -5958,6 +5953,7 @@ function importFromAward(){
   // Baseline Cert # from the Supplier Registry (matched on the winning contractor name)
   var _sup=(typeof SUPPLIERS!=='undefined')?SUPPLIERS.find(function(s){return (s.name||'').trim().toLowerCase()===String(b.winner||'').trim().toLowerCase();}):null;
   if(_sup&&_sup.lcCertId)set('fBC',_sup.lcCertId);
+  if(_sup){set('fContact',_sup.contact||'');set('fContEmail',_sup.email||'');} // carry contractor contact from supplier registry
   // LC Amount = Amount × Agreed %
   if(typeof calcLC==='function')calcLC();
   window._importedFromBidId=b.id;
@@ -7214,8 +7210,8 @@ function openContractFullEdit(id){
   h+='<div class="fg"><label class="fl2">End-User</label><select class="fsel2" id="cfe_eu" style="font-size:11px;padding:5px 8px">'+euOpts+'</select></div>';
   h+='<div class="fg full"><label class="fl2">Name</label><input class="fi" id="cfe_name" value="'+(c.name||'').replace(/"/g,'&quot;')+'" style="font-size:11px;padding:5px 8px"/></div>';
   h+=fld('Contractor','cfe_cont',c.contractor);
-  h+=fld('Contractor Contact Name','cfe_contact',c.contractorContact);
-  h+=fld('Contractor Contact Email','cfe_email',c.contractorEmail);
+  h+=fld('Contractor Contact Person','cfe_contact',c.contractorContact);
+  h+=fld('Contractor Contact Person Email','cfe_email',c.contractorEmail,'email');
   h+='<div class="fg"><label class="fl2">Mechanism</label><select class="fsel2" id="cfe_mech" style="font-size:11px;padding:5px 8px">'+mOpts+'</select></div>';
   h+=fld('Amount (SAR)','cfe_amt',c.amount,'number');
   h+=fld('Agreed LC %','cfe_ap',(c.agreedPct!=null?+(c.agreedPct*100).toFixed(2):''),'number');
@@ -9168,59 +9164,74 @@ body.mobile-mode .btn,body.mobile-mode .tbtn,body.mobile-mode .fsel,body.mobile-
 body.mobile-mode #dashEntitySel{max-width:100%!important}
 body.mobile-mode .fb{flex-wrap:wrap}
 
-/* ════════ v57 EXECUTIVE RIBBON DASHBOARD ════════ */
-.exr-wrap{display:flex;flex-direction:column;gap:16px}
-.exr-ribbon{background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:18px;padding:18px 20px;color:#fff;box-shadow:0 18px 44px -24px rgba(60,40,180,.75)}
-.exr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:15px}
-.exr-id{display:flex;align-items:center;gap:12px}
-.exr-logo{width:42px;height:42px;border-radius:11px;object-fit:cover;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
-.exr-org{font-size:16px;font-weight:800;line-height:1.15}
-.exr-tag{font-size:10.5px;opacity:.85;font-weight:600;letter-spacing:.3px}
-.exr-date{font-size:10px;opacity:.72;margin-top:2px}
-.exr-pdf{margin-top:8px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;cursor:pointer}
-.exr-pdf:hover{background:rgba(255,255,255,.24)}
-.exr-filters{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
-.exr-fl{display:flex;flex-direction:column;gap:3px}
-.exr-fl>label{font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.78}
-.exr-sel{font-size:12px;font-weight:600;padding:7px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.16);color:#fff;cursor:pointer;max-width:200px}
+/* ════════ v57 EXECUTIVE RIBBON DASHBOARD (mockup match) ════════ */
+.exr-wrap{display:flex;flex-direction:column;gap:16px;font-family:'Manrope',var(--fn)}
+.exr-num{font-family:'Fraunces','Bricolage Grotesque',serif;font-weight:600;font-variant-numeric:lining-nums;letter-spacing:-.5px}
+.exr-ribbon{position:relative;background:linear-gradient(125deg,#0f2557 0%,#16357e 45%,#2a4bb5 100%);border-radius:20px;padding:20px 22px;color:#fff;box-shadow:0 22px 50px -26px rgba(20,30,90,.85);overflow:hidden}
+.exr-ribbon::after{content:'';position:absolute;inset:0;background:radial-gradient(700px 360px at 88% -10%,rgba(124,58,237,.40),transparent 60%);pointer-events:none}
+.exr-top{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.exr-eyebrow{font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.exr-title{font-family:'Fraunces',serif;font-weight:600;font-size:27px;line-height:1.05;margin-top:3px}
+.exr-title em{font-style:italic;color:#cbd5ff}
+.exr-pdf{margin-top:10px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
+.exr-pdf:hover{background:rgba(255,255,255,.22)}
+.exr-filters{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;justify-content:flex-end}
+.exr-fl{display:flex;flex-direction:column;gap:4px}
+.exr-fl>label{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.exr-sel{font-size:12px;font-weight:600;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.32);background:rgba(255,255,255,.12);color:#fff;cursor:pointer;max-width:220px}
 .exr-sel option{color:#0b1324;background:#fff}
 .exr-qchips{display:flex;gap:4px}
-.exr-qchip{font-size:11px;font-weight:700;padding:7px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.10);color:#fff;cursor:pointer;transition:all .15s}
-.exr-qchip.on{background:#fff;color:#4326b3;border-color:#fff}
-.exr-heroes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.exr-hero{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:13px 15px;cursor:pointer;transition:transform .15s,background .15s;text-align:start}
-.exr-hero:hover{transform:translateY(-2px);background:rgba(255,255,255,.22)}
-.exr-hero .k-l{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;opacity:.88}
-.exr-hero .k-v{font-size:25px;font-weight:800;margin:3px 0;line-height:1}
-.exr-hero .k-s{font-size:10.5px;opacity:.82;font-weight:600}
-.exr-hero .k-d{font-size:10px;font-weight:800;margin-top:3px}
+.exr-qchip{font-size:11px;font-weight:700;padding:8px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;transition:all .15s}
+.exr-qchip.on{background:#fff;color:#1a2a6e;border-color:#fff}
+.exr-heroes{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.exr-hero{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.16);border-radius:15px;padding:15px 17px;cursor:pointer;transition:transform .15s,background .15s;text-align:start;min-height:120px;display:flex;flex-direction:column}
+.exr-hero:hover{transform:translateY(-2px);background:rgba(255,255,255,.13)}
+.exr-hero .k-l{font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.66)}
+.exr-hero .k-row{display:flex;align-items:baseline;gap:9px;margin:5px 0 2px;flex-wrap:wrap}
+.exr-hero .k-v{font-size:34px;line-height:1;color:#fff}
+.exr-hero .k-s{font-size:11px;color:rgba(255,255,255,.72);font-weight:600}
+.exr-hero .k-d{font-size:10px;font-weight:800;margin-top:auto;padding-top:6px}
+.exr-prog{height:7px;border-radius:5px;background:rgba(255,255,255,.16);overflow:hidden;margin-top:auto}
+.exr-prog>i{display:block;height:100%;background:linear-gradient(90deg,#34d399,#10b981);border-radius:5px}
+.exr-chip{display:inline-block;font-size:10px;font-weight:700;color:#dbe4ff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:4px 11px;margin-top:auto}
+.exr-spline{margin-top:auto}
 .exr-bands{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:1050px){.exr-bands{grid-template-columns:1fr}.exr-heroes{grid-template-columns:1fr}.exr-top{flex-direction:column}}
-.exr-band{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;border-top:3px solid var(--bandc,#2563eb)}
-.exr-band-hd{display:flex;align-items:center;gap:8px;margin-bottom:11px}
-.exr-band-hd .ei{font-size:16px}
-.exr-band-t{font-size:13px;font-weight:800;color:var(--text);line-height:1.15}
-.exr-band-t small{display:block;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.3px;text-transform:uppercase}
+@media(max-width:1050px){.exr-bands{grid-template-columns:1fr}.exr-heroes{grid-template-columns:1fr}.exr-top{flex-direction:column}.exr-filters{justify-content:flex-start}}
+.exr-band{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:15px;border-top:3px solid var(--bandc,#2563eb);display:flex;flex-direction:column}
+.exr-band-hd{display:flex;align-items:center;gap:9px;margin-bottom:12px}
+.exr-band-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;background:var(--bandsoft,rgba(37,99,235,.12));flex:none}
+.exr-band-t{font-size:14px;font-weight:800;color:var(--text);line-height:1.1;flex:1}
+.exr-band-sum{font-size:9.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;text-align:end}
 .exr-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.exr-tile{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:9px 11px;cursor:pointer;transition:border-color .15s,transform .15s;text-align:start;display:block;width:100%;font-family:inherit}
+.exr-tile{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;cursor:pointer;transition:border-color .15s,transform .15s;text-align:start;display:block;width:100%;font-family:inherit}
 .exr-tile:hover{border-color:var(--bandc,var(--accent));transform:translateY(-1px)}
-.exr-tile .k-l{font-size:9px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;line-height:1.25}
-.exr-tile .k-v{font-size:18px;font-weight:800;color:var(--text);margin:2px 0;line-height:1}
-.exr-tile .k-s{font-size:9px;color:var(--text2);font-weight:600;line-height:1.2}
+.exr-tile .k-l{font-size:9px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;line-height:1.25}
+.exr-tile .k-v{font-size:21px;color:var(--text);margin:3px 0 1px;line-height:1}
+.exr-tile .k-s{font-size:9.5px;color:var(--text2);font-weight:600;line-height:1.2}
+.exr-tile.bad .k-v{color:#dc2626}
+.exr-tile.bad{background:rgba(220,38,38,.05);border-color:rgba(220,38,38,.25)}
 .exr-tile.wide{grid-column:1/-1}
-.exr-spark-wrap{margin-top:11px}
-.exr-spark-cap{font-size:9px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;display:flex;justify-content:space-between}
-.exr-spark{display:flex;align-items:flex-end;gap:4px;height:38px}
-.exr-spark-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;justify-content:flex-end}
-.exr-spark-b{width:100%;background:var(--bandc,var(--accent));border-radius:3px 3px 0 0;min-height:3px;opacity:.88}
-.exr-spark-x{font-size:8px;color:var(--text3);font-weight:700}
-.exr-bar3{display:flex;height:9px;border-radius:5px;overflow:hidden;margin-top:9px;background:var(--surface2);border:1px solid var(--border)}
+.exr-pl{margin-top:11px;background:rgba(202,138,4,.06);border:1px solid rgba(202,138,4,.18);border-radius:11px;padding:10px 11px}
+.exr-pl-cap,.exr-blk-cap{font-size:9px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.exr-pl-row{display:grid;grid-template-columns:74px 1fr 34px;align-items:center;gap:7px;margin-bottom:5px}
+.exr-pl-row .pl-l{font-size:9.5px;font-weight:700;color:var(--text2)}
+.exr-pl-bar{height:8px;border-radius:5px;background:var(--surface2);overflow:hidden}
+.exr-pl-bar>i{display:block;height:100%;border-radius:5px}
+.exr-pl-row .pl-v{font-size:10px;font-weight:800;color:var(--text);text-align:end}
+.exr-blk{margin-top:11px}
+.exr-bar3{display:flex;height:9px;border-radius:5px;overflow:hidden;margin-top:5px;background:var(--surface2);border:1px solid var(--border);width:100%;padding:0;cursor:pointer}
 .exr-bar3 i{display:block;height:100%}
-.exr-bar3-lg{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;font-size:9.5px;font-weight:700;color:var(--text2)}
+.exr-bar3-lg{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;font-size:9px;font-weight:700;color:var(--text2)}
 .exr-bar3-lg span{display:inline-flex;align-items:center;gap:4px}
 .exr-bar3-lg b{width:9px;height:9px;border-radius:3px;display:inline-block}
-.exr-foot{font-size:10px;color:var(--text2);font-weight:600;margin-top:11px;padding-top:9px;border-top:1px dashed var(--border)}
-[data-theme=dark] .exr-ribbon{box-shadow:0 18px 50px -24px rgba(0,0,0,.7)}
+.exr-area{margin-top:11px;background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:10px 11px}
+.exr-foot{margin-top:auto;padding-top:10px}
+.exr-foot-row{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:10.5px;font-weight:600;color:var(--text2);padding:5px 0;border-top:1px solid var(--border);cursor:pointer}
+.exr-foot-row:hover{color:var(--text)}
+.exr-foot-row b{font-weight:800;color:var(--text)}
+.exr-foot-row .fr-pos{color:#dc2626;font-weight:800}
+[data-theme=dark] .exr-ribbon{box-shadow:0 22px 56px -26px rgba(0,0,0,.8)}
+[data-theme=dark] .exr-band-ic{filter:brightness(1.15)}
 body.mobile-mode .exr-bands,body.mobile-mode .exr-heroes{grid-template-columns:1fr}
 </style>
 <div id="loginOverlay"><div class="login-card">
@@ -9561,9 +9572,37 @@ function a1OpenWizard(){
       '<div class="fg" id="a1CapexWrap" style="display:none"><label class="fl2">'+L('Expenditure Type','نوع الإنفاق')+'</label><select class="fsel2" id="a1Capex" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="capex">'+L('Capex (Project Level)','رأسمالي (مستوى المشروع)')+'</option><option value="opex">'+L('Opex (Company Level)','تشغيلي (مستوى الشركة)')+'</option></select></div>'+
     '</div>'+
     '<div id="a1Result" style="margin-top:12px"><div style="font-size:11px;color:var(--text3)">'+L('Enter nature & estimated value to identify the mechanism.','أدخل الطبيعة والقيمة التقديرية لتحديد الآلية.')+'</div></div>'+
+    '<div id="a1ThresholdBox" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:var(--rs);padding:12px;background:var(--surface2)">'+
+      '<div style="font-size:12px;font-weight:800;margin-bottom:2px">📊 '+L('Local Content Minimum Threshold Requirements','متطلبات الحد الأدنى للمحتوى المحلي')+'</div>'+
+      '<div style="font-size:10px;color:var(--text3);margin-bottom:10px">'+L('Toggle ON to enforce a minimum for bidders. If OFF, no exclusion for that criterion.','فعّل لفرض حد أدنى على المتقدمين. عند الإيقاف لا يُستبعد أحد لهذا المعيار.')+'</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+        '<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs)"><label class="sw-toggle"><input type="checkbox" id="a1MinBaselineOn" onchange="a1ToggleThr(\'baseline\')"><span class="sw-slider"></span></label><div style="flex:1"><label class="fl2" style="margin:0">'+L('Min Baseline Required %','الحد الأدنى لخط الأساس %')+'</label><input class="fi" id="a1MinBaseline" type="number" step="0.1" value="0" disabled style="width:100%;font-size:11px;padding:5px 8px;margin-top:4px;background:#f0f0f0;cursor:not-allowed"></div></div>'+
+        '<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs)"><label class="sw-toggle"><input type="checkbox" id="a1MinTargetOn" onchange="a1ToggleThr(\'target\')"><span class="sw-slider"></span></label><div style="flex:1"><label class="fl2" style="margin:0">'+L('Min Target LC Required %','الحد الأدنى للمستهدف %')+'</label><input class="fi" id="a1MinTarget" type="number" step="0.1" value="0" disabled style="width:100%;font-size:11px;padding:5px 8px;margin-top:4px;background:#f0f0f0;cursor:not-allowed"></div></div>'+
+      '</div>'+
+      '<div style="margin-top:10px"><label class="fl2">📎 '+L('Threshold Excel Attachment','مرفق إكسل الحد الأدنى')+'</label><div style="display:flex;align-items:center;gap:6px;margin-top:4px"><input type="file" id="a1ThresholdFile" accept=".xlsx,.xls,.csv" style="display:none" onchange="a1HandleThrFile(this)"><button class="btn btn-s btn-sm" type="button" onclick="document.getElementById(\'a1ThresholdFile\').click()">+ '+L('Upload Threshold File','رفع ملف')+'</button><span id="a1ThresholdFileName" style="font-size:10px;color:var(--text3)"></span></div></div>'+
+    '</div>'+
   '</div></div>';
   document.body.appendChild(d);
+  _a1ThrFile=null;
   _v57EU(document.getElementById('a1EU'));
+}
+var _a1ThrFile=null;
+function a1ToggleThr(which){
+  var on=document.getElementById(which==='target'?'a1MinTargetOn':'a1MinBaselineOn');
+  var inp=document.getElementById(which==='target'?'a1MinTarget':'a1MinBaseline');
+  if(!on||!inp)return;
+  inp.disabled=!on.checked;inp.style.background=on.checked?'':'#f0f0f0';inp.style.cursor=on.checked?'':'not-allowed';
+  if(on.checked)inp.focus();
+}
+function a1HandleThrFile(inp){
+  if(!inp||!inp.files||!inp.files.length)return;var f=inp.files[0];
+  if(typeof _fileTooBig==='function'&&_fileTooBig(f,5))return;
+  var rd=new FileReader();rd.onload=function(ev){_a1ThrFile={name:f.name,data:ev.target.result};var sp=document.getElementById('a1ThresholdFileName');if(sp)sp.textContent='📎 '+f.name;toast('Threshold file attached','ok');};rd.readAsDataURL(f);
+}
+function a1UpdateThrBox(){
+  var box=document.getElementById('a1ThresholdBox');if(!box)return;
+  var isThr=_a1Pick&&typeof mechClass==='function'&&mechClass(_a1Pick).base==='threshold';
+  box.style.display=isThr?'block':'none';
 }
 function a1CloseWizard(){var m=document.getElementById('a1WizModal');if(m)m.remove();}
 function _a1HasTC(mech){if(!mech||typeof MECH_TC==='undefined')return false;var tc=MECH_TC[mech];return !!(tc&&(tc.rfp||tc.contract||tc.rfpFileData||tc.contractFileData));}
@@ -9596,6 +9635,21 @@ function a1DownloadTC(mechEnc,which){
   var nm=which==='contract'?(tc.contractFile||'Contract-TC'):(tc.rfpFile||'RFP-TC');
   if(data&&typeof _dlData==='function')_dlData(data,nm);else toast('No attached document','err');
 }
+function _openDataUrl(data,nm){try{var parts=String(data).split(',');var mime=((parts[0]||'').match(/data:([^;]+)/)||[])[1]||'application/octet-stream';var bin=atob(parts[1]||'');var arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);var url=URL.createObjectURL(new Blob([arr],{type:mime}));var w=window.open(url,'_blank');if(!w){var a=document.createElement('a');a.href=url;a.download=nm||'file';a.click();}setTimeout(function(){URL.revokeObjectURL(url);},60000);}catch(e){toast('Could not open file','err');}}
+window._openDataUrl=_openDataUrl;
+function a1ViewThr(id){var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r||!r.thresholdFileData){toast('No threshold file','err');return;}_openDataUrl(r.thresholdFileData,r.thresholdFileName||'threshold.xlsx');}
+function a1DlThr(id){var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r||!r.thresholdFileData){toast('No threshold file','err');return;}_dlData(r.thresholdFileData,r.thresholdFileName||'threshold.xlsx');}
+window.a1ViewThr=a1ViewThr;window.a1DlThr=a1DlThr;
+function _a1ThrCell(r){
+  var isThr=(typeof mechClass==='function'&&mechClass(r.suggestedMech||'').base==='threshold');
+  if(!isThr)return '<span style="color:var(--text3)">—</span>';
+  var parts=[];
+  parts.push('<span style="'+(r.minBaselineOn?'':'opacity:.45')+'">BL '+(r.minBaselineOn?'≥ '+(r.minBaseline||0)+'%':'off')+'</span>');
+  parts.push('<span style="'+(r.minTargetOn?'':'opacity:.45')+'">TG '+(r.minTargetOn?'≥ '+(r.minTarget||0)+'%':'off')+'</span>');
+  var txt='<div style="font-size:10px;line-height:1.5">'+parts.join(' · ')+'</div>';
+  if(r.thresholdFileData)txt+='<div style="display:flex;gap:4px;margin-top:2px"><button class="btn btn-s btn-sm" style="padding:1px 6px;font-size:9px" onclick="a1ViewThr('+JSON.stringify(r.id)+')" title="'+escSub(r.thresholdFileName||'')+'">👁</button><button class="btn btn-s btn-sm" style="padding:1px 6px;font-size:9px" onclick="a1DlThr('+JSON.stringify(r.id)+')">⬇</button></div>';
+  return txt;
+}
 function a1Identify(){
   var n=(document.getElementById('a1Nature')||{}).value||'';
   var v=parseFloat((document.getElementById('a1Value')||{}).value)||0;
@@ -9606,8 +9660,8 @@ function a1Identify(){
   var needCapex=DR.some(function(r){return r.nature===n&&r.valueLevel===(isH?'high':'low')&&(r.expenditure==='capex'||r.expenditure==='opex');});
   var cw=document.getElementById('a1CapexWrap'); if(cw)cw.style.display=needCapex?'':'none';
   _a1Pick=null;_a1Mechs=[];
-  if(!n||!v){res.innerHTML='<div style="font-size:11px;color:var(--text3)">Enter nature &amp; estimated value to identify the mechanism.</div>';return;}
-  if(needCapex&&!cx){res.innerHTML='<div style="font-size:11px;color:var(--warn)">Select Capex / Opex to continue.</div>';return;}
+  if(!n||!v){res.innerHTML='<div style="font-size:11px;color:var(--text3)">Enter nature &amp; estimated value to identify the mechanism.</div>';a1UpdateThrBox();return;}
+  if(needCapex&&!cx){res.innerHTML='<div style="font-size:11px;color:var(--warn)">Select Capex / Opex to continue.</div>';a1UpdateThrBox();return;}
   var vl=isH?'high':'low',match=null;
   DR.forEach(function(r){ if(r.nature===n&&r.valueLevel===vl){ if(r.expenditure==='any'&&!match)match=r; if(cx&&r.expenditure===cx)match=r; if(!needCapex&&r.expenditure==='any')match=r; } });
   if(!match){res.innerHTML='<div style="font-size:11px;color:var(--danger)">No matching rule. Add one in Settings → Decision Tree.</div>';return;}
@@ -9617,9 +9671,10 @@ function a1Identify(){
     _a1Pick=mechs[0]||'';
     res.innerHTML='<div style="background:var(--al);border:1.5px solid var(--accent);border-radius:var(--rs);padding:12px 14px"><div style="font-size:10px;color:var(--accent);font-weight:700">RECOMMENDED MECHANISM</div><div style="font-size:14px;font-weight:800;margin:4px 0">'+escSub(_a1Pick||'—')+'</div>'+head+'<button class="btn btn-p btn-sm" onclick="a1Save()">💾 Save as Processed</button></div>';
   }else{
-    var opts=mechs.map(function(m,i){return '<label style="display:flex;gap:8px;align-items:center;padding:4px 0;font-size:12px;cursor:pointer"><input type="radio" name="a1mech" value="'+i+'" onchange="_a1Pick=_a1Mechs[+this.value]"> '+escSub(m)+'</label>';}).join('');
+    var opts=mechs.map(function(m,i){return '<label style="display:flex;gap:8px;align-items:center;padding:4px 0;font-size:12px;cursor:pointer"><input type="radio" name="a1mech" value="'+i+'" onchange="_a1Pick=_a1Mechs[+this.value];a1UpdateThrBox()"> '+escSub(m)+'</label>';}).join('');
     res.innerHTML='<div style="background:var(--al);border:1.5px solid var(--accent);border-radius:var(--rs);padding:12px 14px"><div style="font-size:10px;color:var(--accent);font-weight:700">SELECT MECHANISM (choose one)</div>'+head+opts+'<button class="btn btn-p btn-sm" style="margin-top:8px" onclick="a1Save()">💾 Save as Processed</button></div>';
   }
+  a1UpdateThrBox();
 }
 function a1Save(){
   var name=((document.getElementById('a1Name')||{}).value||'').trim();
@@ -9633,6 +9688,18 @@ function a1Save(){
   var rec=num?RFPS.find(function(r){return (r.ref||'').trim().toLowerCase()===num.toLowerCase();}):null;
   if(!rec){rec={id:uid(),created:new Date().toISOString().split('T')[0],boq:[]};RFPS.push(rec);}
   rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.suggestedMech=_a1Pick;rec.mechAuto=(_a1Mechs.length<=1);rec.status='processed';rec.processedAt=new Date().toISOString();
+  // #threshold — store LC min baseline/target + excel when the mechanism is a threshold type
+  var _isThr=(typeof mechClass==='function'&&mechClass(_a1Pick).base==='threshold');
+  if(_isThr){
+    var _blOn=!!(document.getElementById('a1MinBaselineOn')||{}).checked;
+    var _tgOn=!!(document.getElementById('a1MinTargetOn')||{}).checked;
+    rec.minBaselineOn=_blOn;rec.minTargetOn=_tgOn;
+    rec.minBaseline=_blOn?(parseFloat((document.getElementById('a1MinBaseline')||{}).value)||0):0;
+    rec.minTarget=_tgOn?(parseFloat((document.getElementById('a1MinTarget')||{}).value)||0):0;
+    if(_a1ThrFile){rec.thresholdFileName=_a1ThrFile.name;rec.thresholdFileData=_a1ThrFile.data;}
+  }else{
+    rec.minBaselineOn=false;rec.minTargetOn=false;rec.minBaseline=0;rec.minTarget=0;delete rec.thresholdFileName;delete rec.thresholdFileData;
+  }
   if(typeof saveAll==='function')saveAll();
   if(typeof logAudit==='function')logAudit('create','RFP processed (A.1): '+name+' → '+_a1Pick);
   toast('Saved as processed: '+name,'ok');
@@ -9645,6 +9712,14 @@ function a1Edit(id){
   _v57EU(document.getElementById('a1EU'));document.getElementById('a1EU').value=r.endUser||'';
   document.getElementById('a1Value').value=r.value||'';document.getElementById('a1Nature').value=r.nature||'';
   a1Identify();var cx=document.getElementById('a1Capex');if(cx&&r.expenditure){cx.value=r.expenditure;a1Identify();}
+  // repopulate threshold fields if this RFP's mechanism is a threshold type
+  if(typeof mechClass==='function'&&mechClass(r.suggestedMech||_a1Pick||'').base==='threshold'){
+    var cbBL=document.getElementById('a1MinBaselineOn'),cbTG=document.getElementById('a1MinTargetOn'),inBL=document.getElementById('a1MinBaseline'),inTG=document.getElementById('a1MinTarget');
+    if(cbBL)cbBL.checked=!!r.minBaselineOn;if(cbTG)cbTG.checked=!!r.minTargetOn;
+    if(inBL)inBL.value=r.minBaseline||0;if(inTG)inTG.value=r.minTarget||0;
+    a1ToggleThr('baseline');a1ToggleThr('target');
+    if(r.thresholdFileName){_a1ThrFile={name:r.thresholdFileName,data:r.thresholdFileData||null};var sp=document.getElementById('a1ThresholdFileName');if(sp)sp.textContent='📎 '+r.thresholdFileName;}
+  }
 }
 function renderMechWiz(){
   _v57EU(document.getElementById('a1EU'));
@@ -9653,10 +9728,10 @@ function renderMechWiz(){
   tb.innerHTML=pr.length?pr.map(function(r){
     var mech=r.suggestedMech||'';
     var tcCell=_a1HasTC(mech)?'<button class="btn btn-s btn-sm" onclick="a1ViewTC(\''+encodeURIComponent(mech)+'\')" title="View &amp; download the mechanism Terms &amp; Conditions">📜 T&amp;C</button>':'<span style="color:var(--text3)">—</span>';
-    return '<tr><td>'+escSub(r.ref||'—')+'</td><td class="td-n">'+escSub(r.title||'—')+'</td><td>'+escSub(r.endUser||'—')+'</td><td class="r">'+_v57Money(r.value)+'</td><td>'+escSub(r.nature||'—')+'</td><td style="font-size:11px">'+escSub(mech||'—')+'</td><td>'+tcCell+'</td><td style="font-size:10px;color:var(--text3)">'+_v57Date(r.processedAt)+'</td><td><button class="btn btn-s btn-sm" onclick="a1Edit('+JSON.stringify(r.id)+')">Edit</button></td></tr>';
-  }).join(''):'<tr><td colspan="9"><div class="empty"><div class="ei">📋</div><p>No processed RFPs yet — click <b>+ Start New Process</b> to identify a mechanism.</p></div></td></tr>';
+    return '<tr><td>'+escSub(r.ref||'—')+'</td><td class="td-n">'+escSub(r.title||'—')+'</td><td>'+escSub(r.endUser||'—')+'</td><td class="r">'+_v57Money(r.value)+'</td><td>'+escSub(r.nature||'—')+'</td><td style="font-size:11px">'+escSub(mech||'—')+'</td><td>'+_a1ThrCell(r)+'</td><td>'+tcCell+'</td><td style="font-size:10px;color:var(--text3)">'+_v57Date(r.processedAt)+'</td><td><button class="btn btn-s btn-sm" onclick="a1Edit('+JSON.stringify(r.id)+')">Edit</button></td></tr>';
+  }).join(''):'<tr><td colspan="10"><div class="empty"><div class="ei">📋</div><p>No processed RFPs yet — click <b>+ Start New Process</b> to identify a mechanism.</p></div></td></tr>';
 }
-window.a1Identify=a1Identify;window.a1Save=a1Save;window.a1Edit=a1Edit;window.renderMechWiz=renderMechWiz;window.a1OpenWizard=a1OpenWizard;window.a1CloseWizard=a1CloseWizard;window.a1ViewTC=a1ViewTC;window.a1DownloadTC=a1DownloadTC;
+window.a1Identify=a1Identify;window.a1Save=a1Save;window.a1Edit=a1Edit;window.renderMechWiz=renderMechWiz;window.a1OpenWizard=a1OpenWizard;window.a1CloseWizard=a1CloseWizard;window.a1ViewTC=a1ViewTC;window.a1DownloadTC=a1DownloadTC;window.a1ToggleThr=a1ToggleThr;window.a1HandleThrFile=a1HandleThrFile;window.a1UpdateThrBox=a1UpdateThrBox;
 
 /* ===== Mandatory List Identifier ===== */
 var _a2Boq=[],_a2RfpId=null;
@@ -9675,6 +9750,55 @@ function a2RenderBoq(){
 function a2AddRow(){_a2Boq.push({desc:'',nature:'goods',qty:1,uom:'Lump Sum',cost:0});a2RenderBoq();}
 function a2AddRows(n){for(var i=0;i<n;i++)_a2Boq.push({desc:'',nature:'goods',qty:1,uom:'Lump Sum',cost:0});a2RenderBoq();}
 function a2DelRow(i){_a2Boq.splice(i,1);a2RenderBoq();}
+function a2OpenWizard(id){
+  var ex=document.getElementById('a2WizModal');if(ex)ex.remove();
+  _a2RfpId=id||null;_a2Boq=[];
+  var r=id?(RFPS||[]).find(function(x){return String(x.id)===String(id);}):null;
+  if(r&&r.boq&&r.boq.length)_a2Boq=JSON.parse(JSON.stringify(r.boq));
+  var d=document.createElement('div');d.className='mo open';d.id='a2WizModal';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  d.innerHTML='<div class="md" style="max-width:980px"><div class="md-hd"><div class="md-title">📋 '+(r?L('Edit Mandatory-List Identification','تعديل تحديد القائمة الإلزامية'):L('New Mandatory-List Identification','تحديد جديد للقائمة الإلزامية'))+'</div><button class="md-close" onclick="document.getElementById(\'a2WizModal\').remove()">✕</button></div><div class="md-body">'+
+    '<div class="fg2" style="gap:10px">'+
+      '<div class="fg"><label class="fl2">'+L('RFP Name','اسم المنافسة')+' <span class="req">*</span></label><input class="fi" id="a2Name" placeholder="RFP title" value="'+escSub(r?(r.title||''):'')+'"></div>'+
+      '<div class="fg"><label class="fl2">'+L('RFP Number','رقم المنافسة')+'</label><input class="fi" id="a2Num" placeholder="RFP-2026-001" value="'+escSub(r?(r.ref||''):'')+'"></div>'+
+      '<div class="fg"><label class="fl2">'+L('End-User','الجهة المستفيدة')+'</label><select class="fsel2" id="a2EU"><option value="">'+L('Select end-user…','اختر الجهة…')+'</option></select></div>'+
+    '</div>'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin:14px 0 6px"><div class="fsec-title" style="border:none;margin:0;padding:0">'+L('Bill of Quantities','جدول الكميات')+'</div><div style="display:flex;gap:6px"><button class="btn btn-s btn-sm" onclick="a2AddRow()">+ Add Row</button><button class="btn btn-s btn-sm" onclick="a2AddRows(5)">+ Add 5</button></div></div>'+
+    '<div style="overflow-x:auto"><table style="width:100%;font-size:11px"><thead><tr><th>#</th><th>Item Description</th><th>Nature</th><th>Qty</th><th>UoM</th><th>Est. Cost</th><th>Mandatory List</th><th></th></tr></thead><tbody id="a2BoqBody"></tbody></table></div>'+
+    '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn btn-a" onclick="a2Identify()">🔍 '+L('Identify Mandatory List Items','تحديد بنود القائمة الإلزامية')+'</button><button class="btn btn-p" onclick="a2Save()">💾 '+L('Save to RFP','حفظ في المنافسة')+'</button></div>'+
+    '<div id="a2Results" style="margin-top:12px"></div>'+
+  '</div></div>';
+  document.body.appendChild(d);
+  _v57EU(document.getElementById('a2EU'));if(r)document.getElementById('a2EU').value=r.endUser||'';
+  a2RenderBoq();
+}
+function _a2Attachments(r){
+  var list=[];var mech=r.suggestedMech||r.mechanism||'';var tc=(typeof MECH_TC!=='undefined')?MECH_TC[mech]:null;
+  (r.files||[]).forEach(function(f,i){if(f&&f.data)list.push({label:L('RFP File','ملف المنافسة'),name:f.name||('file'+(i+1)),kind:'rfpfile',idx:i});});
+  if(r.thresholdFileData)list.push({label:L('Threshold Excel','إكسل الحد الأدنى'),name:r.thresholdFileName||'threshold.xlsx',kind:'threshold',idx:0});
+  if(tc&&tc.rfpFileData)list.push({label:L('Mechanism RFP T&C','شروط المنافسة'),name:tc.rfpFile||'RFP-TC',kind:'tcrfp',idx:0});
+  if(tc&&tc.contractFileData)list.push({label:L('Mechanism Contract T&C','شروط العقد'),name:tc.contractFile||'Contract-TC',kind:'tccontract',idx:0});
+  return list;
+}
+function _a2AttachData(r,kind,idx){
+  var mech=r.suggestedMech||r.mechanism||'';var tc=(typeof MECH_TC!=='undefined')?MECH_TC[mech]:null;
+  if(kind==='rfpfile')return (r.files&&r.files[idx])?{data:r.files[idx].data,name:r.files[idx].name}:null;
+  if(kind==='threshold')return {data:r.thresholdFileData,name:r.thresholdFileName||'threshold.xlsx'};
+  if(kind==='tcrfp')return tc?{data:tc.rfpFileData,name:tc.rfpFile||'RFP-TC'}:null;
+  if(kind==='tccontract')return tc?{data:tc.contractFileData,name:tc.contractFile||'Contract-TC'}:null;
+  return null;
+}
+function a2DoAttach(id,kind,idx,mode){var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r)return;var a=_a2AttachData(r,kind,idx);if(!a||!a.data){toast('No file','err');return;}if(mode==='dl')_dlData(a.data,a.name);else _openDataUrl(a.data,a.name);}
+function _a2HasAttach(r){return _a2Attachments(r).length>0;}
+function a2ViewAttach(id){
+  var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r)return;
+  var list=_a2Attachments(r);
+  var ex=document.getElementById('a2AttachModal');if(ex)ex.remove();
+  var d=document.createElement('div');d.className='mo open';d.id='a2AttachModal';d.onclick=function(e){if(e.target===d)d.remove();};
+  var body=list.length?list.map(function(a){return '<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--rs);margin-bottom:6px"><div style="font-size:11px;min-width:0"><b>'+a.label+'</b><div style="color:var(--text3);font-size:10px;overflow:hidden;text-overflow:ellipsis">'+escSub(a.name)+'</div></div><div style="display:flex;gap:5px;flex:none"><button class="btn btn-s btn-sm" onclick="a2DoAttach('+JSON.stringify(id)+',\''+a.kind+'\','+a.idx+',\'view\')">👁 '+L('View','عرض')+'</button><button class="btn btn-s btn-sm" onclick="a2DoAttach('+JSON.stringify(id)+',\''+a.kind+'\','+a.idx+',\'dl\')">⬇ '+L('Download','تنزيل')+'</button></div></div>';}).join(''):'<div class="empty" style="padding:16px"><p>'+L('No attachments for this RFP.','لا توجد مرفقات لهذه المنافسة.')+'</p></div>';
+  d.innerHTML='<div class="md" style="max-width:600px"><div class="md-hd"><div class="md-title">📎 '+L('Attachments','المرفقات')+' — '+escSub(r.title||r.ref||'')+'</div><button class="md-close" onclick="document.getElementById(\'a2AttachModal\').remove()">✕</button></div><div class="md-body">'+body+'</div></div>';
+  document.body.appendChild(d);
+}
 function a2LoadPick(){
   var id=(document.getElementById('a2Pick')||{}).value;_a2RfpId=id||null;
   if(!id){document.getElementById('a2Name').value='';document.getElementById('a2Num').value='';document.getElementById('a2EU').value='';_a2Boq=[];a2RenderBoq();document.getElementById('a2Results').innerHTML='';return;}
@@ -9719,15 +9843,20 @@ function a2Save(){
   if(!rec.status)rec.status='processed';
   if(typeof saveAll==='function')saveAll();
   if(typeof logAudit==='function')logAudit('edit','Mandatory List identified (A.2): '+name+' ('+rec.mlnpItems.length+' items)');
-  toast('Saved BoQ + mandatory items to RFP','ok');renderMlWiz();
+  toast('Saved BoQ + mandatory items to RFP','ok');
+  var m=document.getElementById('a2WizModal');if(m)m.remove();
+  renderMlWiz();
 }
 function renderMlWiz(){
-  var pick=document.getElementById('a2Pick');
-  if(pick){var cur=pick.value;pick.innerHTML='<option value="">— New / fresh entry —</option>'+((RFPS||[]).filter(function(r){return r.status==='processed';}).map(function(r){return '<option value="'+r.id+'">'+escSub((r.ref||'')+' '+(r.title||''))+'</option>';}).join(''));if(cur)pick.value=cur;}
-  _v57EU(document.getElementById('a2EU'));
-  a2RenderBoq();
+  var tb=document.getElementById('a2Tbody');if(!tb)return;
+  var pr=(typeof RFPS!=='undefined'?RFPS:[]).filter(function(r){return r.status==='processed';});
+  tb.innerHTML=pr.length?pr.map(function(r){
+    var mand=(r.mlnpItems&&r.mlnpItems.length)||((r.boq||[]).filter(function(it){return it.isMandatory&&it.mlCode;}).length);
+    var att=_a2HasAttach(r)?'<button class="btn btn-s btn-sm" onclick="a2ViewAttach('+JSON.stringify(r.id)+')">📎 '+L('Attachments','المرفقات')+'</button>':'<span style="color:var(--text3)">—</span>';
+    return '<tr><td>'+escSub(r.ref||'—')+'</td><td class="td-n">'+escSub(r.title||'—')+'</td><td>'+escSub(r.endUser||'—')+'</td><td>'+(mand||0)+'</td><td>'+att+'</td><td style="font-size:10px;color:var(--text3)">'+_v57Date(r.processedAt)+'</td><td><button class="btn btn-s btn-sm" onclick="a2OpenWizard('+JSON.stringify(r.id)+')">Edit</button></td></tr>';
+  }).join(''):'<tr><td colspan="7"><div class="empty"><div class="ei">📋</div><p>No processed RFPs yet — click <b>+ New Identification</b>.</p></div></td></tr>';
 }
-window.a2AddRow=a2AddRow;window.a2AddRows=a2AddRows;window.a2DelRow=a2DelRow;window.a2LoadPick=a2LoadPick;window.a2Identify=a2Identify;window.a2ApplyNoms=a2ApplyNoms;window.a2Save=a2Save;window.renderMlWiz=renderMlWiz;
+window.a2AddRow=a2AddRow;window.a2AddRows=a2AddRows;window.a2DelRow=a2DelRow;window.a2LoadPick=a2LoadPick;window.a2Identify=a2Identify;window.a2ApplyNoms=a2ApplyNoms;window.a2Save=a2Save;window.renderMlWiz=renderMlWiz;window.a2OpenWizard=a2OpenWizard;window.a2ViewAttach=a2ViewAttach;window.a2DoAttach=a2DoAttach;
 
 /* ===== Evaluation Assistant ===== */
 function _eaFlags(mech){ var mc=(typeof mechClass==='function')?mechClass(mech||''):{base:'none',npp:false,ml:false}; var isLCw=mc.base==='company'||mc.base==='project'; var isThr=mc.base==='threshold'; return {showLC:isLCw||isThr,npp:mc.npp,ml:mc.ml,sme:mc.base==='sme'||/sme|small/i.test(mech||'')}; }
@@ -9735,7 +9864,7 @@ function renderEvalAssist(){
   document.getElementById('ea-list').style.display='block';document.getElementById('ea-detail').style.display='none';
   var el=document.getElementById('eaListBody');if(!el)return;
   var rows=(typeof BIDS!=='undefined'?BIDS:[]);
-  el.innerHTML=rows.length?('<div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Evaluation</th><th>End-User</th><th>Mechanism</th><th>Bidders</th><th>Status</th><th></th></tr></thead><tbody>'+rows.map(function(b){var rfp=b.rfpId?(RFPS||[]).find(function(r){return String(r.id)===String(b.rfpId);}):null;var st=b.status==='evaluated'?'<span class="badge bg">✓ Evaluated</span>':b.status==='contractCreated'?'<span class="badge bp">📑 Contract Created</span>':'<span class="badge ba">Draft</span>';return '<tr style="cursor:pointer" onclick="eaOpen('+JSON.stringify(b.id)+')"><td>'+escSub((rfp&&rfp.ref)||b.ref||'—')+'</td><td class="td-n">'+escSub(b.title||'Untitled')+'</td><td>'+escSub((rfp&&rfp.endUser)||b.endUser||'—')+'</td><td style="font-size:11px">'+escSub(b.mechanism||'—')+'</td><td>'+((b.bidders||[]).length)+'</td><td>'+st+'</td><td><button class="btn btn-s btn-sm" onclick="event.stopPropagation();eaOpen('+JSON.stringify(b.id)+')">Open</button></td></tr>';}).join('')+'</tbody></table></div>'):'<div class="empty"><div class="ei">⚖️</div><p>No evaluations yet. Click "+ New Evaluation" and pick a processed RFP.</p></div>';
+  el.innerHTML=rows.length?('<div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Evaluation</th><th>End-User</th><th>Mechanism</th><th>Bidders</th><th>Status</th><th></th></tr></thead><tbody>'+rows.map(function(b){var rfp=b.rfpId?(RFPS||[]).find(function(r){return String(r.id)===String(b.rfpId);}):null;var st=b.status==='awarded'?'<span class="badge bg">🏆 Awarded</span>':b.status==='evaluated'?'<span class="badge bg">✓ Evaluated</span>':b.status==='contractCreated'?'<span class="badge bp">📑 Contract Created</span>':'<span class="badge ba">Draft</span>';return '<tr style="cursor:pointer" onclick="eaOpen('+JSON.stringify(b.id)+')"><td>'+escSub((rfp&&rfp.ref)||b.ref||'—')+'</td><td class="td-n">'+escSub(b.title||'Untitled')+'</td><td>'+escSub((rfp&&rfp.endUser)||b.endUser||'—')+'</td><td style="font-size:11px">'+escSub(b.mechanism||'—')+'</td><td>'+((b.bidders||[]).length)+'</td><td>'+st+'</td><td><button class="btn btn-s btn-sm" onclick="event.stopPropagation();eaOpen('+JSON.stringify(b.id)+')">Open</button></td></tr>';}).join('')+'</tbody></table></div>'):'<div class="empty"><div class="ei">⚖️</div><p>No evaluations yet. Click "+ New Evaluation" and pick a processed RFP.</p></div>';
 }
 function eaNew(){
   var pr=(RFPS||[]).filter(function(r){return r.status==='processed';});
@@ -9766,7 +9895,8 @@ function eaCreate(mode){
     nb={id:uid(),title:t,ref:((document.getElementById('eaManRef')||{}).value||'').trim(),rfpId:null,endUser:eu,mechanism:(document.getElementById('eaManMech')||{}).value||'',value:0,nature:'',bidders:[],status:'draft',winner:'',created:new Date().toISOString().split('T')[0],rfpBoQ:[]};
   } else {
     var id=(document.getElementById('eaNewPick')||{}).value;var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r){toast('Pick an RFP','err');return;}
-    nb={id:uid(),title:r.title||'',ref:r.ref||'',rfpId:r.id,endUser:r.endUser||'',mechanism:r.suggestedMech||r.mechanism||'',value:r.value||0,nature:r.nature||'',bidders:[],status:'draft',winner:'',created:new Date().toISOString().split('T')[0],rfpBoQ:(r.boq?JSON.parse(JSON.stringify(r.boq)):[])};
+    nb={id:uid(),title:r.title||'',ref:r.ref||'',rfpId:r.id,endUser:r.endUser||'',mechanism:r.suggestedMech||r.mechanism||'',value:r.value||0,nature:r.nature||'',bidders:[],status:'draft',winner:'',created:new Date().toISOString().split('T')[0],rfpBoQ:(r.boq?JSON.parse(JSON.stringify(r.boq)):[]),
+      minBaseline:r.minBaseline||0,minTarget:r.minTarget||0,minBaselineOn:!!r.minBaselineOn,minTargetOn:!!r.minTargetOn}; // #threshold carry from processed RFP → evaluation exclusions
   }
   BIDS.push(nb);if(typeof saveAll==='function')saveAll();
   var m=document.getElementById('eaNewModal');if(m)m.remove();
@@ -9781,7 +9911,7 @@ function eaOpen(id){
   var rfp=b.rfpId?(RFPS||[]).find(function(r){return String(r.id)===String(b.rfpId);}):null;
   var locked=b.status==='contractCreated';
   dt.innerHTML='<div class="fb" style="justify-content:space-between"><button class="btn btn-s btn-sm" onclick="eaBack()">← Evaluations</button><div style="font-size:11px;color:var(--text3)">RFP #'+escSub((rfp&&rfp.ref)||b.ref||'—')+' · '+escSub(b.title||'')+' · '+escSub((rfp&&rfp.endUser)||b.endUser||'—')+'</div></div>'+
-    '<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">⚖️ '+escSub(b.title||'Evaluation')+'</div><span class="badge '+(b.status==='evaluated'?'bg':b.status==='contractCreated'?'bp':'ba')+'">'+(b.status==='evaluated'?'✓ Evaluated':b.status==='contractCreated'?'📑 Contract Created':'Draft')+'</span></div>'+
+    '<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">⚖️ '+escSub(b.title||'Evaluation')+'</div><span class="badge '+(b.status==='awarded'||b.status==='evaluated'?'bg':b.status==='contractCreated'?'bp':'ba')+'">'+(b.status==='awarded'?'🏆 Awarded':b.status==='evaluated'?'✓ Evaluated':b.status==='contractCreated'?'📑 Contract Created':'Draft')+'</span></div>'+
     '<div style="font-size:11px;color:var(--text2);margin-bottom:8px">Mechanism: <b>'+escSub(b.mechanism||'—')+'</b></div>'+
     '<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:10px;padding:8px 10px;background:var(--surface2);border-radius:8px">'+
       '<div class="fg" style="margin:0"><label class="fl2">Technical Weight %</label><input class="fi" id="eaTechW" type="number" style="width:90px;font-size:11px;padding:5px 8px" value="'+(b.techWeight!=null?b.techWeight:'')+'" '+(locked?'disabled':'')+'></div>'+
@@ -9794,7 +9924,7 @@ function eaOpen(id){
       (locked?'':'<button class="btn btn-s btn-sm" onclick="eaAddBidder()">+ Add Bidder</button>')+
       '<button class="btn btn-s btn-sm" disabled title="AI proposal reading — coming soon" style="opacity:.55;cursor:not-allowed">✨ AI Read Proposals (coming soon)</button>'+
       (locked?'':(b.techWeight!=null?'<button class="btn btn-p btn-sm" onclick="eaCalc()">⚡ Calculate &amp; Rank</button>':'<button class="btn btn-p btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Confirm Technical/Commercial weights first">⚡ Calculate &amp; Rank</button>'))+
-      (locked?'':'<button class="btn btn-sm" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:800" onclick="eaMarkEvaluated()">✓ Mark as Evaluated</button>')+
+      (locked?'':'<button class="btn btn-sm" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:800" onclick="eaAwardFinalize()">🏆 Award &amp; Finalize</button>')+
       '<button class="btn btn-p btn-sm" onclick="if(typeof exportBidMoMPDF===\'function\'){_eaSync();exportBidMoMPDF();}">📄 Export MoM</button>'+
     '</div></div>';
   eaRenderTable();
@@ -9866,6 +9996,14 @@ function eaSetWeights(){
   eaOpen(curBid.id);
 }
 function eaCalc(){ if(!curBidders.length){toast('Add bidders first','err');return;} if(curBid.techWeight==null||curBid.commWeight==null){toast('Confirm Technical/Commercial weights first','err');return;} _eaSync(); try{calcBids();}catch(e){toast('Calc error: '+e.message,'err');} eaRenderTable(); if(typeof saveAll==='function')saveAll(); }
+function eaAwardFinalize(){
+  if(!curBidders.length){toast('Add bidders first','err');return;}
+  if(curBid.techWeight==null||curBid.commWeight==null){toast('Confirm Technical/Commercial weights first','err');return;}
+  _eaSync();
+  try{calcBids();}catch(e){toast('Calc error: '+e.message,'err');return;}
+  eaRenderTable();
+  if(typeof openAwardFinalize==='function')openAwardFinalize();else toast('Award flow unavailable','err');
+}
 function eaMarkEvaluated(){
   if(!curBid)return;
   if(!curBidders.length){toast('Add bidders first','err');return;}
@@ -9936,7 +10074,7 @@ function _eaCardFile(i,field,label){
   var bd=curBidders[i];if(bd&&bd[field])return '<button class="btn btn-s btn-sm" onclick="eaView('+i+',\''+field+'\')">👁 '+label+'</button>';
   return '<button class="btn btn-s btn-sm" onclick="eaAttach('+i+',\''+field+'\')">📎 '+label+'</button>';
 }
-window.renderEvalAssist=renderEvalAssist;window.eaNew=eaNew;window.eaCreate=eaCreate;window.eaOpen=eaOpen;window.eaBack=eaBack;window.eaRenderTable=eaRenderTable;window.eaAttach=eaAttach;window.eaView=eaView;window.eaAddBidder=eaAddBidder;window.eaCalc=eaCalc;window.eaSetWeights=eaSetWeights;window.eaMarkEvaluated=eaMarkEvaluated;window.eaCard=eaCard;window.eaCardBoqAdd=eaCardBoqAdd;window.eaCardBoqDel=eaCardBoqDel;window._eaCardNppRefresh=_eaCardNppRefresh;
+window.renderEvalAssist=renderEvalAssist;window.eaNew=eaNew;window.eaCreate=eaCreate;window.eaOpen=eaOpen;window.eaBack=eaBack;window.eaRenderTable=eaRenderTable;window.eaAttach=eaAttach;window.eaView=eaView;window.eaAddBidder=eaAddBidder;window.eaCalc=eaCalc;window.eaSetWeights=eaSetWeights;window.eaMarkEvaluated=eaMarkEvaluated;window.eaAwardFinalize=eaAwardFinalize;window.eaCard=eaCard;window.eaCardBoqAdd=eaCardBoqAdd;window.eaCardBoqDel=eaCardBoqDel;window._eaCardNppRefresh=_eaCardNppRefresh;
 </script>
 
 <script>
@@ -10145,7 +10283,34 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
     var trajY={}; db.forEach(function(c){(c.reports||[]).forEach(function(r){if((r.type==='period'||r.type==='final')&&r.actual!=null&&r.year){if(!trajY[r.year])trajY[r.year]={a:0,n:0};trajY[r.year].a+=(r.type==='final'?(r.achieved||r.actual):r.actual);trajY[r.year].n++;}});});
     var trajArr=Object.keys(trajY).map(Number).sort(function(a,b){return a-b;}).map(function(y){return {y:y,v:trajY[y].a/trajY[y].n};});
 
+    /* ---------- mockup band extras ---------- */
+    var pipeline=rfps.filter(function(r){return r.status!=='awarded';});
+    var pipelineVal=pipeline.reduce(function(s,r){return s+(r.value||0);},0);
+    var evidenceQueue=0; db.forEach(function(c){Object.keys(c.evidence||{}).forEach(function(rt){(c.evidence[rt]||[]).forEach(function(f){if((f.status||'pending')==='pending')evidenceQueue++;});});});
+    var penContractsN=Object.keys(penByContract).length;
+    function wOf(b){return (b.bidders||[]).find(function(x){return x.name===b.winner;})||{};}
+    var awN2=awardedDone.length;
+    var smeShare=awN2?Math.round(awardedDone.filter(function(b){return wOf(b).isSME;}).length/awN2*100):0;
+    var tadShare=awN2?Math.round(awardedDone.filter(function(b){return wOf(b).isTadawul;}).length/awN2*100):0;
+    var nppShare=awN2?Math.round(awardedDone.filter(function(b){var m=(b.mechanism||'').toLowerCase();return /national product|\bnpp\b/.test(m);}).length/awN2*100):0;
+    var certShare=awN2?Math.round(awardedDone.filter(function(b){return wOf(b).hasCert;}).length/awN2*100):0;
+    var boqRfps=rfps.filter(function(r){return r.boq&&r.boq.length;});
+    var avgBoq=boqRfps.length?Math.round(boqRfps.reduce(function(s,r){return s+r.boq.length;},0)/boqRfps.length):0;
+    var mixLC=0,mixNPP=0,mixML=0; processed.forEach(function(r){var m=(r.suggestedMech||'').toLowerCase();if(/weight|threshold|local content/.test(m))mixLC++;if(/national product|npp/.test(m))mixNPP++;if(/mandatory|mlnp/.test(m))mixML++;});
+    var art19=0; evalsDone.forEach(function(b){(b.lastResults||[]).forEach(function(r){if(r.art19Shifted)art19++;});});
+    var topMatch=awardedDone.length?Math.round((awardedDone.length-overrides)/awardedDone.length*100):0;
+    var penYrs=Object.keys(penByYear).filter(function(k){return k!=='—';}).map(Number).sort(function(a,b){return a-b;});
+    var penTrendPct=null; if(penYrs.length>=2){var _lp=penByYear[penYrs[penYrs.length-1]],_pp=penByYear[penYrs[penYrs.length-2]];if(_pp>0)penTrendPct=Math.round((_lp-_pp)/_pp*100);}
+    var weeks=1; if(!R.isAll&&R.start&&R.end){weeks=Math.max(1,Math.round((R.end-R.start)/(7*86400000)));} else {var _ts=audits.map(function(a){return a.id;}).filter(Boolean);if(_ts.length>=2)weeks=Math.max(1,Math.round((Math.max.apply(null,_ts)-Math.min.apply(null,_ts))/(7*86400000)));}
+    var auditsPerWeek=Math.round(audits.length/weeks);
+    var rfpComplete=rfps.length?Math.round(rfps.filter(function(r){return r.title&&r.ref&&r.endUser&&r.value&&r.nature;}).length/rfps.length*100):0;
+    var readyN=rfps.filter(function(r){return r.status==='ready'||(r.status==='processed'&&!r.awardedEvalId);}).length;
+    var _ach=activeC.map(cAchieved).filter(function(v){return v!=null;});
+    var lcAchieved=_ach.length?(_ach.reduce(function(s,v){return s+v;},0)/_ach.length):null;
+
     return {range:R,years:_exYears(),portHealth:portHealth,portDelta:portDelta,healthyN:healthyN,activeN:activeC.length,
+      pipelineN:pipeline.length,pipelineVal:pipelineVal,evidenceQueue:evidenceQueue,penContractsN:penContractsN,rfpComplete:rfpComplete,readyN:readyN,lcAchieved:lcAchieved,
+      smeShare:smeShare,tadShare:tadShare,nppShare:nppShare,certShare:certShare,avgBoq:avgBoq,mixLC:mixLC,mixNPP:mixNPP,mixML:mixML,art19:art19,topMatch:topMatch,penTrendPct:penTrendPct,auditsPerWeek:auditsPerWeek,
       penTotal:penTotal,conc:conc,penByYear:penByYear,throughput:throughput,rfpN:rfpsCreated.length,evalN:evalsCreated.length,awardN:awardedBids.length,ctrN:contractsCreated.length,
       autoPct:autoPct,autoN:autoN,processedN:processed.length,matched:matched,flagged:flagged,unmapped:unmapped,covTot:covTot,
       draftReady:draftReady,tcPct:tcPct,tcN:tcN,mechN:mechs.length,mixCount:mixArr.length,mixTop:(mixArr[0]?mixArr[0].m:'—'),
@@ -10155,58 +10320,85 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
       certsSoon:soon.length,auditsN:audits.length,trajArr:trajArr,drills:DR};
   }
 
+  function _svgLine(pairs,w,hh,color,fill,dashY,dashColor){
+    if(!pairs.length)return '';
+    var vals=pairs.map(function(p){return p.v;});
+    var mx=Math.max.apply(null,vals.concat([dashY!=null?dashY:0,1]));
+    var mn=Math.min.apply(null,vals.concat([dashY!=null?dashY:mx]));
+    var rng=(mx-mn)||1, n=pairs.length;
+    function Y(v){return (hh-3)-((v-mn)/rng)*(hh-6);}
+    var pts=pairs.map(function(p,i){var x=n===1?w/2:(i/(n-1))*w;return x.toFixed(1)+','+Y(p.v).toFixed(1);});
+    var s='<svg viewBox="0 0 '+w+' '+hh+'" preserveAspectRatio="none" style="width:100%;height:'+hh+'px;display:block">';
+    if(fill)s+='<polygon points="0,'+hh+' '+pts.join(' ')+' '+w+','+hh+'" fill="'+fill+'"/>';
+    if(dashY!=null)s+='<line x1="0" y1="'+Y(dashY).toFixed(1)+'" x2="'+w+'" y2="'+Y(dashY).toFixed(1)+'" stroke="'+(dashColor||'var(--text3)')+'" stroke-width="1.4" stroke-dasharray="4 3"/>';
+    s+='<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    return s;
+  }
   function _exRender(){
     var host=document.getElementById('dashKPIs'); if(!host)return;
     window._allDashEntities=(function(){var s={};(typeof ENDUSERS!=='undefined'?ENDUSERS:[]).forEach(function(e){if(e&&e.name)s[e.name]=1;});(typeof DB!=='undefined'?DB:[]).forEach(function(c){if(c.endUser)s[c.endUser]=1;});return Object.keys(s);})();
     var M; try{ M=_exCompute(); }catch(e){ host.innerHTML='<div class="empty" style="padding:24px"><p>Dashboard error: '+_esc(e.message)+'</p></div>'; return; }
     _exDR=M.drills;
     var bi=(typeof brandInfo==='function')?brandInfo():{org:'LC Monitor Pro',proj:'',logo:''};
-    function hero(key,lbl,val,sub,delta){var d=delta==null?'':'<div class="k-d">'+(delta>=0?'▲ +'+delta:'▼ '+delta)+L(' pts','نقطة')+'</div>';return '<button type="button" class="exr-hero" onclick="_exDrill(\''+key+'\')"><div class="k-l">'+lbl+'</div><div class="k-v">'+val+'</div><div class="k-s">'+sub+'</div>'+d+'</button>';}
-    function tile(key,lbl,val,sub,wide){return '<button type="button" class="exr-tile'+(wide?' wide':'')+'" onclick="_exDrill(\''+key+'\')"><div class="k-l">'+lbl+'</div><div class="k-v">'+val+'</div><div class="k-s">'+(sub||'')+'</div></button>';}
-    function spark(cap,pairs){ if(!pairs.length)return ''; var mx=Math.max.apply(null,pairs.map(function(p){return p.v;}).concat([1])); return '<div class="exr-spark-wrap"><div class="exr-spark-cap"><span>'+cap+'</span></div><div class="exr-spark">'+pairs.map(function(p){var hh=Math.max(3,Math.round((p.v/mx)*34));return '<div class="exr-spark-col"><div class="exr-spark-b" style="height:'+hh+'px" title="'+_esc(String(p.x))+': '+_esc(p.t||String(p.v))+'"></div><div class="exr-spark-x">'+_esc(String(p.x))+'</div></div>';}).join('')+'</div></div>'; }
+    function tile(key,lbl,val,sub,bad){return '<button type="button" class="exr-tile'+(bad?' bad':'')+'" onclick="_exDrill(\''+key+'\')"><div class="k-l">'+lbl+'</div><div class="k-v exr-num">'+val+'</div><div class="k-s">'+(sub||'')+'</div></button>';}
+    function foot(key,lbl,val,pos){return '<div class="exr-foot-row" onclick="_exDrill(\''+key+'\')"><span>'+lbl+'</span><span'+(pos?' class="fr-pos"':'')+'><b>'+val+'</b></span></div>';}
+    function plRow(lbl,pct,color){return '<div class="exr-pl-row"><span class="pl-l">'+lbl+'</span><div class="exr-pl-bar"><i style="width:'+Math.max(2,pct)+'%;background:'+color+'"></i></div><span class="pl-v">'+pct+'%</span></div>';}
 
+    // ===== RIBBON =====
     var h='<div class="exr-wrap"><div class="exr-ribbon"><div class="exr-top">';
-    h+='<div class="exr-id">'+(bi.logo?'<img class="exr-logo" src="'+bi.logo+'" alt=""/>':'<div class="exr-logo">LC</div>')+'<div><div class="exr-org">'+_esc(bi.org)+'</div><div class="exr-tag">'+(bi.proj?_esc(bi.proj)+' · ':'')+L('Executive Pulse — Local Content','النبض التنفيذي — المحتوى المحلي')+'</div><div class="exr-date">'+new Date().toLocaleDateString(_loc(),{weekday:'long',day:'2-digit',month:'long',year:'numeric'})+'</div><button type="button" class="exr-pdf" onclick="exportDashPDF()">📄 '+L('Export PDF','تصدير PDF')+'</button></div></div>';
+    h+='<div><div class="exr-eyebrow">'+L('Executive Pulse','النبض التنفيذي')+'</div><div class="exr-title">'+L('Local Content portfolio — <em>at a glance</em>','محفظة المحتوى المحلي — <em>لمحة سريعة</em>')+'</div><button type="button" class="exr-pdf" onclick="exportDashPDF()">📄 '+L('Export PDF','تصدير PDF')+'</button></div>';
     h+='<div class="exr-filters">';
-    h+='<div class="exr-fl"><label>'+L('Entity','الجهة')+'</label><select class="exr-sel" onchange="setDashEntity(this.value)">'+_dashEntityOptions()+'</select></div>';
+    h+='<div class="exr-fl"><label>'+L('End-User','الجهة')+'</label><select class="exr-sel" onchange="setDashEntity(this.value)">'+_dashEntityOptions()+'</select></div>';
     var yopts='<option value="">'+L('All years','كل السنوات')+'</option>'+M.years.map(function(y){return '<option value="'+y+'"'+(String(window.dashYear)===String(y)?' selected':'')+'>'+y+'</option>';}).join('');
     h+='<div class="exr-fl"><label>'+L('Year','السنة')+'</label><select class="exr-sel" onchange="setDashYear(this.value)">'+yopts+'</select></div>';
     var qs=['all','1','2','3','4'];
     h+='<div class="exr-fl"><label>'+L('Quarter','الربع')+'</label><div class="exr-qchips">'+qs.map(function(q){var on=String(window.dashQuarter)===String(q);var dis=!window.dashYear;return '<button type="button" class="exr-qchip'+(on?' on':'')+'"'+(dis?' disabled style="opacity:.4;cursor:not-allowed"':'')+' onclick="setDashQuarter(\''+q+'\')">'+(q==='all'?L('All','الكل'):'Q'+q)+'</button>';}).join('')+'</div></div>';
     h+='</div></div>';
+    // heroes
     h+='<div class="exr-heroes">';
-    h+=hero('portHealth',L('Portfolio Health','صحة المحفظة'),M.portHealth+'%',M.healthyN+' / '+M.activeN+' '+L('healthy active','نشط سليم'),M.portDelta);
-    h+=hero('penExposure',L('Penalty Exposure','الانكشاف للغرامات'),_money(M.penTotal),M.conc+'% '+L('in top 2 contracts','في أعلى عقدين'),null);
-    h+=hero('throughput',L('Value Throughput','حجم القيمة المُرساة'),_money(M.throughput),M.rfpN+' ▸ '+M.evalN+' ▸ '+M.awardN+' ▸ '+M.ctrN+' '+L('(RFP▸Eval▸Award▸Contract)','(منافسة▸تقييم▸ترسية▸عقد)'),null);
+    var pd=M.portDelta;
+    var hDelta=pd==null?'':'<div class="k-d" style="color:'+(pd>=0?'#34d399':'#fca5a5')+'">'+(pd>=0?'▲ +'+pd:'▼ '+pd)+L(' pts vs prev',' نقطة')+'</div>';
+    h+='<button type="button" class="exr-hero" onclick="_exDrill(\'portHealth\')"><div class="k-l">'+L('Portfolio Health','صحة المحفظة')+'</div><div class="k-row"><span class="k-v exr-num">'+M.portHealth+'%</span><span class="k-s">'+M.healthyN+' '+L('compliant','ملتزم')+' · '+(M.activeN-M.healthyN)+' '+L('at risk','معرّض')+'</span></div>'+(hDelta||'<div style="margin-top:auto"></div>')+'<div class="exr-prog"><i style="width:'+M.portHealth+'%"></i></div></button>';
+    var penPairs=Object.keys(M.penByYear).filter(function(k){return k!=='—';}).map(Number).sort(function(a,b){return a-b;}).map(function(y){return {x:y,v:M.penByYear[y]};});
+    h+='<button type="button" class="exr-hero" onclick="_exDrill(\'penExposure\')"><div class="k-l">'+L('Penalty Exposure','الانكشاف للغرامات')+'</div><div class="k-row"><span class="k-v exr-num">'+_money(M.penTotal)+'</span><span class="k-s">'+M.penContractsN+' '+L('contracts','عقد')+' · '+M.conc+'% '+L('in 2','في عقدين')+'</span></div><div class="exr-spline">'+(penPairs.length>1?_svgLine(penPairs,260,34,'#fca5a5',null):'<div style="height:34px"></div>')+'</div></button>';
+    h+='<button type="button" class="exr-hero" onclick="_exDrill(\'throughput\')"><div class="k-l">'+L('Value Throughput','حجم القيمة المُرساة')+'</div><div class="k-row"><span class="k-v exr-num">'+_money(M.throughput)+'</span><span class="k-s">'+L('awarded in period','مُرسى في الفترة')+'</span></div><span class="exr-chip">'+M.rfpN+' '+L('RFPs','منافسة')+' ▸ '+M.awardN+' '+L('awards','ترسية')+' ▸ '+M.ctrN+' '+L('contracts','عقد')+'</span></button>';
     h+='</div></div>';
+
+    // ===== BANDS =====
     h+='<div class="exr-bands">';
-    var preTiles=tile('rfpsCreated',L('RFPs Created','المنافسات المُنشأة'),String(M.rfpN),L('in period','في الفترة'))+
-      tile('autoId',L('% Auto-Identified','% المُحدَّد آليًا'),M.autoPct+'%',(M.processedN-M.autoN)+' '+L('overridden','معدّل'))+
+    // -- Pre-Tendering --
+    var preTiles=tile('rfpsCreated',L('RFPs in Pipeline','منافسات قيد الإعداد'),String(M.pipelineN),'+'+M.rfpN+' '+L('created','مُنشأة'))+
       tile('draftReady',L('Draft → Ready','المسودة ← الجاهزية'),dDays(M.draftReady),L('avg cycle','متوسط الدورة'))+
-      tile('tc',L('T&C Complete','اكتمال الشروط'),M.tcPct+'%',M.tcN+'/'+M.mechN+' '+L('mechanisms','آلية'))+
-      tile('mechMix',L('Mechanism Mix','توزيع الآليات'),String(M.mixCount),_esc(M.mixTop),true);
+      tile('rfpsCreated',L('RFP Completeness','اكتمال البيانات'),M.rfpComplete+'%',L('title·ref·EU·value','العنوان·المرجع·الجهة·القيمة'))+
+      tile('rfpsCreated',L('Ready · Unissued','جاهزة · غير مُصدرة'),String(M.readyN),L('to issue','للإصدار'));
     var covBar='';
     if(M.covTot){var mp=Math.round(M.matched/M.covTot*100),fp=Math.round(M.flagged/M.covTot*100),up=Math.max(0,100-mp-fp);
-      covBar='<div class="exr-spark-cap" style="margin-top:11px"><span>'+L('BoQ Mandatory Coverage','تغطية القائمة الإلزامية')+'</span></div><button type="button" class="exr-bar3" style="width:100%;cursor:pointer;padding:0" onclick="_exDrill(\'coverage\')"><i style="width:'+mp+'%;background:#059669"></i><i style="width:'+fp+'%;background:#d4a017"></i><i style="width:'+up+'%;background:var(--text3)"></i></button><div class="exr-bar3-lg"><span><b style="background:#059669"></b>'+L('Matched','مطابق')+' '+M.matched+'</span><span><b style="background:#d4a017"></b>'+L('Flagged','معلّم')+' '+M.flagged+'</span><span><b style="background:var(--text3)"></b>'+L('Unmapped','غير مصنّف')+' '+M.unmapped+'</span></div>';
+      covBar='<div class="exr-blk"><div class="exr-blk-cap" style="display:flex;justify-content:space-between"><span>'+L('BoQ Mandatory Coverage','تغطية القائمة الإلزامية')+'</span><b style="color:var(--text)">'+mp+'%</b></div><button type="button" class="exr-bar3" onclick="_exDrill(\'coverage\')"><i style="width:'+mp+'%;background:#2563eb"></i><i style="width:'+fp+'%;background:#d4a017"></i><i style="width:'+up+'%;background:var(--text3)"></i></button><div class="exr-bar3-lg"><span><b style="background:#2563eb"></b>'+L('matched','مطابق')+' '+M.matched+'</span><span><b style="background:#d4a017"></b>'+L('review','مراجعة')+' '+M.flagged+'</span><span><b style="background:var(--text3)"></b>'+L('unmapped','غير مصنّف')+' '+M.unmapped+'</span></div></div>';
     }
-    h+='<div class="exr-band" style="--bandc:#2563eb"><div class="exr-band-hd"><span class="ei">📄</span><div class="exr-band-t">'+L('Pre-Tendering','ما قبل الطرح')+'<small>'+L('Preparation','الإعداد')+'</small></div></div><div class="exr-tiles">'+preTiles+'</div>'+covBar+'</div>';
-    var awTiles=tile('evalsDone',L('Evaluations Done','التقييمات المنجزة'),String(M.evalDoneN),L('in period','في الفترة'))+
-      tile('conversion',L('Conversion','نسبة الترسية'),M.conv+'%',M.awardedN+'/'+M.evalDoneN+' '+L('awarded','مُرسى'))+
-      tile('tta',L('Time to Award','زمن الترسية'),dDays(M.avgTTA),L('avg','متوسط'))+
-      tile('avgBidders',L('Avg Bidders','متوسط المتقدمين'),M.avgBidders.toFixed(1),L('per eval','لكل تقييم'))+
-      tile('override',L('Override Rate','نسبة التجاوز'),M.overrideRate+'%',M.overrides+' '+L('overrides','تجاوز'))+
-      tile('sme',L('SME Uplift','أثر المنشآت'),M.smeWon+'/'+M.smeComp,L('won/contested','فوز/منافسة'))+
-      tile('winLC',L('Winner LC vs Target','المحتوى مقابل المستهدف'),(M.avgWinLC!=null?M.avgWinLC.toFixed(0)+'%':'—'),L('target','المستهدف')+' '+M.portTarget.toFixed(0)+'%',true);
-    h+='<div class="exr-band" style="--bandc:#ca8a04"><div class="exr-band-hd"><span class="ei">⚖️</span><div class="exr-band-t">'+L('Awarding','الترسية')+'<small>'+L('Evaluation & award','التقييم والترسية')+'</small></div></div><div class="exr-tiles">'+awTiles+'</div></div>';
-    var moTiles=tile('activeContracts',L('Active Contracts','العقود النشطة'),String(M.activeN),L('as of period','حتى نهاية الفترة'))+
-      tile('reports',L('Reports On-Time','التقارير في وقتها'),M.onTimePct+'%',M.overdueN+' '+L('overdue','متأخر'))+
-      tile('evidence',L('Evidence Rejection','رفض الأدلة'),M.evRej+'%',M.evRejected+'/'+M.evReviewed)+
-      tile('certs',L('Certs ≤30d','شهادات ≤30 يوم'),String(M.certsSoon),L('expiring','تنتهي قريبًا'))+
-      tile('audits',L('Audit Events','أحداث التدقيق'),String(M.auditsN),L('in period','في الفترة'))+
-      tile('worstLate',L('Worst Late','الأكثر تأخرًا'),M.worstLate+'d',L('most overdue','أكثر تأخرًا'));
-    var penPairs=Object.keys(M.penByYear).filter(function(k){return k!=='—';}).map(Number).sort(function(a,b){return a-b;}).map(function(y){return {x:y,v:M.penByYear[y],t:_money(M.penByYear[y])};});
-    var trajPairs=M.trajArr.map(function(t){return {x:t.y,v:t.v,t:t.v.toFixed(0)+'%'};});
-    h+='<div class="exr-band" style="--bandc:#0d9488"><div class="exr-band-hd"><span class="ei">📊</span><div class="exr-band-t">'+L('Monitoring','المراقبة')+'<small>'+L('Post-contract','بعد التعاقد')+'</small></div></div><div class="exr-tiles">'+moTiles+'</div>'+spark(L('Penalty by Year','الغرامات حسب السنة'),penPairs)+spark(L('LC Achieved by Year','المحتوى المحلي المحقق سنويًا'),trajPairs)+'</div>';
+    var preFoot='<div class="exr-foot">'+foot('mechMix',L('Avg BoQ lines / RFP','متوسط بنود الجدول'),String(M.avgBoq))+foot('mechMix',L('Mechanism mix · LC / NPP / ML','توزيع الآليات'),M.mixLC+' / '+M.mixNPP+' / '+M.mixML)+foot('tc',L('T&Cs attached','الشروط مرفقة'),M.tcPct+'%')+'</div>';
+    h+='<div class="exr-band" style="--bandc:#2563eb;--bandsoft:rgba(37,99,235,.12)"><div class="exr-band-hd"><span class="exr-band-ic">📄</span><div class="exr-band-t">'+L('Pre-Tendering','ما قبل الطرح')+'</div><div class="exr-band-sum">'+M.pipelineN+' '+L('open','مفتوحة')+' · '+_money(M.pipelineVal)+'</div></div><div class="exr-tiles">'+preTiles+'</div>'+covBar+preFoot+'</div>';
+    // -- Awarding --
+    var awTiles=tile('tta',L('Time to Award','زمن الترسية'),dDays(M.avgTTA),L('avg','متوسط'))+
+      tile('conversion',L('Conversion','نسبة الترسية'),M.conv+'%',M.awardedN+' '+L('of','من')+' '+M.evalDoneN+' '+L('evals','تقييم'))+
+      tile('override',L('Override Rate','نسبة التجاوز'),M.overrideRate+'%',M.overrides+' '+L('w/ memo','بمبرر'))+
+      tile('avgBidders',L('Avg Bidders','متوسط المتقدمين'),M.avgBidders.toFixed(1),L('per eval','لكل تقييم'));
+    var plBlock='<div class="exr-pl"><div class="exr-pl-cap">'+L('Preference Lift — SME / Tadawul / NPP / Baseline','أثر التفضيل')+'</div>'+
+      plRow(L('SME wins','فوز المنشآت'),M.smeShare,'#ca8a04')+
+      plRow(L('Tadawul','تداول'),M.tadShare,'#ca8a04')+
+      plRow(L('NPP-only','المنتجات الوطنية'),M.nppShare,'#ca8a04')+
+      plRow(L('w/ baseline cert','بشهادة أساس'),M.certShare,'#059669')+'</div>';
+    var awFoot='<div class="exr-foot">'+foot('override',L('Top-ranked vs awarded match','تطابق الأعلى مع المُرسى'),M.topMatch+'%')+foot('winLC',L('Avg LC% committed by winners','متوسط التزام الفائزين'),(M.avgWinLC!=null?M.avgWinLC.toFixed(1)+'%':'—'))+foot('override',L('Price-deviation (Art.19) flags','مخالفات المادة 19'),String(M.art19))+'</div>';
+    h+='<div class="exr-band" style="--bandc:#ca8a04;--bandsoft:rgba(202,138,4,.14)"><div class="exr-band-hd"><span class="exr-band-ic">⚖️</span><div class="exr-band-t">'+L('Awarding','الترسية')+'</div><div class="exr-band-sum">'+M.awardN+' '+L('awards','ترسية')+' · '+_money(M.throughput)+'</div></div><div class="exr-tiles">'+awTiles+'</div>'+plBlock+awFoot+'</div>';
+    // -- Monitoring --
+    var gap=(M.lcAchieved!=null)?(M.lcAchieved-M.portTarget):null;
+    var moTiles=tile('reports',L('LC Achieved vs Agreed','المحقق مقابل المتعاقد'),(M.lcAchieved!=null?M.lcAchieved.toFixed(1)+'%':'—'),L('target','المستهدف')+' '+M.portTarget.toFixed(0)+'% · '+L('gap','الفجوة')+' '+(gap==null?'—':(gap>=0?'+':'')+gap.toFixed(1))+' '+L('pts','نقطة'))+
+      tile('portHealth',L('Contracts at Risk','عقود معرّضة'),String(M.activeN-M.healthyN),L('of','من')+' '+M.activeN+' '+L('active','نشط'),(M.activeN-M.healthyN)>0)+
+      tile('reports',L('Reports On-Time','التقارير في وقتها'),M.onTimePct+'%',M.overdueN+' '+L('overdue','متأخر')+' · '+M.worstLate+'d '+L('worst','أسوأ'))+
+      tile('evidence',L('Evidence Rejection','رفض الأدلة'),M.evRej+'%',M.evRejected+' '+L('of','من')+' '+M.evReviewed);
+    var trajPairs=M.trajArr.map(function(t){return {x:t.y,v:t.v};});
+    var areaBlock=trajPairs.length?'<div class="exr-area"><div class="exr-blk-cap" style="display:flex;justify-content:space-between"><span>'+L('LC Trajectory — by period','مسار المحتوى المحلي')+'</span><span style="font-weight:700;color:var(--text3)">— '+L('Achieved','المحقق')+' &nbsp; -- '+L('Agreed','المتعاقد')+'</span></div>'+_svgLine(trajPairs,300,58,'#0d9488','rgba(13,148,136,.16)',M.portTarget,'var(--text3)')+'</div>':'';
+    var moFoot='<div class="exr-foot">'+foot('penExposure',L('Penalty exposure trend','اتجاه الغرامات'),(M.penTrendPct==null?'—':(M.penTrendPct>=0?'+'+M.penTrendPct+'%':M.penTrendPct+'%')),M.penTrendPct!=null&&M.penTrendPct>0)+foot('certs',L('Supplier certs expiring ≤30d','شهادات تنتهي ≤30 يوم'),String(M.certsSoon))+foot('audits',L('Audit events / week','أحداث التدقيق/أسبوع'),String(M.auditsPerWeek))+'</div>';
+    h+='<div class="exr-band" style="--bandc:#0d9488;--bandsoft:rgba(13,148,136,.14)"><div class="exr-band-hd"><span class="exr-band-ic">📊</span><div class="exr-band-t">'+L('Monitoring','المراقبة')+'</div><div class="exr-band-sum">'+M.activeN+' '+L('live','نشط')+' · '+M.evidenceQueue+' '+L('evidence in queue','دليل بالانتظار')+'</div></div><div class="exr-tiles">'+moTiles+'</div>'+areaBlock+moFoot+'</div>';
     h+='</div></div>';
     host.innerHTML=h;
   }
