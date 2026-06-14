@@ -227,6 +227,7 @@ body.rtl .fcl{margin-left:0;margin-right:auto;}
 /* MODAL */
 .mo{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px;}
 .mo.open{display:flex;}
+#cFullEditModal{z-index:560;} /* layer the "Edit Contract's Info" popup above the contract details modal */
 .md{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);width:100%;max-width:660px;max-height:92vh;overflow-y:auto;box-shadow:var(--shl);animation:mIn .24s cubic-bezier(.22,1,.36,1);}
 .md.wide{max-width:860px;}
 @keyframes mIn{from{opacity:0;transform:scale(.94) translateY(16px);}to{opacity:1;transform:scale(1) translateY(0);}}
@@ -2522,7 +2523,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 </div><!-- /app -->
 
 <!-- MODALS -->
-<div class="mo" id="cFullEditModal"><div class="md"><div class="md-hd"><div><div class="md-title">🛠 Full Edit Contract</div><div class="md-sub">Top-manager override — edits every field (locks bypassed)</div></div><button class="md-close" onclick="closeModal(&#39;cFullEditModal&#39;)">✕</button></div><div class="md-body" id="cfeBody"></div></div></div>
+<div class="mo" id="cFullEditModal"><div class="md"><div class="md-hd"><div><div class="md-title">✏️ Edit Contract's Info</div><div class="md-sub">Edit all contract fields, amounts and BoQ</div></div><button class="md-close" onclick="closeModal(&#39;cFullEditModal&#39;)">✕</button></div><div class="md-body" id="cfeBody"></div></div></div>
 <div class="mo" id="cModal"><div class="md"><div class="md-hd"><div><div class="md-title" id="mT">#1 — إعداد دراسات السعة والطلب والدراسات الخمس لعدد من مشاريع القوات الخاصة للأمن البيئي</div><div class="md-sub" id="mS">Small &amp; Medium Enterprises</div></div><button class="md-close" onclick="closeModal(&#39;cModal&#39;)">✕</button></div><div class="md-body" id="mB"><div class="md-sec"><div class="md-sec-title">Contract Info</div><div class="ig">
     <div><div class="ik">End-User</div><div class="iv">Ministry of Environment</div></div>
     <div><div class="ik">Amount</div><div class="iv">SAR&nbsp;55,000,000</div></div>
@@ -3498,34 +3499,13 @@ function openContractModal(id){
 
   var h='';
   h+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">';
-  h+='<button class="btn btn-s btn-sm" onclick="toggleContractEditInfo()">&#9998; Edit Info</button>';
+  h+='<button class="btn btn-a btn-sm" onclick="openContractFullEdit('+c.id+')">&#9999;&#65039; Edit Contract&#39;s Info</button>';
   h+='<button class="btn btn-p btn-sm" onclick="saveAndRecalc('+c.id+')">&#9889; Save &amp; Recalculate</button>';
   h+='<button class="btn btn-s btn-sm" onclick="generateReport('+c.id+')">&#128196; PDF</button>';
-  h+='<button class="btn btn-a btn-sm" onclick="openContractFullEdit('+c.id+')">&#9999;&#65039; Edit All Fields</button>';
   /* v57: penalty letter removed from contract details — available in the Penalties section */
   h+='</div>';
 
-  h+='<div id="editInfoSection" style="display:none;margin-bottom:12px">';
-  h+='<div class="fsec" style="padding:12px;margin-bottom:0">';
-  h+='<div class="fsec-title" style="font-size:11px">&#9998; Edit Contract Info</div>';
-  h+='<div class="fg2" style="gap:8px">';
-  h+='<div class="fg"><label class="fl2">Name</label><input class="fi" id="meditName" value="'+(c.name||'').replace(/"/g,'&quot;')+'" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">End-User</label><select class="fsel2" id="meditEU" style="font-size:11px;padding:4px 8px">';
-  ENDUSERS.forEach(function(eu){h+='<option value="'+eu.name+'"'+(eu.name===c.endUser?' selected':'')+'>'+eu.name+'</option>';});
-  h+='</select></div>';
-  h+='<div class="fg"><label class="fl2">Amount (SAR)</label><input class="fi" id="meditAmt" type="number" value="'+(c.amount||0)+'" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">Agreed LC %</label><input class="fi" id="meditLC" type="number" step="0.1" value="'+(c.agreedPct?+(c.agreedPct*100).toFixed(1):'')+'" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">Mechanism</label><select class="fsel2" id="meditMech" style="font-size:11px;padding:4px 8px">';
-  MECHS.forEach(function(m){h+='<option value="'+m+'"'+(m===c.mechanism?' selected':'')+'>'+m+'</option>';});
-  h+='</select></div>';
-  var _supDL=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]).map(function(s){return '<option value="'+String(s.name||'').replace(/"/g,'&quot;')+'">';}).join('');
-  h+='<div class="fg"><label class="fl2">Contractor</label><div style="display:flex;gap:6px;align-items:center"><input class="fi" id="meditCont" list="meditContDL" autocomplete="off" value="'+(c.contractor||'').replace(/"/g,'&quot;')+'" placeholder="Type to search registered suppliers…" style="font-size:11px;padding:4px 8px;flex:1"/><datalist id="meditContDL">'+_supDL+'</datalist><button type="button" class="btn btn-s btn-sm" style="white-space:nowrap;padding:4px 9px;font-size:10px" onclick="gotoSupplierRegistryFromContract()" title="Add a new supplier in the Supplier Registry">+ New Supplier</button></div></div>';
-  h+='<div class="fg"><label class="fl2">Contractor Contact Person</label><input class="fi" id="meditContact" value="'+(c.contractorContact||'').replace(/"/g,'&quot;')+'" placeholder="Full name" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">Contractor Contact Person Email</label><input class="fi" id="meditContEmail" type="email" value="'+(c.contractorEmail||'').replace(/"/g,'&quot;')+'" placeholder="name@company.com" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">Start Date</label><input class="fi" id="meditStart" type="date" value="'+(c.start||'')+'" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">Duration (months)</label><input class="fi" id="meditDur" type="number" min="1" value="'+(c.duration||12)+'" style="font-size:11px;padding:4px 8px"/></div>';
-  h+='<div class="fg"><label class="fl2">Awarding Date <span style="color:var(--text3);font-weight:400">(Improvement Plan)</span></label><input class="fi" id="meditAward" type="date" value="'+(c.awardDate||'')+'" style="font-size:11px;padding:4px 8px" title="Drives the Improvement Plan due date (award + 60 days)"/></div>';
-  h+='</div><div style="font-size:9px;color:var(--text3);margin-top:6px">\u26a0 Changing mechanism, start date or duration regenerates the required reports (received status, actuals and evidence are preserved where the same report still applies).</div></div></div>';
+  /* v57: inline "Edit Info" removed — core fields are edited via the "Edit Contract's Info" popup (openContractFullEdit). */
 
   h+='<div class="md-sec"><div class="md-sec-title">Contract Info</div><div class="ig">';
   h+='<div><div class="ik">End-User</div><div class="iv">'+(c.endUser||'\u2014')+'</div></div>';
@@ -3545,16 +3525,16 @@ function openContractModal(id){
     h+='<div class="ev-row" style="padding:8px 10px">';
     h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
     h+='<span style="font-size:12px;font-weight:700">🎯 Improvement Plan</span>';
-    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; Approved</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; Set Awarding Date in Edit Info</span>')+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; Approved</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; Set Awarding Date in Edit Contract&#39;s Info</span>')+'</div>';
     h+='</div>';
     if(typeof isHighValue==='function'&&!isHighValue(c))h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">Below the high-value threshold &mdash; tracked &amp; approvable, but not counted in KPIs.</div>';
     h+='<div style="font-size:10px;color:var(--text3);margin:2px 0 4px">Yearly LC Targets <span style="color:var(--text3)">(feed each periodic report’s Target on Save &amp; Recalculate)</span>:</div>';
     h+='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">';
     (_ip.planTargets||[]).forEach(function(pt,pi){
-      h+='<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--text2);font-weight:600">'+pt.label+'</label><input class="fi" type="number" step="0.1" id="mip_'+pi+'" value="'+(pt.pct!=null&&pt.pct!==''?pt.pct:'')+'" disabled placeholder="%" style="width:84px;font-size:11px;padding:3px 6px;background:var(--surface2);cursor:not-allowed"/></div>';
+      h+='<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--text2);font-weight:600">'+pt.label+'</label><input class="fi" type="number" step="0.1" id="mip_'+pi+'" value="'+(pt.pct!=null&&pt.pct!==''?pt.pct:'')+'" placeholder="%" style="width:84px;font-size:11px;padding:3px 6px"/></div>';
     });
     h+='</div>';
-    h+='<div id="mipEdit" style="display:none;margin-top:7px"><label class="ev-add-btn" for="mipFile" style="cursor:pointer;display:inline-flex;font-size:10px">&#128206; Attach Plan</label><input type="file" id="mipFile" style="display:none" onchange="mipAttachPlan(this,'+c.id+')"/></div>';
+    h+='<div id="mipEdit" style="margin-top:7px"><label class="ev-add-btn" for="mipFile" style="cursor:pointer;display:inline-flex;font-size:10px">&#128206; Attach Plan</label><input type="file" id="mipFile" style="display:none" onchange="mipAttachPlan(this,'+c.id+')"/></div>';
     h+=evSection('improvement');
     h+='</div></div>';
   }
@@ -7318,9 +7298,17 @@ function saveContractFullEdit(id,recalc){
   c.natProdAmount=parseFloat(gv('cfe_np'))||0;c.mandatoryListAmount=parseFloat(gv('cfe_ml'))||0;c.nppPct=parseFloat(gv('cfe_nppct'))||0;
   c.start=gv('cfe_start')||c.start;c.duration=parseInt(gv('cfe_dur'))||c.duration;c.end=gv('cfe_end')||c.end;c.awardDate=gv('cfe_award')||'';c.notes=gv('cfe_notes');
   c.boqItems=JSON.parse(JSON.stringify(_cfeBoQ));
-  if(recalc){if(typeof regenerateReports==='function')regenerateReports(c);}
-  saveDB();if(typeof logAudit==='function')logAudit('edit','Full-edit (admin) contract #'+c.num+(recalc?' + recalculated':''),c.num);
-  closeModal('cFullEditModal');if(typeof renderContractAdmin==='function')renderContractAdmin();if(typeof updateBadges==='function')updateBadges();
+  if(recalc){if(typeof regenerateReports==='function')regenerateReports(c);if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);}
+  saveDB();if(typeof logAudit==='function')logAudit('edit','Edited contract #'+c.num+(recalc?' + recalculated':''),c.num);
+  closeModal('cFullEditModal');
+  if(typeof renderContractAdmin==='function')renderContractAdmin();
+  if(typeof renderContracts==='function')renderContracts();
+  if(typeof renderDashboard==='function')renderDashboard();
+  if(typeof renderPenalties==='function')renderPenalties();
+  if(typeof updateBadges==='function')updateBadges();
+  // refresh the contract details card if it's open (this popup is now the primary editor)
+  var _cm=document.getElementById('cModal');
+  if(_cm&&_cm.classList.contains('open')&&typeof openContractModal==='function')openContractModal(id);
   toast('Contract saved'+(recalc?' & recalculated':' (reports/penalties unchanged)'),'ok');
 }
 window.openContractFullEdit=openContractFullEdit;window.saveContractFullEdit=saveContractFullEdit;
