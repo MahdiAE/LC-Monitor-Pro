@@ -3686,6 +3686,8 @@ function openContractModal(id){
   h+='</select></div>';
   var _supDL=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]).map(function(s){return '<option value="'+String(s.name||'').replace(/"/g,'&quot;')+'">';}).join('');
   h+='<div class="fg"><label class="fl2">Contractor</label><div style="display:flex;gap:6px;align-items:center"><input class="fi" id="meditCont" list="meditContDL" autocomplete="off" value="'+(c.contractor||'').replace(/"/g,'&quot;')+'" placeholder="Type to search registered suppliers…" style="font-size:11px;padding:4px 8px;flex:1"/><datalist id="meditContDL">'+_supDL+'</datalist><button type="button" class="btn btn-s btn-sm" style="white-space:nowrap;padding:4px 9px;font-size:10px" onclick="gotoSupplierRegistryFromContract()" title="Add a new supplier in the Supplier Registry">+ New Supplier</button></div></div>';
+  h+='<div class="fg"><label class="fl2">Contractor Contact Person</label><input class="fi" id="meditContact" value="'+(c.contractorContact||'').replace(/"/g,'&quot;')+'" placeholder="Full name" style="font-size:11px;padding:4px 8px"/></div>';
+  h+='<div class="fg"><label class="fl2">Contractor Contact Person Email</label><input class="fi" id="meditContEmail" type="email" value="'+(c.contractorEmail||'').replace(/"/g,'&quot;')+'" placeholder="name@company.com" style="font-size:11px;padding:4px 8px"/></div>';
   h+='<div class="fg"><label class="fl2">Start Date</label><input class="fi" id="meditStart" type="date" value="'+(c.start||'')+'" style="font-size:11px;padding:4px 8px"/></div>';
   h+='<div class="fg"><label class="fl2">Duration (months)</label><input class="fi" id="meditDur" type="number" min="1" value="'+(c.duration||12)+'" style="font-size:11px;padding:4px 8px"/></div>';
   h+='<div class="fg"><label class="fl2">Awarding Date <span style="color:var(--text3);font-weight:400">(Improvement Plan)</span></label><input class="fi" id="meditAward" type="date" value="'+(c.awardDate||'')+'" style="font-size:11px;padding:4px 8px" title="Drives the Improvement Plan due date (award + 60 days)"/></div>';
@@ -3702,6 +3704,26 @@ function openContractModal(id){
   h+='<div><div class="ik">Status</div><div class="iv"><span class="badge '+(isExp(c)?'bgy':'bg')+'">'+(isExp(c)?'Expired':'Active')+'</span></div></div>';
   h+='</div></div>';
 
+  // Improvement Plan — shown FIRST; yearly-% targets become editable when Edit Info is ON.
+  var _ip=(c.reports||[]).find(function(r){return r.type==='improvement';});
+  if(_ip){
+    h+='<div class="md-sec"><div class="md-sec-title">Improvement Plan</div>';
+    h+='<div class="ev-row" style="padding:8px 10px">';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
+    h+='<span style="font-size:12px;font-weight:700">🎯 Improvement Plan</span>';
+    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; Approved</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; Set Awarding Date in Edit Info</span>')+'</div>';
+    h+='</div>';
+    if(typeof isHighValue==='function'&&!isHighValue(c))h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">Below the high-value threshold &mdash; tracked &amp; approvable, but not counted in KPIs.</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin:2px 0 4px">Yearly LC Targets <span style="color:var(--text3)">(feed each periodic report’s Target on Save &amp; Recalculate)</span>:</div>';
+    h+='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">';
+    (_ip.planTargets||[]).forEach(function(pt,pi){
+      h+='<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--text2);font-weight:600">'+pt.label+'</label><input class="fi" type="number" step="0.1" id="mip_'+pi+'" value="'+(pt.pct!=null&&pt.pct!==''?pt.pct:'')+'" disabled placeholder="%" style="width:84px;font-size:11px;padding:3px 6px;background:var(--surface2);cursor:not-allowed"/></div>';
+    });
+    h+='</div>';
+    h+='<div id="mipEdit" style="display:none;margin-top:7px"><label class="ev-add-btn" for="mipFile" style="cursor:pointer;display:inline-flex;font-size:10px">&#128206; Attach Plan</label><input type="file" id="mipFile" style="display:none" onchange="mipAttachPlan(this,'+c.id+')"/></div>';
+    h+=evSection('improvement');
+    h+='</div></div>';
+  }
   if(periods.length){
     h+='<div class="md-sec"><div class="md-sec-title">Periodic Reports</div>';
     periods.forEach(function(r){
@@ -3740,8 +3762,8 @@ function openContractModal(id){
     if(finalR.due)h+='<span style="font-size:9px;color:var(--text3)">Due: '+fD(finalR.due)+(finalR.deadline?' · grace '+fD(finalR.deadline):'')+'</span>';
     h+='</div></div>';
     h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-    h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Achieved%:</label><input class="fi" type="number" step="0.1" id="minput_final" value="'+(finalR.achieved!=null?+(finalR.achieved*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
-    h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Agreed:</span><span style="font-size:11px;font-weight:700">'+pct(c.agreedPct)+'</span></div>';
+    h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Target:</span><span style="font-size:11px;font-weight:700" id="mFinalTarget">'+pct(c.agreedPct)+'</span>'+(c.sourceBidId?'<button class="btn btn-s btn-sm" style="padding:1px 7px;font-size:9px" onclick="importFinalTargetFromEval('+c.id+')" title="Pull the LC Target % from the source evaluation">&#10515; Import</button>':'')+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Actual%:</label><input class="fi" type="number" step="0.1" id="minput_final" value="'+(finalR.achieved!=null?+(finalR.achieved*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
     var fPen=(finalR.penalty||0)+(finalR.devPenalty||0);
     if(fPen>0)h+='<span class="badge br" style="font-size:9px">'+fSAR(fPen)+'</span>';
     h+='</div>';
@@ -3784,22 +3806,6 @@ function openContractModal(id){
     h+='</div>';
   }
 
-  var _ip=(c.reports||[]).find(function(r){return r.type==='improvement';});
-  if(_ip){
-    h+='<div class="md-sec"><div class="md-sec-title">Improvement Plan</div>';
-    h+='<div class="ev-row" style="padding:8px 10px">';
-    h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
-    h+='<span style="font-size:12px;font-weight:700">Improvement Plan</span>';
-    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; Approved &middot; targets applied</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; Set Awarding Date in Edit Info</span>')+'</div>';
-    h+='</div>';
-    if(typeof isHighValue==='function'&&!isHighValue(c))h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">Below the high-value threshold &mdash; tracked &amp; approvable, but not counted in KPIs.</div>';
-    h+='<div style="font-size:10px;color:var(--text3);margin:2px 0 3px">Yearly LC Targets ('+(_ip.planApproved?'approved':'proposed')+'):</div>';
-    h+='<div style="display:flex;flex-wrap:wrap;gap:6px">';
-    (_ip.planTargets||[]).forEach(function(pt){h+='<span style="font-size:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:3px 8px"><b>'+pt.label+':</b> '+(pt.pct!=null&&pt.pct!==''?pt.pct+'%':'&mdash;')+'</span>';});
-    h+='</div>';
-    h+=evSection('improvement');
-    h+='</div></div>';
-  }
   if(c.documents&&c.documents.length){
     h+='<div class="md-sec"><div class="md-sec-title">Contract Documents</div><div style="display:flex;flex-direction:column;gap:5px">';
     c.documents.forEach(function(d,di){
@@ -3836,19 +3842,54 @@ function openContractModal(id){
   h+='</div>';
 
   document.getElementById('mB').innerHTML=h;
-  /* Reports are received via the Receiving workspace and confirmed in Reports Review — keep them read-only here */
-  try{var _mb=document.getElementById('mB');if(_mb){
-    _mb.querySelectorAll('[id^="minput_"]').forEach(function(i){i.readOnly=true;i.tabIndex=-1;i.style.background='var(--surface2)';i.style.cursor='not-allowed';i.title='Set from the Receiving workspace after approval';});
-    _mb.querySelectorAll('[id^="mbadge_"]').forEach(function(bb){bb.onclick=null;bb.style.cursor='default';bb.title='Report status is set from Receiving after approval';});
-  }}catch(e){}
+  /* v57: report Actual/Target inputs and the Received toggle are editable here (Receiving workspace is being retired) */
   var oldBtn=document.getElementById('modalPDFBtn');if(oldBtn)oldBtn.remove();
   openModal('cModal');
 }
 
 function toggleContractEditInfo(){
   var sec=document.getElementById('editInfoSection');
-  if(sec)sec.style.display=sec.style.display==='none'?'block':'none';
+  var on=sec&&sec.style.display==='none';
+  if(sec)sec.style.display=on?'block':'none';
+  // Improvement-Plan yearly-% become editable only in Edit Info mode; Attach Plan appears too.
+  document.querySelectorAll('[id^="mip_"]').forEach(function(i){i.disabled=!on;i.style.background=on?'':'var(--surface2)';i.style.cursor=on?'':'not-allowed';});
+  var me=document.getElementById('mipEdit');if(me)me.style.display=on?'block':'none';
 }
+function importFinalTargetFromEval(cid){
+  var c=DB.find(function(x){return x.id===cid;});if(!c)return;
+  var b=(typeof BIDS!=='undefined')?BIDS.find(function(x){return String(x.id)===String(c.sourceBidId);}):null;
+  if(!b){toast('No source evaluation linked to this contract','err');return;}
+  var w=(b.bidders||[]).find(function(x){return x.name===b.winner;})||{};
+  var r=(b.lastResults||[]).find(function(x){return x.name===b.winner;})||{};
+  var lc=(w.lcPct!=null?w.lcPct:r.lcPct);
+  if(lc==null){toast('Winner LC Target % not found in the evaluation','err');return;}
+  c.agreedPct=(+lc)/100; c.lcAmount=(c.amount||0)*c.agreedPct;
+  if(typeof saveAll==='function')saveAll();else saveDB();
+  if(typeof logAudit==='function')logAudit('edit','Final Target imported from evaluation ('+lc+'%) · #'+c.num,c.num);
+  var el=document.getElementById('mFinalTarget');if(el)el.textContent=pct(c.agreedPct);
+  var lcb=document.getElementById('meditLC');if(lcb)lcb.value=+(c.agreedPct*100).toFixed(1);
+  toast('Final Target set to '+lc+'% from the evaluation','ok');
+}
+window.importFinalTargetFromEval=importFinalTargetFromEval;
+function mipAttachPlan(inp,cid){
+  var f=inp.files[0];if(!f)return;
+  if(typeof _fileTooBig==='function'&&_fileTooBig(f,5)){inp.value='';return;}
+  var c=DB.find(function(x){return x.id===cid;});if(!c)return;
+  // preserve any in-progress yearly-% edits so the re-render doesn't drop them
+  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});
+  if(ip)(ip.planTargets||[]).forEach(function(pt,i){var el=document.getElementById('mip_'+i);if(el){var v=el.value;pt.pct=(v===''||isNaN(parseFloat(v)))?null:parseFloat(v);}});
+  var rd=new FileReader();
+  rd.onload=function(ev){
+    if(!c.evidence)c.evidence={};if(!c.evidence['improvement'])c.evidence['improvement']=[];
+    c.evidence['improvement'].push({name:f.name,size:(typeof fSize==='function'?fSize(f.size):f.size),dataUrl:ev.target.result,mimeType:f.type,uploaded:new Date().toLocaleDateString('en-GB'),status:'pending',uploadedBy:'End User'});
+    if(typeof saveAll==='function')saveAll();else saveDB();
+    if(typeof logAudit==='function')logAudit('receive','Improvement Plan attachment added · #'+c.num,c.num);
+    toast('Improvement Plan file attached','ok');
+    openContractModal(cid);
+  };
+  rd.readAsDataURL(f);
+}
+window.mipAttachPlan=mipAttachPlan;
 // Jump from the contract edit modal straight to the Supplier Registry to add a new supplier.
 function gotoSupplierRegistryFromContract(){
   try{closeModal('cModal');}catch(e){}
@@ -3874,6 +3915,10 @@ function saveAndRecalc(cid){
   var c=DB.find(function(x){return x.id===cid;});if(!c)return;
   if(!modalEditState||modalEditState.cid!==cid){toast('State error','err');return;}
 
+  // Improvement Plan — capture in-progress yearly-% edits (mip_<i> maps to planTargets order) before any regenerate.
+  var _ipCap=(c.reports||[]).find(function(r){return r.type==='improvement';});
+  if(_ipCap)(_ipCap.planTargets||[]).forEach(function(pt,i){var el=document.getElementById('mip_'+i);if(el){var v=el.value;pt.pct=(v===''||isNaN(parseFloat(v)))?null:parseFloat(v);}});
+
   var editSec=document.getElementById('editInfoSection');
   if(editSec&&editSec.style.display!=='none'){
     var nEl=document.getElementById('meditName');if(nEl)c.name=nEl.value.trim()||c.name;
@@ -3884,6 +3929,8 @@ function saveAndRecalc(cid){
     var _oldMech=c.mechanism,_oldStart=c.start,_oldDur=c.duration,_oldAward=c.awardDate;
     var mechEl=document.getElementById('meditMech');if(mechEl)c.mechanism=mechEl.value;
     var contEl=document.getElementById('meditCont');if(contEl)c.contractor=contEl.value.trim();
+    var ctcEl=document.getElementById('meditContact');if(ctcEl)c.contractorContact=ctcEl.value.trim();
+    var cteEl=document.getElementById('meditContEmail');if(cteEl)c.contractorEmail=cteEl.value.trim();
     var stEl=document.getElementById('meditStart');if(stEl&&stEl.value)c.start=stEl.value;
     var duEl=document.getElementById('meditDur');if(duEl&&duEl.value)c.duration=parseInt(duEl.value)||c.duration;
     var awEl=document.getElementById('meditAward');if(awEl)c.awardDate=awEl.value||'';
@@ -3895,6 +3942,11 @@ function saveAndRecalc(cid){
       toast('Requirements regenerated for '+c.mechanism,'info');
     }
   }
+
+  // Apply Improvement-Plan yearly % to each periodic report's TARGET (Actual stays manual).
+  var _ip2=(c.reports||[]).find(function(r){return r.type==='improvement';});
+  if(_ip2){var _ptByKey={};(_ip2.planTargets||[]).forEach(function(pt){_ptByKey[pt.key]=pt.pct;});
+    (c.reports||[]).forEach(function(r){if(r.type==='period'){var k='period_'+r.year;if(_ptByKey[k]!=null&&_ptByKey[k]!=='')r.target=parseFloat(_ptByKey[k])/100;}});}
 
   (c.reports||[]).forEach(function(r){
     var key=r.type==='period'?'period_'+r.year:r.type;
@@ -3932,7 +3984,7 @@ function saveAndRecalc(cid){
 // ============================================================
 // REVIEW PAGE
 // ============================================================
-const REPORT_TYPES=['period_1','period_2','period_3','period_4','period_5','final','npp','mlnp','improvement'];
+const REPORT_TYPES=['improvement','period_1','period_2','period_3','period_4','period_5','final','npp','mlnp'];
 const REPORT_LABELS={'period_1':'1st Year Periodic Report','period_2':'2nd Year Periodic Report','period_3':'3rd Year Periodic Report','period_4':'4th Year Periodic Report','period_5':'5th Year Periodic Report','final':'Final Report','npp':'National Products Price Preferencing Final Supply Report','mlnp':'Mandatory List Final Supply Report','improvement':'Improvement Plan'};
 function rvChip(m){rvMode=m;['rv-all','rv-pend','rv-app','rv-rej'].forEach(id=>document.getElementById(id)?.classList.remove('on'));document.getElementById('rv-'+m)?.classList.add('on');renderReview();}
 function renderReview(){
@@ -3999,7 +4051,7 @@ function renderReview(){
       +'</div>';
     // report-level groups
     var grouped={};filtered.forEach(function(f){if(!grouped[f.rt])grouped[f.rt]=[];grouped[f.rt].push(f);});
-    Object.keys(grouped).forEach(function(rt){
+    Object.keys(grouped).sort(function(a,b){var ia=REPORT_TYPES.indexOf(a),ib=REPORT_TYPES.indexOf(b);return (ia<0?99:ia)-(ib<0?99:ib);}).forEach(function(rt){
       html+='<div style="margin-bottom:6px"><div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+evLabel(rt,c)+'</div>';
       if(rt==='improvement')html+=_impReviewTargetsHTML(c);
       grouped[rt].forEach(function(f){html+=fileRow(rt,f);});
@@ -6616,7 +6668,7 @@ function renderSupReq(){
   if(!contracts.length){el.innerHTML='<div class="empty"><div class="ei">📭</div><p>No contracts found where "'+name+'" is the contractor</p></div>';return;}
   var h='';
   contracts.forEach(function(c){
-    var due=(c.reports||[]).filter(function(r){return r.received!==true;});
+    var due=(c.reports||[]).filter(function(r){return r.received!==true;}).sort(function(a,b){return (a.type==='improvement'?0:1)-(b.type==='improvement'?0:1);});
     var liItems=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return o.it.isMandatoryRFP||(o.it.origin==='Local');});
     var totalReq=due.length+liItems.length;
     h+='<div class="card" style="margin-bottom:10px"><div class="card-hd"><div class="card-title">#'+c.num+' — '+(c.name||'')+'</div><span class="badge '+(totalReq?'ba':'bg')+'">'+(totalReq?totalReq+' requirement(s)':'All submitted')+'</span></div>';
@@ -9554,7 +9606,7 @@ function recvRenderContract(){
   h+='<div style="text-align:right"><div style="font-size:16px;font-weight:800">'+fSAR(c.amount)+'</div><div style="font-size:10px;color:var(--text3)">Contract value</div></div>';
   h+='</div></div>';
   /* Due reports */
-  var due=(c.reports||[]).filter(function(r){return r.received!==true;});
+  var due=(c.reports||[]).filter(function(r){return r.received!==true;}).sort(function(a,b){return (a.type==='improvement'?0:1)-(b.type==='improvement'?0:1);});
   h+='<div class="card" style="margin-bottom:12px"><div class="card-hd"><div class="card-title">&#128203; Due Reports to Receive</div><span class="badge '+(due.length?'ba':'bg')+'">'+due.length+' due</span></div>';
   if(!due.length)h+='<div style="font-size:11px;color:var(--text3)">All reports received &#10003;</div>';
   else due.forEach(function(r){
@@ -10112,6 +10164,7 @@ function eaRenderTable(){
   cols.push('Tech Score','Total Score','Rank','');
   var head='<tr>'+cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr>';
   var body=curBidders.length?curBidders.map(function(bd,i){
+    if(bd.boqItems&&bd.boqItems.length){bd.boqItems.forEach(function(it){if(it.unitPrice!=null)it.price=+(((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0)).toFixed(2));});bd.price=bd.boqItems.reduce(function(s,it){return s+(parseFloat(it.price)||0);},0);} // E: Bid Price = Σ(Unit×Qty)
     bd.nppPct=window._v57NppShare(bd.boqItems); // #2 read-only auto-compute
     var r=res(bd.name);var rowExcl=r&&r.excluded;
     var t='<tr style="cursor:pointer'+(rowExcl?';opacity:.6':'')+'" onclick="eaCard('+i+')">';
@@ -10200,6 +10253,9 @@ function eaMarkEvaluated(){
 }
 function eaCard(i){
   var bd=curBidders[i];if(!bd)return;var locked=curBid&&curBid.status==='contractCreated';
+  // E: BoQ now carries Unit Price; line total (it.price) = Unit Price × Qty; Bid Price = Σ line totals (read-only).
+  (bd.boqItems||[]).forEach(function(it){if(it.unitPrice==null||it.unitPrice===''){var q=parseFloat(it.qty)||0;it.unitPrice=q?+(((parseFloat(it.price)||0)/q).toFixed(4)):(parseFloat(it.price)||0);}it.price=+(((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0)).toFixed(2));});
+  bd.price=(bd.boqItems||[]).reduce(function(s,it){return s+(parseFloat(it.price)||0);},0);
   bd.nppPct=window._v57NppShare(bd.boqItems); // #2 read-only auto-compute from BoQ
   var ex=document.getElementById('eaCardModal');if(ex)ex.remove();
   var d=document.createElement('div');d.className='mo open';d.id='eaCardModal';d.onclick=function(e){if(e.target===d)d.remove();};
@@ -10211,9 +10267,9 @@ function eaCard(i){
     '<td>'+(bi+1)+'</td>'+
     '<td><input class="fi" style="font-size:10px;padding:3px 5px;min-width:120px" value="'+escSub(it.desc||'')+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].desc=this.value"/></td>'+
     '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].nature=this.value;_eaCardNppRefresh('+i+')"><option value="goods"'+(it.nature==='goods'?' selected':'')+'>Goods</option><option value="services"'+(it.nature==='services'?' selected':'')+'>Services</option></select></td>'+
-    '<td><input class="fi" type="number" style="width:44px;font-size:10px;padding:3px" value="'+(it.qty||1)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].qty=parseFloat(this.value)||1"/></td>'+
+    '<td><input class="fi" type="number" style="width:44px;font-size:10px;padding:3px" value="'+(it.qty||1)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].qty=parseFloat(this.value)||0;_eaCardRecalc('+i+')"/></td>'+
     '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].uom=this.value">'+_uom.map(function(u){return '<option'+(u===it.uom?' selected':'')+'>'+u+'</option>';}).join('')+'</select></td>'+
-    '<td><input class="fi" type="number" style="width:78px;font-size:10px;padding:3px" value="'+(it.price||0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].price=parseFloat(this.value)||0;_eaCardNppRefresh('+i+')"/></td>'+
+    '<td><input class="fi" type="number" style="width:84px;font-size:10px;padding:3px" value="'+(it.unitPrice!=null?it.unitPrice:0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].unitPrice=parseFloat(this.value)||0;_eaCardRecalc('+i+')"/></td>'+
     '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].origin=this.value;_eaCardNppRefresh('+i+')"><option value="Local"'+(it.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(it.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'+
     '<td style="text-align:center"><input type="checkbox" '+(it.isMandatoryRFP?'checked':'')+' '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].isMandatoryRFP=this.checked;_eaCardNppRefresh('+i+')"/></td>'+
     '<td><input class="fi" style="width:68px;font-size:10px;padding:3px" value="'+escSub(it.mlCode||'')+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].mlCode=this.value"/></td>'+
@@ -10222,20 +10278,22 @@ function eaCard(i){
     '<div class="fg2" style="gap:10px">'+
     '<div class="fg"><label class="fl2">Bidder Name</label><input class="fi" value="'+escSub(bd.name||'')+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].name=this.value;eaRenderTable()"/></div>'+
     '<div class="fg"><label class="fl2">Technical Score</label><input class="fi" type="number" value="'+(bd.techScore||0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].techScore=parseFloat(this.value)||0;eaRenderTable()"/></div>'+
-    num('price','Bid Price (SAR)')+num('lcBaseline','LC Baseline %')+num('lcPct','LC Target %')+
+    '<div class="fg"><label class="fl2">Bid Price (SAR) — auto</label><input class="fi" id="eaPrice_'+i+'" type="number" value="'+(bd.price||0)+'" readonly title="Auto = Σ(Unit Price × Qty) from the BoQ" style="background:var(--surface);cursor:not-allowed"/></div>'+num('lcBaseline','LC Baseline %')+num('lcPct','LC Target %')+
     '<div class="fg"><label class="fl2">National Products % (auto)</label><input class="fi" id="eaNpp_'+i+'" type="number" value="'+(bd.nppPct||0)+'" readonly title="Auto-computed: Σ Local goods (excl. Mandatory-List) ÷ Σ all lines (excl. Mandatory-List). Edit the BoQ below to change it." style="background:var(--surface);cursor:not-allowed"/></div>'+
     yn('isSME','SME Registered')+yn('isTadawul','Tadawul-listed')+yn('hasCert','LC Certificate')+yn('mlCompliant','Mandatory-List Compliant')+
     '</div>'+
     '<div style="display:flex;gap:7px;margin:12px 0;flex-wrap:wrap"><span style="font-size:11px;color:var(--text2);align-self:center">Attachments:</span>'+_eaCardFile(i,'_techFile','Technical')+_eaCardFile(i,'_commFile','Financial')+_eaCardFile(i,'_mlFile','Mandatory Letter')+'</div>'+
     '<div style="display:flex;justify-content:space-between;align-items:center"><div class="fsec-title" style="font-size:12px;border:none;margin:0">BoQ Line Items</div>'+(locked?'':'<button class="btn btn-s btn-sm" onclick="eaCardBoqAdd('+i+')">+ Add Row</button>')+'</div>'+
-    '<div style="overflow-x:auto"><table style="width:100%;font-size:10px"><thead><tr><th>#</th><th>Description</th><th>Nature</th><th>Qty</th><th>UoM</th><th>Price</th><th>Origin</th><th>Mand.</th><th>ML Code</th><th></th></tr></thead><tbody>'+boqRows+'</tbody></table></div>'+
+    '<div style="overflow-x:auto"><table style="width:100%;font-size:10px"><thead><tr><th>#</th><th>Description</th><th>Nature</th><th>Qty</th><th>UoM</th><th>Unit Price</th><th>Origin</th><th>Mand.</th><th>ML Code</th><th></th></tr></thead><tbody>'+boqRows+'</tbody></table></div>'+
     '<div class="fa-row" style="margin-top:14px"><button class="btn btn-p" onclick="document.getElementById(\'eaCardModal\').remove();eaRenderTable();if(typeof saveAll===\'function\')saveAll()">Done</button></div>'+
     '</div></div>';
   document.body.appendChild(d);
 }
-function eaCardBoqAdd(i){ if(!curBidders[i].boqItems)curBidders[i].boqItems=[]; curBidders[i].boqItems.push({desc:'',nature:'goods',qty:1,uom:'Lump Sum',price:0,origin:'Local',isMandatoryRFP:false,isMandatoryResp:false,mlCode:''}); eaCard(i); }
+function eaCardBoqAdd(i){ if(!curBidders[i].boqItems)curBidders[i].boqItems=[]; curBidders[i].boqItems.push({desc:'',nature:'goods',qty:1,uom:'Lump Sum',unitPrice:0,price:0,origin:'Local',isMandatoryRFP:false,isMandatoryResp:false,mlCode:''}); eaCard(i); }
 function eaCardBoqDel(i,bi){ if(curBidders[i].boqItems)curBidders[i].boqItems.splice(bi,1); eaCard(i); }
 function _eaCardNppRefresh(i){ var bd=curBidders[i]; if(!bd)return; bd.nppPct=window._v57NppShare(bd.boqItems); var el=document.getElementById('eaNpp_'+i); if(el)el.value=bd.nppPct; }
+function _eaCardRecalc(i){ var bd=curBidders[i]; if(!bd)return; var tot=0; (bd.boqItems||[]).forEach(function(it){var up=parseFloat(it.unitPrice)||0,q=parseFloat(it.qty)||0;it.price=+((up*q).toFixed(2));tot+=it.price;}); bd.price=+(tot.toFixed(2)); var pe=document.getElementById('eaPrice_'+i); if(pe)pe.value=bd.price; bd.nppPct=window._v57NppShare(bd.boqItems); var ne=document.getElementById('eaNpp_'+i); if(ne)ne.value=bd.nppPct; }
+window._eaCardRecalc=_eaCardRecalc;
 function _eaCardFile(i,field,label){
   var bd=curBidders[i];if(bd&&bd[field])return '<button class="btn btn-s btn-sm" onclick="eaView('+i+',\''+field+'\')">👁 '+label+'</button>';
   return '<button class="btn btn-s btn-sm" onclick="eaAttach('+i+',\''+field+'\')">📎 '+label+'</button>';
