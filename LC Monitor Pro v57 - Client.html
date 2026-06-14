@@ -1546,22 +1546,13 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <!-- =================== PAGE: RFP PREPARATION =================== -->
 <!-- ===== v57 A.1 · LC MECHANISM IDENTIFIER ===== -->
 <div class="page" id="page-mechwiz">
-  <div class="card" style="max-width:900px">
-    <div class="card-hd"><div class="card-title">🧭 Mechanism Identifier</div></div>
-    <div style="font-size:11px;color:var(--text2);margin:2px 0 12px">Enter the RFP details — the wizard identifies the LCGPA mechanism from the <b>Decision Tree</b> (Settings → Decision Tree) and the <b>value threshold</b> (Settings → Value Threshold).</div>
-    <div class="fg2" style="gap:10px">
-      <div class="fg"><label class="fl2">RFP Name <span class="req">*</span></label><input class="fi" id="a1Name" placeholder="RFP title"></div>
-      <div class="fg"><label class="fl2">RFP Number</label><input class="fi" id="a1Num" placeholder="RFP-2026-001"></div>
-      <div class="fg"><label class="fl2">End-User</label><select class="fsel2" id="a1EU"><option value="">Select end-user…</option></select></div>
-      <div class="fg"><label class="fl2">Estimated Value (SAR) <span class="req">*</span></label><input class="fi" id="a1Value" type="number" placeholder="0" oninput="a1Identify()"></div>
-      <div class="fg"><label class="fl2">Nature of Procurement <span class="req">*</span></label><select class="fsel2" id="a1Nature" onchange="a1Identify()"><option value="">Select…</option><option value="services">Pure Services</option><option value="supply">Pure Supply (Goods)</option><option value="mixed">Mixed (Services + Supply)</option></select></div>
-      <div class="fg" id="a1CapexWrap" style="display:none"><label class="fl2">Expenditure Type</label><select class="fsel2" id="a1Capex" onchange="a1Identify()"><option value="">Select…</option><option value="capex">Capex (Project Level)</option><option value="opex">Opex (Company Level)</option></select></div>
+  <div class="card">
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div class="card-title">🧭 Mechanism Identifier</div>
+      <button class="btn btn-p btn-sm" onclick="a1OpenWizard()">+ Start New Process</button>
     </div>
-    <div id="a1Result" style="margin-top:12px"><div style="font-size:11px;color:var(--text3)">Enter nature &amp; estimated value to identify the mechanism.</div></div>
-  </div>
-  <div class="card" style="margin-top:14px">
-    <div class="card-hd"><div class="card-title">📑 Processed RFPs</div></div>
-    <div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Nature</th><th>Mechanism</th><th>Processed</th><th></th></tr></thead><tbody id="a1Tbody"></tbody></table></div>
+    <div style="font-size:11px;color:var(--text2);margin:2px 0 12px">Processed RFPs and their identified LCGPA mechanism. Click <b>Start New Process</b> to identify a mechanism for a new RFP. Each row links to the mechanism's <b>Terms &amp; Conditions</b> (from Settings → Mechanism T&amp;C) — view &amp; download.</div>
+    <div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Nature</th><th>Mechanism</th><th>Terms &amp; Conditions</th><th>Processed</th><th></th></tr></thead><tbody id="a1Tbody"></tbody></table></div>
   </div>
 </div>
 <!-- ===== v57 A.2 · MANDATORY LIST IDENTIFIER ===== -->
@@ -2799,6 +2790,19 @@ function ic(n,cls){return '<svg class="ic'+(cls?' '+cls:'')+'" viewBox="0 0 24 2
 if(typeof window.L!=='function'){window.L=function(en,ar){return (typeof lang!=='undefined'&&lang==='ar')?ar:en;};}
 // Global HTML escaper available to every script block (the v55 escSub is IIFE-scoped). Used by all render/doc sinks.
 if(typeof window.escSub!=='function'){window.escSub=function(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];});};}
+// #2 — National Products (NPP) National Share, single source of truth (read-only everywhere).
+// Literal LCGPA guidance: National Share = Σ(price of LOCAL GOODS lines, excl. Mandatory-List) ÷ Σ(price of ALL lines goods+services, excl. Mandatory-List).
+// Adjusted price (applied elsewhere) = Price + 10% × Price × (1 − share). Empty BoQ → 0%.
+window._v57IsGoods=function(r){return !r.nature||/good/i.test(r.nature);};
+window._v57NppShare=function(boq){
+  boq=(boq&&boq.length)?boq:[];
+  if(!boq.length)return 0;
+  var nonML=boq.filter(function(r){return !(r.isMandatoryRFP||r.isMandatory);});
+  var sumAll=nonML.reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
+  if(sumAll<=0)return 0;
+  var sumLocalGoods=nonML.filter(function(r){return r.origin==='Local'&&window._v57IsGoods(r);}).reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
+  return +(sumLocalGoods/sumAll*100).toFixed(2);
+};
 
 // ============================================================
 // KPI registry — clustered + semantic stroke icons (status-colored at render)
@@ -5939,7 +5943,8 @@ function importFromAward(){
   var _mech=(typeof canonicalMechName==='function')?(canonicalMechName(b.mechanism||'')||b.mechanism||''):(b.mechanism||'');
   setSel('fMech2',_mech);
   set('fAward',b.awardedOn||(b.awardedAt?String(b.awardedAt).split('T')[0]:''));
-  if(rfp){set('fEU',rfp.endUser||'');set('fDur',rfp.duration||'');}
+  setSel('fEU',b.endUser||(rfp&&rfp.endUser)||''); // carry End-User from the evaluation (manual or RFP-linked)
+  if(rfp){set('fDur',rfp.duration||'');}
   // Agreed LC % + LCGPA baseline from the evaluation
   var lc=(w.lcPct!=null?w.lcPct:res.lcPct);
   if(lc!=null)set('fAP',lc);
@@ -8284,10 +8289,7 @@ renderBiddersList=function(){
     // ── BoQ sum & NPP auto-calc ──
     var bSum=b.boqItems.reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
     if(b.boqItems.length)b.price=bSum;
-    var nonML=b.boqItems.filter(function(r){return !r.isMandatoryRFP;});
-    var sumAllNonML=nonML.reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
-    var sumLocalNonML=nonML.filter(function(r){return r.origin==='Local';}).reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
-    b.nppPct=sumAllNonML>0?+(sumLocalNonML/sumAllNonML*100).toFixed(2):0;
+    b.nppPct=window._v57NppShare(b.boqItems); // #2 read-only: Local GOODS (excl. ML) / all lines (excl. ML)
     var adjBid=isNPP?bSum+(0.10*bSum*(1-b.nppPct/100)):bSum;
     b._adjBid=+adjBid.toFixed(0);
 
@@ -8344,7 +8346,7 @@ renderBiddersList=function(){
     }
 
     // NPP %
-    fields+='<div class="fg"><label class="fl2">NPP % Committed</label><input class="fi" type="number" step="0.1" value="'+b.nppPct+'" style="font-size:11px;padding:5px 8px'+(b.boqItems.length?';background:#f0f0f0;cursor:not-allowed':'')+'" '+(b.boqItems.length?'readonly title="Auto: Sum Local (excl ML) / Sum All (excl ML)"':'onchange="curBidders['+i+'].nppPct=parseFloat(this.value)||0"')+'/></div>';
+    fields+='<div class="fg"><label class="fl2">NPP % (auto)</label><input class="fi" type="number" step="0.1" value="'+b.nppPct+'" readonly title="Auto-computed: Σ Local goods (excl. Mandatory-List) ÷ Σ all lines (excl. Mandatory-List). Edit the BoQ to change it." style="font-size:11px;padding:5px 8px;background:#f0f0f0;cursor:not-allowed"/></div>';
 
     fields+='<div class="fg"><label class="fl2">LCGPA Certificate</label><select class="fsel2" style="font-size:11px;padding:5px 8px" onchange="curBidders['+i+'].hasCert=this.value==='+SQ+'yes'+SQ+';recalcBids()"><option value="yes" '+(b.hasCert?'selected':'')+'>'+'\u2713'+' Has Certificate</option><option value="no" '+(!b.hasCert?'selected':'')+'>'+'\u2717'+' No Certificate</option></select></div>';
 
@@ -8444,6 +8446,8 @@ function tbSortPrice(a,c){
 // ══════════════════════════════════════════════════════════════
 calcBids=function(){
   if(!curBidders.length){toast("Add bidders","err");return;}
+  // #2 — NPP National Share is computed from each bidder's BoQ (read-only), so scores & MoM stay consistent.
+  curBidders.forEach(function(b){if(b.boqItems&&b.boqItems.length)b.nppPct=window._v57NppShare(b.boqItems);else b.nppPct=0;});
   var mech=document.getElementById("bidMech")?document.getElementById("bidMech").value:"";
   var isLC=mech.indexOf("Weight")>=0||mech.indexOf("Commercial")>=0;
   var isThreshold=mech.indexOf("Threshold")>=0;
@@ -9163,6 +9167,61 @@ body.mobile-mode .cmd-band,body.mobile-mode .brd-hero,body.mobile-mode .dash-her
 body.mobile-mode .btn,body.mobile-mode .tbtn,body.mobile-mode .fsel,body.mobile-mode .fi,body.mobile-mode .fsel2{min-height:38px}
 body.mobile-mode #dashEntitySel{max-width:100%!important}
 body.mobile-mode .fb{flex-wrap:wrap}
+
+/* ════════ v57 EXECUTIVE RIBBON DASHBOARD ════════ */
+.exr-wrap{display:flex;flex-direction:column;gap:16px}
+.exr-ribbon{background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:18px;padding:18px 20px;color:#fff;box-shadow:0 18px 44px -24px rgba(60,40,180,.75)}
+.exr-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:15px}
+.exr-id{display:flex;align-items:center;gap:12px}
+.exr-logo{width:42px;height:42px;border-radius:11px;object-fit:cover;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+.exr-org{font-size:16px;font-weight:800;line-height:1.15}
+.exr-tag{font-size:10.5px;opacity:.85;font-weight:600;letter-spacing:.3px}
+.exr-date{font-size:10px;opacity:.72;margin-top:2px}
+.exr-pdf{margin-top:8px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;cursor:pointer}
+.exr-pdf:hover{background:rgba(255,255,255,.24)}
+.exr-filters{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.exr-fl{display:flex;flex-direction:column;gap:3px}
+.exr-fl>label{font-size:8.5px;font-weight:800;letter-spacing:1px;text-transform:uppercase;opacity:.78}
+.exr-sel{font-size:12px;font-weight:600;padding:7px 11px;border-radius:10px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.16);color:#fff;cursor:pointer;max-width:200px}
+.exr-sel option{color:#0b1324;background:#fff}
+.exr-qchips{display:flex;gap:4px}
+.exr-qchip{font-size:11px;font-weight:700;padding:7px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.10);color:#fff;cursor:pointer;transition:all .15s}
+.exr-qchip.on{background:#fff;color:#4326b3;border-color:#fff}
+.exr-heroes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.exr-hero{background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:13px 15px;cursor:pointer;transition:transform .15s,background .15s;text-align:start}
+.exr-hero:hover{transform:translateY(-2px);background:rgba(255,255,255,.22)}
+.exr-hero .k-l{font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;opacity:.88}
+.exr-hero .k-v{font-size:25px;font-weight:800;margin:3px 0;line-height:1}
+.exr-hero .k-s{font-size:10.5px;opacity:.82;font-weight:600}
+.exr-hero .k-d{font-size:10px;font-weight:800;margin-top:3px}
+.exr-bands{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:1050px){.exr-bands{grid-template-columns:1fr}.exr-heroes{grid-template-columns:1fr}.exr-top{flex-direction:column}}
+.exr-band{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:14px;border-top:3px solid var(--bandc,#2563eb)}
+.exr-band-hd{display:flex;align-items:center;gap:8px;margin-bottom:11px}
+.exr-band-hd .ei{font-size:16px}
+.exr-band-t{font-size:13px;font-weight:800;color:var(--text);line-height:1.15}
+.exr-band-t small{display:block;font-size:9px;font-weight:700;color:var(--text3);letter-spacing:.3px;text-transform:uppercase}
+.exr-tiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.exr-tile{background:var(--surface2);border:1px solid var(--border);border-radius:11px;padding:9px 11px;cursor:pointer;transition:border-color .15s,transform .15s;text-align:start;display:block;width:100%;font-family:inherit}
+.exr-tile:hover{border-color:var(--bandc,var(--accent));transform:translateY(-1px)}
+.exr-tile .k-l{font-size:9px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.3px;line-height:1.25}
+.exr-tile .k-v{font-size:18px;font-weight:800;color:var(--text);margin:2px 0;line-height:1}
+.exr-tile .k-s{font-size:9px;color:var(--text2);font-weight:600;line-height:1.2}
+.exr-tile.wide{grid-column:1/-1}
+.exr-spark-wrap{margin-top:11px}
+.exr-spark-cap{font-size:9px;color:var(--text3);font-weight:800;text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px;display:flex;justify-content:space-between}
+.exr-spark{display:flex;align-items:flex-end;gap:4px;height:38px}
+.exr-spark-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;justify-content:flex-end}
+.exr-spark-b{width:100%;background:var(--bandc,var(--accent));border-radius:3px 3px 0 0;min-height:3px;opacity:.88}
+.exr-spark-x{font-size:8px;color:var(--text3);font-weight:700}
+.exr-bar3{display:flex;height:9px;border-radius:5px;overflow:hidden;margin-top:9px;background:var(--surface2);border:1px solid var(--border)}
+.exr-bar3 i{display:block;height:100%}
+.exr-bar3-lg{display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;font-size:9.5px;font-weight:700;color:var(--text2)}
+.exr-bar3-lg span{display:inline-flex;align-items:center;gap:4px}
+.exr-bar3-lg b{width:9px;height:9px;border-radius:3px;display:inline-block}
+.exr-foot{font-size:10px;color:var(--text2);font-weight:600;margin-top:11px;padding-top:9px;border-top:1px dashed var(--border)}
+[data-theme=dark] .exr-ribbon{box-shadow:0 18px 50px -24px rgba(0,0,0,.7)}
+body.mobile-mode .exr-bands,body.mobile-mode .exr-heroes{grid-template-columns:1fr}
 </style>
 <div id="loginOverlay"><div class="login-card">
   <div class="login-logo">LC</div>
@@ -9487,6 +9546,56 @@ function _v57Date(d){ if(!d)return '—'; try{return fD(String(d).split('T')[0])
 
 /* ===== A.1 · Mechanism Identifier (Decision-Tree driven) ===== */
 var _a1Pick=null,_a1Mechs=[];
+function a1OpenWizard(){
+  var ex=document.getElementById('a1WizModal');if(ex)ex.remove();
+  var d=document.createElement('div');d.className='mo open';d.id='a1WizModal';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  d.innerHTML='<div class="md" style="max-width:760px"><div class="md-hd"><div class="md-title">🧭 '+L('Start New Process — Mechanism Identifier','بدء معالجة جديدة — مُحدِّد الآلية')+'</div><button class="md-close" onclick="document.getElementById(\'a1WizModal\').remove()">✕</button></div><div class="md-body">'+
+    '<div style="font-size:11px;color:var(--text2);margin:0 0 12px">'+L('Enter the RFP details — the wizard identifies the LCGPA mechanism from the Decision Tree (Settings → Decision Tree) and the value threshold (Settings → Value Threshold).','أدخل تفاصيل المنافسة — يحدد المعالج آلية المحتوى المحلي من شجرة القرار وحد القيمة.')+'</div>'+
+    '<div class="fg2" style="gap:10px">'+
+      '<div class="fg"><label class="fl2">'+L('RFP Name','اسم المنافسة')+' <span class="req">*</span></label><input class="fi" id="a1Name" placeholder="RFP title"></div>'+
+      '<div class="fg"><label class="fl2">'+L('RFP Number','رقم المنافسة')+'</label><input class="fi" id="a1Num" placeholder="RFP-2026-001"></div>'+
+      '<div class="fg"><label class="fl2">'+L('End-User','الجهة المستفيدة')+'</label><select class="fsel2" id="a1EU"><option value="">'+L('Select end-user…','اختر الجهة…')+'</option></select></div>'+
+      '<div class="fg"><label class="fl2">'+L('Estimated Value (SAR)','القيمة التقديرية (ر.س)')+' <span class="req">*</span></label><input class="fi" id="a1Value" type="number" placeholder="0" oninput="a1Identify()"></div>'+
+      '<div class="fg"><label class="fl2">'+L('Nature of Procurement','طبيعة المشتريات')+' <span class="req">*</span></label><select class="fsel2" id="a1Nature" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="services">'+L('Pure Services','خدمات بحتة')+'</option><option value="supply">'+L('Pure Supply (Goods)','توريد بحت (سلع)')+'</option><option value="mixed">'+L('Mixed (Services + Supply)','مختلط (خدمات + توريد)')+'</option></select></div>'+
+      '<div class="fg" id="a1CapexWrap" style="display:none"><label class="fl2">'+L('Expenditure Type','نوع الإنفاق')+'</label><select class="fsel2" id="a1Capex" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="capex">'+L('Capex (Project Level)','رأسمالي (مستوى المشروع)')+'</option><option value="opex">'+L('Opex (Company Level)','تشغيلي (مستوى الشركة)')+'</option></select></div>'+
+    '</div>'+
+    '<div id="a1Result" style="margin-top:12px"><div style="font-size:11px;color:var(--text3)">'+L('Enter nature & estimated value to identify the mechanism.','أدخل الطبيعة والقيمة التقديرية لتحديد الآلية.')+'</div></div>'+
+  '</div></div>';
+  document.body.appendChild(d);
+  _v57EU(document.getElementById('a1EU'));
+}
+function a1CloseWizard(){var m=document.getElementById('a1WizModal');if(m)m.remove();}
+function _a1HasTC(mech){if(!mech||typeof MECH_TC==='undefined')return false;var tc=MECH_TC[mech];return !!(tc&&(tc.rfp||tc.contract||tc.rfpFileData||tc.contractFileData));}
+function a1ViewTC(mechEnc){
+  var mech=decodeURIComponent(mechEnc);
+  var tc=(typeof MECH_TC!=='undefined')?MECH_TC[mech]:null;
+  var ex=document.getElementById('a1TCModal');if(ex)ex.remove();
+  var d=document.createElement('div');d.className='mo open';d.id='a1TCModal';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  function block(title,text,fileName,fileKey){
+    var h='<div style="margin-bottom:14px"><div class="fsec-title" style="font-size:12px;border:none;margin:0 0 5px;padding:0">'+title+'</div>';
+    if(text)h+='<div style="font-size:12px;line-height:1.6;white-space:pre-wrap;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px">'+escSub(text)+'</div>';
+    else h+='<div style="font-size:11px;color:var(--text3);font-style:italic">'+L('No text recorded.','لا يوجد نص.')+'</div>';
+    if(fileName)h+='<div style="display:flex;gap:7px;margin-top:7px;flex-wrap:wrap"><button class="btn btn-s btn-sm" onclick="_viewTCDoc(\''+mechEnc+'\',\''+fileKey+'\')">👁 '+L('View','عرض')+' — '+escSub(fileName)+'</button><button class="btn btn-s btn-sm" onclick="a1DownloadTC(\''+mechEnc+'\',\''+fileKey+'\')">⬇ '+L('Download','تنزيل')+'</button></div>';
+    return h+'</div>';
+  }
+  var bodyHtml;
+  if(!tc||!_a1HasTC(mech)){
+    bodyHtml='<div class="empty" style="padding:18px"><div class="ei">📜</div><p>'+L('No Terms & Conditions configured for this mechanism. Add them in Settings → Mechanism T&C.','لم تُسجَّل شروط وأحكام لهذه الآلية. أضِفها من الإعدادات ← شروط الآلية.')+'</p></div>';
+  }else{
+    bodyHtml=block(L('RFP Terms & Conditions','شروط وأحكام المنافسة'),tc.rfp||'',tc.rfpFile,'rfp')+block(L('Contract Terms & Conditions','شروط وأحكام العقد'),tc.contract||'',tc.contractFile,'contract');
+  }
+  d.innerHTML='<div class="md" style="max-width:680px"><div class="md-hd"><div class="md-title">📜 '+L('Terms & Conditions','الشروط والأحكام')+' — '+escSub(mech)+'</div><button class="md-close" onclick="document.getElementById(\'a1TCModal\').remove()">✕</button></div><div class="md-body">'+bodyHtml+'</div></div>';
+  document.body.appendChild(d);
+}
+function a1DownloadTC(mechEnc,which){
+  var mech=decodeURIComponent(mechEnc);
+  var tc=(typeof MECH_TC!=='undefined')?MECH_TC[mech]:null;if(!tc){toast('No T&C document','err');return;}
+  var data=which==='contract'?tc.contractFileData:tc.rfpFileData;
+  var nm=which==='contract'?(tc.contractFile||'Contract-TC'):(tc.rfpFile||'RFP-TC');
+  if(data&&typeof _dlData==='function')_dlData(data,nm);else toast('No attached document','err');
+}
 function a1Identify(){
   var n=(document.getElementById('a1Nature')||{}).value||'';
   var v=parseFloat((document.getElementById('a1Value')||{}).value)||0;
@@ -9523,29 +9632,31 @@ function a1Save(){
   var cx=(document.getElementById('a1Capex')||{}).value||'';
   var rec=num?RFPS.find(function(r){return (r.ref||'').trim().toLowerCase()===num.toLowerCase();}):null;
   if(!rec){rec={id:uid(),created:new Date().toISOString().split('T')[0],boq:[]};RFPS.push(rec);}
-  rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.suggestedMech=_a1Pick;rec.status='processed';rec.processedAt=new Date().toISOString();
+  rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.suggestedMech=_a1Pick;rec.mechAuto=(_a1Mechs.length<=1);rec.status='processed';rec.processedAt=new Date().toISOString();
   if(typeof saveAll==='function')saveAll();
   if(typeof logAudit==='function')logAudit('create','RFP processed (A.1): '+name+' → '+_a1Pick);
   toast('Saved as processed: '+name,'ok');
-  ['a1Name','a1Num','a1Value','a1Nature','a1Capex'].forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
-  var r0=document.getElementById('a1Result');if(r0)r0.innerHTML='<div style="font-size:11px;color:var(--text3)">Enter nature &amp; estimated value to identify the mechanism.</div>';
-  _a1Pick=null;renderMechWiz();
+  _a1Pick=null;a1CloseWizard();renderMechWiz();
 }
 function a1Edit(id){
   var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r)return;
+  a1OpenWizard();
   document.getElementById('a1Name').value=r.title||'';document.getElementById('a1Num').value=r.ref||'';
   _v57EU(document.getElementById('a1EU'));document.getElementById('a1EU').value=r.endUser||'';
   document.getElementById('a1Value').value=r.value||'';document.getElementById('a1Nature').value=r.nature||'';
   a1Identify();var cx=document.getElementById('a1Capex');if(cx&&r.expenditure){cx.value=r.expenditure;a1Identify();}
-  try{window.scrollTo(0,0);}catch(e){}
 }
 function renderMechWiz(){
   _v57EU(document.getElementById('a1EU'));
   var tb=document.getElementById('a1Tbody');if(!tb)return;
   var pr=(typeof RFPS!=='undefined'?RFPS:[]).filter(function(r){return r.status==='processed';});
-  tb.innerHTML=pr.length?pr.map(function(r){return '<tr><td>'+escSub(r.ref||'—')+'</td><td class="td-n">'+escSub(r.title||'—')+'</td><td>'+escSub(r.endUser||'—')+'</td><td class="r">'+_v57Money(r.value)+'</td><td>'+escSub(r.nature||'—')+'</td><td style="font-size:11px">'+escSub(r.suggestedMech||'—')+'</td><td style="font-size:10px;color:var(--text3)">'+_v57Date(r.processedAt)+'</td><td><button class="btn btn-s btn-sm" onclick="a1Edit('+JSON.stringify(r.id)+')">Edit</button></td></tr>';}).join(''):'<tr><td colspan="8"><div class="empty"><div class="ei">📋</div><p>No processed RFPs yet — identify a mechanism above and Save.</p></div></td></tr>';
+  tb.innerHTML=pr.length?pr.map(function(r){
+    var mech=r.suggestedMech||'';
+    var tcCell=_a1HasTC(mech)?'<button class="btn btn-s btn-sm" onclick="a1ViewTC(\''+encodeURIComponent(mech)+'\')" title="View &amp; download the mechanism Terms &amp; Conditions">📜 T&amp;C</button>':'<span style="color:var(--text3)">—</span>';
+    return '<tr><td>'+escSub(r.ref||'—')+'</td><td class="td-n">'+escSub(r.title||'—')+'</td><td>'+escSub(r.endUser||'—')+'</td><td class="r">'+_v57Money(r.value)+'</td><td>'+escSub(r.nature||'—')+'</td><td style="font-size:11px">'+escSub(mech||'—')+'</td><td>'+tcCell+'</td><td style="font-size:10px;color:var(--text3)">'+_v57Date(r.processedAt)+'</td><td><button class="btn btn-s btn-sm" onclick="a1Edit('+JSON.stringify(r.id)+')">Edit</button></td></tr>';
+  }).join(''):'<tr><td colspan="9"><div class="empty"><div class="ei">📋</div><p>No processed RFPs yet — click <b>+ Start New Process</b> to identify a mechanism.</p></div></td></tr>';
 }
-window.a1Identify=a1Identify;window.a1Save=a1Save;window.a1Edit=a1Edit;window.renderMechWiz=renderMechWiz;
+window.a1Identify=a1Identify;window.a1Save=a1Save;window.a1Edit=a1Edit;window.renderMechWiz=renderMechWiz;window.a1OpenWizard=a1OpenWizard;window.a1CloseWizard=a1CloseWizard;window.a1ViewTC=a1ViewTC;window.a1DownloadTC=a1DownloadTC;
 
 /* ===== Mandatory List Identifier ===== */
 var _a2Boq=[],_a2RfpId=null;
@@ -9629,6 +9740,7 @@ function renderEvalAssist(){
 function eaNew(){
   var pr=(RFPS||[]).filter(function(r){return r.status==='processed';});
   var mechOpts=(typeof MECHS!=='undefined'?MECHS:[]).map(function(m){return '<option value="'+escSub(m)+'">'+escSub(m)+'</option>';}).join('');
+  var euOpts='<option value="">Select end-user…</option>'+((typeof ENDUSERS!=='undefined'?ENDUSERS:[]).map(function(e){return '<option value="'+escSub(e.name)+'">'+escSub(e.name)+'</option>';}).join(''));
   var d=document.createElement('div');d.className='mo open';d.id='eaNewModal';d.onclick=function(e){if(e.target===d)d.remove();};
   d.innerHTML='<div class="md" style="max-width:520px"><div class="md-hd"><div class="md-title">New Evaluation</div><button class="md-close" onclick="document.getElementById(\'eaNewModal\').remove()">X</button></div><div class="md-body">'+
     '<div style="background:var(--al);border:1.5px solid var(--accent);border-radius:10px;padding:12px;margin-bottom:12px"><b style="color:var(--accent)">📥 Import from RFP</b><div style="font-size:11px;color:var(--text2);margin:4px 0 8px">Pre-fills #, name, End-User, mechanism and BoQ from a processed RFP.</div>'+
@@ -9638,7 +9750,8 @@ function eaNew(){
     '<div style="background:var(--surface2);border:1.5px solid var(--border);border-radius:10px;padding:12px"><b>✏️ Create Manually</b><div style="font-size:11px;color:var(--text2);margin:4px 0 8px">Enter the evaluation details yourself.</div>'+
       '<label class="fl2">Evaluation Title</label><input class="fi" id="eaManTitle" placeholder="Evaluation title" style="width:100%;margin-bottom:8px"/>'+
       '<label class="fl2">RFP Number</label><input class="fi" id="eaManRef" placeholder="RFP-2026-001" style="width:100%;margin-bottom:8px"/>'+
-      '<label class="fl2">Mechanism</label><select class="fsel2" id="eaManMech" style="width:100%">'+mechOpts+'</select>'+
+      '<label class="fl2">Mechanism</label><select class="fsel2" id="eaManMech" style="width:100%;margin-bottom:8px">'+mechOpts+'</select>'+
+      '<label class="fl2">End-User <span class="req">*</span></label><select class="fsel2" id="eaManEU" style="width:100%">'+euOpts+'</select>'+
       '<button class="btn btn-p" style="margin-top:10px;width:100%" onclick="eaCreate(\'manual\')">Create Manually</button>'+
     '</div></div></div>';
   document.body.appendChild(d);
@@ -9648,7 +9761,9 @@ function eaCreate(mode){
   if(mode==='manual'){
     var t=((document.getElementById('eaManTitle')||{}).value||'').trim();
     if(!t){toast('Enter an evaluation title','err');return;}
-    nb={id:uid(),title:t,ref:((document.getElementById('eaManRef')||{}).value||'').trim(),rfpId:null,endUser:'',mechanism:(document.getElementById('eaManMech')||{}).value||'',value:0,nature:'',bidders:[],status:'draft',winner:'',created:new Date().toISOString().split('T')[0],rfpBoQ:[]};
+    var eu=((document.getElementById('eaManEU')||{}).value||'').trim();
+    if(!eu){toast('Select an End-User','err');return;}
+    nb={id:uid(),title:t,ref:((document.getElementById('eaManRef')||{}).value||'').trim(),rfpId:null,endUser:eu,mechanism:(document.getElementById('eaManMech')||{}).value||'',value:0,nature:'',bidders:[],status:'draft',winner:'',created:new Date().toISOString().split('T')[0],rfpBoQ:[]};
   } else {
     var id=(document.getElementById('eaNewPick')||{}).value;var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r){toast('Pick an RFP','err');return;}
     nb={id:uid(),title:r.title||'',ref:r.ref||'',rfpId:r.id,endUser:r.endUser||'',mechanism:r.suggestedMech||r.mechanism||'',value:r.value||0,nature:r.nature||'',bidders:[],status:'draft',winner:'',created:new Date().toISOString().split('T')[0],rfpBoQ:(r.boq?JSON.parse(JSON.stringify(r.boq)):[])};
@@ -9701,6 +9816,7 @@ function eaRenderTable(){
   cols.push('Tech Score','Total Score','Rank','');
   var head='<tr>'+cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr>';
   var body=curBidders.length?curBidders.map(function(bd,i){
+    bd.nppPct=window._v57NppShare(bd.boqItems); // #2 read-only auto-compute
     var r=res(bd.name);var rowExcl=r&&r.excluded;
     var t='<tr style="cursor:pointer'+(rowExcl?';opacity:.6':'')+'" onclick="eaCard('+i+')">';
     t+='<td>'+(r&&!r.excluded?r.rank:(i+1))+'</td>';
@@ -9780,6 +9896,7 @@ function eaMarkEvaluated(){
 }
 function eaCard(i){
   var bd=curBidders[i];if(!bd)return;var locked=curBid&&curBid.status==='contractCreated';
+  bd.nppPct=window._v57NppShare(bd.boqItems); // #2 read-only auto-compute from BoQ
   var ex=document.getElementById('eaCardModal');if(ex)ex.remove();
   var d=document.createElement('div');d.className='mo open';d.id='eaCardModal';d.onclick=function(e){if(e.target===d)d.remove();};
   function num(field,label){return '<div class="fg"><label class="fl2">'+label+'</label><input class="fi" type="number" value="'+(bd[field]||0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].'+field+'=parseFloat(this.value)||0"/></div>';}
@@ -9789,19 +9906,20 @@ function eaCard(i){
   var boqRows=boq.length?boq.map(function(it,bi){return '<tr>'+
     '<td>'+(bi+1)+'</td>'+
     '<td><input class="fi" style="font-size:10px;padding:3px 5px;min-width:120px" value="'+escSub(it.desc||'')+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].desc=this.value"/></td>'+
-    '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].nature=this.value"><option value="goods"'+(it.nature==='goods'?' selected':'')+'>Goods</option><option value="services"'+(it.nature==='services'?' selected':'')+'>Services</option></select></td>'+
+    '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].nature=this.value;_eaCardNppRefresh('+i+')"><option value="goods"'+(it.nature==='goods'?' selected':'')+'>Goods</option><option value="services"'+(it.nature==='services'?' selected':'')+'>Services</option></select></td>'+
     '<td><input class="fi" type="number" style="width:44px;font-size:10px;padding:3px" value="'+(it.qty||1)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].qty=parseFloat(this.value)||1"/></td>'+
     '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].uom=this.value">'+_uom.map(function(u){return '<option'+(u===it.uom?' selected':'')+'>'+u+'</option>';}).join('')+'</select></td>'+
-    '<td><input class="fi" type="number" style="width:78px;font-size:10px;padding:3px" value="'+(it.price||0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].price=parseFloat(this.value)||0"/></td>'+
-    '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].origin=this.value"><option value="Local"'+(it.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(it.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'+
-    '<td style="text-align:center"><input type="checkbox" '+(it.isMandatoryRFP?'checked':'')+' '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].isMandatoryRFP=this.checked"/></td>'+
+    '<td><input class="fi" type="number" style="width:78px;font-size:10px;padding:3px" value="'+(it.price||0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].price=parseFloat(this.value)||0;_eaCardNppRefresh('+i+')"/></td>'+
+    '<td><select class="fsel2" style="font-size:10px;padding:3px" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].origin=this.value;_eaCardNppRefresh('+i+')"><option value="Local"'+(it.origin!=='Foreign'?' selected':'')+'>Local</option><option value="Foreign"'+(it.origin==='Foreign'?' selected':'')+'>Foreign</option></select></td>'+
+    '<td style="text-align:center"><input type="checkbox" '+(it.isMandatoryRFP?'checked':'')+' '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].isMandatoryRFP=this.checked;_eaCardNppRefresh('+i+')"/></td>'+
     '<td><input class="fi" style="width:68px;font-size:10px;padding:3px" value="'+escSub(it.mlCode||'')+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].boqItems['+bi+'].mlCode=this.value"/></td>'+
     '<td>'+(locked?'':'<button class="mb del" onclick="eaCardBoqDel('+i+','+bi+')">X</button>')+'</td></tr>';}).join(''):'<tr><td colspan="10" style="text-align:center;color:var(--text3);font-size:11px;padding:8px">No BoQ line items.</td></tr>';
   d.innerHTML='<div class="md" style="max-width:840px"><div class="md-hd"><div class="md-title">Bidder — '+escSub(bd.name||'')+'</div><button class="md-close" onclick="document.getElementById(\'eaCardModal\').remove()">X</button></div><div class="md-body">'+
     '<div class="fg2" style="gap:10px">'+
     '<div class="fg"><label class="fl2">Bidder Name</label><input class="fi" value="'+escSub(bd.name||'')+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].name=this.value;eaRenderTable()"/></div>'+
     '<div class="fg"><label class="fl2">Technical Score</label><input class="fi" type="number" value="'+(bd.techScore||0)+'" '+(locked?'disabled':'')+' onchange="curBidders['+i+'].techScore=parseFloat(this.value)||0;eaRenderTable()"/></div>'+
-    num('price','Bid Price (SAR)')+num('lcBaseline','LC Baseline %')+num('lcPct','LC Target %')+num('nppPct','National Products %')+
+    num('price','Bid Price (SAR)')+num('lcBaseline','LC Baseline %')+num('lcPct','LC Target %')+
+    '<div class="fg"><label class="fl2">National Products % (auto)</label><input class="fi" id="eaNpp_'+i+'" type="number" value="'+(bd.nppPct||0)+'" readonly title="Auto-computed: Σ Local goods (excl. Mandatory-List) ÷ Σ all lines (excl. Mandatory-List). Edit the BoQ below to change it." style="background:var(--surface);cursor:not-allowed"/></div>'+
     yn('isSME','SME Registered')+yn('isTadawul','Tadawul-listed')+yn('hasCert','LC Certificate')+yn('mlCompliant','Mandatory-List Compliant')+
     '</div>'+
     '<div style="display:flex;gap:7px;margin:12px 0;flex-wrap:wrap"><span style="font-size:11px;color:var(--text2);align-self:center">Attachments:</span>'+_eaCardFile(i,'_techFile','Technical')+_eaCardFile(i,'_commFile','Financial')+_eaCardFile(i,'_mlFile','Mandatory Letter')+'</div>'+
@@ -9813,11 +9931,12 @@ function eaCard(i){
 }
 function eaCardBoqAdd(i){ if(!curBidders[i].boqItems)curBidders[i].boqItems=[]; curBidders[i].boqItems.push({desc:'',nature:'goods',qty:1,uom:'Lump Sum',price:0,origin:'Local',isMandatoryRFP:false,isMandatoryResp:false,mlCode:''}); eaCard(i); }
 function eaCardBoqDel(i,bi){ if(curBidders[i].boqItems)curBidders[i].boqItems.splice(bi,1); eaCard(i); }
+function _eaCardNppRefresh(i){ var bd=curBidders[i]; if(!bd)return; bd.nppPct=window._v57NppShare(bd.boqItems); var el=document.getElementById('eaNpp_'+i); if(el)el.value=bd.nppPct; }
 function _eaCardFile(i,field,label){
   var bd=curBidders[i];if(bd&&bd[field])return '<button class="btn btn-s btn-sm" onclick="eaView('+i+',\''+field+'\')">👁 '+label+'</button>';
   return '<button class="btn btn-s btn-sm" onclick="eaAttach('+i+',\''+field+'\')">📎 '+label+'</button>';
 }
-window.renderEvalAssist=renderEvalAssist;window.eaNew=eaNew;window.eaCreate=eaCreate;window.eaOpen=eaOpen;window.eaBack=eaBack;window.eaRenderTable=eaRenderTable;window.eaAttach=eaAttach;window.eaView=eaView;window.eaAddBidder=eaAddBidder;window.eaCalc=eaCalc;window.eaSetWeights=eaSetWeights;window.eaMarkEvaluated=eaMarkEvaluated;window.eaCard=eaCard;window.eaCardBoqAdd=eaCardBoqAdd;window.eaCardBoqDel=eaCardBoqDel;
+window.renderEvalAssist=renderEvalAssist;window.eaNew=eaNew;window.eaCreate=eaCreate;window.eaOpen=eaOpen;window.eaBack=eaBack;window.eaRenderTable=eaRenderTable;window.eaAttach=eaAttach;window.eaView=eaView;window.eaAddBidder=eaAddBidder;window.eaCalc=eaCalc;window.eaSetWeights=eaSetWeights;window.eaMarkEvaluated=eaMarkEvaluated;window.eaCard=eaCard;window.eaCardBoqAdd=eaCardBoqAdd;window.eaCardBoqDel=eaCardBoqDel;window._eaCardNppRefresh=_eaCardNppRefresh;
 </script>
 
 <script>
@@ -9851,6 +9970,255 @@ window.c1SendReminder=c1SendReminder;
 function c1AddManual(){ nav('entry',null); if(typeof resetForm==='function')resetForm(); if(typeof _unlockContractForm==='function')_unlockContractForm(); if(typeof renderEntryBoQ==='function')renderEntryBoQ(); toast('Manual entry — all fields and BoQ are editable','info'); }
 function c1ImportAward(){ nav('entry',null); if(typeof resetForm==='function')resetForm(); if(typeof refreshAwardImportSel==='function')refreshAwardImportSel(); var el=document.getElementById('impAwardSel'); if(el){try{el.scrollIntoView({behavior:'smooth',block:'center'});el.focus();}catch(e){}} toast('Pick an evaluated evaluation, then “Import Data” — all fields will lock.','info'); }
 window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
+</script>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════════
+   v57 — EXECUTIVE RIBBON DASHBOARD  (final override of renderDashboard)
+   • Entity + Year + Quarter filters (period applies to everything; stock
+     metrics computed as-of the period end).
+   • 4 lenses: Executive (hero ribbon) · Pre-Tendering · Awarding · Monitoring.
+   • Every KPI tile is clickable → drill-down popup of its underlying records.
+   ════════════════════════════════════════════════════════════════════════ */
+(function(){
+  if(window.dashYear==null)window.dashYear='';
+  if(window.dashQuarter==null)window.dashQuarter='all';
+  var _exDR={};
+  function _D(v){ if(v==null||v==='')return null; var d=new Date(v); return isNaN(d.getTime())?null:d; }
+  function _loc(){ return (typeof lang!=='undefined'&&lang==='ar')?'ar-SA':'en-GB'; }
+  function dDays(x){ return x==null?'—':((typeof fDays==='function')?fDays(x):(x.toFixed(1)+'d')); }
+  function _esc(s){ return (typeof escSub==='function')?escSub(s):String(s==null?'':s); }
+  function _money(v){ return (typeof fSAR==='function')?fSAR(v||0):String(v||0); }
+  function _dt(v){ return (typeof _v57Date==='function')?_v57Date(v):String(v||'—'); }
+
+  function _exYears(){
+    var ys={};
+    function add(v){ var d=_D(v); if(d){var y=d.getFullYear(); if(y>2000&&y<2100)ys[y]=1;} }
+    (typeof RFPS!=='undefined'?RFPS:[]).forEach(function(r){add(r.created);add(r.processedAt);});
+    (typeof BIDS!=='undefined'?BIDS:[]).forEach(function(b){add(b.created);add(b.awardedOn);add(b.evaluatedAt);});
+    (typeof DB!=='undefined'?DB:[]).forEach(function(c){add(c.awardDate);add(c.start);
+      (c.penalties||[]).forEach(function(p){if(p.year)ys[+p.year]=1;});
+      (c.reports||[]).forEach(function(r){if(r.year)ys[+r.year]=1;add(r.due);});});
+    (typeof AUDIT_LOG!=='undefined'?AUDIT_LOG:[]).forEach(function(a){if(a.id)add(a.id);});
+    return Object.keys(ys).map(Number).sort(function(a,b){return b-a;});
+  }
+  function _exRange(){
+    var yr=window.dashYear,qt=window.dashQuarter;
+    if(!yr)return {start:null,end:null,isAll:true,label:L('All time','كل الفترات')};
+    yr=+yr;
+    if(qt==='all'||qt==null)return {start:new Date(yr,0,1,0,0,0),end:new Date(yr,11,31,23,59,59),isAll:false,label:String(yr)};
+    var sm=({'1':0,'2':3,'3':6,'4':9})[String(qt)]; if(sm==null)sm=0;
+    return {start:new Date(yr,sm,1,0,0,0),end:new Date(yr,sm+3,0,23,59,59),isAll:false,label:'Q'+qt+' '+yr};
+  }
+
+  function _exCompute(){
+    var R=_exRange(); var now=new Date(); var pe=R.end||now; var peY=pe.getFullYear();
+    function inP(v){ var d=_D(v); if(!d)return false; if(R.start&&d<R.start)return false; if(R.end&&d>R.end)return false; return true; }
+    var ent=window.dashEntity||'';
+    function eOK(o){ return !ent || (o&&o.endUser===ent); }
+    function bidEU(b){ if(b.endUser)return b.endUser; if(b.rfpId){var r=(RFPS||[]).find(function(x){return x.id===b.rfpId;});return r?r.endUser:'';} return ''; }
+    function bOK(b){ return !ent || bidEU(b)===ent; }
+    var db=(typeof DB!=='undefined'?DB:[]).filter(eOK), rfps=(typeof RFPS!=='undefined'?RFPS:[]).filter(eOK), bids=(typeof BIDS!=='undefined'?BIDS:[]).filter(bOK);
+    function tw(headers,rows){ if(!rows.length)return '<div class="empty"><p>'+L('No records for this selection.','لا توجد سجلات لهذا التحديد.')+'</p></div>';
+      return '<div class="tbl-wrap"><table style="width:100%"><thead><tr>'+headers.map(function(c){return '<th style="padding:6px 10px;font-size:10px;text-align:start">'+c+'</th>';}).join('')+'</tr></thead><tbody>'+rows.map(function(r){return '<tr>'+r.map(function(c){return '<td style="padding:6px 10px;font-size:11px;border-bottom:1px solid var(--border)">'+c+'</td>';}).join('')+'</tr>';}).join('')+'</tbody></table></div>'; }
+    var DR={};
+
+    function activeAt(asof){ return db.filter(function(c){var s=_D(c.start),e=_D(c.end);return (!s||s<=asof)&&(!e||e>=asof);}); }
+    function cOverdueAt(c,asof){ return (c.reports||[]).filter(function(r){var d=_D(r.due);return d&&d<=asof&&r.received!==true;}).length; }
+    function cPenAt(c,asof){ return (c.penalties||[]).filter(function(p){return p.year&&(+p.year<=asof.getFullYear());}).reduce(function(s,p){return s+(p.amount||0);},0); }
+    function cAchieved(c){ var reps=(c.reports||[]).filter(function(r){return r.type==='period'||r.type==='final';}); var lr=reps.length?reps[reps.length-1]:null; if(!lr)return null; return lr.type==='final'?(lr.achieved||lr.actual||0):(lr.actual||0); }
+    function healthAt(asof){ var ac=activeAt(asof); if(!ac.length)return null; var h=ac.filter(function(c){var ov=cOverdueAt(c,asof),op=cPenAt(c,asof),ach=cAchieved(c),ag=(c.agreedPct||0)*100,lcOK=!ag||(ach!=null&&ach>=ag);return ov===0&&op<=0&&lcOK;}).length; return Math.round(h/ac.length*100); }
+
+    /* ---------- EXECUTIVE ---------- */
+    var activeC=activeAt(pe);
+    var healthyN=activeC.filter(function(c){var ov=cOverdueAt(c,pe),op=cPenAt(c,pe),ach=cAchieved(c),ag=(c.agreedPct||0)*100,lcOK=!ag||(ach!=null&&ach>=ag);return ov===0&&op<=0&&lcOK;}).length;
+    var portHealth=activeC.length?Math.round(healthyN/activeC.length*100):0;
+    var prevEnd=R.isAll?null:new Date((R.start?R.start.getTime():pe.getTime())-1);
+    var prevHealth=prevEnd?healthAt(prevEnd):null;
+    var portDelta=(prevHealth!=null)?(portHealth-prevHealth):null;
+    DR.portHealth={title:L('Portfolio Health','صحة المحفظة'),sub:healthyN+' / '+activeC.length+' '+L('active contracts healthy','عقد نشط سليم')+' · '+R.label,
+      body:tw([L('Contract','العقد'),L('End-User','الجهة'),L('Achieved/Agreed','المحقق/المتعاقد'),L('Overdue','متأخر'),L('Open Penalty','غرامة قائمة'),L('Status','الحالة')],
+        activeC.map(function(c){var ov=cOverdueAt(c,pe),op=cPenAt(c,pe),ach=cAchieved(c),ag=(c.agreedPct||0)*100,lcOK=!ag||(ach!=null&&ach>=ag);var ok=ov===0&&op<=0&&lcOK;
+          return ['#'+_esc(c.num),_esc(c.endUser||'—'),(ach!=null?ach.toFixed(0):'—')+'% / '+(ag?ag.toFixed(0):'—')+'%',String(ov),_money(op),ok?'<span class="badge bg">'+L('Healthy','سليم')+'</span>':'<span class="badge br">'+L('At risk','معرّض')+'</span>'];}))};
+
+    var penByYear={},penByContract={},penRows=[];
+    db.forEach(function(c){(c.penalties||[]).forEach(function(p){ if(p.year&&(+p.year>peY))return; var amt=p.amount||0; var y=p.year||'—'; penByYear[y]=(penByYear[y]||0)+amt; penByContract[c.num]=(penByContract[c.num]||0)+amt; penRows.push(['#'+_esc(c.num),_esc(p.type||'—'),String(y),_money(amt),_esc((p.reason||'').substring(0,60))]); });});
+    var penTotal=Object.keys(penByContract).reduce(function(s,k){return s+penByContract[k];},0);
+    var contribs=Object.keys(penByContract).map(function(k){return penByContract[k];}).sort(function(a,b){return b-a;});
+    var conc=penTotal>0?Math.round((contribs.slice(0,2).reduce(function(s,v){return s+v;},0))/penTotal*100):0;
+    DR.penExposure={title:L('Penalty Exposure','الانكشاف للغرامات'),sub:_money(penTotal)+' · '+conc+'% '+L('in top 2','في أعلى عقدين')+' · '+R.label,
+      body:tw([L('Contract','العقد'),L('Type','النوع'),L('Year','السنة'),L('Amount','المبلغ'),L('Reason','السبب')],penRows)};
+
+    function bidWinPrice(b){ var w=(b.bidders||[]).find(function(x){return x.name===b.winner;})||{}; var r=(b.lastResults||[]).find(function(x){return x.name===b.winner;})||{}; return w.price||r.origPrice||b.value||0; }
+    var awardedBids=bids.filter(function(b){return (b.status==='awarded'||b.status==='evaluated'||b.status==='contractCreated')&&b.winner&&inP(b.awardedOn||b.evaluatedAt);});
+    var throughput=awardedBids.reduce(function(s,b){return s+bidWinPrice(b);},0);
+    var rfpsCreated=rfps.filter(function(r){return R.isAll?true:inP(r.created);});
+    var evalsCreated=bids.filter(function(b){return R.isAll?true:inP(b.created);});
+    var contractsCreated=db.filter(function(c){return R.isAll?true:inP(c.awardDate||c.start);});
+    DR.throughput={title:L('Value Throughput & Lifecycle','حجم القيمة ودورة الحياة'),sub:_money(throughput)+' '+L('awarded','مُرسى')+' · '+R.label,
+      body:'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">'+['<b>'+rfpsCreated.length+'</b> '+L('RFPs','منافسات'),'<b>'+evalsCreated.length+'</b> '+L('Evaluations','تقييمات'),'<b>'+awardedBids.length+'</b> '+L('Awards','ترسيات'),'<b>'+contractsCreated.length+'</b> '+L('Contracts','عقود')].map(function(x){return '<span class="badge bb" style="font-size:12px;padding:6px 10px">'+x+'</span>';}).join('')+'</div>'+
+        tw([L('Award','الترسية'),L('Mechanism','الآلية'),L('Winner','الفائز'),L('Value','القيمة'),L('Date','التاريخ')],awardedBids.map(function(b){return [_esc(b.title||b.ref||'—'),_esc(b.mechanism||'—'),_esc(b.winner||'—'),_money(bidWinPrice(b)),_dt(b.awardedOn||b.evaluatedAt)];}))};
+
+    /* ---------- PRE-TENDERING ---------- */
+    var processed=rfps.filter(function(r){return r.status==='processed'||r.suggestedMech;}).filter(function(r){return R.isAll?true:(inP(r.processedAt)||inP(r.created));});
+    var autoN=processed.filter(function(r){return r.mechAuto!==false;}).length;
+    var autoPct=processed.length?Math.round(autoN/processed.length*100):0;
+    DR.autoId={title:L('Mechanism Identification','تحديد الآلية'),sub:autoN+' / '+processed.length+' '+L('accepted as suggested','مقبول كما اقتُرح'),
+      body:tw([L('RFP','المنافسة'),L('Mechanism','الآلية'),L('Identification','التحديد')],processed.map(function(r){return [_esc(r.title||r.ref||'—'),_esc(r.suggestedMech||'—'),r.mechAuto===false?'<span class="badge ba">'+L('Manual / overridden','يدوي / معدّل')+'</span>':'<span class="badge bg">'+L('Auto-suggested','مقترح آليًا')+'</span>'];}))};
+    DR.rfpsCreated={title:L('RFPs Created','المنافسات المُنشأة'),sub:rfpsCreated.length+' · '+R.label,
+      body:tw([L('RFP #','رقم'),L('Title','العنوان'),L('Value','القيمة'),L('Status','الحالة'),L('Created','أُنشئت')],rfpsCreated.map(function(r){return [_esc(r.ref||'—'),_esc(r.title||'—'),_money(r.value),_esc(r.status||'—'),_dt(r.created)];}))};
+    var mechMix={}; processed.forEach(function(r){var m=r.suggestedMech||'—';mechMix[m]=(mechMix[m]||0)+1;});
+    var mixArr=Object.keys(mechMix).map(function(k){return {m:k,n:mechMix[k]};}).sort(function(a,b){return b.n-a.n;});
+    DR.mechMix={title:L('Mechanism Mix','توزيع الآليات'),sub:mixArr.length+' '+L('distinct mechanisms','آلية مختلفة'),
+      body:tw([L('Mechanism','الآلية'),L('RFPs','المنافسات')],mixArr.map(function(x){return [_esc(x.m),String(x.n)];}))};
+    var matched=0,flagged=0,unmapped=0;
+    rfps.filter(function(r){return R.isAll?true:inP(r.created);}).forEach(function(r){(r.boq||[]).forEach(function(li){ if(li.mlCode)matched++; else if(li.isMandatory)flagged++; else unmapped++; });});
+    var covTot=matched+flagged+unmapped;
+    DR.coverage={title:L('BoQ Mandatory-List Coverage','تغطية القائمة الإلزامية للبنود'),sub:covTot+' '+L('BoQ lines','بند'),
+      body:tw([L('State','الحالة'),L('Lines','البنود'),'%'],[
+        ['<span class="badge bg">'+L('Matched (Etimad code)','مطابق (رمز اعتماد)')+'</span>',String(matched),covTot?Math.round(matched/covTot*100)+'%':'—'],
+        ['<span class="badge ba">'+L('Flagged (mandatory, no code)','معلّم (إلزامي بلا رمز)')+'</span>',String(flagged),covTot?Math.round(flagged/covTot*100)+'%':'—'],
+        ['<span class="badge bt">'+L('Unmapped','غير مصنّف')+'</span>',String(unmapped),covTot?Math.round(unmapped/covTot*100)+'%':'—']])};
+    var cyc=[]; rfps.forEach(function(r){var c0=_D(r.created),c1=_D(r.readyAt);if(c0&&c1&&(R.isAll||inP(r.readyAt)))cyc.push((c1-c0)/86400000);});
+    var draftReady=cyc.length?(cyc.reduce(function(s,v){return s+v;},0)/cyc.length):null;
+    DR.draftReady={title:L('Draft → Ready Cycle','دورة المسودة ← الجاهزية'),sub:cyc.length+' '+L('RFPs measured','منافسة مقاسة'),
+      body:tw([L('RFP','المنافسة'),L('Created','أُنشئت'),L('Ready','جاهزة'),L('Days','أيام')],rfps.filter(function(r){return _D(r.readyAt)&&_D(r.created);}).map(function(r){return [_esc(r.title||r.ref||'—'),_dt(r.created),_dt(r.readyAt),(((_D(r.readyAt)-_D(r.created))/86400000)).toFixed(1)];}))};
+    var mechs=(typeof MECHS!=='undefined'?MECHS:[]);
+    var tcN=mechs.filter(function(m){var tc=(typeof MECH_TC!=='undefined')?MECH_TC[m]:null;return tc&&(tc.rfp||tc.contract||tc.rfpFileData||tc.contractFileData);}).length;
+    var tcPct=mechs.length?Math.round(tcN/mechs.length*100):0;
+    DR.tc={title:L('Terms & Conditions Completeness','اكتمال الشروط والأحكام'),sub:tcN+' / '+mechs.length+' '+L('mechanisms configured','آلية مهيأة'),
+      body:tw([L('Mechanism','الآلية'),L('T&C','الشروط')],mechs.map(function(m){var tc=(typeof MECH_TC!=='undefined')?MECH_TC[m]:null;var has=tc&&(tc.rfp||tc.contract||tc.rfpFileData||tc.contractFileData);return [_esc(m),has?'<span class="badge bg">'+L('Configured','مهيأة')+'</span>':'<span class="badge bt">'+L('Missing','ناقصة')+'</span>'];}))};
+
+    /* ---------- AWARDING ---------- */
+    var evalsDone=bids.filter(function(b){return (b.status==='evaluated'||b.status==='awarded'||b.status==='contractCreated')&&inP(b.evaluatedAt||b.awardedOn);});
+    var awardedDone=evalsDone.filter(function(b){return b.winner;});
+    var conv=evalsDone.length?Math.round(awardedDone.length/evalsDone.length*100):0;
+    DR.evalsDone={title:L('Evaluations Completed','التقييمات المكتملة'),sub:evalsDone.length+' · '+R.label,
+      body:tw([L('Evaluation','التقييم'),L('Mechanism','الآلية'),L('Winner','الفائز'),L('Bidders','المتقدمون'),L('Date','التاريخ')],evalsDone.map(function(b){return [_esc(b.title||b.ref||'—'),_esc(b.mechanism||'—'),_esc(b.winner||'—'),String((b.lastResults&&b.lastResults.length)||(b.bidders&&b.bidders.length)||0),_dt(b.evaluatedAt||b.awardedOn)];}))};
+    DR.conversion={title:L('Award Conversion','نسبة الترسية'),sub:awardedDone.length+' '+L('awarded of','مُرسى من')+' '+evalsDone.length+' '+L('evaluated','مُقيَّم'),body:DR.evalsDone.body};
+    var tta=[]; awardedDone.forEach(function(b){var c0=_D(b.created),c1=_D(b.awardedOn||b.evaluatedAt);if(c0&&c1)tta.push((c1-c0)/86400000);});
+    var avgTTA=tta.length?(tta.reduce(function(s,v){return s+v;},0)/tta.length):null;
+    DR.tta={title:L('Time to Award','زمن الترسية'),sub:(avgTTA!=null?dDays(avgTTA):'—')+' '+L('average','متوسط'),
+      body:tw([L('Evaluation','التقييم'),L('Created','أُنشئ'),L('Awarded','رُسي'),L('Days','أيام')],awardedDone.filter(function(b){return _D(b.created)&&_D(b.awardedOn||b.evaluatedAt);}).map(function(b){return [_esc(b.title||b.ref||'—'),_dt(b.created),_dt(b.awardedOn||b.evaluatedAt),(((_D(b.awardedOn||b.evaluatedAt)-_D(b.created))/86400000)).toFixed(1)];}))};
+    var bidderCounts=evalsDone.map(function(b){return (b.lastResults&&b.lastResults.length)||(b.bidders&&b.bidders.length)||0;});
+    var avgBidders=bidderCounts.length?(bidderCounts.reduce(function(s,v){return s+v;},0)/bidderCounts.length):0;
+    DR.avgBidders={title:L('Average Bidders','متوسط المتقدمين'),sub:avgBidders.toFixed(1)+' '+L('per evaluation','لكل تقييم'),body:DR.evalsDone.body};
+    var overrides=awardedDone.filter(function(b){return b.awardOverride;}).length;
+    var overrideRate=awardedDone.length?Math.round(overrides/awardedDone.length*100):0;
+    DR.override={title:L('Award Override Rate','نسبة تجاوز الترتيب'),sub:overrides+' '+L('overrides of','تجاوز من')+' '+awardedDone.length+' '+L('awards','ترسية'),
+      body:tw([L('Evaluation','التقييم'),L('Top-Ranked','الأعلى ترتيبًا'),L('Awarded','المُرسى'),L('Override','تجاوز')],awardedDone.map(function(b){return [_esc(b.title||b.ref||'—'),_esc(b.topRanked||'—'),_esc(b.winner||'—'),b.awardOverride?'<span class="badge ba">'+L('Yes','نعم')+(b.awardJustification?' — '+_esc(b.awardJustification.substring(0,40)):'')+'</span>':'<span class="badge bg">'+L('No','لا')+'</span>'];}))};
+    var smelog=(typeof SME_LOG!=='undefined'?SME_LOG:[]).filter(function(x){return (!ent||x.endUser===ent)&&(R.isAll||inP(x.awardedOn));});
+    var smeWon=smelog.filter(function(x){return x.smeWon;}).length;
+    DR.sme={title:L('SME Preference Uplift','أثر تفضيل المنشآت الصغيرة'),sub:smeWon+' '+L('SME wins of','فوز للمنشآت من')+' '+smelog.length+' '+L('SME-contested','منافسة بمشاركتها'),
+      body:tw([L('RFP','المنافسة'),L('Value','القيمة'),L('Winner','الفائز'),L('SME Won','فازت المنشأة')],smelog.map(function(x){return [_esc(x.title||x.ref||'—'),_money(x.value),_esc(x.winner||'—'),x.smeWon?'<span class="badge bg">'+L('Yes','نعم')+'</span>':'<span class="badge bt">'+L('No','لا')+'</span>'];}))};
+    var winLC=[]; awardedDone.forEach(function(b){var w=(b.bidders||[]).find(function(x){return x.name===b.winner;})||{};var r=(b.lastResults||[]).find(function(x){return x.name===b.winner;})||{};var lc=(w.lcPct!=null?w.lcPct:r.lcPct);if(lc!=null)winLC.push(+lc);});
+    var avgWinLC=winLC.length?(winLC.reduce(function(s,v){return s+v;},0)/winLC.length):null;
+    var tgtC=db.filter(function(c){return c.agreedPct;});
+    var portTarget=tgtC.length?(tgtC.reduce(function(s,c){return s+c.agreedPct*100;},0)/tgtC.length):((typeof S!=='undefined'&&S.targetSplit)||50);
+    DR.winLC={title:L('Winner LC vs Portfolio Target','المحتوى المحلي للفائزين مقابل المستهدف'),sub:(avgWinLC!=null?avgWinLC.toFixed(1):'—')+'% '+L('avg vs target','متوسط مقابل')+' '+portTarget.toFixed(0)+'%',
+      body:tw([L('Evaluation','التقييم'),L('Winner','الفائز'),L('Winner LC %','المحتوى المحلي للفائز')],awardedDone.map(function(b){var w=(b.bidders||[]).find(function(x){return x.name===b.winner;})||{};var r=(b.lastResults||[]).find(function(x){return x.name===b.winner;})||{};var lc=(w.lcPct!=null?w.lcPct:r.lcPct);return [_esc(b.title||b.ref||'—'),_esc(b.winner||'—'),(lc!=null?(+lc).toFixed(1)+'%':'—')];}))};
+
+    /* ---------- MONITORING ---------- */
+    var dueReps=[]; db.forEach(function(c){(c.reports||[]).forEach(function(r){var due=_D(r.due);if(due&&due<=pe)dueReps.push({c:c,r:r,due:due});});});
+    var rcvd=dueReps.filter(function(x){return x.r.received===true;}).length;
+    var overdue=dueReps.filter(function(x){return x.r.received!==true;});
+    var onTimePct=dueReps.length?Math.round(rcvd/dueReps.length*100):0;
+    var worstLate=0; overdue.forEach(function(x){var late=Math.floor((pe-x.due)/86400000);if(late>worstLate)worstLate=late;});
+    DR.reports={title:L('Report Compliance','الالتزام بالتقارير'),sub:rcvd+' / '+dueReps.length+' '+L('received','مستلم')+' · '+overdue.length+' '+L('overdue','متأخر'),
+      body:tw([L('Contract','العقد'),L('Report','التقرير'),L('Due','الاستحقاق'),L('Status','الحالة')],dueReps.map(function(x){var late=Math.floor((pe-x.due)/86400000);return ['#'+_esc(x.c.num),_esc(x.r.type||'—'),_dt(x.r.due),x.r.received===true?'<span class="badge bg">'+L('Received','مستلم')+'</span>':'<span class="badge br">'+L('Overdue','متأخر')+' '+late+'d</span>'];}))};
+    DR.worstLate={title:L('Most Overdue Report','أكثر التقارير تأخرًا'),sub:worstLate+' '+L('days','يوم'),body:DR.reports.body};
+    var evApproved=0,evRejected=0,evRows=[];
+    db.forEach(function(c){Object.keys(c.evidence||{}).forEach(function(rt){(c.evidence[rt]||[]).forEach(function(f){var st=f.status||'pending';if(st==='approved')evApproved++;else if(st==='rejected'){evRejected++;evRows.push(['#'+_esc(c.num),_esc(rt),_esc(f.name||'—'),'<span class="badge br">'+L('Rejected','مرفوض')+'</span>']);}});});});
+    var evReviewed=evApproved+evRejected;
+    var evRej=evReviewed?Math.round(evRejected/evReviewed*100):0;
+    DR.evidence={title:L('Evidence Rejection','رفض الأدلة'),sub:evRejected+' '+L('rejected of','مرفوض من')+' '+evReviewed+' '+L('reviewed','مُراجَع'),
+      body:evRows.length?tw([L('Contract','العقد'),L('Report','التقرير'),L('File','الملف'),L('Status','الحالة')],evRows):'<div class="empty"><p>'+L('No rejected evidence in this selection.','لا توجد أدلة مرفوضة.')+'</p></div>'};
+    var certs=(typeof CERTS!=='undefined'?CERTS:[]);
+    var soon=certs.filter(function(c){var e=_D(c.expiry);if(!e)return false;var days=Math.ceil((e-pe)/86400000);return days>=0&&days<=30;});
+    DR.certs={title:L('Certificates Expiring ≤30 days','شهادات تنتهي خلال 30 يومًا'),sub:soon.length+' '+L('as of','حتى')+' '+_dt(pe.toISOString().split('T')[0]),
+      body:tw([L('Supplier','المورد'),L('Certificate','الشهادة'),L('Expiry','الانتهاء'),L('Days','أيام')],soon.map(function(c){var e=_D(c.expiry);var days=Math.ceil((e-pe)/86400000);return [_esc(c.entity||c.name||'—'),_esc(c.type||c.num||'—'),_dt(c.expiry),String(days)];}))};
+    var audits=(typeof AUDIT_LOG!=='undefined'?AUDIT_LOG:[]).filter(function(a){return R.isAll?true:inP(a.id);});
+    DR.audits={title:L('Audit Events','أحداث التدقيق'),sub:audits.length+' · '+R.label,
+      body:tw([L('When','الوقت'),L('Type','النوع'),L('Action','الإجراء'),L('Actor','المنفّذ')],audits.slice(0,200).map(function(a){return [_esc(a.ts||''),_esc(a.type||'—'),_esc((a.desc||'').substring(0,80)),_esc(a.actor||'—')];}))};
+    DR.activeContracts={title:L('Active Contracts','العقود النشطة'),sub:activeC.length+' '+L('as of','حتى')+' '+R.label,
+      body:tw([L('Contract','العقد'),L('End-User','الجهة'),L('Value','القيمة'),L('Start','البداية'),L('End','النهاية')],activeC.map(function(c){return ['#'+_esc(c.num),_esc(c.endUser||'—'),_money(c.amount),_dt(c.start),_dt(c.end)];}))};
+    var trajY={}; db.forEach(function(c){(c.reports||[]).forEach(function(r){if((r.type==='period'||r.type==='final')&&r.actual!=null&&r.year){if(!trajY[r.year])trajY[r.year]={a:0,n:0};trajY[r.year].a+=(r.type==='final'?(r.achieved||r.actual):r.actual);trajY[r.year].n++;}});});
+    var trajArr=Object.keys(trajY).map(Number).sort(function(a,b){return a-b;}).map(function(y){return {y:y,v:trajY[y].a/trajY[y].n};});
+
+    return {range:R,years:_exYears(),portHealth:portHealth,portDelta:portDelta,healthyN:healthyN,activeN:activeC.length,
+      penTotal:penTotal,conc:conc,penByYear:penByYear,throughput:throughput,rfpN:rfpsCreated.length,evalN:evalsCreated.length,awardN:awardedBids.length,ctrN:contractsCreated.length,
+      autoPct:autoPct,autoN:autoN,processedN:processed.length,matched:matched,flagged:flagged,unmapped:unmapped,covTot:covTot,
+      draftReady:draftReady,tcPct:tcPct,tcN:tcN,mechN:mechs.length,mixCount:mixArr.length,mixTop:(mixArr[0]?mixArr[0].m:'—'),
+      evalDoneN:evalsDone.length,conv:conv,awardedN:awardedDone.length,avgTTA:avgTTA,avgBidders:avgBidders,overrideRate:overrideRate,overrides:overrides,
+      smeWon:smeWon,smeComp:smelog.length,avgWinLC:avgWinLC,portTarget:portTarget,
+      onTimePct:onTimePct,overdueN:overdue.length,worstLate:worstLate,evRej:evRej,evRejected:evRejected,evReviewed:evReviewed,
+      certsSoon:soon.length,auditsN:audits.length,trajArr:trajArr,drills:DR};
+  }
+
+  function _exRender(){
+    var host=document.getElementById('dashKPIs'); if(!host)return;
+    window._allDashEntities=(function(){var s={};(typeof ENDUSERS!=='undefined'?ENDUSERS:[]).forEach(function(e){if(e&&e.name)s[e.name]=1;});(typeof DB!=='undefined'?DB:[]).forEach(function(c){if(c.endUser)s[c.endUser]=1;});return Object.keys(s);})();
+    var M; try{ M=_exCompute(); }catch(e){ host.innerHTML='<div class="empty" style="padding:24px"><p>Dashboard error: '+_esc(e.message)+'</p></div>'; return; }
+    _exDR=M.drills;
+    var bi=(typeof brandInfo==='function')?brandInfo():{org:'LC Monitor Pro',proj:'',logo:''};
+    function hero(key,lbl,val,sub,delta){var d=delta==null?'':'<div class="k-d">'+(delta>=0?'▲ +'+delta:'▼ '+delta)+L(' pts','نقطة')+'</div>';return '<button type="button" class="exr-hero" onclick="_exDrill(\''+key+'\')"><div class="k-l">'+lbl+'</div><div class="k-v">'+val+'</div><div class="k-s">'+sub+'</div>'+d+'</button>';}
+    function tile(key,lbl,val,sub,wide){return '<button type="button" class="exr-tile'+(wide?' wide':'')+'" onclick="_exDrill(\''+key+'\')"><div class="k-l">'+lbl+'</div><div class="k-v">'+val+'</div><div class="k-s">'+(sub||'')+'</div></button>';}
+    function spark(cap,pairs){ if(!pairs.length)return ''; var mx=Math.max.apply(null,pairs.map(function(p){return p.v;}).concat([1])); return '<div class="exr-spark-wrap"><div class="exr-spark-cap"><span>'+cap+'</span></div><div class="exr-spark">'+pairs.map(function(p){var hh=Math.max(3,Math.round((p.v/mx)*34));return '<div class="exr-spark-col"><div class="exr-spark-b" style="height:'+hh+'px" title="'+_esc(String(p.x))+': '+_esc(p.t||String(p.v))+'"></div><div class="exr-spark-x">'+_esc(String(p.x))+'</div></div>';}).join('')+'</div></div>'; }
+
+    var h='<div class="exr-wrap"><div class="exr-ribbon"><div class="exr-top">';
+    h+='<div class="exr-id">'+(bi.logo?'<img class="exr-logo" src="'+bi.logo+'" alt=""/>':'<div class="exr-logo">LC</div>')+'<div><div class="exr-org">'+_esc(bi.org)+'</div><div class="exr-tag">'+(bi.proj?_esc(bi.proj)+' · ':'')+L('Executive Pulse — Local Content','النبض التنفيذي — المحتوى المحلي')+'</div><div class="exr-date">'+new Date().toLocaleDateString(_loc(),{weekday:'long',day:'2-digit',month:'long',year:'numeric'})+'</div><button type="button" class="exr-pdf" onclick="exportDashPDF()">📄 '+L('Export PDF','تصدير PDF')+'</button></div></div>';
+    h+='<div class="exr-filters">';
+    h+='<div class="exr-fl"><label>'+L('Entity','الجهة')+'</label><select class="exr-sel" onchange="setDashEntity(this.value)">'+_dashEntityOptions()+'</select></div>';
+    var yopts='<option value="">'+L('All years','كل السنوات')+'</option>'+M.years.map(function(y){return '<option value="'+y+'"'+(String(window.dashYear)===String(y)?' selected':'')+'>'+y+'</option>';}).join('');
+    h+='<div class="exr-fl"><label>'+L('Year','السنة')+'</label><select class="exr-sel" onchange="setDashYear(this.value)">'+yopts+'</select></div>';
+    var qs=['all','1','2','3','4'];
+    h+='<div class="exr-fl"><label>'+L('Quarter','الربع')+'</label><div class="exr-qchips">'+qs.map(function(q){var on=String(window.dashQuarter)===String(q);var dis=!window.dashYear;return '<button type="button" class="exr-qchip'+(on?' on':'')+'"'+(dis?' disabled style="opacity:.4;cursor:not-allowed"':'')+' onclick="setDashQuarter(\''+q+'\')">'+(q==='all'?L('All','الكل'):'Q'+q)+'</button>';}).join('')+'</div></div>';
+    h+='</div></div>';
+    h+='<div class="exr-heroes">';
+    h+=hero('portHealth',L('Portfolio Health','صحة المحفظة'),M.portHealth+'%',M.healthyN+' / '+M.activeN+' '+L('healthy active','نشط سليم'),M.portDelta);
+    h+=hero('penExposure',L('Penalty Exposure','الانكشاف للغرامات'),_money(M.penTotal),M.conc+'% '+L('in top 2 contracts','في أعلى عقدين'),null);
+    h+=hero('throughput',L('Value Throughput','حجم القيمة المُرساة'),_money(M.throughput),M.rfpN+' ▸ '+M.evalN+' ▸ '+M.awardN+' ▸ '+M.ctrN+' '+L('(RFP▸Eval▸Award▸Contract)','(منافسة▸تقييم▸ترسية▸عقد)'),null);
+    h+='</div></div>';
+    h+='<div class="exr-bands">';
+    var preTiles=tile('rfpsCreated',L('RFPs Created','المنافسات المُنشأة'),String(M.rfpN),L('in period','في الفترة'))+
+      tile('autoId',L('% Auto-Identified','% المُحدَّد آليًا'),M.autoPct+'%',(M.processedN-M.autoN)+' '+L('overridden','معدّل'))+
+      tile('draftReady',L('Draft → Ready','المسودة ← الجاهزية'),dDays(M.draftReady),L('avg cycle','متوسط الدورة'))+
+      tile('tc',L('T&C Complete','اكتمال الشروط'),M.tcPct+'%',M.tcN+'/'+M.mechN+' '+L('mechanisms','آلية'))+
+      tile('mechMix',L('Mechanism Mix','توزيع الآليات'),String(M.mixCount),_esc(M.mixTop),true);
+    var covBar='';
+    if(M.covTot){var mp=Math.round(M.matched/M.covTot*100),fp=Math.round(M.flagged/M.covTot*100),up=Math.max(0,100-mp-fp);
+      covBar='<div class="exr-spark-cap" style="margin-top:11px"><span>'+L('BoQ Mandatory Coverage','تغطية القائمة الإلزامية')+'</span></div><button type="button" class="exr-bar3" style="width:100%;cursor:pointer;padding:0" onclick="_exDrill(\'coverage\')"><i style="width:'+mp+'%;background:#059669"></i><i style="width:'+fp+'%;background:#d4a017"></i><i style="width:'+up+'%;background:var(--text3)"></i></button><div class="exr-bar3-lg"><span><b style="background:#059669"></b>'+L('Matched','مطابق')+' '+M.matched+'</span><span><b style="background:#d4a017"></b>'+L('Flagged','معلّم')+' '+M.flagged+'</span><span><b style="background:var(--text3)"></b>'+L('Unmapped','غير مصنّف')+' '+M.unmapped+'</span></div>';
+    }
+    h+='<div class="exr-band" style="--bandc:#2563eb"><div class="exr-band-hd"><span class="ei">📄</span><div class="exr-band-t">'+L('Pre-Tendering','ما قبل الطرح')+'<small>'+L('Preparation','الإعداد')+'</small></div></div><div class="exr-tiles">'+preTiles+'</div>'+covBar+'</div>';
+    var awTiles=tile('evalsDone',L('Evaluations Done','التقييمات المنجزة'),String(M.evalDoneN),L('in period','في الفترة'))+
+      tile('conversion',L('Conversion','نسبة الترسية'),M.conv+'%',M.awardedN+'/'+M.evalDoneN+' '+L('awarded','مُرسى'))+
+      tile('tta',L('Time to Award','زمن الترسية'),dDays(M.avgTTA),L('avg','متوسط'))+
+      tile('avgBidders',L('Avg Bidders','متوسط المتقدمين'),M.avgBidders.toFixed(1),L('per eval','لكل تقييم'))+
+      tile('override',L('Override Rate','نسبة التجاوز'),M.overrideRate+'%',M.overrides+' '+L('overrides','تجاوز'))+
+      tile('sme',L('SME Uplift','أثر المنشآت'),M.smeWon+'/'+M.smeComp,L('won/contested','فوز/منافسة'))+
+      tile('winLC',L('Winner LC vs Target','المحتوى مقابل المستهدف'),(M.avgWinLC!=null?M.avgWinLC.toFixed(0)+'%':'—'),L('target','المستهدف')+' '+M.portTarget.toFixed(0)+'%',true);
+    h+='<div class="exr-band" style="--bandc:#ca8a04"><div class="exr-band-hd"><span class="ei">⚖️</span><div class="exr-band-t">'+L('Awarding','الترسية')+'<small>'+L('Evaluation & award','التقييم والترسية')+'</small></div></div><div class="exr-tiles">'+awTiles+'</div></div>';
+    var moTiles=tile('activeContracts',L('Active Contracts','العقود النشطة'),String(M.activeN),L('as of period','حتى نهاية الفترة'))+
+      tile('reports',L('Reports On-Time','التقارير في وقتها'),M.onTimePct+'%',M.overdueN+' '+L('overdue','متأخر'))+
+      tile('evidence',L('Evidence Rejection','رفض الأدلة'),M.evRej+'%',M.evRejected+'/'+M.evReviewed)+
+      tile('certs',L('Certs ≤30d','شهادات ≤30 يوم'),String(M.certsSoon),L('expiring','تنتهي قريبًا'))+
+      tile('audits',L('Audit Events','أحداث التدقيق'),String(M.auditsN),L('in period','في الفترة'))+
+      tile('worstLate',L('Worst Late','الأكثر تأخرًا'),M.worstLate+'d',L('most overdue','أكثر تأخرًا'));
+    var penPairs=Object.keys(M.penByYear).filter(function(k){return k!=='—';}).map(Number).sort(function(a,b){return a-b;}).map(function(y){return {x:y,v:M.penByYear[y],t:_money(M.penByYear[y])};});
+    var trajPairs=M.trajArr.map(function(t){return {x:t.y,v:t.v,t:t.v.toFixed(0)+'%'};});
+    h+='<div class="exr-band" style="--bandc:#0d9488"><div class="exr-band-hd"><span class="ei">📊</span><div class="exr-band-t">'+L('Monitoring','المراقبة')+'<small>'+L('Post-contract','بعد التعاقد')+'</small></div></div><div class="exr-tiles">'+moTiles+'</div>'+spark(L('Penalty by Year','الغرامات حسب السنة'),penPairs)+spark(L('LC Achieved by Year','المحتوى المحلي المحقق سنويًا'),trajPairs)+'</div>';
+    h+='</div></div>';
+    host.innerHTML=h;
+  }
+
+  window.setDashYear=function(v){window.dashYear=v||'';if(!window.dashYear)window.dashQuarter='all';if(typeof renderDashboard==='function')renderDashboard();};
+  window.setDashQuarter=function(v){if(!window.dashYear)return;window.dashQuarter=v||'all';if(typeof renderDashboard==='function')renderDashboard();};
+  window._exDrill=function(key){var d=_exDR[key];if(!d)return;var t=document.getElementById('kpiDrillTitle'),s=document.getElementById('kpiDrillSub'),b=document.getElementById('kpiDrillBody');if(t)t.textContent=d.title||'Detail';if(s)s.textContent=d.sub||'';if(b)b.innerHTML=d.body||'';if(typeof openModal==='function')openModal('kpiDrillModal');};
+  window.gatherDashboardData=function(){var kpis=[];document.querySelectorAll('#dashKPIs .exr-hero, #dashKPIs .exr-tile').forEach(function(el){var l=el.querySelector('.k-l'),v=el.querySelector('.k-v'),s=el.querySelector('.k-s');kpis.push({label:l?l.textContent:'',value:v?v.textContent:'',sub:s?s.textContent:'',color:'neutral'});});return {kpis:kpis,charts:[],alerts:[]};};
+
+  renderDashboard=_exRender; window.renderDashboard=_exRender;
+  try{ if(document.getElementById('dashKPIs')&&(typeof curPage==='undefined'||curPage==='dashboard'))_exRender(); }catch(e){}
+})();
 </script>
 
 </body></html>
