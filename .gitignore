@@ -2,6 +2,7 @@ node_modules/
 package.json
 package-lock.json
 /*.js
+!/lc-mandatory-list.js
 diag*.js
 verify*.js
 dbg.js
