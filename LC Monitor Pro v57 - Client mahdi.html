@@ -6,7 +6,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232563eb'/><text x='32' y='45' font-size='32' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'>LC</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
 <script src="vendor/chart.umd.min.js"></script>
 <script>window.Chart||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>');</script>
 <script src="vendor/xlsx.full.min.js"></script>
@@ -15,28 +15,44 @@
 <script>window.PDFLib||document.write('<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');</script>
 <style>
 :root{
-  --bg:#f4f6fb;--surface:#ffffff;--surface2:#f7f9fd;--surface3:#eef1f8;
-  --border:#e4e9f2;--border2:#cdd6e4;
-  --accent:#2563eb;--al:rgba(37,99,235,.09);--accent2:#7c3aed;--accent3:#0d9488;
-  --warn:#d97706;--danger:#dc2626;--info:#0284c7;
-  --gold:#f59e0b;
-  --text:#0b1324;--text2:#42526b;--text3:#8c9bb3;
-  --sh:0 1px 2px rgba(15,30,70,.06),0 6px 20px rgba(15,30,70,.06);
-  --shl:0 14px 44px rgba(15,30,70,.16);
-  --r:14px;--rs:8px;--rl:20px;--sb:236px;
-  --fn:'Bricolage Grotesque',sans-serif;--far:'IBM Plex Sans Arabic',sans-serif;--fm:'JetBrains Mono',monospace;
-  --grad-brand:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);
+  /* ── EVOLVE token values (names preserved so the whole app reskins via cascade) ── */
+  --bg:#f4f5f7;--surface:#ffffff;--surface2:#fafbfc;--surface3:#eef1f8;
+  --border:#e3e6ec;--border2:#cdd2db;
+  --accent:#2563eb;--al:rgba(37,99,235,.08);--accent2:#7c3aed;--accent3:#0f8a4a;
+  --warn:#9a6400;--danger:#c0241f;--info:#1d4ed8;
+  --gold:#9a6400;
+  --text:#171a21;--text2:#3d4350;--text3:#5a6373;
+  /* Evolve semantic status (AA on tinted bg) */
+  --ok:#0f8a4a;--ok-bg:#e7f6ec;--ok-ink:#0a6b39;
+  --warn-bg:#fbf0d9;--warn-ink:#82540a;
+  --bad:#c0241f;--bad-bg:#fbe7e6;--bad-ink:#9c1a1a;
+  --accent-ink:#1d4ed8;--accent-soft:#eef2ff;--focus:#2563eb;
+  --neutral:#5a6373;--neutral-bg:#eef0f3;
+  /* Evolve restrained shadows */
+  --sh:0 1px 2px rgba(16,21,33,.05);
+  --shl:0 4px 16px -4px rgba(16,21,33,.12),0 1px 3px rgba(16,21,33,.06);
+  --r:10px;--rs:7px;--rl:14px;--sb:236px;
+  /* TYPE: --fn display (titles/wordmark only) · --fs Inter (UI/data) · --fm JetBrains Mono (figures) · --far Arabic */
+  --fn:'Bricolage Grotesque',ui-sans-serif,system-ui,sans-serif;
+  --fs:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --far:'IBM Plex Sans Arabic','Inter',sans-serif;--fm:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,monospace;
+  --grad-brand:linear-gradient(100deg,#2563eb 0%,#7c3aed 100%);
   --grad-side:linear-gradient(180deg,#0c1530 0%,#101c3f 55%,#16234d 100%);
-  --tr:.18s ease}
+  --tr:.15s ease}
 [data-theme=dark]{
-  --bg:#0a1226;--surface:#111c3a;--surface2:#0d1730;--surface3:#1a2750;
-  --border:rgba(140,170,255,.14);--border2:rgba(140,170,255,.26);
-  --accent:#4f8cff;--al:rgba(79,140,255,.14);--accent2:#a78bfa;--accent3:#2dd4bf;
-  --warn:#fbbf24;--danger:#fb7185;--info:#38bdf8;
-  --gold:#fbbf24;
-  --text:#eaf0ff;--text2:#aebcd8;--text3:#6e7ca6;
-  --sh:0 1px 3px rgba(0,0,0,.5),0 10px 30px -8px rgba(0,0,0,.6);
-  --shl:0 24px 70px -16px rgba(0,0,0,.8);
+  --bg:#0c0e13;--surface:#14171d;--surface2:#181c23;--surface3:#1b2230;
+  --border:#262b34;--border2:#363d49;
+  --accent:#5b8bff;--al:rgba(91,139,255,.12);--accent2:#a489ee;--accent3:#34c878;
+  --warn:#e0a93a;--danger:#f0716c;--info:#86a8ff;
+  --gold:#e0a93a;
+  --text:#eef0f4;--text2:#c3c9d4;--text3:#9aa2b1;
+  --ok:#34c878;--ok-bg:#0e2a1c;--ok-ink:#5fd996;
+  --warn-bg:#2c220c;--warn-ink:#f0bf5e;
+  --bad:#f0716c;--bad-bg:#2e1413;--bad-ink:#f78c87;
+  --accent-ink:#86a8ff;--accent-soft:#1a2540;--focus:#6c97ff;
+  --neutral:#9aa2b1;--neutral-bg:#222732;
+  --sh:0 1px 2px rgba(0,0,0,.4);
+  --shl:0 6px 22px -6px rgba(0,0,0,.6),0 1px 3px rgba(0,0,0,.4);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -1547,6 +1563,22 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <!-- =================== PAGE: RFP PREPARATION =================== -->
 <!-- ===== v57 A.1 · LC MECHANISM IDENTIFIER ===== -->
 <div class="page" id="page-mechwiz">
+  <!-- v57 Feature 1+2 · RFP DRAFTS POOL -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <div class="card-title">🗂️ RFP Pool</div>
+      <button class="btn btn-p btn-sm" onclick="mwCreateRFP()">+ Create RFP</button>
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin:2px 0 10px">Draft RFPs waiting to be processed. Click <b>▶ Start process</b> on a draft to identify its mechanism &amp; fill the Bill of Quantities. Completing the process marks the RFP <b>Ready</b>.</div>
+    <div class="fb"><span class="fl">STATUS:</span>
+      <div class="fc on" id="mwc-all" onclick="mwPoolChip('all')">All</div>
+      <div class="fc" id="mwc-draft" onclick="mwPoolChip('draft')">Draft</div>
+      <div class="fc" id="mwc-opened" onclick="mwPoolChip('opened')">Opened</div>
+      <div class="fc" id="mwc-inprocess" onclick="mwPoolChip('inprocess')">In Process</div>
+      <div class="fc" id="mwc-ready" onclick="mwPoolChip('ready')">Ready</div>
+    </div>
+    <div style="overflow-x:auto;margin-top:8px"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Mechanism</th><th>Status</th><th></th></tr></thead><tbody id="mwPoolBody"></tbody></table></div>
+  </div>
   <div class="card">
     <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
       <div class="card-title">🧭 Mechanism Identifier</div>
@@ -1644,7 +1676,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
           <div class="fg" id="rfpCapexWrap" style="display:none"><label class="fl2">2. Expenditure Type</label>
             <select class="fsel2" id="rfpCapex" onchange="runMechWizard()"><option value="">Select...</option><option value="capex">Capex (Project Level)</option><option value="opex">Opex (Company Level)</option></select></div>
         </div>
-        <div id="mechWizardResult" style="margin-top:10px"><div style="background:var(--surface);border:1.5px solid var(--accent3);border-radius:var(--rs);padding:10px 14px"><div style="font-size:10px;color:var(--accent3);font-weight:700">RECOMMENDED MECHANISM</div><div style="font-size:13px;font-weight:700;color:var(--text);margin:4px 0">National Product Preferencing + Mandatory list</div><div style="font-size:10px;color:var(--text3)">Pure supply: NPP+MLNP | SAR&nbsp;2,525,555 | Threshold: SAR 50M</div><button class="btn btn-p btn-sm" style="margin-top:8px" onclick="acceptWizardMech()">Accept</button></div></div>
+        <div id="mechWizardResult" style="margin-top:10px"><div style="font-size:11px;color:var(--text3)">Fill nature &amp; value</div></div>
       </div>
     </div>
 
@@ -1670,8 +1702,8 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
     </div>
     <div class="rfp-step" id="rfpBoQStep" style="display: block;">
       <div class="rfp-step-hd"><div class="rfp-step-num">B</div><div><div class="rfp-step-title">Bill of Quantities (BoQ)</div><div class="rfp-step-desc">Define items based on procurement type</div></div></div>
-      <div style="overflow-x:auto"><table style="width:100%;font-size:11px" id="boqTable"><thead><tr><th>#</th><th>Item Description</th><th>Nature</th><th>Origin</th><th>Qty</th><th>UoM</th><th>Est. Cost (SAR)</th><th>Mandatory List</th><th></th></tr></thead><tbody id="boqBody"><tr><td>1</td><td><input class="fi" style="font-size:11px;padding:4px 7px" value="" onchange="rfpBoQ[0].desc=this.value"></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[0].nature=this.value"><option value="goods" selected="">Goods</option></select></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[0].origin=this.value"><option value="Local" selected="">Local</option><option value="Foreign">Foreign</option></select></td><td><input class="fi" type="number" style="width:60px;font-size:11px;padding:4px" value="1" onchange="rfpBoQ[0].qty=parseFloat(this.value)||1"></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[0].uom=this.value"><option selected="">Lump Sum</option><option>Man-Month</option><option>Man-Day</option><option>Each</option><option>Lot</option><option>Kg</option><option>Ton</option><option>Meter</option><option>Sq.M</option><option>Cu.M</option><option>Trip</option><option>Hour</option><option>Set</option><option>Unit</option></select></td><td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="0" onchange="rfpBoQ[0].cost=parseFloat(this.value)||0"></td><td style="text-align:center"><label style="display:flex;flex-direction:column;align-items:center;gap:2px"><input type="checkbox" onchange="rfpBoQ[0].isMandatory=this.checked;renderBoQ()"></label></td><td><button class="mb del" onclick="removeBoQRow(0)">X</button></td></tr><tr><td>2</td><td><input class="fi" style="font-size:11px;padding:4px 7px" value="" onchange="rfpBoQ[1].desc=this.value"></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[1].nature=this.value"><option value="goods" selected="">Goods</option></select></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[1].origin=this.value"><option value="Local" selected="">Local</option><option value="Foreign">Foreign</option></select></td><td><input class="fi" type="number" style="width:60px;font-size:11px;padding:4px" value="1" onchange="rfpBoQ[1].qty=parseFloat(this.value)||1"></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[1].uom=this.value"><option selected="">Lump Sum</option><option>Man-Month</option><option>Man-Day</option><option>Each</option><option>Lot</option><option>Kg</option><option>Ton</option><option>Meter</option><option>Sq.M</option><option>Cu.M</option><option>Trip</option><option>Hour</option><option>Set</option><option>Unit</option></select></td><td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="0" onchange="rfpBoQ[1].cost=parseFloat(this.value)||0"></td><td style="text-align:center"><label style="display:flex;flex-direction:column;align-items:center;gap:2px"><input type="checkbox" onchange="rfpBoQ[1].isMandatory=this.checked;renderBoQ()"></label></td><td><button class="mb del" onclick="removeBoQRow(1)">X</button></td></tr><tr><td>3</td><td><input class="fi" style="font-size:11px;padding:4px 7px" value="" onchange="rfpBoQ[2].desc=this.value"></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[2].nature=this.value"><option value="goods" selected="">Goods</option></select></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[2].origin=this.value"><option value="Local" selected="">Local</option><option value="Foreign">Foreign</option></select></td><td><input class="fi" type="number" style="width:60px;font-size:11px;padding:4px" value="1" onchange="rfpBoQ[2].qty=parseFloat(this.value)||1"></td><td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ[2].uom=this.value"><option selected="">Lump Sum</option><option>Man-Month</option><option>Man-Day</option><option>Each</option><option>Lot</option><option>Kg</option><option>Ton</option><option>Meter</option><option>Sq.M</option><option>Cu.M</option><option>Trip</option><option>Hour</option><option>Set</option><option>Unit</option></select></td><td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="0" onchange="rfpBoQ[2].cost=parseFloat(this.value)||0"></td><td style="text-align:center"><label style="display:flex;flex-direction:column;align-items:center;gap:2px"><input type="checkbox" onchange="rfpBoQ[2].isMandatory=this.checked;renderBoQ()"></label></td><td><button class="mb del" onclick="removeBoQRow(2)">X</button></td></tr></tbody></table></div>
-      <div style="display:flex;gap:6px;margin-top:8px"><button class="btn btn-s btn-sm" onclick="addBoQRow()">+ Add Row</button><button class="btn btn-s btn-sm" onclick="addBoQRows(5)">+ Add 5 Rows</button></div>
+      <div style="overflow-x:auto"><table style="width:100%;font-size:11px" id="boqTable"><thead id="boqHead"><tr><th>#</th><th>Item Description</th><th>Qty</th><th>UoM</th><th>Est. Cost (SAR)</th><th>Nature</th><th></th></tr></thead><tbody id="boqBody"></tbody></table></div>
+      <div style="display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap"><button class="btn btn-s btn-sm" onclick="addBoQRow()">+ Add Row</button><button class="btn btn-s btn-sm" onclick="addBoQRows(5)">+ Add 5 Rows</button><button class="btn btn-s btn-sm" disabled aria-disabled="true" style="opacity:.5;cursor:not-allowed;background:var(--surface2);color:var(--text3)" title="Coming soon">🤖 Import BoQ Data using AI</button></div>
     </div>
     <div class="rfp-step">
       <div class="rfp-step-hd"><div class="rfp-step-num">2</div><div><div class="rfp-step-title">Upload BoQ / Scope Document</div><div class="rfp-step-desc">AI will read the document to identify MLNP items and suggest mechanism</div></div></div>
@@ -1779,7 +1811,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
   <div class="card">
     <div class="card-hd" style="justify-content:space-between;align-items:center"><div><div class="card-title">Contracts &amp; Monitoring</div><div class="card-sub" id="cntLbl">6 of 6 contracts</div></div><div style="display:flex;gap:6px"><button class="btn btn-s btn-sm" onclick="c1AddManual()">✏️ Add Contract Manually</button><button class="btn btn-p btn-sm" onclick="c1ImportAward()">🏆 Import from Award</button></div></div>
     <div class="tbl-wrap"><table><thead><tr>
-      <th>#</th><th>End-User</th><th>Name</th><th>Mechanism</th><th>Amount (ex-VAT)</th><th>VAT 15%</th><th>Total (inc-VAT)</th><th>End Date</th><th>LC Target</th><th>Reports</th><th>Penalty</th><th>Evidence</th>
+      <th>#</th><th>End-User</th><th>Name</th><th>Mechanism</th><th>Amount (ex-VAT)</th><th>VAT 15%</th><th>Total (inc-VAT)</th><th>End Date</th><th>LC Target</th><th>Reports</th><th>Penalty</th>
     </tr></thead><tbody id="cTbody"><tr onclick="openContractModal(1)">
       <td><span class="badge bgy">Exp</span> #1</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ministry of Environment</td>
@@ -1790,7 +1822,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:0%;background:var(--accent2)"></div></div><span class="pg-p">—</span></div></td>
       <td>0 <span class="badge bg">✓</span></td>
       <td><span class="badge bg">✓ Clear</span></td>
-      <td><span class="badge bt">0f</span></td>
     </tr><tr onclick="openContractModal(2)">
       <td><span class="badge bgy">Exp</span> #2</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ministry of Defense</td>
@@ -1801,7 +1832,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:35%;background:var(--accent2)"></div></div><span class="pg-p">35.0%</span></div></td>
       <td>5 <span class="badge br">3 miss</span></td>
       <td><span class="badge br">⚠ SAR&nbsp;504,000</span></td>
-      <td><span class="badge ba">2f 1⏳</span></td>
     </tr><tr onclick="openContractModal(3)">
       <td><span class="badge bgy">Exp</span> #3</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">ARAMCO</td>
@@ -1812,7 +1842,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:0%;background:var(--accent2)"></div></div><span class="pg-p">—</span></div></td>
       <td>2 <span class="badge bg">✓</span></td>
       <td><span class="badge br">⚠ SAR&nbsp;528,462</span></td>
-      <td><span class="badge bt">1f</span></td>
     </tr><tr onclick="openContractModal(5)">
       <td><span class="badge bgy">Exp</span> #5</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">SABIC</td>
@@ -1823,7 +1852,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:40%;background:var(--accent2)"></div></div><span class="pg-p">40.0%</span></div></td>
       <td>5 <span class="badge br">2 miss</span></td>
       <td><span class="badge br">⚠ SAR&nbsp;6,952,857</span></td>
-      <td><span class="badge bt">0f</span></td>
     </tr><tr onclick="openContractModal(6)">
       <td><span class="badge bgy">Exp</span> #6</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Ministry of Interior 🔒</td>
@@ -1834,7 +1862,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:25%;background:var(--accent2)"></div></div><span class="pg-p">25.0%</span></div></td>
       <td>5 <span class="badge br">3 miss</span></td>
       <td><span class="badge br">⚠ SAR&nbsp;2,926,000</span></td>
-      <td><span class="badge bt">0f</span></td>
     </tr><tr onclick="openContractModal(1780657846541)">
       <td><span class="badge bgy">Exp</span> #4</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</td>
@@ -1845,7 +1872,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:0%;background:var(--accent2)"></div></div><span class="pg-p">—</span></div></td>
       <td>0 <span class="badge bg">✓</span></td>
       <td><span class="badge bg">✓ Clear</span></td>
-      <td><span class="badge bt">0f</span></td>
     </tr></tbody></table></div>
   </div>
 </div>
@@ -2016,6 +2042,11 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
     <div class="kpi-cfg" id="kpiCfg"><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Total Contracts</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;total&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Active Contracts</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;active&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Total Penalties</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;penalties&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Missing Reports</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;missing&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Avg LC Compliance (Services)</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;compliance&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Avg LC Compliance (Goods)</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;complianceGoods&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">With Penalties</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;withPen&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Portfolio Value</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;portfolio&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Active RFPs</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;rfps&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Open Evaluations</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;bids&#39;]=this.checked"><span class="sw-slider"></span></label></div><div class="kpi-cfg-item"><div><div class="kpi-cfg-lbl">Pending Reviews</div></div><label class="sw-toggle"><input type="checkbox" checked="" onchange="KPICFG[&#39;reviews&#39;]=this.checked"><span class="sw-slider"></span></label></div></div>
     <div style="margin-top:10px;display:flex;gap:7px"><button class="btn btn-p btn-sm" onclick="saveKPIConfig()">Save Layout</button><button class="btn btn-s btn-sm" onclick="resetKPIConfig()">Reset</button></div>
   </div>
+  <div class="fsec" id="settSec-mechanisms">
+    <div class="fsec-title">🔧 Mechanisms Management</div>
+    <div class="ml" id="mechList"></div>
+    <div class="amf"><input type="text" id="newMech" placeholder="Add new mechanism…"><button class="btn btn-p btn-sm" onclick="addMech()">+ Add</button></div>
+  </div>
   <div class="fsec" id="settSec-decisionTree">
     <div class="fsec-title">🌳 Decision Tree Rules</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Define the decision tree rules the Smart Mechanism Wizard uses. Each rule maps <b>Nature + Value Level + Expenditure</b> to one or more mechanisms. Multiple mechanisms = OR options (radio buttons).</div>
@@ -2143,11 +2174,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.6">Define conditions that automatically disqualify bids. Toggle on/off per condition. Applied before scoring.</div>
     <div id="exclusionList"><div class="pr"><div style="display:flex;flex-direction:column;gap:2px"><span class="pr-l">LC% below minimum threshold</span><span style="font-size:9px;color:var(--text3)">threshold</span></div><div class="pr-r"><label class="sw-toggle"><input type="checkbox" onchange="EXCLUSIONS[0].active=this.checked;lsSet(&#39;lcExcl&#39;,JSON.stringify(EXCLUSIONS))"><span class="sw-slider"></span></label><button class="mb del" onclick="removeExclusion(0)">✕</button></div></div><div class="pr"><div style="display:flex;flex-direction:column;gap:2px"><span class="pr-l">Missing LCGPA certificate</span><span style="font-size:9px;color:var(--text3)">document</span></div><div class="pr-r"><label class="sw-toggle"><input type="checkbox" onchange="EXCLUSIONS[1].active=this.checked;lsSet(&#39;lcExcl&#39;,JSON.stringify(EXCLUSIONS))"><span class="sw-slider"></span></label><button class="mb del" onclick="removeExclusion(1)">✕</button></div></div><div class="pr"><div style="display:flex;flex-direction:column;gap:2px"><span class="pr-l">NPP commitment below mandatory minimum</span><span style="font-size:9px;color:var(--text3)">threshold</span></div><div class="pr-r"><label class="sw-toggle"><input type="checkbox" onchange="EXCLUSIONS[2].active=this.checked;lsSet(&#39;lcExcl&#39;,JSON.stringify(EXCLUSIONS))"><span class="sw-slider"></span></label><button class="mb del" onclick="removeExclusion(2)">✕</button></div></div><div class="pr"><div style="display:flex;flex-direction:column;gap:2px"><span class="pr-l">Expired LC baseline certificate</span><span style="font-size:9px;color:var(--text3)">document</span></div><div class="pr-r"><label class="sw-toggle"><input type="checkbox" onchange="EXCLUSIONS[3].active=this.checked;lsSet(&#39;lcExcl&#39;,JSON.stringify(EXCLUSIONS))"><span class="sw-slider"></span></label><button class="mb del" onclick="removeExclusion(3)">✕</button></div></div><div class="pr"><div style="display:flex;flex-direction:column;gap:2px"><span class="pr-l">Bid price exceeds budget by more than 20%</span><span style="font-size:9px;color:var(--text3)">threshold</span></div><div class="pr-r"><label class="sw-toggle"><input type="checkbox" onchange="EXCLUSIONS[4].active=this.checked;lsSet(&#39;lcExcl&#39;,JSON.stringify(EXCLUSIONS))"><span class="sw-slider"></span></label><button class="mb del" onclick="removeExclusion(4)">✕</button></div></div></div>
     <div class="amf"><input type="text" id="newExcl" placeholder="Add new exclusion condition…"><button class="btn btn-p btn-sm" onclick="addExclusion()">+ Add</button></div>
-  </div>
-  <div class="fsec" id="settSec-mechanisms">
-    <div class="fsec-title">🔧 Mechanisms Management</div>
-    <div class="ml" id="mechList"><div class="mi"><div class="mi-n" title="Small &amp; Medium Enterprises" style="max-width:280px;white-space:normal;line-height:1.3">Small &amp; Medium Enterprises</div><div class="ma"><button class="mb" onclick="editMechName(0)">Edit</button><button class="mb del" onclick="removeMech(0)">X</button></div></div><div class="mi"><div class="mi-n" title="Local Content Weight in Commercial Evaluation - Project Level" style="max-width:280px;white-space:normal;line-height:1.3">Local Content Weight in Commercial Evaluation - Project Level</div><div class="ma"><button class="mb" onclick="editMechName(1)">Edit</button><button class="mb del" onclick="removeMech(1)">X</button></div></div><div class="mi"><div class="mi-n" title="LC Weight + NPP - Company Level" style="max-width:280px;white-space:normal;line-height:1.3">LC Weight + NPP - Company Level</div><div class="ma"><button class="mb" onclick="editMechName(2)">Edit</button><button class="mb del" onclick="removeMech(2)">X</button></div></div><div class="mi"><div class="mi-n" title="National Product Preferencing" style="max-width:280px;white-space:normal;line-height:1.3">National Product Preferencing</div><div class="ma"><button class="mb" onclick="editMechName(3)">Edit</button><button class="mb del" onclick="removeMech(3)">X</button></div></div><div class="mi"><div class="mi-n" title="National Product Preferencing + Mandatory list" style="max-width:280px;white-space:normal;line-height:1.3">National Product Preferencing + Mandatory list</div><div class="ma"><button class="mb" onclick="editMechName(4)">Edit</button><button class="mb del" onclick="removeMech(4)">X</button></div></div><div class="mi"><div class="mi-n" title="Local Content Minimum Threshold" style="max-width:280px;white-space:normal;line-height:1.3">Local Content Minimum Threshold</div><div class="ma"><button class="mb" onclick="editMechName(5)">Edit</button><button class="mb del" onclick="removeMech(5)">X</button></div></div><div class="mi"><div class="mi-n" title="Local Content Weight in Commercial Evaluation - Company Level" style="max-width:280px;white-space:normal;line-height:1.3">Local Content Weight in Commercial Evaluation - Company Level</div><div class="ma"><button class="mb" onclick="editMechName(6)">Edit</button><button class="mb del" onclick="removeMech(6)">X</button></div></div><div class="mi"><div class="mi-n" title="Local Content Minimum Threshold + NPP + MLNP" style="max-width:280px;white-space:normal;line-height:1.3">Local Content Minimum Threshold + NPP + MLNP</div><div class="ma"><button class="mb" onclick="editMechName(7)">Edit</button><button class="mb del" onclick="removeMech(7)">X</button></div></div><div class="mi"><div class="mi-n" title="Small &amp; Medium Enterprises + NPP + MLNP" style="max-width:280px;white-space:normal;line-height:1.3">Small &amp; Medium Enterprises + NPP + MLNP</div><div class="ma"><button class="mb" onclick="editMechName(8)">Edit</button><button class="mb del" onclick="removeMech(8)">X</button></div></div><div class="mi"><div class="mi-n" title="Local Content Weight in Commercial Evaluation + NPP + MLNP - Company Level" style="max-width:280px;white-space:normal;line-height:1.3">Local Content Weight in Commercial Evaluation + NPP + MLNP - Company Level</div><div class="ma"><button class="mb" onclick="editMechName(9)">Edit</button><button class="mb del" onclick="removeMech(9)">X</button></div></div><div class="mi"><div class="mi-n" title="Local Content Weight in Commercial Evaluation + NPP + MLNP -  Project Level" style="max-width:280px;white-space:normal;line-height:1.3">Local Content Weight in Commercial Evaluation + NPP + MLNP -  Project Level</div><div class="ma"><button class="mb" onclick="editMechName(10)">Edit</button><button class="mb del" onclick="removeMech(10)">X</button></div></div></div>
-    <div class="amf"><input type="text" id="newMech" placeholder="Add new mechanism…"><button class="btn btn-p btn-sm" onclick="addMech()">+ Add</button></div>
   </div>
   <div class="fsec" id="settSec-penalties">
     <div class="fsec-title">⚠️ Penalty Rules</div>
@@ -2564,14 +2590,14 @@ const SEED_CONTRACTS=[
     attachments:[],evidence:{},notes:""}
 ];
 
-const SEED_MECHS=["Small & Medium Enterprises","Local Content Weight in Commercial Evaluation - Company Level","Local Content Weight in Commercial Evaluation - Project Level","Local Content Minimum Threshold","National Products Price Preferencing","Mandatory List","National Products Price Preferencing + Mandatory List","Small & Medium Enterprises + National Products Price Preferencing + Mandatory List","Local Content Weight in Commercial Evaluation - Company Level + National Products Price Preferencing + Mandatory List","Local Content Weight in Commercial Evaluation - Project Level + National Products Price Preferencing + Mandatory List","Local Content Minimum Threshold + National Products Price Preferencing + Mandatory List"];
+const SEED_MECHS=["Small & Medium Enterprises","Local Content Weight in Commercial Evaluation - Company Level","Local Content Weight in Commercial Evaluation - Project Level","Local Content Minimum Threshold","National Products Preferencing","Mandatory List","Local Content Weight in Commercial Evaluation - Company Level + National Products Preferencing","National Products Preferencing + Mandatory List","Small & Medium Enterprises + National Products Preferencing + Mandatory List","Local Content Weight in Commercial Evaluation - Company Level + National Products Preferencing + Mandatory List","Local Content Weight in Commercial Evaluation - Project Level + National Products Preferencing + Mandatory List","Local Content Minimum Threshold + National Products Preferencing + Mandatory List"];
 const SEED_EU=[{name:"Ministry of Environment",frozen:false,contact:"Ahmed Al-Rashidi",email:"alrashidi@moe.gov.sa",phone:"+966501234567",position:"LC Officer"},{name:"Ministry of Defense",frozen:false,contact:"Khalid Al-Otaibi",email:"k.otaibi@mod.gov.sa",phone:"+966502345678",position:"Procurement Director"},{name:"Ministry of Interior",frozen:false},{name:"ARAMCO",frozen:false,contact:"Faisal Al-Dosari",email:"f.dosari@aramco.com",phone:"+966504567890",position:"LC Manager"},{name:"SABIC",frozen:false,contact:"Nora Al-Shammari",email:"n.shammari@sabic.com",phone:"+966505678901",position:"Procurement Head"},{name:"NEOM",frozen:false,contact:"Omar Al-Ghamdi",email:"o.ghamdi@neom.com",phone:"+966506789012",position:"LC Director"}];
 const SEED_FORMULAS={
   "Small & Medium Enterprises":{description:"SME contracts below high-value threshold.",variables:[{key:"sme_pref",label:"SME Price Preference (%)",default:10}],formula:"Non-SME Adjusted = Price x (1 + SME_Pref%). Lowest wins."},
   "Local Content Weight in Commercial Evaluation - Project Level":{description:"Project-level LC weighted per LCGPA Article 17.",variables:[{key:"price_weight",label:"Price Weight (%)",default:60},{key:"lc_weight",label:"LC Weight (%)",default:40},{key:"listed_bonus",label:"Listed Company Bonus (%)",default:5}],formula:"Score = (LowestPrice/BidPrice) x PriceWt + (TargetLC x 50% + Baseline x 50% + 5%_listed) x LCWt"},
-  "National Product Preferencing":{description:"Supply contracts: Price preference for national products per LCGPA Article 11.",variables:[{key:"npp_pref",label:"NPP Price Preference (%)",default:10}],formula:"Adjusted = BidPrice + NPP_Pref% x BidPrice x (1 - NPP_Share). Lowest wins."},
-  "National Product Preferencing + Mandatory list":{description:"Supply + mandatory list. ML items must be national (pass/fail).",variables:[{key:"npp_pref",label:"NPP Preference (%)",default:10}],formula:"ML Check then: Adjusted = NonML + NPP% x NonML x (1 - NPP_Share) + ML_Value"},
-  "LC Weight + NPP - Company Level":{description:"Hybrid: Adjust price for NPP first, then apply LC weight formula.",variables:[{key:"price_weight",label:"Price Weight (%)",default:60},{key:"lc_weight",label:"LC Weight (%)",default:40},{key:"npp_pref",label:"NPP Preference (%)",default:10},{key:"listed_bonus",label:"Listed Bonus (%)",default:5}],formula:"Step1: AdjPrice = Price + NPP% x Price x (1-NPP_Share). Step2: Score = (LowestAdj/AdjPrice) x PriceWt + LC x LCWt"}
+  "National Products Preferencing":{description:"Supply contracts: Price preference for national products per LCGPA Article 11.",variables:[{key:"npp_pref",label:"NPP Price Preference (%)",default:10}],formula:"Adjusted = BidPrice + NPP_Pref% x BidPrice x (1 - NPP_Share). Lowest wins."},
+  "National Products Preferencing + Mandatory List":{description:"Supply + mandatory list. ML items must be national (pass/fail).",variables:[{key:"npp_pref",label:"NPP Preference (%)",default:10}],formula:"ML Check then: Adjusted = NonML + NPP% x NonML x (1 - NPP_Share) + ML_Value"},
+  "Local Content Weight in Commercial Evaluation - Company Level + National Products Preferencing":{description:"Hybrid: Adjust price for NPP first, then apply LC weight formula.",variables:[{key:"price_weight",label:"Price Weight (%)",default:60},{key:"lc_weight",label:"LC Weight (%)",default:40},{key:"npp_pref",label:"NPP Preference (%)",default:10},{key:"listed_bonus",label:"Listed Bonus (%)",default:5}],formula:"Step1: AdjPrice = Price + NPP% x Price x (1-NPP_Share). Step2: Score = (LowestAdj/AdjPrice) x PriceWt + LC x LCWt"}
 };
 const SEED_EXCLUSIONS=[
   {id:1,label:"LC% below minimum threshold",active:true,threshold:null,type:"threshold"},
@@ -3450,9 +3476,8 @@ function renderContracts(){
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:${c.agreedPct?c.agreedPct*100:0}%;background:var(--accent2)"></div></div><span class="pg-p">${pct(c.agreedPct)}</span></div></td>
       <td>${(c.reports||[]).length} <span class="badge ${m>0?'br':'bg'}">${m>0?m+' overdue':'✓'}</span>${(typeof dueCnt==='function'&&dueCnt(c)>0)?` <span class="badge ba" title="Due — within grace period">${dueCnt(c)} due</span>`:''}${(m>0||(typeof dueCnt==='function'&&dueCnt(c)>0))?` <button class="btn btn-s btn-sm" style="padding:2px 7px;font-size:10px;white-space:nowrap" title="Email the contractor (CC End-User) about the due report" onclick="event.stopPropagation();c1SendReminder(${c.id})">✉ Remind</button>`:''}</td>
       <td>${p>0?`<span class="badge br">⚠ ${fSAR(p)}</span>`:`<span class="badge bg">✓ Clear</span>`}</td>
-      <td><span class="badge ${pendEv>0?'ba':'bt'}">${evCount}f${pendEv>0?' '+pendEv+'⏳':''}</span></td>
     </tr>`;
-  }).join(''):`<tr><td colspan="12"><div class="empty"><div class="ei">🔍</div><p>No results</p></div></td></tr>`;
+  }).join(''):`<tr><td colspan="11"><div class="empty"><div class="ei">🔍</div><p>No results</p></div></td></tr>`;
 }
 
 // CONTRACT MODAL
@@ -4072,15 +4097,42 @@ function sendPenaltyToSupplier(cid,pidx){
   var subj=fill(tpl.subject);
   var details='\n\n----------------------------------------\nPENALTY NOTICE\nContract: #'+c.num+' — '+(c.name||'')+'\nContractor: '+(c.contractor||'')+'\nMechanism: '+(c.mechanism||'')+'\nPenalty type: '+vars.PENALTY_TYPE+'\nAmount: '+fSAR(p.amount)+'\nReason: '+(p.reason||'—')+'\nDate: '+(new Date().toISOString().split('T')[0])+'\n----------------------------------------';
   var body=fill(tpl.body)+details;
-  if(!confirm('Send penalty notice?\n\nTo: '+to+(cc?'\nCc: '+cc+' (End-User)':'')+'\nSubject: '+subj+'\n\n'+body))return;
+
+  // v57 Feature 8: generate the penalty letter as a self-contained .html file (TRANSIENT — not persisted).
+  var letterHTML=(typeof _buildPenaltyLetterHTML==='function')?_buildPenaltyLetterHTML(c,[p],true):'';
+  var safeName=('Penalty-Notice-'+(c.num||'')+'-'+(new Date().toISOString().split('T')[0])).replace(/[^\w\-]+/g,'_')+'.html';
+  var letterDataUrl=letterHTML?('data:text/html;charset=utf-8,'+encodeURIComponent(letterHTML)):'';
+  // settings attachments from the Penalty template (stored base64 objects, or legacy name-strings)
+  var setAtts=((typeof EMAIL_TPL!=='undefined'&&EMAIL_TPL.penalty&&EMAIL_TPL.penalty.attachments)||[]);
+  // build a combined attachment list: the penalty letter ON TOP of the settings attachments
+  var atts=[];
+  if(letterDataUrl)atts.push({name:safeName,size:(letterHTML.length),type:'text/html',data:letterDataUrl,_letter:true});
+  setAtts.forEach(function(a){ if(a&&typeof a==='object'){atts.push(a);} else if(typeof a==='string'){atts.push({name:a});} });
+  var attNames=atts.map(function(a){return (a&&a.name)||'attachment';});
+
+  if(!confirm('Send penalty notice?\n\nTo: '+to+(cc?'\nCc: '+cc+' (End-User)':'')+'\nSubject: '+subj+'\nAttachments: '+(attNames.length?attNames.join(', '):'(none)')+'\n\n'+body))return;
   p.pushedToSupplier=true;p.pushedAt=new Date().toISOString().split('T')[0];p.pushedSupplierId=sup?sup.id:null;p.pushedSupplierName=(sup&&sup.name)||c.contractor||'';
   saveDB();
+
+  function _attSizeOf(a){return (a&&a.size)||(a&&a.data?Math.floor((String(a.data).length*3)/4):0);}
   if(typeof EJS!=='undefined'&&EJS.configured&&window.emailjs){
-    window.emailjs.send(EJS.serviceId,EJS.templateId,{to_email:to,to_name:vars.CONTACT_NAME,cc_email:cc,subject:subj,body:body,message:body}).then(function(){if(typeof logAudit==='function')logAudit('Penalty → Supplier','Penalty '+vars.PENALTY_TYPE+' '+fSAR(p.amount)+' emailed to '+to+(cc?' (CC '+cc+')':'')+' (#'+c.num+')',c.num);toast('Penalty notice emailed to '+to,'ok');renderPenalties();}).catch(function(e){toast('Email failed: '+(e&&(e.text||e.message)||e),'err');});
+    // EmailJS: attach as real files (base64), size-guarded — only those with bytes.
+    var ejAtts=atts.filter(function(a){return a&&a.data;}).map(function(a){
+      if(_attSizeOf(a)>1.5*1024*1024)toast('"'+(a.name||'file')+'" is large — it may be rejected by the mail provider.','warn');
+      return {name:a.name,data:a.data};
+    });
+    var params={to_email:to,to_name:vars.CONTACT_NAME,cc_email:cc,subject:subj,body:body,message:body,attachments:ejAtts,attachment_list:attNames.join(', ')};
+    window.emailjs.send(EJS.serviceId,EJS.templateId,params).then(function(){if(typeof logAudit==='function')logAudit('Penalty → Supplier','Penalty '+vars.PENALTY_TYPE+' '+fSAR(p.amount)+' emailed to '+to+(cc?' (CC '+cc+')':'')+' with '+atts.length+' attachment(s) (#'+c.num+')',c.num);toast('Penalty notice + letter emailed to '+to,'ok');renderPenalties();}).catch(function(e){toast('Email failed: '+(e&&(e.text||e.message)||e),'err');});
   } else {
-    toast('EmailJS not configured (Settings → EmailJS) — opening your email app.','info');
-    window.open('mailto:'+encodeURIComponent(to)+'?'+(cc?'cc='+encodeURIComponent(cc)+'&':'')+'subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(body),'_blank');
-    if(typeof logAudit==='function')logAudit('Penalty → Supplier','Penalty '+vars.PENALTY_TYPE+' '+fSAR(p.amount)+' (mailto) to '+to+' (#'+c.num+')',c.num);
+    // HYBRID fallback: auto-download the letter + all settings attachments, then open the mail draft
+    // with a body note listing the filenames to attach.
+    if(letterDataUrl&&typeof _dlData==='function')_dlData(letterDataUrl,safeName);
+    setAtts.forEach(function(a){ if(a&&typeof a==='object'&&a.data&&typeof _dlData==='function')_dlData(a.data,a.name||'attachment'); });
+    var note=attNames.length?('\n\n----------------------------------------\nPlease attach: '+attNames.join(', ')+'\n(The files have been downloaded to your device.)'):'';
+    var bodyM=body+note;
+    toast('EmailJS not configured — letter + attachments downloaded; opening your email app.','info');
+    window.open('mailto:'+encodeURIComponent(to)+'?'+(cc?'cc='+encodeURIComponent(cc)+'&':'')+'subject='+encodeURIComponent(subj)+'&body='+encodeURIComponent(bodyM),'_blank');
+    if(typeof logAudit==='function')logAudit('Penalty → Supplier','Penalty '+vars.PENALTY_TYPE+' '+fSAR(p.amount)+' (mailto) to '+to+' with '+atts.length+' attachment(s) downloaded (#'+c.num+')',c.num);
   }
   renderPenalties();
 }
@@ -4252,23 +4304,32 @@ function penTypeLabel(t){
   return {Periodic:'Periodic LC',FinalSub:'Final Submission',Deviation:'LC Deviation',GoodsDeviation:'Goods Deviation',NPP:'National Products Price Preferencing',MLNP:'Mandatory List'}[t]||t;
 }
 // Map any (possibly legacy/short) mechanism string to its canonical full-name form.
+// Canonical mechanism component names (v57 LOCKED):
+//   NPP = "National Products Preferencing" (plural Products, NO "Price")
+//   ML  = "Mandatory List"
+var CANON_NPP='National Products Preferencing';
+var CANON_ML='Mandatory List';
 function canonicalMechName(name){
   var cl=mechClass(name);
   var bn={company:'Local Content Weight in Commercial Evaluation - Company Level',project:'Local Content Weight in Commercial Evaluation - Project Level',threshold:'Local Content Minimum Threshold',sme:'Small & Medium Enterprises',none:''}[cl.base];
   var parts=[];
   if(bn)parts.push(bn);
-  if(cl.npp)parts.push('National Products Price Preferencing');
-  if(cl.ml)parts.push('Mandatory List');
+  if(cl.npp)parts.push(CANON_NPP);
+  if(cl.ml)parts.push(CANON_ML);
   if(!parts.length)return name||'';
   return parts.join(' + ');
 }
-// One-time: adopt the canonical full-name mechanism list and normalise existing contracts' mechanism strings.
+window.canonicalMechName=canonicalMechName;
+// One-time: adopt the canonical full-name mechanism list (NPP="National Products Preferencing",
+// ML="Mandatory List") and normalise existing DB / RFPS / BIDS mechanism strings.
 (function _migrateMechNames(){
   try{
-    if(localStorage.getItem('lcMechCanon_v57'))return;
+    if(localStorage.getItem('lcMechCanon_v57b'))return;
     if(typeof MECHS!=='undefined'){MECHS=SEED_MECHS.slice();if(typeof saveMechs==='function')saveMechs();else lsSet('lcMechs',JSON.stringify(MECHS));}
     if(typeof DB!=='undefined'&&DB&&DB.length){DB.forEach(function(c){if(c&&c.mechanism){var cn=canonicalMechName(c.mechanism);if(cn)c.mechanism=cn;}});if(typeof saveDB==='function')saveDB();}
-    localStorage.setItem('lcMechCanon_v57','1');
+    if(typeof RFPS!=='undefined'&&RFPS&&RFPS.length){RFPS.forEach(function(r){if(r&&r.suggestedMech){var cn=canonicalMechName(r.suggestedMech);if(cn)r.suggestedMech=cn;}if(r&&Array.isArray(r._wizardMechs))r._wizardMechs=r._wizardMechs.map(function(m){return canonicalMechName(m)||m;});});if(typeof lsSet==='function')lsSet('lcRFPS',JSON.stringify(RFPS));}
+    if(typeof BIDS!=='undefined'&&BIDS&&BIDS.length){BIDS.forEach(function(b){if(b&&b.mechanism){var cn=canonicalMechName(b.mechanism);if(cn)b.mechanism=cn;}});if(typeof lsSet==='function')lsSet('lcBIDS',JSON.stringify(BIDS));}
+    localStorage.setItem('lcMechCanon_v57b','1');
   }catch(e){}
 })();
 function regenerateReports(c){
@@ -4797,7 +4858,7 @@ function previewReminder(num,rt){
     +'<div class="sim-email-to">To: '+(eu?eu.contact||eu.name:'Contact')+(eu&&eu.email?' &lt;'+eu.email+'&gt;':'')+'</div>'
     +'<div class="sim-email-subj">'+safeHTML(fillTpl(tpl.subject,vars))+'</div>'
     +'<div class="sim-email-body">'+nl2br(safeHTML(fillTpl(tpl.body,vars)))+'</div>'
-    +(tpl.attachments&&tpl.attachments.length?'<div style="margin-top:8px">'+tpl.attachments.map(function(a){return '<span class="badge bt">&#128206; '+a+'</span>';}).join(' ')+'</div>':'')
+    +(tpl.attachments&&tpl.attachments.length?'<div style="margin-top:8px">'+tpl.attachments.map(function(a){return '<span class="badge bt">&#128206; '+escSub(a&&typeof a==='object'?(a.name||'attachment'):a)+'</span>';}).join(' ')+'</div>':'')
     +'</div>';
 }
 function renderEmailPreview(){
@@ -4809,7 +4870,7 @@ function renderEmailPreview(){
     +'<div class="sim-email-to">To: Ahmed Al-Rashidi &lt;alrashidi@entity.gov.sa&gt;</div>'
     +'<div class="sim-email-subj">'+safeHTML(fillTpl(tpl.subject,sV))+'</div>'
     +'<div class="sim-email-body">'+nl2br(safeHTML(fillTpl(tpl.body,sV)))+'</div>'
-    +(tpl.attachments&&tpl.attachments.length?'<div style="margin-top:8px">'+tpl.attachments.map(function(a){return '<span class="badge bt">'+a+'</span>';}).join(' ')+'</div>':'')
+    +(tpl.attachments&&tpl.attachments.length?'<div style="margin-top:8px">'+tpl.attachments.map(function(a){return '<span class="badge bt">&#128206; '+escSub(a&&typeof a==='object'?(a.name||'attachment'):a)+'</span>';}).join(' ')+'</div>':'')
     +'</div>';
 }
 function runReminderScan(){
@@ -4821,12 +4882,21 @@ function runReminderScan(){
   }else{saveAll();toast(q.length+' reminder(s) queued (simulated). Configure EmailJS in Settings to send real emails.','info');renderReminders();}
 }
 function renderEmailTplList(){
-  // v57: one Periodic template (with {{REPORT_TYPE}}), plus a Penalty Notice template
+  // v57: five per-year Periodic templates (period_1..5) — each independently editable
+  // with its own subject/body/attachments — plus Final, NPP, MLNP and a Penalty Notice template.
+  // These are the SAME keys the reminder-send path reads (rtKey = 'period_'+r.year),
+  // so editing one here changes the email that is actually sent for that year.
   if(typeof EMAIL_TPL!=='undefined'){
-    if(!EMAIL_TPL.period)EMAIL_TPL.period={subject:'Reminder: {{REPORT_TYPE}} due — {{CONTRACT_NAME}}',body:'Dear {{CONTACT_NAME}},\n\nThe {{REPORT_TYPE}} for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}) is due on {{DUE_DATE}}.\n\nPlease submit it before the deadline.\n\nBest regards.',attachments:[]};
+    for(var _py=1;_py<=5;_py++){
+      var _pk='period_'+_py;
+      if(!EMAIL_TPL[_pk]){
+        var _ord=({1:'1st',2:'2nd',3:'3rd',4:'4th',5:'5th'})[_py];
+        EMAIL_TPL[_pk]={subject:'Reminder: '+_ord+' Periodic LC Report Due — Contract {{CONTRACT_NUM}}',body:'Dear {{CONTACT_NAME}},\n\nThe '+_ord+' Periodic LC Report for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}) is due in {{DAYS_LEFT}} days on {{DUE_DATE}}.\n\nLC Target: {{LC_TARGET}}\n\nBest regards,\nLC Monitor Pro',attachments:[]};
+      }
+    }
     if(!EMAIL_TPL.penalty)EMAIL_TPL.penalty={subject:'Penalty Notice — {{CONTRACT_NAME}} (#{{CONTRACT_NUM}})',body:'Dear {{CONTACT_NAME}},\n\nThis is a formal Local Content penalty notice for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}).\nPenalty: {{PENALTY_TYPE}} — {{PENALTY_AMOUNT}}.\nReason: {{PENALTY_REASON}}.\n\nThe full details are shown below.\n\nRegards.',attachments:[]};
   }
-  var tplKeys=['period','final','npp','mlnp','penalty'];
+  var tplKeys=['period_1','period_2','period_3','period_4','period_5','final','npp','mlnp','penalty'];
   var container=document.getElementById('emailTemplateList');if(!container)return;
   container.innerHTML='';
   tplKeys.forEach(function(rt){
@@ -4845,7 +4915,7 @@ function renderEmailTplList(){
     var sEl=document.getElementById('etS_'+k);if(sEl)sEl.value=tpl.subject||'';
     var bEl=document.getElementById('etB_'+k);if(bEl)bEl.value=tpl.body||'';
     var alEl=document.getElementById('etAL_'+k);
-    if(alEl&&tpl.attachments&&tpl.attachments.length){alEl.innerHTML=tpl.attachments.map(function(a){return '<div class="afile"><div class="af-name">'+a+'</div></div>';}).join('');}
+    if(alEl)alEl.innerHTML=_etRenderAttachments(rt,tpl.attachments||[]);
     (function(rtKey,kKey){
       var saveBtn=document.getElementById('etSave_'+kKey);
       if(saveBtn)saveBtn.onclick=function(){
@@ -4859,12 +4929,55 @@ function renderEmailTplList(){
       if(fi)fi.addEventListener('change',function(){
         if(!EMAIL_TPL[rtKey])EMAIL_TPL[rtKey]={attachments:[]};
         if(!EMAIL_TPL[rtKey].attachments)EMAIL_TPL[rtKey].attachments=[];
-        for(var i=0;i<this.files.length;i++)EMAIL_TPL[rtKey].attachments.push(this.files[i].name);
-        saveAll();renderEmailTplList();toast('Attached','ok');
+        var files=Array.prototype.slice.call(this.files);
+        if(!files.length)return;
+        var pending=files.length;
+        files.forEach(function(f){
+          // SIZE GUARD: warn (toast) for large files to protect localStorage; 1.5MB soft limit.
+          if(f.size>1.5*1024*1024){toast('"'+f.name+'" is '+_etFmtBytes(f.size)+' — large files can fill browser storage. Consider a smaller file.','warn');}
+          var rd=new FileReader();
+          rd.onload=function(ev){
+            EMAIL_TPL[rtKey].attachments.push({name:f.name,size:f.size,type:f.type||'',data:ev.target.result});
+            if(--pending===0){try{saveAll();}catch(e){toast('Storage is full — remove a large attachment.','err');}renderEmailTplList();toast('Attached','ok');}
+          };
+          rd.onerror=function(){if(--pending===0){renderEmailTplList();}};
+          rd.readAsDataURL(f);
+        });
+        this.value='';
       });
     })(rt,k);
   });
 }
+// human-readable byte size
+function _etFmtBytes(n){n=+n||0;if(n<1024)return n+' B';if(n<1048576)return (n/1024).toFixed(1)+' KB';return (n/1048576).toFixed(2)+' MB';}
+// render attachment rows: name + size + Review + Delete (tolerant of legacy string-only entries)
+function _etRenderAttachments(rt,list){
+  if(!list||!list.length)return '<div style="font-size:9px;color:var(--text3);margin-top:4px">No attachments yet.</div>';
+  return list.map(function(a,i){
+    var isObj=a&&typeof a==='object';
+    var nm=isObj?(a.name||'file'):String(a);
+    var sz=isObj&&a.size?(' &middot; '+_etFmtBytes(a.size)):'';
+    var canReview=isObj&&!!a.data;
+    var review=canReview?'<button class="btn btn-s btn-sm" style="padding:2px 7px;font-size:9px" onclick="etReviewAttachment(\''+rt+'\','+i+')">👁 Review</button>':'<span style="font-size:8px;color:var(--text3)">name only</span>';
+    return '<div class="afile" style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 7px;margin-top:3px;border:1px solid var(--border);border-radius:6px">'
+      +'<div class="af-name" style="font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">📎 '+escSub(nm)+'<span style="color:var(--text3)">'+sz+'</span></div>'
+      +'<div style="display:flex;gap:4px;flex-shrink:0">'+review+'<button class="btn btn-d btn-sm" style="padding:2px 7px;font-size:9px" onclick="etDeleteAttachment(\''+rt+'\','+i+')">🗑 Delete</button></div>'
+      +'</div>';
+  }).join('');
+}
+function etReviewAttachment(rt,i){
+  var tpl=(typeof EMAIL_TPL!=='undefined')?EMAIL_TPL[rt]:null;if(!tpl||!tpl.attachments)return;
+  var a=tpl.attachments[i];if(!a||typeof a!=='object'||!a.data){toast('No file bytes stored for this attachment','info');return;}
+  if(typeof _openDataUrl==='function')_openDataUrl(a.data,a.name||'attachment');
+  else{var w=window.open();if(w)w.document.write('<iframe src="'+a.data+'" style="width:100%;height:100%;border:0"></iframe>');}
+}
+function etDeleteAttachment(rt,i){
+  var tpl=(typeof EMAIL_TPL!=='undefined')?EMAIL_TPL[rt]:null;if(!tpl||!tpl.attachments)return;
+  tpl.attachments.splice(i,1);
+  try{saveAll();}catch(e){}
+  renderEmailTplList();toast('Attachment removed','info');
+}
+window.etReviewAttachment=etReviewAttachment;window.etDeleteAttachment=etDeleteAttachment;window.renderEmailTplList=renderEmailTplList;
 
 // ============================================================
 // AUDIT TRAIL
@@ -6139,8 +6252,9 @@ function generatePenaltyLetterFor(cid,pidx){
   if(p.type==='Periodic'&&p.year&&typeof PPEN!=='undefined'&&_pPenOff()){toast('This penalty is currently disabled','info');return;}
   _openPenaltyLetter(c,[p],true);
 }
-function _openPenaltyLetter(c,pens,single){
-  if(!pens||!pens.length){toast('No penalties to report','info');return;}
+// v57 Feature 8: pure builder — returns the self-contained penalty-letter HTML string.
+function _buildPenaltyLetterHTML(c,pens,single){
+  if(!pens||!pens.length){return '';}
   var AR_MODE=(typeof lang!=='undefined'&&lang==='ar');function L(en,ar){return AR_MODE?ar:en;}
   var _sn=0;function SN(){return (++_sn)+'. ';}
   var bi=(typeof brandInfo==='function')?brandInfo():{org:(S&&S.org)||'LC Monitor Pro',logo:''};
@@ -6220,10 +6334,20 @@ function _openPenaltyLetter(c,pens,single){
   h+='<h2>'+SN()+L('Remedy','الإجراء التصحيحي')+'</h2><div class="box">'+L('The contractor is requested to submit the outstanding evidence/reports and remedy the local-content shortfall within the period stipulated in the contract. Penalties are recalculated upon receipt and approval of valid evidence.','يُطلب من المقاول تقديم المستندات/التقارير المتأخرة ومعالجة النقص في المحتوى المحلي خلال المدة المنصوص عليها في العقد. ويُعاد احتساب الغرامات عند استلام واعتماد الإثباتات الصحيحة.')+'</div>';
   h+='<div class="sig"><div>'+L('Issued by','صادر عن')+'<br/><br/>__________________</div><div>'+L('Acknowledged by (Contractor)','إقرار المقاول')+'<br/><br/>__________________</div></div>';
   h+='<div class="foot">'+bi.org+' — '+L('Generated by LC Monitor Pro','تم إنشاؤه بواسطة LC Monitor Pro')+' · '+now+'</div></body></html>';
+  return h;
+}
+window._buildPenaltyLetterHTML=_buildPenaltyLetterHTML;
+// thin wrapper: build + open the print/preview document (unchanged behaviour for existing callers)
+function _openPenaltyLetter(c,pens,single){
+  if(!pens||!pens.length){toast('No penalties to report','info');return;}
+  var h=_buildPenaltyLetterHTML(c,pens,single);
+  if(!h){toast('No penalties to report','info');return;}
   _openPrintDoc(h);
   if(typeof logAudit==='function')logAudit('create','Penalty letter generated for contract #'+c.num);
-  toast(L('Penalty letter generated','تم إنشاء إشعار الغرامة'),'ok');
+  var _AR=(typeof lang!=='undefined'&&lang==='ar');
+  toast(_AR?'تم إنشاء إشعار الغرامة':'Penalty letter generated','ok');
 }
+window._openPenaltyLetter=_openPenaltyLetter;
 function generateSupplierCardPDF(){
   var AR_MODE=(typeof lang!=='undefined'&&lang==='ar');function L(en,ar){return AR_MODE?ar:en;}
   var bi=(typeof brandInfo==='function')?brandInfo():{org:(S&&S.org)||'LC Monitor Pro',logo:''};
@@ -7420,15 +7544,20 @@ window.handleBidderFile=handleBidderFile;
 // V30: Decision Tree OR Radio, Editable DT Rules, BoQ Origin+ML, RFP PDF
 var SEED_DECISION_RULES=[
   {id:1,nature:"services",valueLevel:"low",expenditure:"any",mechanisms:["Small & Medium Enterprises"],note:"Services below threshold"},
-  {id:2,nature:"services",valueLevel:"high",expenditure:"capex",mechanisms:["Local Content Weight in Commercial Evaluation - Project Level","LC Minimum Threshold"],note:"High-value services, Capex"},
-  {id:3,nature:"services",valueLevel:"high",expenditure:"opex",mechanisms:["LC Weight + NPP - Company Level","LC Minimum Threshold"],note:"High-value services, Opex"},
-  {id:4,nature:"supply",valueLevel:"low",expenditure:"any",mechanisms:["National Product Preferencing + Mandatory list"],note:"Pure supply: NPP+MLNP"},
-  {id:5,nature:"supply",valueLevel:"high",expenditure:"any",mechanisms:["National Product Preferencing + Mandatory list"],note:"Supply high-value: NPP+MLNP"},
-  {id:6,nature:"mixed",valueLevel:"low",expenditure:"any",mechanisms:["Small & Medium Enterprises"],note:"Mixed below threshold"},
-  {id:7,nature:"mixed",valueLevel:"high",expenditure:"capex",mechanisms:["LC Min Threshold + NPP + MLNP - Project Level","LC Min Threshold + NPP + MLNP"],note:"High-value mixed, Capex"},
-  {id:8,nature:"mixed",valueLevel:"high",expenditure:"opex",mechanisms:["LC Weight + NPP + MLNP - Company Level","LC Min Threshold + NPP + MLNP"],note:"High-value mixed, Opex"}
+  {id:2,nature:"services",valueLevel:"high",expenditure:"capex",mechanisms:["Local Content Weight in Commercial Evaluation - Project Level","Local Content Minimum Threshold"],note:"High-value services, Capex"},
+  {id:3,nature:"services",valueLevel:"high",expenditure:"opex",mechanisms:["Local Content Weight in Commercial Evaluation - Company Level + National Products Preferencing","Local Content Minimum Threshold"],note:"High-value services, Opex"},
+  {id:4,nature:"supply",valueLevel:"low",expenditure:"any",mechanisms:["National Products Preferencing + Mandatory List"],note:"Pure supply: NPP+ML"},
+  {id:5,nature:"supply",valueLevel:"high",expenditure:"any",mechanisms:["National Products Preferencing + Mandatory List"],note:"Supply high-value: NPP+ML"},
+  {id:6,nature:"mixed",valueLevel:"low",expenditure:"any",mechanisms:["Small & Medium Enterprises + National Products Preferencing + Mandatory List"],note:"Mixed below threshold"},
+  {id:7,nature:"mixed",valueLevel:"high",expenditure:"capex",mechanisms:["Local Content Weight in Commercial Evaluation - Project Level + National Products Preferencing + Mandatory List","Local Content Minimum Threshold + National Products Preferencing + Mandatory List"],note:"High-value mixed, Capex"},
+  {id:8,nature:"mixed",valueLevel:"high",expenditure:"opex",mechanisms:["Local Content Weight in Commercial Evaluation - Company Level + National Products Preferencing + Mandatory List","Local Content Minimum Threshold + National Products Preferencing + Mandatory List"],note:"High-value mixed, Opex"}
 ];
+// v57: normalise every decision-rule mechanism string to its canonical full name so the
+// wizard's recommendations are string-identical to the mechanism dropdowns + Settings list.
+(function _canonDR(){try{if(typeof canonicalMechName!=='function')return;SEED_DECISION_RULES.forEach(function(r){r.mechanisms=(r.mechanisms||[]).map(function(m){return canonicalMechName(m)||m;});});}catch(e){}})();
 var DECISION_RULES;try{DECISION_RULES=JSON.parse(localStorage.getItem('lcDecisionRules')||'null');}catch(e){DECISION_RULES=null;}if(!DECISION_RULES)DECISION_RULES=JSON.parse(JSON.stringify(SEED_DECISION_RULES));
+// v57: also canonicalise any stored decision rules (older localStorage) once.
+(function _canonStoredDR(){try{if(typeof canonicalMechName!=='function')return;if(localStorage.getItem('lcDRCanon_v57'))return;DECISION_RULES.forEach(function(r){r.mechanisms=(r.mechanisms||[]).map(function(m){return canonicalMechName(m)||m;});});if(typeof saveDTRulesStore==='function')saveDTRulesStore();localStorage.setItem('lcDRCanon_v57','1');}catch(e){}})();
 function saveDTRulesStore(){lsSet('lcDecisionRules',JSON.stringify(DECISION_RULES));}
 
 runMechWizard=function(){
@@ -8532,7 +8661,7 @@ calcBids=function(){
   });
 
   var q=results.filter(function(r){return !r.excluded;});
-  if(!q.length){document.getElementById("bidResults").innerHTML='<div style="padding:20px;text-align:center;color:var(--danger)">All bidders excluded</div>';return;}
+  if(!q.length){document.getElementById("bidResults").innerHTML='<div class="bidev-award"><div class="bidev-award__icon" style="border-color:color-mix(in srgb,var(--bad) 30%,transparent);color:var(--bad-ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div><div class="bidev-award__body"><div class="bidev-award__title">'+((typeof window.L==="function")?window.L("All bidders excluded","استُبعد جميع العارضين"):"All bidders excluded")+'</div><div class="bidev-award__text">'+((typeof window.L==="function")?window.L("No qualified bid remains under the current mechanism and exclusion gates.","لا يوجد عطاء مؤهل وفق الآلية وبوابات الاستبعاد الحالية."):"No qualified bid remains under the current mechanism and exclusion gates.")+'</div></div></div>';return;}
 
   // ── Commercial fraction (0..1, best commercial = 1) per mechanism ──
   var lpAll=Math.min.apply(null,q.map(function(b){return b.price||Infinity;}));
@@ -8605,54 +8734,124 @@ calcBids=function(){
   var sA=isNPP||isSME||isHybrid;
   var sL=showLC||isHybrid;
 
-  // Award guidance
+  // \u2500\u2500 Evolve helpers (bilingual via window.L; SVG icons; safe escape) \u2500\u2500
+  var _L=(typeof window.L==='function')?window.L:function(en,ar){return en;};
+  var _esc=(typeof escSub==='function')?escSub:function(s){return String(s==null?'':s);};
+  var ICO={
+    trophy:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/></svg>',
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12l2.4 2.4L15.8 9.5"/></svg>',
+    xmark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+    warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9l-8 13.9A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.2l-8-13.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    tadOk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>',
+    tadNo:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+    sigma:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18 4H6l6 8-6 8h12"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>'
+  };
+
+  // weights + tech presence (for the formula strip and breakdown header)
+  var twPct=hasTW?curBid.techWeight:0, cwPct=hasTW?curBid.commWeight:100;
+
+  // \u2500\u2500 Scoring-basis / formula strip \u2500\u2500
+  var basisTxt = sL ? (_L('LC Weight + Price','\u0648\u0632\u0646 \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A + \u0627\u0644\u0633\u0639\u0631')+(isNPP?' + NPP':'')+(tadawulOn?' + Tadawul':'')+' \u00B7 '+_L('two-envelope','\u0645\u0638\u0631\u0648\u0641\u0627\u0646'))
+                    : (isNPP&&!showLC ? _L('National-Product Premium \u00B7 adjusted price','\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A \u00B7 \u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')
+                    : (isSME&&!showLC ? _L('SME preference \u00B7 adjusted price','\u062A\u0641\u0636\u064A\u0644 \u0627\u0644\u0645\u0646\u0634\u0622\u062A \u0627\u0644\u0635\u063A\u064A\u0631\u0629 \u00B7 \u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')
+                    : _L('Lowest qualified price','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0624\u0647\u0651\u0644')));
+  var formula='<section class="bidev-formula"><div class="bf-head">'+ICO.sigma+'<h3>'+_L('How the winner is chosen','\u0643\u064A\u0641 \u064A\u064F\u062E\u062A\u0627\u0631 \u0627\u0644\u0641\u0627\u0626\u0632')+'</h3><span class="bf-basis">'+_esc(basisTxt)+'</span></div><div class="bf-body">';
+  if(hasTW){
+    formula+='<div class="bf-row"><span class="bf-l">'+_L('Total score','\u0627\u0644\u062F\u0631\u062C\u0629 \u0627\u0644\u0643\u0644\u064A\u0629')+'</span><span class="bf-eq"><b>'+_L('Total','\u0627\u0644\u0643\u0644\u064A')+'</b> = <b>'+_L('Technical','\u0627\u0644\u0641\u0646\u064A')+'</b>\u00D7<span class="w">'+twPct+'%</span> + <b>'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</b>\u00D7<span class="w">'+cwPct+'%</span></span></div>';
+  }
+  if(sL){
+    formula+='<div class="bf-row"><span class="bf-l">'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</span><span class="bf-eq"><span class="pill">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span> (Lowest'+(sA?'Adj':'')+'Price \u00F7 '+(sA?'Adj':'')+'Price) \u00D7 <span class="w">'+(S.priceWeight||70)+'%</span> + <span class="pill">'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span> ('+(S.targetSplit||50)+'%\u00B7'+_L('Target','\u0645\u0633\u062A\u0647\u062F\u0641')+' + '+(S.baselineSplit||50)+'%\u00B7'+_L('Baseline','\u0623\u0633\u0627\u0633')+(tadawulOn?' + '+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+' '+(S.listedBonusPct||5)+'%':'')+') \u00D7 <span class="w">'+(S.lcWeight||30)+'%</span></span></div>';
+  } else if(isNPP&&!showLC){
+    formula+='<div class="bf-row"><span class="bf-l">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="bf-eq">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+' + <span class="w">'+(S.nppPref||10)+'%</span>\u00B7Price\u00B7(1 \u2212 NationalShare) \u2014 '+_L('lowest adjusted price wins','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u0641\u0648\u0632')+'</span></div>';
+  } else if(isSME&&!showLC){
+    formula+='<div class="bf-row"><span class="bf-l">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="bf-eq">'+_L('non-SME prices loaded','\u062A\u062D\u0645\u064A\u0644 \u0623\u0633\u0639\u0627\u0631 \u063A\u064A\u0631 \u0627\u0644\u0635\u063A\u064A\u0631\u0629')+' +<span class="w">'+(S.smePref||10)+'%</span> \u2014 '+_L('lowest adjusted price wins','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u0641\u0648\u0632')+'</span></div>';
+  }
+  formula+='</div></section>';
+
+  // \u2500\u2500 Award-guidance banner (Evolve, tinted, no side-stripe) \u2500\u2500
   var awardGuide="";
   if(sL){
-    awardGuide='<div style="background:rgba(5,150,105,0.08);border:1.5px solid var(--accent3);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:11px"><strong>\u2139\ufe0f Award Guidance:</strong> Bidders ranked by <strong>highest combined score</strong> (Price + LC'+(tadawulOn?' + Tadawul':'')+').'+(isThreshold?' Threshold enforced for: '+(blEnforced?'Baseline ':'')+(tgEnforced?'Target ':'')+'.':'')+' Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.</div>';
+    awardGuide='<div class="bidev-award ok"><div class="bidev-award__icon">'+ICO.info+'</div><div class="bidev-award__body"><div class="bidev-award__title">'+_L('Award guidance','\u0625\u0631\u0634\u0627\u062F\u0627\u062A \u0627\u0644\u062A\u0631\u0633\u064A\u0629')+'</div><div class="bidev-award__text">'+_L('Bidders ranked by','\u064A\u064F\u0631\u062A\u064E\u0651\u0628 \u0627\u0644\u0639\u0627\u0631\u0636\u0648\u0646 \u062D\u0633\u0628')+' <b>'+_L('highest combined score','\u0623\u0639\u0644\u0649 \u062F\u0631\u062C\u0629 \u0645\u062C\u0645\u0651\u0639\u0629')+'</b> ('+_L('Price','\u0627\u0644\u0633\u0639\u0631')+' + '+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+(tadawulOn?' + '+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644'):'')+').'+(isThreshold?' '+_L('Threshold enforced','\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u062F\u0646\u0649 \u0645\u064F\u0641\u0639\u064E\u0651\u0644')+': '+(blEnforced?_L('Baseline','\u0627\u0644\u0623\u0633\u0627\u0633')+' ':'')+(tgEnforced?_L('Target','\u0627\u0644\u0645\u0633\u062A\u0647\u062F\u0641')+' ':'')+'.':'')+' '+_L('Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.','\u064A\u064F\u0641\u0635\u064E\u0644 \u0627\u0644\u062A\u0639\u0627\u062F\u0644 \u0628\u0623\u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u2192 \u0623\u0639\u0644\u0649 \u0645\u0633\u062A\u0647\u062F\u0641 \u2192 \u0623\u0639\u0644\u0649 \u0639\u0644\u0627\u0648\u0629 \u0645\u0646\u062A\u062C \u0648\u0637\u0646\u064A.')+'</div></div></div>';
   } else if(isNPP&&!showLC){
-    awardGuide='<div style="background:rgba(59,130,246,0.08);border:1.5px solid var(--accent);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:11px"><strong>\u2139\ufe0f Award Guidance (NPP):</strong> Ranked by <strong>Adjusted Bid Price</strong> (lowest wins). Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.</div>';
+    awardGuide='<div class="bidev-award"><div class="bidev-award__icon">'+ICO.info+'</div><div class="bidev-award__body"><div class="bidev-award__title">'+_L('Award guidance (NPP)','\u0625\u0631\u0634\u0627\u062F\u0627\u062A \u0627\u0644\u062A\u0631\u0633\u064A\u0629 (\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A)')+'</div><div class="bidev-award__text">'+_L('Ranked by','\u064A\u064F\u0631\u062A\u064E\u0651\u0628 \u062D\u0633\u0628')+' <b>'+_L('Adjusted Bid Price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</b> ('+_L('lowest wins','\u0627\u0644\u0623\u062F\u0646\u0649 \u064A\u0641\u0648\u0632')+'). '+_L('Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.','\u064A\u064F\u0641\u0635\u064E\u0644 \u0627\u0644\u062A\u0639\u0627\u062F\u0644 \u0628\u0623\u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u2192 \u0623\u0639\u0644\u0649 \u0645\u0633\u062A\u0647\u062F\u0641 \u2192 \u0623\u0639\u0644\u0649 \u0639\u0644\u0627\u0648\u0629 \u0645\u0646\u062A\u062C \u0648\u0637\u0646\u064A.')+'</div></div></div>';
   }
 
-  // Results display
-  document.getElementById("bidResults").innerHTML=awardGuide+fin.map(function(b){
+  // \u2500\u2500 Ranked-results cards (Evolve full-perimeter winner ring, two-envelope, meters) \u2500\u2500
+  var nQual=fin.filter(function(r){return !r.excluded;}).length, nExcl=fin.length-nQual;
+  var sectionRule='<div class="section-rule" style="display:flex;align-items:center;gap:10px;margin:0 0 11px"><h2 style="font-size:14px;font-weight:700;color:var(--text);font-family:var(--fn)">'+_L('Ranked results','\u0627\u0644\u0646\u062A\u0627\u0626\u062C \u0627\u0644\u0645\u0631\u062A\u0651\u0628\u0629')+'</h2><span style="font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12px;color:var(--text3)">'+fin.length+' '+_L('bidders','\u0639\u0627\u0631\u0636\u064A\u0646')+' \u00B7 '+nQual+' '+_L('qualified','\u0645\u0624\u0647\u0644\u0648\u0646')+(nExcl?' \u00B7 '+nExcl+' '+_L('excluded','\u0645\u0633\u062A\u0628\u0639\u062F'):'')+'</span><span style="flex:1;height:1px;background:var(--border)"></span></div>';
+
+  var cards='<section class="bidev-results" aria-label="Ranked bidders">'+fin.map(function(b){
     var qi=b.rank||999,isW=!b.excluded&&qi===1&&!b.art19Shifted;
-    var cd='<div class="'+(b.excluded?"excluded-overlay ":"")+(b.art19Shifted&&!b.excluded?"excluded-overlay ":"")+'bid-card" style="position:relative">';
+    var origPrice=b.price||b.origPrice||0, adjP=Math.round(b.adjustedPrice||origPrice);
+    var lcT=(b.lcPct||0), lcB=(b.lcBaseline||b.baselinePct||0);
+    var psPct=b.priceScore?(b.priceScore*100):0, lsPct=b.lcScore?(b.lcScore*100):0, tsPct=b.tadawulScore?(b.tadawulScore*100):0;
+    var techPct=hasTW?((+b.techScore||0)):0, techFrac=b.techFrac||0;
+    var commPct=(b.commFrac||0)*100;
 
-    if(b.excluded) cd+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:var(--danger);color:#fff;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700">\uD83D\uDEAB EXCLUDED</div>';
-    if(b.art19Shifted&&!b.excluded) cd+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:#f59e0b;color:#fff;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700">Art.19</div>';
-
-    cd+='<div class="bid-card-hd"><div style="display:flex;align-items:center;gap:8px">';
-    if(isW) cd+='<span style="font-size:18px">\uD83C\uDFC6</span>';
-    if(!b.excluded) cd+='<span style="font-size:18px;font-weight:800;color:var(--text3)">#'+qi+'</span>';
-    cd+='<div><div class="bid-name">'+escSub(b.name)+'</div>'+(b.notes?'<div style="font-size:10px;color:var(--text3)">'+escSub(b.notes)+'</div>':'')+'</div></div>';
-    cd+='<div class="bid-score" style="color:'+(b.excluded?"var(--danger)":b.art19Shifted?"#f59e0b":isW?"var(--accent3)":"var(--text)")+'">'+(b.excluded?"Excl.":(sL?b.score.toFixed(1):fSAR(Math.round(b.adjustedPrice))))+'</div></div>';
-
-    if(b.excluded){
-      cd+='<div style="font-size:11px;color:var(--danger);padding:4px 0">'+b.exclusionReasons.join(", ")+'</div>';
-    }
+    var cls='bidder'+(isW?' winner':'')+(b.excluded?' excluded':'')+(b.art19Shifted&&!b.excluded?' art19':'');
+    var cd='<article class="'+cls+'" tabindex="0">';
+    // \u2500\u2500 main row \u2500\u2500
+    cd+='<div class="bidder__main">';
+    // rank badge
+    if(b.excluded){ cd+='<div class="rankbadge muted">'+ICO.xmark+'<span class="rlabel">'+_L('Out','\u0645\u0633\u062A\u0628\u0639\u062F')+'</span></div>'; }
+    else if(isW){ cd+='<div class="rankbadge gold">'+ICO.trophy+'<span class="rnum">1</span></div>'; }
+    else { cd+='<div class="rankbadge"><span class="rnum">'+qi+'</span><span class="rlabel">'+_L('Rank','\u0627\u0644\u062A\u0631\u062A\u064A\u0628')+'</span></div>'; }
+    // identity
+    cd+='<div class="bidder__id"><div class="bidder__name"><span class="nm">'+_esc(b.name)+'</span>';
     if(!b.excluded){
-      cd+='<div class="bid-row"><span class="bid-row-lbl">Original Bid Price</span><span class="bid-row-val">'+fSAR(b.price||b.origPrice||0)+'</span></div>';
-      if(sA) cd+='<div class="bid-row" style="background:rgba(59,130,246,0.06)"><span class="bid-row-lbl">Adjusted Bid Price</span><span class="bid-row-val" style="color:var(--accent);font-weight:800">'+fSAR(Math.round(b.adjustedPrice))+'</span></div>';
-      if(sL){
-        cd+='<div class="bid-row"><span class="bid-row-lbl">LC Baseline %</span><span class="bid-row-val">'+(b.lcBaseline||b.baselinePct||0)+'%</span></div>';
-        cd+='<div class="bid-row"><span class="bid-row-lbl">LC Target %</span><span class="bid-row-val">'+(b.lcPct||0)+'%</span></div>';
-        cd+='<div style="background:var(--al);border:1px solid var(--border);border-radius:var(--rs);padding:8px;margin-top:6px;font-size:11px">';
-        cd+='<div style="font-weight:700;margin-bottom:4px;font-size:10px;color:var(--accent)">SCORE BREAKDOWN</div>';
-        cd+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">';
-        cd+='<div>Price Score: <strong>'+(b.priceScore?(b.priceScore*100).toFixed(1):"\u2014")+'</strong></div>';
-        cd+='<div>LC Score: <strong>'+(b.lcScore?(b.lcScore*100).toFixed(1):"\u2014")+'</strong></div>';
-        cd+='<div>Tadawul: <strong>'+(b.tadawulScore?(b.tadawulScore*100).toFixed(1):"0")+'</strong></div>';
-        cd+='</div>';
-        cd+='<div style="font-weight:800;margin-top:4px;color:var(--text)">Combined: '+b.score.toFixed(1)+'</div>';
-        cd+='</div>';
-      }
-      if(isNPP&&!showLC) cd+='<div class="bid-row"><span class="bid-row-lbl">NPP %</span><span class="bid-row-val">'+(b.nppPct||0)+'%</span></div>';
-      var pw2=sL?(mx>0?b.score/mx*100:0):100;
-      cd+='<div style="margin-top:8px"><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:'+pw2+'%;background:'+(isW?"var(--accent3)":"var(--accent)")+'"></div></div><span class="pg-p">'+(sL?b.score.toFixed(1):fSAR(Math.round(b.adjustedPrice)))+'</span></div></div>';
+      if(b.isTadawul) cd+='<span class="tadawul yes">'+ICO.tadOk+'<span>'+_L('Tadawul-listed','\u0645\u062F\u0631\u062C\u0629 \u0641\u064A \u062A\u062F\u0627\u0648\u0644')+'</span></span>';
+      else cd+='<span class="tadawul no">'+ICO.tadNo+'<span>'+_L('Not Tadawul-listed','\u063A\u064A\u0631 \u0645\u062F\u0631\u062C\u0629 \u0641\u064A \u062A\u062F\u0627\u0648\u0644')+'</span></span>';
     }
+    cd+='</div><div class="bidder__meta">';
+    cd+='<div class="metaitem"><span class="mk">'+_L('Original price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0623\u0635\u0644\u064A')+'</span><span class="mv">'+_esc(fSAR(origPrice))+'</span></div>';
+    if(sA) cd+='<div class="metaitem"><span class="mk">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="mv">'+(b.excluded?'<span style="color:var(--text3)">'+_L('\u2014 not scored','\u2014 \u063A\u064A\u0631 \u0645\u064F\u0642\u064A\u0651\u0645')+'</span>':_esc(fSAR(adjP)))+'</span></div>';
+    if(sL) cd+='<div class="metaitem"><span class="mk">'+_L('LC target / baseline','\u0645\u0633\u062A\u0647\u062F\u0641 / \u0623\u0633\u0627\u0633 \u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span><span class="mv">'+(b.excluded&&!lcT&&!lcB?'<span style="color:var(--bad-ink)">'+_L('none','\u063A\u064A\u0631 \u0645\u062D\u062F\u062F')+'</span>':lcT+'% <span style="color:var(--text3);font-weight:400">'+_L('vs','\u0645\u0642\u0627\u0628\u0644')+'</span> '+lcB+'%')+'</span></div>';
+    if(isNPP) cd+='<div class="metaitem"><span class="mk">'+_L('NPP premium','\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A')+'</span><span class="mv">'+(b.excluded?'<span style="color:var(--text3)">\u2014</span>':'<span class="npp">'+(b.nppPct||0)+'%</span>')+'</span></div>';
+    cd+='</div></div>';
+    // score
+    cd+='<div class="bidder__score"><div class="scorebig"><span class="lbl">'+_L('Total','\u0627\u0644\u0643\u0644\u064A')+'</span>';
+    if(b.excluded) cd+='<span class="val" style="color:var(--text3)">\u2014</span>';
+    else if(sL) cd+='<span class="val">'+b.score.toFixed(1)+'</span><span class="max">/100</span>';
+    else cd+='<span class="val" style="font-size:18px">'+_esc(fSAR(adjP))+'</span>';
     cd+='</div>';
+    if(b.excluded) cd+='<span class="bstatus bad">'+ICO.xmark+'<span>'+_L('Excluded','\u0645\u0633\u062A\u0628\u0639\u062F')+'</span></span>';
+    else if(isW) cd+='<span class="bstatus accent">'+ICO.trophy+'<span>'+_L('Winner','\u0627\u0644\u0641\u0627\u0626\u0632')+'</span></span>';
+    else if(b.art19Shifted) cd+='<span class="bstatus warn">'+ICO.warn+'<span>Art.19</span></span>';
+    else cd+='<span class="bstatus ok">'+ICO.check+'<span>'+_L('Qualified','\u0645\u0624\u0647\u0644')+'</span></span>';
+    cd+='</div></div>';
+
+    // \u2500\u2500 breakdown / exclusions band \u2500\u2500
+    if(b.excluded){
+      cd+='<div class="exreasons"><div class="exreasons-title">'+ICO.warn+'<span>'+_L('Exclusion reasons','\u0623\u0633\u0628\u0627\u0628 \u0627\u0644\u0627\u0633\u062A\u0628\u0639\u0627\u062F')+'</span></div><ul class="exlist">'+
+        (b.exclusionReasons||[]).map(function(r){return '<li>'+ICO.xmark+'<span>'+_esc(r)+'</span></li>';}).join('')+'</ul></div>';
+    } else if(sL){
+      var cScRaw=hasTW?(commPct):(b.score);   // commercial-envelope score (0..100)
+      cd+='<div class="breakdown">';
+      // technical envelope (only when tech weights confirmed)
+      if(hasTW){
+        cd+='<div class="bk-tech"><div class="bk-title"><span>'+_L('Technical','\u0627\u0644\u0641\u0646\u064A')+' \u00B7 '+twPct+'%</span><span class="sc">'+(techPct).toFixed(0)+'<span class="of">/100</span></span></div>'+
+          '<div class="meter"><div class="meter__fill" style="width:'+Math.max(0,Math.min(100,techPct))+'%"></div></div>'+
+          '<div class="bk-techmeta">'+_L('Normalised techFrac','\u0627\u0644\u0646\u0633\u0628\u0629 \u0627\u0644\u0641\u0646\u064A\u0629 \u0627\u0644\u0645\u0639\u064A\u0627\u0631\u064A\u0629')+' <b>'+techFrac.toFixed(2)+'</b> \u00B7 '+_L('contributes','\u064A\u064F\u0633\u0647\u0645 \u0628\u0640')+' <b>'+(techFrac*twPct).toFixed(1)+'</b> '+_L('to total','\u0641\u064A \u0627\u0644\u0643\u0644\u064A')+'</div></div>';
+      }
+      // commercial envelope
+      cd+='<div class="bk-comm"'+(hasTW?'':' style="grid-column:1/-1"')+'><div class="bk-title"><span>'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+' \u00B7 '+cwPct+'%</span><span class="sc">'+cScRaw.toFixed(1)+'<span class="of">/100</span></span></div><div class="subrows">';
+      cd+='<div class="subrow"><span class="sk"><span class="swatch price"></span><span>'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span></span><span class="smeter"><i class="price" style="width:'+Math.max(0,Math.min(100,psPct/(((S.priceWeight||70)/100)||1))).toFixed(0)+'%"></i></span><span class="sval">'+psPct.toFixed(1)+' <span class="of">\u00D7'+(S.priceWeight||70)+'%</span></span></div>';
+      cd+='<div class="subrow"><span class="sk"><span class="swatch lc"></span><span>'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span></span><span class="smeter"><i class="lc" style="width:'+Math.max(0,Math.min(100,lsPct/(((S.lcWeight||30)/100)||1))).toFixed(0)+'%"></i></span><span class="sval">'+lsPct.toFixed(1)+' <span class="of">\u00D7'+(S.lcWeight||30)+'%</span></span></div>';
+      if(tadawulOn) cd+='<div class="subrow"><span class="sk"><span class="swatch tad"></span><span>'+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+'</span></span><span class="smeter"><i class="tad" style="width:'+(tsPct>0?100:0)+'%"></i></span><span class="sval">'+tsPct.toFixed(1)+' <span class="of">'+_L('bonus','\u0639\u0644\u0627\u0648\u0629')+'</span></span></div>';
+      cd+='</div></div></div>';
+    } else {
+      // price/NPP-only commercial summary
+      cd+='<div class="comm-only"><span class="col">'+_L('Adjusted bid price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+' <b>'+_esc(fSAR(adjP))+'</b></span>'+
+        (isNPP?'<span class="col">'+_L('NPP','\u0639\u0644\u0627\u0648\u0629')+' <b>'+(b.nppPct||0)+'%</b></span>':'')+
+        '<span class="col">'+_L('Commercial fraction','\u0646\u0633\u0628\u0629 \u0627\u0644\u0645\u0646\u0627\u0641\u0633\u0629')+' <b>'+(commPct).toFixed(1)+'</b></span></div>';
+    }
+    cd+='</article>';
     return cd;
-  }).join("");
+  }).join("")+'</section>';
+
+  // Results display (formula \u2192 guidance \u2192 ranked cards). Assignment kept so the v55 award-select patch can append.
+  document.getElementById("bidResults").innerHTML=formula+awardGuide+sectionRule+cards;
 
   if(curBid){curBid.bidders=curBidders;}
   toast("LCGPA evaluation complete","ok");
@@ -9205,13 +9404,12 @@ body.mobile-mode #dashEntitySel{max-width:100%!important}
 body.mobile-mode .fb{flex-wrap:wrap}
 
 /* ════════ v57 EXECUTIVE RIBBON DASHBOARD (mockup match) ════════ */
-.exr-wrap{display:flex;flex-direction:column;gap:16px;font-family:'Manrope',var(--fn)}
-.exr-num{font-family:'Fraunces','Bricolage Grotesque',serif;font-weight:600;font-variant-numeric:lining-nums;letter-spacing:-.5px}
-.exr-ribbon{position:relative;background:linear-gradient(125deg,#0f2557 0%,#16357e 45%,#2a4bb5 100%);border-radius:20px;padding:20px 22px;color:#fff;box-shadow:0 22px 50px -26px rgba(20,30,90,.85);overflow:hidden}
-.exr-ribbon::after{content:'';position:absolute;inset:0;background:radial-gradient(700px 360px at 88% -10%,rgba(124,58,237,.40),transparent 60%);pointer-events:none}
+.exr-wrap{display:flex;flex-direction:column;gap:16px;font-family:var(--fs)}
+.exr-num{font-family:var(--fm);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.exr-ribbon{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;color:var(--text);box-shadow:var(--sh);overflow:visible}
 .exr-top{position:relative;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}
 .exr-eyebrow{font-size:10px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.62)}
-.exr-title{font-family:'Fraunces',serif;font-weight:600;font-size:27px;line-height:1.05;margin-top:3px}
+.exr-title{font-family:var(--fn);font-weight:700;font-size:18px;line-height:1.2;margin-top:3px}
 .exr-title em{font-style:italic;color:#cbd5ff}
 .exr-pdf{margin-top:10px;font-size:11px;font-weight:700;padding:5px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;cursor:pointer}
 .exr-pdf:hover{background:rgba(255,255,255,.22)}
@@ -9273,7 +9471,381 @@ body.mobile-mode .fb{flex-wrap:wrap}
 [data-theme=dark] .exr-ribbon{box-shadow:0 22px 56px -26px rgba(0,0,0,.8)}
 [data-theme=dark] .exr-band-ic{filter:brightness(1.15)}
 body.mobile-mode .exr-bands,body.mobile-mode .exr-heroes{grid-template-columns:1fr}
+
+/* ============================================================= */
+/* ===========  EVOLVE RESKIN · app-wide override  ============= */
+/* ===========  (last block — wins the cascade)  ============== */
+/* ============================================================= */
+
+/* ---- TYPE: Inter for UI/data, Bricolage for titles/wordmark only, JetBrains Mono for figures ---- */
+body{font-family:var(--fs);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body.rtl{font-family:var(--far)}
+.mono,.td-m,.kpi-val,.dc-val,.fun-n,.ch-num,.pf-kpi-v,.pg-p,.af-size,.kpi-val,.bid-score{font-family:var(--fm);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+/* page/section titles + wordmark keep the display face */
+.page-title,.card-title,.fsec-title,.md-title,.slt,.kpi-val,.ev-title,.dc-val,.hero-title{letter-spacing:-.2px}
+.page-title,.card-title,.fsec-title,.md-title,.dsec-title,.dc-title{font-family:var(--fn)}
+/* ---- KILL gradient-text on page title (ban): solid ink, no clip ---- */
+#pageTitle,.page-title{background:none!important;background-image:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:var(--text)!important;color:var(--text)!important;font-family:var(--fn)!important}
+/* ---- KILL legacy gradient-text on dead hero/funnel CSS (ban surface) ---- */
+.dh-title,.fun-n,.fun-step.gold .fun-n,.fun-step.teal .fun-n,.fun-step.green .fun-n,.fun-step.red .fun-n,.dsec-hd .dsi{background:none!important;background-image:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;animation:none!important}
+.fun-n{color:var(--accent-ink)!important}
+.dh-title{color:var(--text)!important}
+
+/* ---- FLAT EVOLVE BACKDROP (kill the animated mesh + radial washes) ---- */
+body:not([data-theme=dark]),[data-theme=dark] body{
+  background:var(--bg)!important;background-attachment:scroll!important;
+}
+body::before,body:not([data-theme=dark])::before,[data-theme=dark] body::before{display:none!important;opacity:0!important}
+/* kill the dashboard radial-wash backdrop (decorative gradient ban) */
+#page-dashboard::before{display:none!important;content:none!important;background:none!important}
+
+/* ---- SHELL HAIRLINES / restrained shadows ---- */
+.sidebar{background:var(--surface)!important;border-right:1px solid var(--border)!important;box-shadow:none!important}
+body.rtl .sidebar{border-right:none!important;border-left:1px solid var(--border)!important}
+[data-theme=dark] .sidebar{background:var(--surface)!important;border-right:1px solid var(--border)!important;box-shadow:none!important}
+.topbar{background:var(--surface)!important;backdrop-filter:none!important;border-bottom:1px solid var(--border)!important;box-shadow:none!important}
+[data-theme=dark] .topbar{background:var(--surface)!important}
+
+/* ---- NAV ITEMS: active = brand accent keyline + soft tint (no glow, no transform) ---- */
+.ni-wrap{margin:1px 9px;padding:7px 11px!important;border-radius:8px;transition:color var(--tr),background var(--tr)!important}
+.ni-wrap:hover{transform:none!important;background:var(--surface2)!important;color:var(--text)!important}
+body.rtl .ni-wrap:hover{transform:none!important}
+.ni-wrap:hover .ni{transform:none!important}
+.ni-wrap.active{background:var(--accent-soft)!important;color:var(--accent-ink)!important;font-weight:600}
+[data-theme=dark] .ni-wrap.active{background:var(--al)!important;color:var(--accent)!important}
+.ni-wrap.active::before{background:var(--grad-brand)!important;box-shadow:none!important;width:3px!important;border-radius:0 3px 3px 0!important}
+[data-theme=dark] .ni-wrap.active::before{background:var(--grad-brand)!important}
+.sidebar .nbadge{box-shadow:none!important;animation:none!important;background:var(--bad)!important;color:#fff!important}
+.sidebar .sli{background:var(--grad-brand)!important;box-shadow:0 1px 2px rgba(37,99,235,.4)!important;border-radius:7px!important}
+.sbtm .tb.active{background:var(--grad-brand)!important;color:#fff!important}
+
+/* ---- CARDS: hairline, restrained shadow, no overflow-hidden sheen, gentle hover ---- */
+.card,.fsec{border-radius:var(--r)!important;border:1px solid var(--border)!important;box-shadow:var(--sh)!important;overflow:visible}
+.content .card:hover{box-shadow:var(--sh)!important;border-color:var(--border)!important;transform:none}
+
+/* ---- BUTTONS: primary = restrained brand gradient; remove sheen + hover lift ---- */
+.btn{border-radius:var(--rs)!important;font-weight:600;transition:background var(--tr),border-color var(--tr),box-shadow var(--tr)!important}
+.btn:hover{transform:none!important}
+.btn:active{transform:translateY(1px)!important}
+.btn-p,.btn.btn-p{background:var(--grad-brand)!important;border:1px solid transparent!important;color:#fff!important;box-shadow:0 1px 2px rgba(37,99,235,.35)!important}
+.btn-p::after{display:none!important;content:none!important}
+.btn-p:hover::after{animation:none!important}
+.btn-p:hover{filter:none!important;box-shadow:0 3px 10px -2px rgba(37,99,235,.5)!important;background:linear-gradient(100deg,#2159db 0%,#7232d6 100%)!important}
+.btn-s{background:var(--surface)!important;border:1px solid var(--border2)!important;color:var(--text)!important}
+.btn-s:hover{background:var(--surface2)!important;border-color:var(--border2)!important;color:var(--text)!important}
+.tbtn{border-radius:8px!important;font-weight:600}
+.tbtn:hover{transform:none!important;box-shadow:none!important;background:var(--surface2)!important;border-color:var(--border2)!important;color:var(--text)!important}
+.tbtn.primary{background:var(--grad-brand)!important;border:1px solid transparent!important;color:#fff!important}
+.tbtn.primary:hover{filter:none!important;box-shadow:0 3px 10px -2px rgba(37,99,235,.5)!important}
+
+/* ---- TABLES: hairline header + rows, no inset side-stripe on hover ---- */
+th{background:var(--surface2)!important;backdrop-filter:none!important;border-bottom:1px solid var(--border2)!important;text-transform:uppercase;letter-spacing:.02em;font-size:11px;color:var(--text3)}
+tbody tr{transition:background var(--tr)!important}
+tbody tr:hover{background:var(--surface2)!important;box-shadow:none!important}
+body.rtl tbody tr:hover{box-shadow:none!important}
+td{border-bottom:1px solid var(--border)!important}
+
+/* ---- FILTER CHIPS: active = soft accent (not full gradient glow) ---- */
+.fc{border-radius:999px!important;font-weight:600;transition:background var(--tr),border-color var(--tr),color var(--tr)!important}
+.fc:hover{transform:none!important;background:var(--surface2)!important;color:var(--text)!important}
+.fc.on{background:var(--accent-soft)!important;color:var(--accent-ink)!important;border:1px solid color-mix(in srgb,var(--accent) 30%,transparent)!important;box-shadow:none!important}
+[data-theme=dark] .fc.on{background:var(--al)!important;color:var(--accent)!important}
+
+/* ---- BADGES: semantic tint + label (icon supplied in markup) ---- */
+.badge{border-radius:999px;font-weight:600;letter-spacing:0;border:1px solid transparent}
+.bg{background:var(--ok-bg);color:var(--ok-ink);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.br{background:var(--bad-bg);color:var(--bad-ink);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.ba{background:var(--warn-bg);color:var(--warn-ink);border-color:color-mix(in srgb,var(--warn) 32%,transparent)}
+.bb{background:var(--accent-soft);color:var(--accent-ink);border-color:color-mix(in srgb,var(--accent) 28%,transparent)}
+.bp{background:var(--accent-soft);color:var(--accent-ink);border-color:color-mix(in srgb,var(--accent2) 30%,transparent)}
+.bt{background:var(--accent-soft);color:var(--accent-ink)}
+.bgy{background:var(--neutral-bg);color:var(--text3);border-color:var(--border2)}
+[data-theme=dark] .badge.bb{background:var(--al);color:var(--accent)}
+[data-theme=dark] .badge.bg{background:var(--ok-bg);color:var(--ok-ink)}
+[data-theme=dark] .badge.br{background:var(--bad-bg);color:var(--bad-ink)}
+[data-theme=dark] .badge.ba{background:var(--warn-bg);color:var(--warn-ink)}
+
+/* ---- PLACEHOLDERS: explicit muted ink (AA headroom, theme-aware) ---- */
+input::placeholder,textarea::placeholder,.fi::placeholder,.si::placeholder,.fta::placeholder{color:var(--text3)!important;opacity:1!important}
+
+/* ---- FOCUS: visible ring app-wide ---- */
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.fi:focus,.fsel:focus,.fsel2:focus,.fta:focus,.si:focus,input:focus,select:focus,textarea:focus{outline:none!important;border-color:var(--accent)!important;box-shadow:0 0 0 3px var(--accent-soft)!important}
+
+/* ---- MODALS: hairline + restrained ---- */
+.mo{background:rgba(10,16,34,.5)!important;backdrop-filter:blur(4px)!important}
+.md{border-radius:var(--rl)!important;box-shadow:var(--shl)!important;border:1px solid var(--border)!important;animation:none!important}
+.md-close:hover{transform:none!important}
+
+/* ---- TOASTS / scrollbar accents stay subtle ---- */
+.toast{border-radius:10px!important;box-shadow:var(--shl)!important;animation:none!important}
+*::-webkit-scrollbar-thumb:hover{background:var(--border2)!important}
+
+/* ---- KPI generic cards: hairline, no transform pop ---- */
+.kpi{border-radius:var(--r)!important;box-shadow:var(--sh)!important;border:1px solid var(--border)!important}
+.kpi:hover{transform:none!important;box-shadow:var(--sh)!important}
+
+/* ---- DASHBOARD KPI tiles: flatten the inset side-stripe glow → hairline + top accent dot via icon ---- */
+#page-dashboard .dr-kpi .dc{border:1px solid var(--border)!important;border-radius:var(--r)!important;background:var(--surface)!important;box-shadow:var(--sh)!important}
+#page-dashboard .dr-kpi .dc.dc-blue,#page-dashboard .dr-kpi .dc.dc-green,#page-dashboard .dr-kpi .dc.dc-red,#page-dashboard .dr-kpi .dc.dc-amber,#page-dashboard .dr-kpi .dc.dc-purple,#page-dashboard .dr-kpi .dc.dc-teal{background:var(--surface)!important;box-shadow:var(--sh)!important}
+body.rtl #page-dashboard .dr-kpi .dc.dc-blue,body.rtl #page-dashboard .dr-kpi .dc.dc-green,body.rtl #page-dashboard .dr-kpi .dc.dc-red,body.rtl #page-dashboard .dr-kpi .dc.dc-amber,body.rtl #page-dashboard .dr-kpi .dc.dc-purple,body.rtl #page-dashboard .dr-kpi .dc.dc-teal{box-shadow:var(--sh)!important}
+#page-dashboard .dr-kpi .dc:hover{transform:none!important;box-shadow:var(--shl)!important}
+/* semantic dot top-start of each KPI tile (replaces side-stripe) */
+#page-dashboard .dr-kpi .dc{position:relative}
+#page-dashboard .dr-kpi .dc::after{content:'';display:block!important;position:absolute;top:14px;inset-inline-start:0;width:3px;height:22px;border-radius:0 2px 2px 0;background:var(--accent)}
+#page-dashboard .dr-kpi .dc.dc-blue::after{background:var(--accent)}
+#page-dashboard .dr-kpi .dc.dc-green::after{background:var(--ok)}
+#page-dashboard .dr-kpi .dc.dc-red::after{background:var(--bad)}
+#page-dashboard .dr-kpi .dc.dc-amber::after{background:var(--warn)}
+#page-dashboard .dr-kpi .dc.dc-purple::after{background:var(--accent2)}
+#page-dashboard .dr-kpi .dc.dc-teal::after{background:var(--accent3)}
+
+/* kill remaining decorative sheen/glow keyframes on chrome */
+.empty .ei{animation:none!important}
+.page.active{animation:none!important}
+.content>.page.active>*{animation:none!important}
+
+/* ============================================================= */
+/* ===========  EVOLVE · DASHBOARD ribbon → flat KPI band  ===== */
+/* ===========  (override the dark Fraunces hero in place)  ==== */
+/* ============================================================= */
+/* numbers: JetBrains Mono, NOT Fraunces; wrap: system font, NOT Manrope */
+.exr-wrap{font-family:var(--fs)!important;gap:14px!important}
+body.rtl .exr-wrap{font-family:var(--far)!important}
+.exr-num{font-family:var(--fm)!important;font-weight:700!important;font-variant-numeric:tabular-nums!important;letter-spacing:-.01em!important}
+/* ribbon: flat surface, hairline, no gradient band, no glow, no radial wash */
+.exr-ribbon{background:var(--surface)!important;border:1px solid var(--border)!important;border-radius:var(--r)!important;padding:16px 18px!important;color:var(--text)!important;box-shadow:var(--sh)!important}
+.exr-ribbon::after{display:none!important;content:none!important}
+[data-theme=dark] .exr-ribbon{box-shadow:var(--sh)!important}
+.exr-top{margin-bottom:14px!important}
+.exr-eyebrow{color:var(--text3)!important;letter-spacing:.12em!important;font-weight:700!important}
+.exr-title{font-family:var(--fn)!important;font-weight:700!important;font-size:18px!important;color:var(--text)!important;line-height:1.2!important}
+.exr-title em{font-style:normal!important;color:var(--text3)!important}
+/* PDF + filter chrome → restrained, on-surface */
+.exr-pdf{background:var(--surface)!important;border:1px solid var(--border2)!important;color:var(--text)!important;border-radius:var(--rs)!important}
+.exr-pdf:hover{background:var(--surface2)!important}
+.exr-fl>label{color:var(--text3)!important;letter-spacing:.08em!important}
+.exr-sel{background:var(--surface)!important;border:1px solid var(--border2)!important;color:var(--text)!important;border-radius:var(--rs)!important}
+.exr-sel option{color:var(--text)!important;background:var(--surface)!important}
+.exr-qchip{background:var(--surface)!important;border:1px solid var(--border2)!important;color:var(--text2)!important;border-radius:var(--rs)!important}
+.exr-qchip.on{background:var(--accent-soft)!important;color:var(--accent-ink)!important;border-color:color-mix(in srgb,var(--accent) 30%,transparent)!important}
+[data-theme=dark] .exr-qchip.on{background:var(--al)!important;color:var(--accent)!important}
+/* heroes: hairline-divided KPI strip — NOT a card grid, NOT giant hero metrics */
+.exr-heroes{gap:0!important;border:1px solid var(--border)!important;border-radius:var(--r)!important;overflow:hidden!important;background:var(--surface)!important}
+.exr-hero{background:transparent!important;border:0!important;border-inline-start:1px solid var(--border)!important;border-radius:0!important;padding:13px 16px!important;min-height:0!important}
+.exr-heroes>.exr-hero:first-child{border-inline-start:0!important}
+.exr-hero:hover{transform:none!important;background:var(--surface2)!important}
+.exr-hero .k-l{color:var(--text3)!important;letter-spacing:.06em!important;font-weight:700!important}
+.exr-hero .k-v{font-size:21px!important;color:var(--text)!important}
+.exr-hero .k-s{color:var(--text2)!important;font-weight:500!important}
+.exr-prog{background:var(--neutral-bg)!important;height:6px!important;margin-top:10px!important}
+.exr-prog>i{background:var(--accent)!important}
+.exr-chip{color:var(--accent-ink)!important;background:var(--accent-soft)!important;border:1px solid color-mix(in srgb,var(--accent) 24%,transparent)!important}
+[data-theme=dark] .exr-chip{background:var(--al)!important;color:var(--accent)!important}
+.exr-hero .k-d{font-weight:700!important}
+@media(max-width:1050px){.exr-heroes{grid-template-columns:1fr}.exr-hero{border-inline-start:0!important;border-top:1px solid var(--border)!important}.exr-heroes>.exr-hero:first-child{border-top:0!important}}
+
+/* ============================================================= */
+/* ===========  EVOLVE · BID EVALUATION centerpiece  ========== */
+/* ============================================================= */
+.bidev-formula{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden}
+.bidev-formula .bf-head{display:flex;align-items:center;gap:9px;padding:11px 16px;border-bottom:1px solid var(--border)}
+.bidev-formula .bf-head svg{width:16px;height:16px;color:var(--text3);flex-shrink:0}
+.bidev-formula .bf-head h3{font-size:13px;font-weight:700;color:var(--text);font-family:var(--fn);letter-spacing:-.1px}
+.bidev-formula .bf-head .bf-basis{margin-inline-start:auto;font-size:11.5px;color:var(--text3);font-weight:500}
+.bidev-formula .bf-body{padding:13px 16px;display:flex;flex-direction:column;gap:9px}
+.bidev-formula .bf-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.bidev-formula .bf-l{font-size:11.5px;font-weight:600;color:var(--text3);min-width:104px;flex-shrink:0}
+.bidev-formula .bf-eq{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12px;color:var(--text2);line-height:1.6}
+.bidev-formula .bf-eq b{color:var(--text);font-weight:600}
+.bidev-formula .bf-eq .w{color:var(--accent-ink);font-weight:600}
+.bidev-formula .bf-eq .pill{display:inline-block;padding:1px 6px;border-radius:5px;background:var(--neutral-bg);color:var(--text2);font-size:11px;font-weight:600}
+
+.bidev-results{display:flex;flex-direction:column;gap:11px}
+.bidder{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;transition:border-color var(--tr),box-shadow var(--tr)}
+.bidder:focus-within{border-color:var(--border2)}
+/* winner — full-perimeter accent ring, NO side-stripe */
+.bidder.winner{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent),var(--shl)}
+.bidder.art19{border-color:color-mix(in srgb,var(--warn) 40%,var(--border))}
+.bidder.excluded{background:var(--surface2);opacity:.96}
+.bidder__main{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:14px 16px}
+.rankbadge{display:flex;flex-direction:column;align-items:center;gap:3px;width:50px;flex-shrink:0}
+.rankbadge .rnum{font-family:var(--fm);font-variant-numeric:tabular-nums;font-weight:700;font-size:18px;color:var(--text3);line-height:1}
+.rankbadge .rlabel{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+.rankbadge.gold{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:9px;padding:8px 0}
+.rankbadge.gold .rnum{color:var(--accent-ink)}
+.rankbadge.gold svg{width:18px;height:18px;color:var(--accent-ink)}
+.rankbadge.muted svg{width:18px;height:18px;color:var(--bad-ink)}
+.bidder__id{min-width:0}
+.bidder__name{font-weight:700;color:var(--text);font-size:15px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.bidder.excluded .bidder__name{color:var(--text2)}
+.tadawul{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid var(--border2);color:var(--text2);background:var(--surface)}
+.tadawul svg{width:11px;height:11px}
+.tadawul.yes{color:var(--ok-ink);border-color:color-mix(in srgb,var(--ok) 30%,transparent);background:var(--ok-bg)}
+.tadawul.no{color:var(--text3)}
+.bidder__meta{display:flex;align-items:center;gap:16px;margin-top:7px;flex-wrap:wrap}
+.metaitem{display:flex;flex-direction:column;gap:1px}
+.metaitem .mk{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.02em}
+.metaitem .mv{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:600;color:var(--text)}
+.metaitem .mv .npp{color:var(--accent-ink)}
+.bidder__score{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;min-width:140px}
+body.rtl .bidder__score{align-items:flex-start}
+.scorebig{display:flex;align-items:baseline;gap:6px}
+.scorebig .lbl{font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.03em}
+.scorebig .val{font-family:var(--fm);font-variant-numeric:tabular-nums;font-weight:700;font-size:28px;letter-spacing:-.02em;color:var(--text);line-height:1}
+.bidder.winner .scorebig .val{color:var(--accent-ink)}
+.scorebig .max{font-family:var(--fm);font-size:12px;color:var(--text3);font-weight:500}
+/* status chips (icon+label, semantic) */
+.bstatus{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;padding:4px 9px 4px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+.bstatus svg{width:13px;height:13px;flex-shrink:0}
+.bstatus.ok{color:var(--ok-ink);background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.bstatus.bad{color:var(--bad-ink);background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 30%,transparent)}
+.bstatus.warn{color:var(--warn-ink);background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 32%,transparent)}
+.bstatus.accent{color:var(--accent-ink);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+/* two-envelope breakdown band */
+.breakdown{border-top:1px solid var(--border);background:var(--surface2);display:grid;grid-template-columns:1.1fr 2fr;gap:0}
+.bidder.winner .breakdown{background:color-mix(in srgb,var(--accent-soft) 55%,var(--surface2))}
+.bk-tech,.bk-comm{padding:12px 16px}
+.bk-tech{border-inline-end:1px solid var(--border)}
+.bk-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.bk-title .sc{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--text);font-size:12.5px;font-weight:600}
+.bk-title .sc .of{color:var(--text3);font-weight:400}
+.meter{height:6px;border-radius:4px;background:var(--neutral-bg);position:relative;overflow:hidden}
+.meter__fill{position:absolute;inset-block:0;inset-inline-start:0;border-radius:4px;background:var(--accent)}
+.bk-techmeta{margin-top:7px;font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:11px;color:var(--text3)}
+.bk-techmeta b{color:var(--text2);font-weight:600}
+.subrows{display:flex;flex-direction:column;gap:8px;margin-top:2px}
+.subrow{display:grid;grid-template-columns:92px 1fr auto;align-items:center;gap:11px}
+.subrow .sk{font-size:11px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px}
+.subrow .sk .swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0;background:var(--accent)}
+.subrow .sk .swatch.price{background:var(--accent3)}
+.subrow .sk .swatch.lc{background:var(--accent2)}
+.subrow .sk .swatch.tad{background:var(--warn)}
+.subrow .sval{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:11.5px;font-weight:600;color:var(--text);text-align:end;white-space:nowrap}
+.subrow .sval .of{color:var(--text3);font-weight:400;font-size:10.5px}
+.subrow .smeter{height:5px;border-radius:3px;background:var(--neutral-bg);position:relative;overflow:hidden}
+.subrow .smeter i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:3px;display:block;background:var(--accent)}
+.subrow .smeter i.price{background:var(--accent3)}
+.subrow .smeter i.lc{background:var(--accent2)}
+.subrow .smeter i.tad{background:var(--warn)}
+.comm-only{padding:12px 16px;border-top:1px solid var(--border);background:var(--surface2);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.comm-only .col{font-size:11.5px;color:var(--text2)}
+.comm-only .col b{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--text);font-weight:600}
+/* exclusion reasons band */
+.exreasons{padding:12px 16px;border-top:1px solid var(--border);background:var(--bad-bg)}
+.exreasons-title{font-size:10.5px;font-weight:700;color:var(--bad-ink);text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.exreasons-title svg{width:14px;height:14px}
+.exlist{list-style:none;display:flex;flex-direction:column;gap:6px}
+.exlist li{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);line-height:1.45}
+.exlist li svg{width:14px;height:14px;color:var(--bad-ink);flex-shrink:0;margin-top:1px}
+/* award guidance banner — tinted, NO side-stripe */
+.bidev-award{display:flex;align-items:flex-start;gap:12px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.bidev-award.ok{background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 28%,transparent)}
+.bidev-award__icon{width:32px;height:32px;border-radius:8px;flex-shrink:0;display:grid;place-items:center;background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink)}
+.bidev-award.ok .bidev-award__icon{border-color:color-mix(in srgb,var(--ok) 30%,transparent);color:var(--ok-ink)}
+.bidev-award__icon svg{width:18px;height:18px}
+.bidev-award__title{font-weight:700;color:var(--text);font-size:13px;margin-bottom:3px}
+.bidev-award__text{font-size:12.5px;color:var(--text2);line-height:1.5}
+.bidev-award__text b{color:var(--text);font-weight:600}
+@media(max-width:820px){.breakdown{grid-template-columns:1fr}.bk-tech{border-inline-end:0;border-bottom:1px solid var(--border)}}
+@media(max-width:640px){.bidder__main{grid-template-columns:auto 1fr;gap:12px}.bidder__score{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;min-width:0;padding-top:11px;border-top:1px solid var(--border)}}
+
+/* ============================================================
+   v57 FEATURE 9 · FULL-SCREEN LANDING / LAUNCHPAD (Evolve-styled)
+   ============================================================ */
+body.home-mode .sidebar,
+body.home-mode .topbar{display:none!important}
+body.home-mode .main{margin-left:0!important;margin-right:0!important}
+body.home-mode .content{padding:0!important}
+body.home-mode #homeLanding{display:flex}
+#homeLanding{display:none;position:fixed;inset:0;z-index:300;flex-direction:column;
+  background:radial-gradient(1100px 640px at 12% -8%,rgba(37,99,235,.14),transparent 60%),radial-gradient(900px 600px at 92% 108%,rgba(124,58,237,.13),transparent 60%),var(--bg);
+  overflow:auto;}
+[data-theme=dark] #homeLanding{background:radial-gradient(1100px 640px at 12% -8%,rgba(37,99,235,.22),transparent 60%),radial-gradient(900px 600px at 92% 108%,rgba(124,58,237,.2),transparent 60%),var(--bg);}
+.hl-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:20px 34px;flex-wrap:wrap}
+.hl-brand{display:flex;align-items:center;gap:11px;cursor:pointer;user-select:none}
+.hl-mark{width:36px;height:36px;border-radius:10px;background:var(--grad-brand);display:grid;place-items:center;color:#fff;font-weight:800;font-size:14px;font-family:var(--fn);box-shadow:0 6px 18px -5px rgba(37,99,235,.5);flex-shrink:0}
+.hl-brandtext{display:flex;flex-direction:column;line-height:1.15}
+.hl-brandtext b{font-family:var(--fn);font-weight:700;font-size:16px;letter-spacing:-.02em;color:var(--text)}
+.hl-brandtext span{font-size:11px;color:var(--text3)}
+.hl-topact{display:flex;align-items:center;gap:8px}
+.hl-body{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:1180px;width:100%;margin:0 auto;padding:10px 34px 46px}
+.hl-hero{margin-bottom:24px}
+.hl-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-ink)}
+.hl-title{font-family:var(--fn);font-weight:800;font-size:clamp(26px,4.2vw,42px);letter-spacing:-.03em;line-height:1.05;color:var(--text);margin-top:8px}
+.hl-sub{font-size:14px;color:var(--text3);margin-top:9px;max-width:64ch}
+/* a real hierarchy: one wide hero Dashboard tile, then a section grid (NOT identical cards) */
+.hl-grid{display:grid;grid-template-columns:1.15fr 1fr 1fr;gap:16px}
+.hl-tile{position:relative;border:1px solid var(--border);background:var(--surface);border-radius:var(--rl);
+  padding:18px 18px 16px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:8px;
+  box-shadow:var(--sh);transition:transform .18s ease-out,box-shadow .18s ease-out,border-color .18s ease-out;overflow:hidden}
+.hl-tile:hover{transform:translateY(-3px);box-shadow:var(--shl);border-color:var(--border2)}
+.hl-tile:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.hl-tile.dash{grid-row:span 2;justify-content:space-between;
+  background:linear-gradient(150deg,color-mix(in srgb,var(--accent) 14%,var(--surface)),var(--surface) 62%)}
+.hl-ic{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:21px;
+  background:var(--accent-soft);color:var(--accent-ink);flex-shrink:0}
+.hl-tile.dash .hl-ic{width:50px;height:50px;font-size:25px;background:var(--grad-brand);color:#fff;box-shadow:0 6px 16px -5px rgba(37,99,235,.5)}
+.hl-tname{font-family:var(--fn);font-weight:700;font-size:16px;letter-spacing:-.01em;color:var(--text)}
+.hl-tile.dash .hl-tname{font-size:22px}
+.hl-tdesc{font-size:12.5px;color:var(--text3);line-height:1.5}
+.hl-tmeta{display:flex;align-items:center;gap:6px;margin-top:auto;font-size:11px;font-weight:600;color:var(--accent-ink)}
+.hl-tmeta svg{width:13px;height:13px}
+.hl-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:2px}
+.hl-chip{font-size:10px;font-weight:600;color:var(--text3);background:var(--surface2);border:1px solid var(--border);border-radius:999px;padding:2px 8px}
+/* sub-page (revealed) */
+.hl-sub-view{display:none;flex-direction:column;animation:hlIn .22s ease-out}
+body.home-mode.home-sub .hl-grid,
+body.home-mode.home-sub .hl-hero{display:none}
+body.home-mode.home-sub .hl-sub-view{display:flex}
+.hl-back{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;border:1px solid var(--border);background:var(--surface);
+  color:var(--text2);font-weight:600;font-size:13px;padding:8px 13px;border-radius:9px;cursor:pointer;margin-bottom:16px;transition:background var(--tr),border-color var(--tr)}
+.hl-back:hover{background:var(--surface-hover,var(--surface2));border-color:var(--border2);color:var(--text)}
+.hl-back svg{width:15px;height:15px}
+body.rtl .hl-back svg{transform:scaleX(-1)}
+.hl-sub-head{margin-bottom:16px}
+.hl-sub-title{font-family:var(--fn);font-weight:800;font-size:clamp(22px,3.4vw,32px);letter-spacing:-.02em;color:var(--text)}
+.hl-sub-desc{font-size:13px;color:var(--text3);margin-top:6px;max-width:60ch}
+.hl-subgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px}
+.hl-subtile{border:1px solid var(--border);background:var(--surface);border-radius:var(--r);padding:15px;cursor:pointer;
+  display:flex;gap:13px;align-items:flex-start;box-shadow:var(--sh);transition:transform .16s ease-out,box-shadow .16s ease-out,border-color .16s ease-out;text-align:start}
+.hl-subtile:hover{transform:translateY(-2px);box-shadow:var(--shl);border-color:var(--border2)}
+.hl-subtile:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.hl-subic{width:36px;height:36px;border-radius:9px;display:grid;place-items:center;font-size:18px;background:var(--accent-soft);color:var(--accent-ink);flex-shrink:0}
+.hl-subtext b{display:block;font-weight:700;font-size:13.5px;color:var(--text);margin-bottom:3px}
+.hl-subtext span{font-size:11.5px;color:var(--text3);line-height:1.45}
+@keyframes hlIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:900px){.hl-grid{grid-template-columns:1fr 1fr}.hl-tile.dash{grid-row:auto;grid-column:1/-1}}
+@media(max-width:600px){.hl-grid{grid-template-columns:1fr}.hl-body{padding:8px 18px 30px}.hl-top{padding:16px 18px}}
+@media(prefers-reduced-motion:reduce){.hl-tile,.hl-subtile,.hl-back{transition:none!important}.hl-sub-view{animation:none!important}.hl-tile:hover,.hl-subtile:hover{transform:none}}
 </style>
+<!-- v57 FEATURE 9 · FULL-SCREEN LANDING -->
+<div id="homeLanding" aria-label="LC Monitor Pro home">
+  <div class="hl-top">
+    <div class="hl-brand" onclick="homeGoLanding()" tabindex="0" role="button" title="Home" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();homeGoLanding();}">
+      <div class="hl-mark">LC</div>
+      <div class="hl-brandtext"><b>LC Monitor Pro</b><span class="ar">منصة المحتوى المحلي</span></div>
+    </div>
+    <div class="hl-topact">
+      <button class="tb" id="hlThemeBtn" onclick="homeToggleTheme()" title="Theme">☾</button>
+      <div class="tg" style="display:inline-flex"><button class="tb active" id="hlEN" onclick="homeSetLang('en')">EN</button><button class="tb" id="hlAR" onclick="homeSetLang('ar')">عربي</button></div>
+    </div>
+  </div>
+  <div class="hl-body">
+    <div class="hl-hero">
+      <div class="hl-eyebrow" id="hlEyebrow">Local Content Compliance</div>
+      <h1 class="hl-title" id="hlTitle">Where would you like to start?</h1>
+      <p class="hl-sub" id="hlHeroSub">Pick a stage of the procurement lifecycle, or jump straight to the executive dashboard.</p>
+    </div>
+    <div class="hl-grid" id="hlGrid"></div>
+    <div class="hl-sub-view" id="hlSubView">
+      <button class="hl-back" onclick="homeBack()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg><span id="hlBackLbl">Back</span></button>
+      <div class="hl-sub-head"><div class="hl-sub-title" id="hlSubTitle"></div><div class="hl-sub-desc" id="hlSubDesc"></div></div>
+      <div class="hl-subgrid" id="hlSubGrid"></div>
+    </div>
+  </div>
+</div>
+
 <div id="loginOverlay"><div class="login-card">
   <div class="login-logo">LC</div>
   <div class="login-title" data-i18n="Sign in to LC Monitor Pro">Sign in to LC Monitor Pro</div>
@@ -9763,6 +10335,7 @@ function a1Edit(id){
 }
 function renderMechWiz(){
   _v57EU(document.getElementById('a1EU'));
+  if(typeof mwRenderPool==='function')mwRenderPool();
   var tb=document.getElementById('a1Tbody');if(!tb)return;
   var pr=(typeof RFPS!=='undefined'?RFPS:[]).filter(function(r){return r.status==='processed';});
   tb.innerHTML=pr.length?pr.map(function(r){
@@ -9772,6 +10345,163 @@ function renderMechWiz(){
   }).join(''):'<tr><td colspan="10"><div class="empty"><div class="ei">📋</div><p>No processed RFPs yet — click <b>+ Start New Process</b> to identify a mechanism.</p></div></td></tr>';
 }
 window.a1Identify=a1Identify;window.a1Save=a1Save;window.a1Edit=a1Edit;window.renderMechWiz=renderMechWiz;window.a1OpenWizard=a1OpenWizard;window.a1CloseWizard=a1CloseWizard;window.a1ViewTC=a1ViewTC;window.a1DownloadTC=a1DownloadTC;window.a1ToggleThr=a1ToggleThr;window.a1HandleThrFile=a1HandleThrFile;window.a1UpdateThrBox=a1UpdateThrBox;
+
+/* ============================================================
+   v57 FEATURE 1+2 · RFP POOL on the Mechanism Identifier page
+   - "+ Create RFP" modal (4 manual fields + disabled AI placeholder)
+   - Drafts pool table w/ status chips + "▶ Start process" on draft rows
+   ============================================================ */
+var _mwPoolFilter='all';
+function mwPoolChip(s){
+  _mwPoolFilter=s||'all';
+  ['all','draft','opened','inprocess','ready'].forEach(function(k){var el=document.getElementById('mwc-'+k);if(el)el.classList.toggle('on',k===_mwPoolFilter);});
+  mwRenderPool();
+}
+window.mwPoolChip=mwPoolChip;
+function mwRenderPool(){
+  var tb=document.getElementById('mwPoolBody');if(!tb)return;
+  var poolStatuses={draft:1,opened:1,inprocess:1,ready:1};
+  var rows=(typeof RFPS!=='undefined'?RFPS:[]).filter(function(r){
+    if(!poolStatuses[r.status])return false;
+    if(_mwPoolFilter!=='all'&&r.status!==_mwPoolFilter)return false;
+    return true;
+  });
+  var stBadge={draft:['ba','Draft'],opened:['bp','Opened'],inprocess:['bb','In Process'],ready:['bg','Ready']};
+  tb.innerHTML=rows.length?rows.map(function(r){
+    var sb=stBadge[r.status]||['bt',r.status];
+    var act='';
+    if(r.status==='draft'){
+      act='<button class="btn btn-p btn-sm" title="'+L('Start the mechanism + BoQ process for this draft','بدء عملية الآلية وجدول الكميات لهذه المسودة')+'" onclick="mwStartProcess('+JSON.stringify(r.id)+')">▶ '+L('Start process','بدء المعالجة')+'</button>';
+    } else if(r.status==='ready'||r.status==='inprocess'||r.status==='opened'){
+      act='<button class="btn btn-s btn-sm" title="'+L('Open / continue this RFP','فتح / متابعة هذه المنافسة')+'" onclick="mwStartProcess('+JSON.stringify(r.id)+')">✏️ '+L('Edit','تعديل')+'</button>';
+    }
+    return '<tr>'
+      +'<td>'+escSub(r.ref||'—')+'</td>'
+      +'<td class="td-n">'+escSub(r.title||'Untitled RFP')+'</td>'
+      +'<td>'+escSub(r.endUser||'—')+'</td>'
+      +'<td class="r">'+_v57Money(r.value)+'</td>'
+      +'<td style="font-size:10px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+escSub(r.suggestedMech||'')+'">'+escSub(r.suggestedMech||'—')+'</td>'
+      +'<td><span class="badge '+sb[0]+'">'+sb[1]+'</span></td>'
+      +'<td>'+act+'</td></tr>';
+  }).join(''):'<tr><td colspan="7"><div class="empty"><div class="ei">🗂️</div><p>'+L('No RFPs in the pool. Click <b>+ Create RFP</b> to add a draft.','لا توجد منافسات في القائمة. اضغط <b>+ إنشاء منافسة</b> لإضافة مسودة.')+'</p></div></td></tr>';
+}
+window.mwRenderPool=mwRenderPool;
+function mwCreateRFP(){
+  var ex=document.getElementById('mwCreateModal');if(ex)ex.remove();
+  var d=document.createElement('div');d.className='mo open';d.id='mwCreateModal';
+  d.onclick=function(e){if(e.target===d)d.remove();};
+  d.innerHTML='<div class="md" style="max-width:560px"><div class="md-hd"><div class="md-title">📝 '+L('Create RFP','إنشاء منافسة')+'</div><button class="md-close" onclick="document.getElementById(\'mwCreateModal\').remove()">✕</button></div><div class="md-body">'
+    +'<div style="font-size:11px;color:var(--text2);margin:0 0 12px">'+L('Create a draft RFP. It is saved to the RFP Pool — start the mechanism + BoQ process later from the pool.','أنشئ مسودة منافسة. تُحفظ في قائمة المنافسات — ابدأ عملية الآلية وجدول الكميات لاحقاً من القائمة.')+'</div>'
+    +'<div class="fg2" style="gap:10px">'
+      +'<div class="fg"><label class="fl2">'+L('RFP Name','اسم المنافسة')+' <span class="req">*</span></label><input class="fi" id="mwcName" placeholder="RFP title"></div>'
+      +'<div class="fg"><label class="fl2">'+L('RFP Number','رقم المنافسة')+'</label><input class="fi" id="mwcNum" placeholder="RFP-2026-001"></div>'
+      +'<div class="fg"><label class="fl2">'+L('Estimated Value (SAR)','القيمة التقديرية (ر.س)')+' <span class="req">*</span></label><input class="fi" id="mwcValue" type="number" placeholder="0"></div>'
+      +'<div class="fg"><label class="fl2">'+L('End-User','الجهة المستفيدة')+'</label><select class="fsel2" id="mwcEU"><option value="">'+L('Select end-user…','اختر الجهة…')+'</option></select></div>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap">'
+      +'<button class="btn btn-p btn-sm" onclick="mwSaveRFP()">💾 '+L('Save Draft','حفظ المسودة')+'</button>'
+      +'<button class="btn btn-s btn-sm" disabled aria-disabled="true" style="opacity:.5;cursor:not-allowed;background:var(--surface2);color:var(--text3)" title="'+L('Coming soon — activated later','قريباً — يُفعَّل لاحقاً')+'">🤖 '+L('Import RFP data using AI','استيراد بيانات المنافسة بالذكاء الاصطناعي')+'</button>'
+    +'</div>'
+  +'</div></div>';
+  document.body.appendChild(d);
+  _v57EU(document.getElementById('mwcEU'));
+  if(typeof lang!=='undefined'&&lang==='ar'&&typeof applyLang==='function')setTimeout(function(){applyLang('ar');},0);
+}
+window.mwCreateRFP=mwCreateRFP;
+function mwSaveRFP(){
+  var name=((document.getElementById('mwcName')||{}).value||'').trim();
+  if(!name){toast(L('Enter the RFP name','أدخل اسم المنافسة'),'err');return;}
+  var num=((document.getElementById('mwcNum')||{}).value||'').trim();
+  var eu=(document.getElementById('mwcEU')||{}).value||'';
+  var val=parseFloat((document.getElementById('mwcValue')||{}).value)||0;
+  // reuse the newRFP() object shape; store DRAFT only (do NOT open the process)
+  var rec={id:uid(),title:name,ref:num,endUser:eu,scope:'',value:val,status:'draft',files:[],suggestedMech:'',mlnpItems:[],tc:'',boq:[],created:new Date().toISOString().split('T')[0]};
+  RFPS.push(rec);
+  if(typeof saveAll==='function')saveAll();else lsSet('lcRFPS',JSON.stringify(RFPS));
+  if(typeof logAudit==='function')logAudit('create','RFP draft created (pool): '+name);
+  toast(L('Draft RFP created','تم إنشاء مسودة المنافسة'),'ok');
+  var m=document.getElementById('mwCreateModal');if(m)m.remove();
+  mwRenderPool();
+}
+window.mwSaveRFP=mwSaveRFP;
+// Open the EXISTING multi-step RFP wizard form (page-rfp) pre-filled from this draft, set status 'inprocess'.
+function mwStartProcess(id){
+  var r=(RFPS||[]).find(function(x){return String(x.id)===String(id);});if(!r)return;
+  if(r.status==='awarded'){toast(L('This RFP has been awarded — it is locked.','تم ترسية هذه المنافسة — مقفلة.'),'info');return;}
+  // mark in-process (a draft becomes inprocess once the user starts working on its mechanism/BoQ)
+  if(r.status==='draft'||r.status==='opened'){r.status='inprocess';r.inProcessAt=new Date().toISOString();if(typeof saveAll==='function')saveAll();else lsSet('lcRFPS',JSON.stringify(RFPS));if(typeof logAudit==='function')logAudit('edit','RFP started (pool → wizard): '+(r.title||r.ref||r.id));}
+  // navigate to the RFP wizard page and reuse the existing form
+  nav('rfp',null);
+  setTimeout(function(){
+    if(typeof editRFP==='function')editRFP(r.id);
+    // editRFP may flip draft→opened; keep our 'inprocess' status
+    if(curRFP){curRFP.status='inprocess';if(typeof saveAll==='function')saveAll();}
+    if(typeof mwAdaptBoQColumns==='function')mwAdaptBoQColumns();
+  },60);
+}
+window.mwStartProcess=mwStartProcess;
+
+/* ============================================================
+   v57 FEATURE 4 · Mechanism-specific (adaptive) BoQ
+   Columns:
+     ALWAYS: #, Item Description, Qty, UoM, Estimated Cost, Nature
+     +Origin (Local/Foreign)  when mech includes NPP or ML
+     +Mandatory + ML/Etimad Code  when mech includes ML
+   Data shape unchanged (rfpBoQ rows keep desc/nature/qty/uom/cost/origin/isMandatory/mlCode).
+   ============================================================ */
+function _mwBoQMech(){
+  var m=(typeof curRFP!=='undefined'&&curRFP)?(curRFP.suggestedMech||curRFP._wizardMech||''):'';
+  return (typeof mechClass==='function')?mechClass(m):{base:'none',npp:false,ml:false};
+}
+function mwAdaptBoQColumns(){
+  var head=document.getElementById('boqHead');if(!head)return;
+  var cl=_mwBoQMech();
+  var showOrigin=!!(cl.npp||cl.ml), showML=!!cl.ml;
+  var ths='<tr><th>#</th><th>Item Description</th><th>Qty</th><th>UoM</th><th>Est. Cost (SAR)</th><th>Nature</th>';
+  if(showOrigin)ths+='<th>Origin</th>';
+  if(showML)ths+='<th>Mandatory List</th>';
+  ths+='<th></th></tr>';
+  head.innerHTML=ths;
+}
+window.mwAdaptBoQColumns=mwAdaptBoQColumns;
+// Adaptive renderer (final override — supersedes the V30 origin/ML renderer for the RFP wizard BoQ)
+renderBoQ=function(){
+  var el=document.getElementById('boqBody');if(!el)return;
+  mwAdaptBoQColumns();
+  var cl=_mwBoQMech();
+  var showOrigin=!!(cl.npp||cl.ml), showML=!!cl.ml;
+  var nat=(typeof curRFP!=='undefined'&&curRFP&&curRFP._boqNature)||'mixed';
+  var uoms=(typeof UOM_LIST!=='undefined')?UOM_LIST:['Lump Sum','Each','Unit'];
+  el.innerHTML=(typeof rfpBoQ!=='undefined'?rfpBoQ:[]).map(function(r,i){
+    var no='';
+    if(nat==='services')no='<option value="services" selected>Services</option>';
+    else if(nat==='goods')no='<option value="goods" selected>Goods</option>';
+    else no='<option value="services"'+(r.nature==='services'?' selected':'')+'>Services</option><option value="goods"'+(r.nature==='goods'?' selected':'')+'>Goods</option>';
+    var td='<tr><td>'+(i+1)+'</td>'
+      +'<td><input class="fi" style="font-size:11px;padding:4px 7px" value="'+((r.desc||'').replace(/"/g,'&quot;'))+'" onchange="rfpBoQ['+i+'].desc=this.value"/></td>'
+      +'<td><input class="fi" type="number" style="width:60px;font-size:11px;padding:4px" value="'+(r.qty||1)+'" onchange="rfpBoQ['+i+'].qty=parseFloat(this.value)||1"/></td>'
+      +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ['+i+'].uom=this.value">'+uoms.map(function(u){return '<option'+(u===r.uom?' selected':'')+'>'+u+'</option>';}).join('')+'</select></td>'
+      +'<td><input class="fi" type="number" style="width:100px;font-size:11px;padding:4px" value="'+(r.cost||0)+'" onchange="rfpBoQ['+i+'].cost=parseFloat(this.value)||0"/></td>'
+      +'<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ['+i+'].nature=this.value">'+no+'</select></td>';
+    if(showOrigin){
+      var oo='<option value="Local"'+(r.origin==='Local'||!r.origin?' selected':'')+'>Local</option><option value="Foreign"'+(r.origin==='Foreign'?' selected':'')+'>Foreign</option>';
+      td+='<td><select class="fsel2" style="font-size:11px;padding:4px" onchange="rfpBoQ['+i+'].origin=this.value">'+oo+'</select></td>';
+    }
+    if(showML){
+      var mc=r.isMandatory?'checked':'';
+      var mlc=r.isMandatory?'<input class="fi" style="font-size:10px;padding:2px 5px;width:120px;margin-top:3px" placeholder="ML / Etimad Code" title="Mandatory List / Etimad code" value="'+((r.mlCode||'').replace(/"/g,'&quot;'))+'" onchange="rfpBoQ['+i+'].mlCode=this.value"/>':'';
+      td+='<td style="text-align:center"><label style="display:flex;flex-direction:column;align-items:center;gap:2px"><input type="checkbox" '+mc+' onchange="rfpBoQ['+i+'].isMandatory=this.checked;renderBoQ()"/>'+mlc+'</label></td>';
+    }
+    td+='<td><button class="mb del" onclick="removeBoQRow('+i+')">X</button></td></tr>';
+    return td;
+  }).join('');
+};
+window.renderBoQ=renderBoQ;
+// re-render the BoQ after a mechanism is accepted so the adaptive columns appear immediately
+(function(){
+  if(typeof acceptWizardMech==='function'){var _oAcc=acceptWizardMech;acceptWizardMech=function(){_oAcc.apply(this,arguments);if(typeof renderBoQ==='function')renderBoQ();};window.acceptWizardMech=acceptWizardMech;}
+  if(typeof acceptWizardMechChoice==='function'){var _oAcc2=acceptWizardMechChoice;acceptWizardMechChoice=function(){_oAcc2.apply(this,arguments);if(typeof renderBoQ==='function')renderBoQ();};window.acceptWizardMechChoice=acceptWizardMechChoice;}
+})();
 
 /* ===== Mandatory List Identifier ===== */
 var _a2Boq=[],_a2RfpId=null;
@@ -10456,6 +11186,153 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
 
   renderDashboard=_exRender; window.renderDashboard=_exRender;
   try{ if(document.getElementById('dashKPIs')&&(typeof curPage==='undefined'||curPage==='dashboard'))_exRender(); }catch(e){}
+})();
+</script>
+
+<script>
+/* ============================================================
+   v57 FEATURE 9 · FULL-SCREEN LANDING / LAUNCHPAD — behaviour
+   ============================================================ */
+(function(){
+  function L(en,ar){return (typeof lang!=='undefined'&&lang==='ar')?ar:en;}
+  // section model: each section has an icon, bilingual name + brief, and sub-sections (nav key + icon + name + brief)
+  function HOME_SECTIONS(){return [
+    {icon:'📄',en:'Pre-Tendering',ar:'ما قبل الطرح',
+     enD:'Identify the right LCGPA mechanism and the Mandatory-List items before issuing the RFP.',
+     arD:'حدّد آلية المحتوى المحلي المناسبة وبنود القائمة الإلزامية قبل طرح المنافسة.',
+     subs:[
+       {key:'mechwiz',icon:'🧭',en:'Mechanism Identifier',ar:'مُحدِّد الآلية',enD:'Decision-tree wizard that recommends the LCGPA mechanism and builds the RFP BoQ.',arD:'معالج شجرة القرار الذي يوصي بالآلية ويبني جدول الكميات.'},
+       {key:'mlwiz',icon:'📋',en:'Mandatory List Identifier',ar:'مُحدِّد القائمة الإلزامية',enD:'Map the RFP BoQ to the LCGPA Mandatory List with Etimad codes.',arD:'مطابقة جدول الكميات مع القائمة الإلزامية ورموز اعتماد.'}
+     ]},
+    {icon:'⚖️',en:'Awarding',ar:'الترسية',
+     enD:'Evaluate bids under the chosen mechanism, rank bidders and award the winning offer.',
+     arD:'قيّم العطاءات وفق الآلية المختارة ورتّب العارضين ورسِّ العرض الفائز.',
+     subs:[
+       {key:'evalassist',icon:'⚖️',en:'Evaluation Assistant',ar:'مساعد التقييم',enD:'Score and rank bidders, apply exclusions, and finalize the award.',arD:'تقييم وترتيب العارضين وتطبيق الاستبعادات وإتمام الترسية.'}
+     ]},
+    {icon:'📊',en:'Monitoring — Contracts',ar:'المتابعة — العقود',
+     enD:'Track LC achievement, reporting cadence, receiving and penalty exposure across active contracts.',
+     arD:'تتبّع إنجاز المحتوى المحلي ودورية التقارير والاستلام والتعرض للغرامات عبر العقود النشطة.',
+     subs:[
+       {key:'contracts',icon:'📄',en:'Contracts & Monitoring',ar:'العقود والمتابعة',enD:'The system of record for active Local-Content contracts.',arD:'السجل الرسمي لعقود المحتوى المحلي النشطة.'},
+       {key:'penalties',icon:'⚠️',en:'Penalties',ar:'الغرامات',enD:'Penalty exposure, breakdowns and the penalty-letter workflow.',arD:'التعرض للغرامات وتفاصيلها وسير إشعار الغرامة.'},
+       {key:'review',icon:'🗂️',en:'Reports Review',ar:'مراجعة التقارير',enD:'Approve or push back evidence and reports received from end-users.',arD:'اعتماد أو إعادة الإثباتات والتقارير الواردة من الجهات.'},
+       {key:'receiving',icon:'📦',en:'Receiving',ar:'الاستلام',enD:'Receive due reports and goods deliveries with national-product evidence.',arD:'استلام التقارير المستحقة وتسليمات السلع مع إثبات المنتج الوطني.'}
+     ]},
+    {icon:'🏭',en:'Monitoring — Suppliers & Certificates',ar:'المتابعة — الموردون والشهادات',
+     enD:'Manage the supplier registry, certificates, submissions, requirements, evaluation and blacklisting.',
+     arD:'إدارة سجل الموردين والشهادات والعروض والمتطلبات والتقييم والقائمة السوداء.',
+     subs:[
+       {key:'suppliers',icon:'🏭',en:'Suppliers Registry',ar:'سجل الموردين',enD:'Registered suppliers, LC certificates and contacts.',arD:'الموردون المسجّلون وشهادات المحتوى المحلي وجهات الاتصال.'},
+       {key:'certs',icon:'🏅',en:'Certificates',ar:'الشهادات',enD:'Track LCGPA certificates and their validity.',arD:'تتبّع شهادات المحتوى المحلي وصلاحيتها.'},
+       {key:'subs',icon:'📨',en:'Supplier Submissions',ar:'عروض الموردين',enD:'Supplier bid submissions and their BoQ responses.',arD:'عروض الموردين وردود جدول الكميات.'},
+       {key:'supreq',icon:'📌',en:'Supplier LC Requirements',ar:'متطلبات المحتوى المحلي',enD:'Per-supplier Local-Content requirements and acknowledgements.',arD:'متطلبات المحتوى المحلي لكل مورّد والإقرارات.'},
+       {key:'supeval',icon:'🏆',en:'Supplier Evaluation',ar:'تقييم الموردين',enD:'Score supplier performance across delivery metrics.',arD:'تقييم أداء الموردين عبر مؤشرات التسليم.'},
+       {key:'blacklist',icon:'🚫',en:'Supplier Blacklisting',ar:'القائمة السوداء',enD:'Manage blacklisted suppliers and the rules behind it.',arD:'إدارة الموردين المحظورين والقواعد المرتبطة.'}
+     ]}
+  ];}
+
+  function _arrow(){return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';}
+
+  window.homeRenderLanding=function(){
+    var grid=document.getElementById('hlGrid');if(!grid)return;
+    // localize hero
+    var eb=document.getElementById('hlEyebrow');if(eb)eb.textContent=L('Local Content Compliance','الامتثال للمحتوى المحلي');
+    var tt=document.getElementById('hlTitle');if(tt)tt.textContent=L('Where would you like to start?','من أين تودّ البدء؟');
+    var hs=document.getElementById('hlHeroSub');if(hs)hs.textContent=L('Pick a stage of the procurement lifecycle, or jump straight to the executive dashboard.','اختر مرحلة من دورة المشتريات، أو انتقل مباشرة إلى لوحة المعلومات التنفيذية.');
+    var secs=HOME_SECTIONS();
+    var html='';
+    // Dashboard DIRECT tile (wide, distinct hierarchy)
+    html+='<button class="hl-tile dash" onclick="homeGoDashboard()">'
+      +'<div><div class="hl-ic">⬛</div>'
+      +'<div class="hl-tname" style="margin-top:14px">'+L('Executive Dashboard','لوحة المعلومات التنفيذية')+'</div>'
+      +'<div class="hl-tdesc" style="margin-top:6px">'+L('Portfolio KPIs, compliance, penalty exposure and alerts — at a glance.','مؤشرات المحفظة والامتثال والتعرض للغرامات والتنبيهات — في لمحة.')+'</div></div>'
+      +'<div class="hl-tmeta">'+L('Open dashboard','فتح اللوحة')+' '+_arrow()+'</div>'
+      +'</button>';
+    secs.forEach(function(s,i){
+      var chips=s.subs.map(function(sub){return '<span class="hl-chip">'+(lang==='ar'?sub.ar:sub.en)+'</span>';}).join('');
+      html+='<button class="hl-tile" onclick="homeOpenSection('+i+')">'
+        +'<div class="hl-ic">'+s.icon+'</div>'
+        +'<div class="hl-tname">'+L(s.en,s.ar)+'</div>'
+        +'<div class="hl-tdesc">'+L(s.enD,s.arD)+'</div>'
+        +'<div class="hl-chips">'+chips+'</div>'
+        +'<div class="hl-tmeta">'+s.subs.length+' '+L('sections','أقسام')+' '+_arrow()+'</div>'
+        +'</button>';
+    });
+    grid.innerHTML=html;
+  };
+
+  window.homeOpenSection=function(i){
+    var s=HOME_SECTIONS()[i];if(!s)return;
+    document.getElementById('hlSubTitle').textContent=L(s.en,s.ar);
+    document.getElementById('hlSubDesc').textContent=L(s.enD,s.arD);
+    var bl=document.getElementById('hlBackLbl');if(bl)bl.textContent=L('Back','رجوع');
+    var sg=document.getElementById('hlSubGrid');
+    sg.innerHTML=s.subs.map(function(sub){
+      return '<button class="hl-subtile" onclick="homeNav(\''+sub.key+'\')">'
+        +'<div class="hl-subic">'+sub.icon+'</div>'
+        +'<div class="hl-subtext"><b>'+L(sub.en,sub.ar)+'</b><span>'+L(sub.enD,sub.arD)+'</span></div>'
+        +'</button>';
+    }).join('');
+    document.body.classList.add('home-sub');
+    var sv=document.getElementById('hlSubView');if(sv)sv.scrollTop=0;
+  };
+  window.homeBack=function(){document.body.classList.remove('home-sub');};
+
+  // landing theme + language controls (sync with the sidebar controls)
+  window.homeToggleTheme=function(){
+    var dark=document.documentElement.getAttribute('data-theme')==='dark';
+    var btn=document.getElementById(dark?'btnL':'btnD');
+    if(btn&&typeof setTheme==='function')setTheme(dark?'light':'dark',btn);
+    else document.documentElement.setAttribute('data-theme',dark?'':'dark');
+  };
+  window.homeSetLang=function(l){
+    var sb=document.getElementById(l==='ar'?'btnAR':'btnEN');
+    if(sb&&typeof setLang==='function')setLang(l,sb);
+    else if(typeof setLang==='function'){lang=l;document.body.classList.toggle('rtl',l==='ar');if(typeof applyLang==='function')applyLang(l);}
+    var en=document.getElementById('hlEN'),ar=document.getElementById('hlAR');
+    if(en)en.classList.toggle('active',l!=='ar');if(ar)ar.classList.toggle('active',l==='ar');
+    homeRenderLanding();
+  };
+
+  window.homeGoLanding=function(){
+    document.body.classList.remove('home-sub');
+    document.body.classList.add('home-mode');
+    homeRenderLanding();
+    try{window.scrollTo(0,0);}catch(e){}
+  };
+  window.homeGoDashboard=function(){ homeNav('dashboard'); };
+  // navigate to a real page → leave home-mode, then run the normal nav()
+  window.homeNav=function(key){
+    document.body.classList.remove('home-mode','home-sub');
+    if(typeof nav==='function')nav(key,null);
+    // mark the matching sidebar item active
+    try{var items=document.querySelectorAll('.sidebar .ni-wrap');items.forEach(function(el){if((el.getAttribute('onclick')||'').indexOf("nav('"+key+"'")>=0){document.querySelectorAll('.ni-wrap').forEach(function(x){x.classList.remove('active');});el.classList.add('active');}});}catch(e){}
+  };
+
+  // brand logo (sidebar) → return to the landing
+  function _wireBrand(){
+    var logo=document.getElementById('sidebarLogo');
+    if(logo&&!logo._homeWired){logo.style.cursor='pointer';logo.title='Home';logo.addEventListener('click',function(){homeGoLanding();});logo._homeWired=true;}
+    var title=document.getElementById('sidebarTitle');
+    if(title&&!title._homeWired){title.style.cursor='pointer';title.title='Home';title.addEventListener('click',function(){homeGoLanding();});title._homeWired=true;}
+  }
+
+  // re-localize the landing whenever language flips
+  if(typeof window.applyLang==='function'){
+    var _oAL=window.applyLang;
+    window.applyLang=function(){var r=_oAL.apply(this,arguments);try{if(document.body.classList.contains('home-mode'))homeRenderLanding();}catch(e){}return r;};
+  }
+
+  // SHOW LANDING ON EVERY APP OPEN (after the sign-in gate auto-resolves)
+  window.addEventListener('load',function(){
+    setTimeout(function(){
+      _wireBrand();
+      document.body.classList.add('home-mode');
+      homeRenderLanding();
+      if(typeof lang!=='undefined'&&lang==='ar'){var en=document.getElementById('hlEN'),ar=document.getElementById('hlAR');if(en)en.classList.remove('active');if(ar)ar.classList.add('active');}
+    },260);
+  });
 })();
 </script>
 

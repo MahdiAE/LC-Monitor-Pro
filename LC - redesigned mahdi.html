@@ -6,7 +6,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232563eb'/><text x='32' y='45' font-size='32' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'>LC</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
 <script src="vendor/chart.umd.min.js"></script>
 <script>window.Chart||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>');</script>
 <script src="vendor/xlsx.full.min.js"></script>
@@ -15,38 +15,42 @@
 <script>window.PDFLib||document.write('<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');</script>
 <style>
 :root{
-  /* Boardroom palette — light-first, hairline rules, gradient as jewelry only */
-  --bg:oklch(0.985 0.002 255);--surface:oklch(1 0 0);--surface2:oklch(0.965 0.004 255);--surface3:oklch(0.945 0.005 255);
-  --border:oklch(0.905 0.006 255);--border2:oklch(0.840 0.010 255);
-  --accent:oklch(0.546 0.215 262);--al:oklch(0.946 0.022 262);--accent2:oklch(0.541 0.247 293);--accent3:oklch(0.455 0.110 155);
-  --warn:oklch(0.470 0.100 70);--danger:oklch(0.505 0.180 27);--info:oklch(0.480 0.150 240);
-  --gold:#b7791f;
-  --text:oklch(0.235 0.030 262);--text2:oklch(0.430 0.022 262);--text3:oklch(0.510 0.018 262);
-  --sh:0 1px 2px rgba(15,30,70,.04);
-  --shl:0 16px 48px -16px rgba(15,30,70,.20);
-  --r:8px;--rs:5px;--rl:14px;--sb:236px;
-  --fn:'Bricolage Grotesque',sans-serif;--far:'IBM Plex Sans Arabic',sans-serif;--fm:'JetBrains Mono',monospace;
+  /* EVOLVE palette — light-first, hairline rules, blue→violet gradient as restrained accent only */
+  --bg:#f4f5f7;--surface:#ffffff;--surface2:#fafbfc;--surface3:#f6f8fd;
+  --border:#e3e6ec;--border2:#cdd2db;
+  --accent:#2563eb;--al:#eef2ff;--accent2:#7c3aed;--accent3:#0f8a4a;
+  --warn:#9a6400;--danger:#c0241f;--info:#2563eb;
+  --gold:#9a6400;
+  --text:#171a21;--text2:#3d4350;--text3:#5a6373;
+  --sh:0 1px 2px rgba(16,21,33,.05);
+  --shl:0 16px 48px -16px rgba(16,21,33,.20);
+  --r:10px;--rs:7px;--rl:14px;--sb:236px;
+  --fn:'Bricolage Grotesque','IBM Plex Sans Arabic',sans-serif;--far:'IBM Plex Sans Arabic','Inter',sans-serif;--fm:'JetBrains Mono',ui-monospace,monospace;
   --font-display:'Bricolage Grotesque','IBM Plex Sans Arabic',sans-serif;
-  --font-ui:'IBM Plex Sans','IBM Plex Sans Arabic',sans-serif;
-  --accent-ink:oklch(0.480 0.200 262);
-  --ok-tint:oklch(0.950 0.026 155);--warn-tint:oklch(0.955 0.030 85);--bad-tint:oklch(0.950 0.020 27);--info-tint:oklch(0.945 0.020 240);
-  --warn-bar:oklch(0.700 0.130 75);--bad-bar:oklch(0.580 0.190 27);
-  --grad-brand:linear-gradient(135deg,oklch(0.546 0.215 262) 0%,oklch(0.541 0.247 293) 100%);
+  --font-ui:'Inter','IBM Plex Sans Arabic',sans-serif;
+  --accent-ink:#1d4ed8;
+  --ok-tint:#e7f6ec;--warn-tint:#fbf0d9;--bad-tint:#fbe7e6;--info-tint:#eef2ff;
+  --warn-bar:#9a6400;--bad-bar:#c0241f;
+  --brand-1:#2563eb;--brand-2:#7c3aed;
+  --grad-brand:linear-gradient(100deg,#2563eb 0%,#7c3aed 100%);
   --grad-side:var(--bg);
+  /* status accent series for bid-eval meters */
+  --series-tech:#3b6fd6;--series-comm:#7c5fd6;--series-price:#2f8f63;--series-lc:#7c5fd6;--series-tad:#b08400;
   --tr:.16s cubic-bezier(.22,1,.36,1)}
 [data-theme=dark]{
-  /* refined deep navy */
-  --bg:oklch(0.165 0.022 262);--surface:oklch(0.200 0.024 262);--surface2:oklch(0.235 0.026 262);--surface3:oklch(0.270 0.028 262);
-  --border:oklch(0.285 0.022 262);--border2:oklch(0.350 0.024 262);
-  --accent:oklch(0.680 0.160 262);--al:oklch(0.280 0.060 262);--accent2:oklch(0.700 0.180 293);--accent3:oklch(0.760 0.130 155);
-  --warn:oklch(0.800 0.120 80);--danger:oklch(0.740 0.150 27);--info:oklch(0.750 0.110 240);
-  --gold:oklch(0.800 0.110 80);
-  --text:oklch(0.940 0.008 262);--text2:oklch(0.760 0.016 262);--text3:oklch(0.650 0.020 262);
-  --sh:0 1px 2px rgba(0,0,0,.30);
+  /* EVOLVE dark — neutral ink surfaces, AA */
+  --bg:#0c0e13;--surface:#14171d;--surface2:#181c23;--surface3:#1b2230;
+  --border:#262b34;--border2:#363d49;
+  --accent:#5b8bff;--al:#1a2540;--accent2:#a489ee;--accent3:#34c878;
+  --warn:#e0a93a;--danger:#f0716c;--info:#5b8bff;
+  --gold:#e0a93a;
+  --text:#eef0f4;--text2:#c3c9d4;--text3:#9aa2b1;
+  --sh:0 1px 2px rgba(0,0,0,.4);
   --shl:0 24px 70px -16px rgba(0,0,0,.7);
-  --accent-ink:oklch(0.730 0.140 262);
-  --ok-tint:oklch(0.270 0.040 155);--warn-tint:oklch(0.280 0.040 80);--bad-tint:oklch(0.280 0.045 27);--info-tint:oklch(0.270 0.040 240);
-  --warn-bar:oklch(0.720 0.130 80);--bad-bar:oklch(0.640 0.190 27);
+  --accent-ink:#86a8ff;
+  --ok-tint:#0e2a1c;--warn-tint:#2c220c;--bad-tint:#2e1413;--info-tint:#1a2540;
+  --warn-bar:#e0a93a;--bad-bar:#f0716c;
+  --series-tech:#6f97e6;--series-comm:#a489ee;--series-price:#4cae82;--series-lc:#a489ee;--series-tad:#d3a73f;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
@@ -8605,52 +8609,163 @@ calcBids=function(){
   var sA=isNPP||isSME||isHybrid;
   var sL=showLC||isHybrid;
 
-  // Award guidance
+  // Award guidance \u2014 Evolve banner (semantic info, no side-stripe)
   var awardGuide="";
   if(sL){
-    awardGuide='<div style="background:rgba(5,150,105,0.08);border:1.5px solid var(--accent3);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:11px"><strong>\u2139\ufe0f Award Guidance:</strong> Bidders ranked by <strong>highest combined score</strong> (Price + LC'+(tadawulOn?' + Tadawul':'')+').'+(isThreshold?' Threshold enforced for: '+(blEnforced?'Baseline ':'')+(tgEnforced?'Target ':'')+'.':'')+' Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.</div>';
+    awardGuide='<div class="award-band"><div class="ab-ic">\u2139\ufe0f</div><div class="ab-body"><strong>'+L('Award guidance','\u062A\u0648\u0635\u064A\u0629 \u0627\u0644\u062A\u0631\u0633\u064A\u0629')+':</strong> '+L('Bidders ranked by','\u064A\u064F\u0631\u062A\u064E\u0651\u0628 \u0627\u0644\u0639\u0627\u0631\u0636\u0648\u0646 \u062D\u0633\u0628')+' <strong>'+L('highest combined score','\u0623\u0639\u0644\u0649 \u062F\u0631\u062C\u0629 \u0645\u062C\u0645\u0651\u0639\u0629')+'</strong> (Price + LC'+(tadawulOn?' + Tadawul':'')+').'+(isThreshold?' '+L('Threshold enforced for','\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u062F\u0646\u0649 \u0645\u064F\u0641\u0639\u064E\u0651\u0644 \u0644\u0640')+': '+(blEnforced?'Baseline ':'')+(tgEnforced?'Target ':'')+'.':'')+' '+L('Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.','\u064A\u064F\u0641\u0635\u064E\u0644 \u0627\u0644\u062A\u0639\u0627\u062F\u0644 \u0628\u0640: \u0623\u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u2192 \u0623\u0639\u0644\u0649 \u0645\u0633\u062A\u0647\u062F\u0641 \u2192 \u0623\u0639\u0644\u0649 \u0639\u0644\u0627\u0648\u0629 \u0645\u0646\u062A\u062C \u0648\u0637\u0646\u064A.')+'</div></div>';
   } else if(isNPP&&!showLC){
-    awardGuide='<div style="background:rgba(59,130,246,0.08);border:1.5px solid var(--accent);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:11px"><strong>\u2139\ufe0f Award Guidance (NPP):</strong> Ranked by <strong>Adjusted Bid Price</strong> (lowest wins). Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.</div>';
+    awardGuide='<div class="award-band"><div class="ab-ic">\u2139\ufe0f</div><div class="ab-body"><strong>'+L('Award guidance (NPP)','\u062A\u0648\u0635\u064A\u0629 \u0627\u0644\u062A\u0631\u0633\u064A\u0629 (\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A)')+':</strong> '+L('Ranked by','\u064A\u064F\u0631\u062A\u064E\u0651\u0628 \u062D\u0633\u0628')+' <strong>'+L('Adjusted Bid Price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</strong> ('+L('lowest wins','\u0627\u0644\u0623\u062F\u0646\u0649 \u064A\u0641\u0648\u0632')+'). '+L('Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.','\u064A\u064F\u0641\u0635\u064E\u0644 \u0627\u0644\u062A\u0639\u0627\u062F\u0644 \u0628\u0640: \u0623\u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u2192 \u0623\u0639\u0644\u0649 \u0645\u0633\u062A\u0647\u062F\u0641 \u2192 \u0623\u0639\u0644\u0649 \u0639\u0644\u0627\u0648\u0629 \u0645\u0646\u062A\u062C \u0648\u0637\u0646\u064A.')+'</div></div>';
   }
 
-  // Results display
-  document.getElementById("bidResults").innerHTML=awardGuide+fin.map(function(b){
-    var qi=b.rank||999,isW=!b.excluded&&qi===1&&!b.art19Shifted;
-    var cd='<div class="'+(b.excluded?"excluded-overlay ":"")+(b.art19Shifted&&!b.excluded?"excluded-overlay ":"")+'bid-card" style="position:relative">';
+  function esc0(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function pctClamp(v){return Math.max(0,Math.min(100,v||0));}
 
-    if(b.excluded) cd+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:var(--danger);color:#fff;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700">\uD83D\uDEAB EXCLUDED</div>';
-    if(b.art19Shifted&&!b.excluded) cd+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:#f59e0b;color:#fff;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700">Art.19</div>';
-
-    cd+='<div class="bid-card-hd"><div style="display:flex;align-items:center;gap:8px">';
-    if(isW) cd+='<span style="font-size:18px">\uD83C\uDFC6</span>';
-    if(!b.excluded) cd+='<span style="font-size:18px;font-weight:800;color:var(--text3)">#'+qi+'</span>';
-    cd+='<div><div class="bid-name">'+b.name+'</div>'+(b.notes?'<div style="font-size:10px;color:var(--text3)">'+b.notes+'</div>':'')+'</div></div>';
-    cd+='<div class="bid-score" style="color:'+(b.excluded?"var(--danger)":b.art19Shifted?"#f59e0b":isW?"var(--accent3)":"var(--text)")+'">'+(b.excluded?"Excl.":(sL?b.score.toFixed(1):fSAR(Math.round(b.adjustedPrice))))+'</div></div>';
-
-    if(b.excluded){
-      cd+='<div style="font-size:11px;color:var(--danger);padding:4px 0">'+b.exclusionReasons.join(", ")+'</div>';
+  // ---- Evolve header context bar: END-USER / MECHANISM / BUDGET / CONFIRMED WEIGHTS ----
+  var ctxBar="";
+  (function(){
+    if(!curBid) return;
+    var _eu=curBid.endUser||"";
+    if(!_eu && curBid.rfpId){ try{ var _rf=(typeof RFPS!=='undefined')?RFPS.find(function(r){return String(r.id)===String(curBid.rfpId);}):null; if(_rf)_eu=_rf.endUser||""; }catch(e){} }
+    var _title=esc0(curBid.title||L('Untitled evaluation','\u062A\u0642\u064A\u064A\u0645 \u063A\u064A\u0631 \u0645\u0633\u0645\u0651\u0649'));
+    var _ref=curBid.ref?esc0(curBid.ref):"";
+    var _budget=curBid.value?fSAR(curBid.value):L('Not set','\u063A\u064A\u0631 \u0645\u062D\u062F\u0651\u062F');
+    var _wgt;
+    if(sL){
+      _wgt='<span class="wchip price"><span class="dotbadge"></span>'+L('Price','\u0627\u0644\u0633\u0639\u0631')+' <span class="wv">'+Math.round(priceWt*100)+'%</span></span>'
+          +'<span class="wchip lc"><span class="dotbadge"></span>'+L('Local Content','\u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+' <span class="wv">'+Math.round(lcWt*100)+'%</span></span>';
+    } else {
+      _wgt='<span class="wchip price"><span class="dotbadge"></span>'+L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+' <span class="wv">'+L('lowest wins','\u0627\u0644\u0623\u062F\u0646\u0649 \u064A\u0641\u0648\u0632')+'</span></span>';
     }
+    ctxBar='<section class="bc-ctxbar"><div class="cb-top"><div class="cb-tender">'
+      +'<span class="cb-name">'+_title+'</span>'+(_ref?'<span class="cb-ref">'+_ref+'</span>':'')+'</div>'
+      +'<span class="cb-phase">'+L('Scoring complete','\u0627\u0643\u062A\u0645\u0644 \u0627\u0644\u062A\u0642\u064A\u064A\u0645')+'</span></div>'
+      +'<div class="cb-grid">'
+      +'<div class="cb-cell"><div class="k">'+L('End-User','\u0627\u0644\u062C\u0647\u0629 \u0627\u0644\u0645\u0633\u062A\u0641\u064A\u062F\u0629')+'</div><div class="v">'+(_eu?esc0(_eu):'\u2014')+'</div></div>'
+      +'<div class="cb-cell"><div class="k">'+L('Mechanism','\u0627\u0644\u0622\u0644\u064A\u0629')+'</div><div class="v">'+esc0(mech||'\u2014')+'</div></div>'
+      +'<div class="cb-cell"><div class="k">'+L('Budget','\u0627\u0644\u0645\u064A\u0632\u0627\u0646\u064A\u0629')+'</div><div class="v mono">'+_budget+'</div></div>'
+      +'<div class="cb-cell"><div class="k">'+L('Confirmed weights','\u0627\u0644\u0623\u0648\u0632\u0627\u0646 \u0627\u0644\u0645\u0639\u062A\u0645\u062F\u0629')+'</div><div class="wsplit">'+_wgt+'</div></div>'
+      +'</div></section>';
+  })();
+
+  // ---- Evolve "How the winner is chosen" formula strip (real weights, no side-stripe) ----
+  var formulaStrip="";
+  (function(){
+    var pw=Math.round(priceWt*100), lw=Math.round(lcWt*100), tad=Math.round(tadawulPct*100);
+    if(sL){
+      var commLine='<span class="pill">'+L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span> <span class="op">(</span>'+L('LowestAdjPrice','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644')+' <span class="op">\u00F7</span> '+L('AdjPrice','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'<span class="op">)</span> <span class="op">\u00D7</span> <span class="w">'+pw+'%</span> <span class="op">+</span> <span class="pill">'+L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span> <span class="op">(</span>50%\u00B7'+L('Target','\u0627\u0644\u0645\u0633\u062A\u0647\u062F\u0641')+' <span class="op">+</span> 50%\u00B7'+L('Baseline','\u0627\u0644\u0623\u0633\u0627\u0633')+(tadawulOn?' <span class="op">+</span> '+L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+'\u00A0'+tad+'%':'')+'<span class="op">)</span> <span class="op">\u00D7</span> <span class="w">'+lw+'%</span>';
+      formulaStrip='<section class="bc-formula"><div class="fx-head">'
+        +'<span class="fx-ic">\u0192</span><h4>'+L('How the winner is chosen','\u0643\u064A\u0641 \u064A\u064F\u062E\u062A\u0627\u0631 \u0627\u0644\u0641\u0627\u0626\u0632')+'</h4>'
+        +'<span class="fx-basis">'+esc0(mech||'')+(sL?' \u00B7 '+L('two-envelope','\u0645\u0638\u0631\u0648\u0641\u0627\u0646'):'')+'</span></div>'
+        +'<div class="fx-body">'
+        +'<div class="fx-row"><span class="fx-lbl">'+L('Total score','\u0627\u0644\u062F\u0631\u062C\u0629 \u0627\u0644\u0643\u0644\u064A\u0629')+'</span><span class="fx-eq"><b>'+L('Total','\u0627\u0644\u0643\u0644\u064A')+'</b> <span class="op">=</span> <b>'+L('Price competition','\u0645\u0646\u0627\u0641\u0633\u0629 \u0627\u0644\u0633\u0639\u0631')+'</b><span class="op">\u00D7</span><span class="w">'+pw+'%</span> <span class="op">+</span> <b>'+L('Local Content','\u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+'</b><span class="op">\u00D7</span><span class="w">'+lw+'%</span></span></div>'
+        +'<div class="fx-row"><span class="fx-lbl">'+L('Components','\u0627\u0644\u0645\u0643\u0648\u0651\u0646\u0627\u062A')+'</span><span class="fx-eq">'+commLine+'</span></div>'
+        +'<div class="fx-note"><span class="fx-warn">\u26A0\uFE0F</span><span>'+L('NPP (National-Product Premium) adjusts each bidder\u2019s price <b>before</b> the price-competition ratio is computed \u2014 the lowest adjusted price sets the benchmark.','\u062A\u064F\u0639\u062F\u0651\u0644 \u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A (NPP) \u0633\u0639\u0631 \u0643\u0644 \u0639\u0627\u0631\u0636 <b>\u0642\u0628\u0644</b> \u062D\u0633\u0627\u0628 \u0646\u0633\u0628\u0629 \u0645\u0646\u0627\u0641\u0633\u0629 \u0627\u0644\u0623\u0633\u0639\u0627\u0631 \u2014 \u0648\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u062D\u062F\u0651\u062F \u0627\u0644\u0645\u0631\u062C\u0639.')+'</span></div>'
+        +'</div></section>';
+    } else {
+      formulaStrip='<section class="bc-formula"><div class="fx-head">'
+        +'<span class="fx-ic">\u0192</span><h4>'+L('How the winner is chosen','\u0643\u064A\u0641 \u064A\u064F\u062E\u062A\u0627\u0631 \u0627\u0644\u0641\u0627\u0626\u0632')+'</h4>'
+        +'<span class="fx-basis">'+esc0(mech||'')+'</span></div>'
+        +'<div class="fx-body">'
+        +'<div class="fx-row"><span class="fx-lbl">'+L('Ranking','\u0627\u0644\u062A\u0631\u062A\u064A\u0628')+'</span><span class="fx-eq"><b>'+L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</b> <span class="op">=</span> '+L('Bid price','\u0633\u0639\u0631 \u0627\u0644\u0639\u0631\u0636')+' <span class="op">\u00D7</span> <span class="op">(</span>1 <span class="op">+</span> '+L('NPP%','\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A%')+'<span class="op">)</span> <span class="op">\u2192</span> <span class="w">'+L('lowest wins','\u0627\u0644\u0623\u062F\u0646\u0649 \u064A\u0641\u0648\u0632')+'</span></span></div>'
+        +'</div></section>';
+    }
+  })();
+
+  // section rule
+  var nQ=fin.filter(function(r){return !r.excluded;}).length, nX=fin.length-nQ;
+  var secRule='<div class="section-rule"><h3>'+L('Ranked results','\u0627\u0644\u0646\u062A\u0627\u0626\u062C \u0627\u0644\u0645\u0631\u062A\u0651\u0628\u0629')+'</h3><span class="sr-count">'+fin.length+' '+L('bidders','\u0639\u0627\u0631\u0636\u064A\u0646')+' \u00B7 '+nQ+' '+L('qualified','\u0645\u0624\u0647\u0644\u0648\u0646')+' \u00B7 '+nX+' '+L('excluded','\u0645\u0633\u062A\u0628\u0639\u062F\u0648\u0646')+'</span><span class="sr-hr"></span></div>';
+
+  // Results display \u2014 Evolve bidder cards (winner ring, two-envelope, meters)
+  document.getElementById("bidResults").innerHTML=ctxBar+formulaStrip+awardGuide+secRule+fin.map(function(b){
+    var qi=b.rank||999,isW=!b.excluded&&qi===1&&!b.art19Shifted;
+    var cls='bid-card'+(isW?' is-winner':'')+(b.art19Shifted&&!b.excluded?' is-art19':'')+(b.excluded?' is-excluded':'');
+    var cd='<div class="'+cls+'">';
+
+    // ---- main row: rank \u00B7 identity+meta \u00B7 score+status ----
+    cd+='<div class="bc-main">';
+    if(b.excluded){
+      cd+='<div class="bc-rank muted"><span class="xmark">\u2715</span><span class="rlbl">'+L('Out','\u0645\u0633\u062A\u0628\u0639\u062F')+'</span></div>';
+    } else if(isW){
+      cd+='<div class="bc-rank gold"><span class="trophy">\uD83C\uDFC6</span><span class="rnum">1</span></div>';
+    } else {
+      cd+='<div class="bc-rank"><span class="rnum">'+qi+'</span><span class="rlbl">'+L('Rank','\u0627\u0644\u062A\u0631\u062A\u064A\u0628')+'</span></div>';
+    }
+
+    cd+='<div class="bc-id"><div class="bc-name">'+esc0(b.name);
     if(!b.excluded){
-      cd+='<div class="bid-row"><span class="bid-row-lbl">Original Bid Price</span><span class="bid-row-val">'+fSAR(b.price||b.origPrice||0)+'</span></div>';
-      if(sA) cd+='<div class="bid-row" style="background:rgba(59,130,246,0.06)"><span class="bid-row-lbl">Adjusted Bid Price</span><span class="bid-row-val" style="color:var(--accent);font-weight:800">'+fSAR(Math.round(b.adjustedPrice))+'</span></div>';
-      if(sL){
-        cd+='<div class="bid-row"><span class="bid-row-lbl">LC Baseline %</span><span class="bid-row-val">'+(b.lcBaseline||b.baselinePct||0)+'%</span></div>';
-        cd+='<div class="bid-row"><span class="bid-row-lbl">LC Target %</span><span class="bid-row-val">'+(b.lcPct||0)+'%</span></div>';
-        cd+='<div style="background:var(--al);border:1px solid var(--border);border-radius:var(--rs);padding:8px;margin-top:6px;font-size:11px">';
-        cd+='<div style="font-weight:700;margin-bottom:4px;font-size:10px;color:var(--accent)">SCORE BREAKDOWN</div>';
-        cd+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">';
-        cd+='<div>Price Score: <strong>'+(b.priceScore?(b.priceScore*100).toFixed(1):"\u2014")+'</strong></div>';
-        cd+='<div>LC Score: <strong>'+(b.lcScore?(b.lcScore*100).toFixed(1):"\u2014")+'</strong></div>';
-        cd+='<div>Tadawul: <strong>'+(b.tadawulScore?(b.tadawulScore*100).toFixed(1):"0")+'</strong></div>';
-        cd+='</div>';
-        cd+='<div style="font-weight:800;margin-top:4px;color:var(--text)">Combined: '+b.score.toFixed(1)+'</div>';
-        cd+='</div>';
-      }
-      if(isNPP&&!showLC) cd+='<div class="bid-row"><span class="bid-row-lbl">NPP %</span><span class="bid-row-val">'+(b.nppPct||0)+'%</span></div>';
-      var pw2=sL?(mx>0?b.score/mx*100:0):100;
-      cd+='<div style="margin-top:8px"><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:'+pw2+'%;background:'+(isW?"var(--accent3)":"var(--accent)")+'"></div></div><span class="pg-p">'+(sL?b.score.toFixed(1):fSAR(Math.round(b.adjustedPrice)))+'</span></div></div>';
+      if(b.isTadawul) cd+='<span class="tadawul yes">\u2713 '+L('Tadawul-listed','\u0645\u062F\u0631\u062C\u0629 \u0641\u064A \u062A\u062F\u0627\u0648\u0644')+'</span>';
+      else cd+='<span class="tadawul">'+L('Not Tadawul-listed','\u063A\u064A\u0631 \u0645\u062F\u0631\u062C\u0629 \u0641\u064A \u062A\u062F\u0627\u0648\u0644')+'</span>';
     }
     cd+='</div>';
+    // meta items
+    cd+='<div class="bc-meta">';
+    cd+='<div class="mi"><span class="mk">'+L('Original price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0623\u0635\u0644\u064A')+'</span><span class="mv">'+fSAR(b.price||b.origPrice||0)+'</span></div>';
+    if(sA) cd+='<div class="mi"><span class="mk">'+L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="mv adj">'+(b.excluded?'\u2014':fSAR(Math.round(b.adjustedPrice)))+'</span></div>';
+    if(sL) cd+='<div class="mi"><span class="mk">'+L('LC target / baseline','\u0627\u0644\u0645\u0633\u062A\u0647\u062F\u0641 / \u0627\u0644\u0623\u0633\u0627\u0633')+'</span><span class="mv">'+(b.lcPct||0)+'% <span style="color:var(--text3);font-weight:400">'+L('vs','\u0645\u0642\u0627\u0628\u0644')+'</span> '+(b.lcBaseline||b.baselinePct||0)+'%</span></div>';
+    if(isNPP||isHybrid) cd+='<div class="mi"><span class="mk">'+L('NPP premium','\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A')+'</span><span class="mv"><span class="npp">'+(b.nppPct||0)+'%</span></span></div>';
+    cd+='</div>';
+    if(b.notes&&!b.excluded) cd+='<div class="bc-notes">'+esc0(b.notes)+'</div>';
+    cd+='</div>';
+
+    // score column
+    cd+='<div class="bc-score">';
+    if(b.excluded){
+      cd+='<div class="scorebig"><span class="lbl">'+L('Total','\u0627\u0644\u0643\u0644\u064A')+'</span><span class="val" style="color:var(--text3)">\u2014</span></div>';
+      cd+='<span class="bc-status bad">\u2715 '+L('Excluded','\u0645\u0633\u062A\u0628\u0639\u062F')+'</span>';
+    } else if(sL){
+      cd+='<div class="scorebig"><span class="lbl">'+L('Total','\u0627\u0644\u0643\u0644\u064A')+'</span><span class="val">'+b.score.toFixed(1)+'</span><span class="max">/100</span></div>';
+      if(isW) cd+='<span class="bc-status win">\uD83C\uDFC6 '+L('Winner','\u0627\u0644\u0641\u0627\u0626\u0632')+'</span>';
+      else if(b.art19Shifted) cd+='<span class="bc-status warn">Art.19</span>';
+      else cd+='<span class="bc-status ok">\u2713 '+L('Qualified','\u0645\u0624\u0647\u0644')+'</span>';
+    } else {
+      cd+='<div class="scorebig"><span class="lbl">'+L('Adj. price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="val" style="font-size:18px">'+fSAR(Math.round(b.adjustedPrice))+'</span></div>';
+      if(isW) cd+='<span class="bc-status win">\uD83C\uDFC6 '+L('Winner','\u0627\u0644\u0641\u0627\u0626\u0632')+'</span>';
+      else if(b.art19Shifted) cd+='<span class="bc-status warn">Art.19</span>';
+      else cd+='<span class="bc-status ok">\u2713 '+L('Qualified','\u0645\u0624\u0647\u0644')+'</span>';
+    }
+    cd+='</div>';
+    cd+='</div>'; // /bc-main
+
+    // ---- breakdown band (two-envelope) for LC-scored bidders ----
+    if(!b.excluded && sL){
+      var techW=Math.round((priceWt)*100); // commercial weight overall (price portion) \u2014 display only label uses S weights
+      var pPrice=(b.priceScore||0)*100, pLC=(b.lcScore||0)*100, pTad=(b.tadawulScore||0)*100;
+      var commTotal=pPrice+pLC; // tadawul already folded into lcScore; show separately as bonus
+      cd+='<div class="bc-break">';
+      // Technical column repurposed as Price-competition envelope summary
+      cd+='<div class="bk-tech">';
+      cd+='<div class="bk-title"><span>'+L('Price competition','\u0645\u0646\u0627\u0641\u0633\u0629 \u0627\u0644\u0633\u0639\u0631')+' \u00B7 '+Math.round(priceWt*100)+'%</span><span class="sc">'+pPrice.toFixed(1)+'<span class="of">/100</span></span></div>';
+      cd+='<div class="meter"><i class="tech" style="width:'+pctClamp(pPrice)+'%"></i></div>';
+      cd+='<div class="bk-techmeta">'+L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+' <b>'+fSAR(Math.round(b.adjustedPrice))+'</b> \u00B7 '+L('contributes','\u064A\u064F\u0633\u0647\u0645 \u0628\u0640')+' <b>'+pPrice.toFixed(1)+'</b></div>';
+      cd+='</div>';
+      // Commercial / LC envelope
+      cd+='<div class="bk-comm">';
+      cd+='<div class="bk-title"><span>'+L('Local-Content scoring','\u062A\u0642\u064A\u064A\u0645 \u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+' \u00B7 '+Math.round(lcWt*100)+'%</span><span class="sc">'+pLC.toFixed(1)+'<span class="of">/100</span></span></div>';
+      cd+='<div class="subrows">';
+      cd+='<div class="subrow"><span class="sk"><span class="sw price"></span>'+L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span><span class="smeter"><i class="price" style="width:'+pctClamp(pPrice)+'%"></i></span><span class="sval">'+pPrice.toFixed(1)+'</span></div>';
+      cd+='<div class="subrow"><span class="sk"><span class="sw lc"></span>'+L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+'</span><span class="smeter"><i class="lc" style="width:'+pctClamp(pLC)+'%"></i></span><span class="sval">'+pLC.toFixed(1)+'</span></div>';
+      cd+='<div class="subrow"><span class="sk"><span class="sw tad"></span>'+L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+'</span><span class="smeter"><i class="tad" style="width:'+(pTad>0?100:0)+'%"></i></span><span class="sval">'+pTad.toFixed(1)+' <span class="of">'+L('bonus','\u0639\u0644\u0627\u0648\u0629')+'</span></span></div>';
+      cd+='</div></div>';
+      cd+='</div>';
+    } else if(!b.excluded && !sL){
+      // NPP/SME price-only \u2014 single envelope meter
+      var pw2=mx>0?(b.score/mx*100):100;
+      cd+='<div class="bc-break" style="grid-template-columns:1fr">';
+      cd+='<div class="bk-comm" style="border-inline-end:0">';
+      cd+='<div class="bk-title"><span>'+L('Adjusted-price competition','\u0645\u0646\u0627\u0641\u0633\u0629 \u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="sc">'+fSAR(Math.round(b.adjustedPrice))+'</span></div>';
+      cd+='<div class="meter"><i class="comm" style="width:'+pctClamp(pw2)+'%"></i></div>';
+      cd+='<div class="bk-techmeta">'+L('Lower adjusted price ranks higher','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644 \u0627\u0644\u0623\u062F\u0646\u0649 \u064A\u062D\u062A\u0644 \u0627\u0644\u0645\u0631\u062A\u0628\u0629 \u0627\u0644\u0623\u0639\u0644\u0649')+'</div>';
+      cd+='</div></div>';
+    }
+
+    // ---- exclusion reasons band ----
+    if(b.excluded){
+      cd+='<div class="bc-excl"><div class="ex-t">\u26A0\ufe0f '+L('Exclusion reasons','\u0623\u0633\u0628\u0627\u0628 \u0627\u0644\u0627\u0633\u062A\u0628\u0639\u0627\u062F')+'</div><ul>';
+      cd+=b.exclusionReasons.map(function(r){return '<li>'+esc0(r)+'</li>';}).join("");
+      cd+='</ul></div>';
+    }
+
+    cd+='</div>'; // /bid-card
     return cd;
   }).join("");
 
@@ -8707,13 +8822,18 @@ calcBids=function(){
     if(!resultsDiv) return;
     if(resultsDiv.querySelector('.v55-award-select')) return;
     if(!curBid || !curBid.lastResults || !curBid.lastResults.length) return;
-    var btnHtml = '<div style="margin-top:12px;padding:12px;background:rgba(5,150,105,.06);border:1.5px solid var(--accent3);border-radius:var(--rs)">';
-    btnHtml += '<div style="font-weight:700;font-size:12px;margin-bottom:8px">🏆 Select Winner for Award</div>';
-    btnHtml += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+    var _Lx=(typeof L==='function')?L:function(e,a){return e;};
+    var _esc=function(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');};
+    var _topName='';
+    var _r1=curBid.lastResults.find(function(r){return !r.excluded&&(r.rank===1||r.rank===undefined);});
+    if(_r1)_topName=_r1.name||_r1.bidder||'';
+    var btnHtml = '<div class="bc-winact"><div class="wa-note"><span class="wa-ic">🏆</span><strong>'+_Lx('Award decision','قرار الترسية')+'</strong> · '+_Lx('select the bidder to award','اختر العارض للترسية')+'</div><div class="wa-btns">';
     curBid.lastResults.forEach(function(r){
       if(r.excluded) return;
       var nm = r.name || r.bidder || '';
-      btnHtml += '<button class="btn btn-sm v55-award-select" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:700;font-size:11px;padding:6px 14px;border-radius:8px;cursor:pointer" onclick="pendingAwardName=\x27'+nm.replace(/'/g,"\\\'")+"\x27;openAwardFinalize()"+'">✅ '+nm+'</button>';
+      var isTop = nm===_topName;
+      var cls = isTop ? 'btn btn-p btn-sm v55-award-select wa-top' : 'btn btn-s btn-sm v55-award-select';
+      btnHtml += '<button class="'+cls+'" onclick="pendingAwardName=\x27'+nm.replace(/'/g,"\\\'")+"\x27;openAwardFinalize()"+'">'+(isTop?'🏆 ':'')+_esc(nm)+'</button>';
     });
     btnHtml += '</div></div>';
     resultsDiv.insertAdjacentHTML('beforeend', btnHtml);
@@ -9203,6 +9323,250 @@ body.mobile-mode .cmd-band,body.mobile-mode .brd-hero,body.mobile-mode .dash-her
 body.mobile-mode .btn,body.mobile-mode .tbtn,body.mobile-mode .fsel,body.mobile-mode .fi,body.mobile-mode .fsel2{min-height:38px}
 body.mobile-mode #dashEntitySel{max-width:100%!important}
 body.mobile-mode .fb{flex-wrap:wrap}
+
+/* =============================================================
+   EVOLVE GLOBAL RESKIN  (token-driven; cascades to all pages)
+   - Inter for UI/data, Bricolage for display titles, JetBrains Mono for figures
+   - hairline borders, restrained gradient accent, status semantics, AA contrast
+   ============================================================= */
+body{font-family:var(--font-ui);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;font-feature-settings:"cv05","ss01"}
+body.rtl{font-family:var(--far)}
+/* Bricolage stays display-only: wordmark + page/card/section titles */
+.slt,.page-title,.fsec-title,.card-title,.dh-title,.md-title,.brd-hero-title,.dash-hero h1,.cmd-id .nm{font-family:var(--font-display);letter-spacing:-.015em}
+/* every figure → tabular mono */
+.mono,.bid-score,.bid-row-val,.pg-p,.kpi-val,.dc-val,.td-m,.af-size,.nbadge,.lc-val,.mv,.sc,.sval,.scorebig .val,.metaitem .mv{font-family:var(--fm);font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+
+/* --- restrained gradient accent: primary button + brand mark + avatar only --- */
+.btn-p{background:var(--grad-brand);border-color:transparent;color:#fff;box-shadow:0 1px 2px rgba(37,99,235,.35)}
+.btn-p:hover{background:var(--grad-brand);border-color:transparent;color:#fff;box-shadow:0 3px 10px -2px rgba(37,99,235,.5);filter:saturate(1.05)}
+[data-theme=dark] .btn-p{box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.sli,[data-theme=dark] .sli,.pav,.av{background:var(--grad-brand)!important;color:#fff!important}
+
+/* --- sidebar active: full hairline treatment, NO side-stripe --- */
+.ni-wrap.active::before{display:none!important}
+.ni-wrap.active{color:var(--accent-ink);background:var(--al);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent)}
+body.rtl .ni-wrap.active::before{display:none!important}
+
+/* --- buttons / inputs: hairline + focus-visible ring --- */
+.btn,.btn-s,.tbtn,.fc,.fi,.fsel,.fsel2,.fta,.si{border-radius:var(--r)}
+.fi,.fsel2,.fta,.si{border-width:1px}
+.fi:focus,.fsel2:focus,.fta:focus,.si:focus{box-shadow:var(--ring)}
+.btn:focus-visible,.btn-p:focus-visible,.tbtn:focus-visible,.fc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* --- shadows: restrained --- */
+.bid-card,.card,.dc,.kpi,.fsec{box-shadow:var(--sh)}
+
+/* --- status pills: semantic only, icon+label-ready --- */
+.badge{font-weight:600;border-radius:999px}
+.badge.bb{background:var(--al);color:var(--accent-ink)}
+.badge.bg{background:var(--ok-tint);color:var(--st-ok)}
+.badge.br{background:var(--bad-tint);color:var(--st-bad)}
+.badge.ba{background:var(--warn-tint);color:var(--st-warn)}
+.af-status.pending{background:var(--warn-tint);color:var(--st-warn)}
+.af-status.approved{background:var(--ok-tint);color:var(--st-ok)}
+.af-status.rejected{background:var(--bad-tint);color:var(--st-bad)}
+
+/* --- KPI cards: flat neutral surface, no rainbow tint washes --- */
+.kpi,.kpi.kpi-blue,.kpi.kpi-green,.kpi.kpi-red,.kpi.kpi-amber,.kpi.kpi-purple{background:var(--surface)!important}
+[data-theme=dark] .kpi,[data-theme=dark] .kpi.kpi-blue,[data-theme=dark] .kpi.kpi-green,[data-theme=dark] .kpi.kpi-red,[data-theme=dark] .kpi.kpi-amber,[data-theme=dark] .kpi.kpi-purple{background:var(--surface)!important}
+
+/* =============================================================
+   EVOLVE BID EVALUATION  (#page-bids results) — winner ring, two-envelope
+   ============================================================= */
+/* header context bar — END-USER / MECHANISM / BUDGET / CONFIRMED WEIGHTS (hairline, no side-stripe) */
+#bidResults .bc-ctxbar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+#bidResults .bc-ctxbar .cb-top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 18px;border-bottom:1px solid var(--border);background:var(--surface2)}
+#bidResults .bc-ctxbar .cb-tender{display:flex;align-items:center;gap:9px;min-width:0;flex:1}
+#bidResults .bc-ctxbar .cb-name{font-weight:700;color:var(--text);font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bidResults .bc-ctxbar .cb-ref{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--text3);font-size:12px;white-space:nowrap;flex-shrink:0}
+#bidResults .bc-ctxbar .cb-phase{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:999px;color:var(--accent-ink);background:var(--al);border:1px solid color-mix(in srgb,var(--accent) 26%,transparent)}
+#bidResults .bc-ctxbar .cb-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+#bidResults .bc-ctxbar .cb-cell{padding:12px 18px;border-inline-start:1px solid var(--border);min-width:0}
+#bidResults .bc-ctxbar .cb-cell:first-child{border-inline-start:0}
+#bidResults .bc-ctxbar .cb-cell .k{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em}
+#bidResults .bc-ctxbar .cb-cell .v{font-weight:600;color:var(--text);font-size:13px;margin-top:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#bidResults .bc-ctxbar .cb-cell .v.mono{font-family:var(--fm);font-variant-numeric:tabular-nums}
+#bidResults .bc-ctxbar .wsplit{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap}
+#bidResults .bc-ctxbar .wchip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--border2);border-radius:7px;padding:2px 8px;font-size:11.5px;font-weight:600;color:var(--text2);background:var(--surface)}
+#bidResults .bc-ctxbar .wchip .wv{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--text)}
+#bidResults .bc-ctxbar .wchip .dotbadge{width:7px;height:7px;border-radius:2px;flex-shrink:0}
+#bidResults .bc-ctxbar .wchip.price .dotbadge{background:var(--series-price)}
+#bidResults .bc-ctxbar .wchip.lc .dotbadge{background:var(--series-lc)}
+
+/* formula / scoring-basis strip */
+#bidResults .bc-formula{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:14px}
+#bidResults .bc-formula .fx-head{display:flex;align-items:center;gap:9px;padding:11px 18px;border-bottom:1px solid var(--border)}
+#bidResults .bc-formula .fx-ic{width:22px;height:22px;border-radius:6px;flex-shrink:0;display:grid;place-items:center;background:var(--al);color:var(--accent-ink);font-family:var(--fm);font-weight:700;font-size:14px}
+#bidResults .bc-formula .fx-head h4{font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-ui)}
+#bidResults .bc-formula .fx-basis{margin-inline-start:auto;font-size:11.5px;color:var(--text3);font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:50%;text-align:end}
+#bidResults .bc-formula .fx-body{padding:14px 18px;display:flex;flex-direction:column;gap:11px}
+#bidResults .bc-formula .fx-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+#bidResults .bc-formula .fx-lbl{font-size:11.5px;font-weight:600;color:var(--text3);min-width:104px;flex-shrink:0}
+#bidResults .bc-formula .fx-eq{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12px;color:var(--text2);line-height:1.7}
+#bidResults .bc-formula .fx-eq b{color:var(--text);font-weight:600}
+#bidResults .bc-formula .fx-eq .op{color:var(--text3)}
+#bidResults .bc-formula .fx-eq .w{color:var(--accent-ink);font-weight:600}
+#bidResults .bc-formula .fx-eq .pill{display:inline-block;padding:1px 6px;border-radius:5px;background:var(--surface3);color:var(--text2);font-size:11px;font-weight:600}
+#bidResults .bc-formula .fx-note{font-size:11.5px;color:var(--text3);display:flex;align-items:flex-start;gap:7px;padding-top:10px;border-top:1px dashed var(--border);line-height:1.5}
+#bidResults .bc-formula .fx-note b{color:var(--text2);font-weight:600}
+#bidResults .bc-formula .fx-warn{flex-shrink:0}
+
+#bidResults .award-band{display:flex;align-items:flex-start;gap:13px;background:var(--al);border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:var(--r);padding:13px 16px;margin-bottom:14px}
+#bidResults .award-band .ab-ic{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink);font-size:16px}
+#bidResults .award-band .ab-body{min-width:0;font-size:12px;color:var(--text2);line-height:1.5}
+#bidResults .award-band .ab-body strong{color:var(--text)}
+
+#bidResults .section-rule{display:flex;align-items:center;gap:10px;margin:0 0 12px}
+#bidResults .section-rule h3{font-size:13px;font-weight:700;color:var(--text);font-family:var(--font-ui)}
+#bidResults .section-rule .sr-count{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--text3);font-weight:500}
+#bidResults .section-rule .sr-hr{flex:1;height:1px;background:var(--border)}
+
+#bidResults .bid-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh);transition:border-color var(--tr),box-shadow var(--tr)}
+/* WINNER — full-perimeter accent ring, NO side-stripe */
+#bidResults .bid-card.is-winner{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent),var(--shl)}
+#bidResults .bid-card.is-art19{border-color:color-mix(in srgb,var(--warn) 40%,var(--border))}
+#bidResults .bid-card.is-excluded{background:var(--surface2);opacity:.96}
+#bidResults .bid-card.excluded-overlay::after{display:none!important}
+
+#bidResults .bc-main{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:15px 18px}
+#bidResults .bc-rank{display:flex;flex-direction:column;align-items:center;gap:3px;width:50px;flex-shrink:0}
+#bidResults .bc-rank .rnum{font-family:var(--fm);font-variant-numeric:tabular-nums;font-weight:700;font-size:18px;color:var(--text3);line-height:1}
+#bidResults .bc-rank .rlbl{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+#bidResults .bc-rank.gold{background:var(--al);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:9px;padding:7px 0;width:50px}
+#bidResults .bc-rank.gold .rnum{color:var(--accent-ink)}
+#bidResults .bc-rank.gold .trophy{font-size:16px;line-height:1}
+#bidResults .bc-rank.muted .xmark{font-size:18px;line-height:1;color:var(--st-bad)}
+
+#bidResults .bc-id{min-width:0}
+#bidResults .bc-name{font-weight:700;color:var(--text);font-size:15px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#bidResults .bc-card.is-excluded .bc-name{color:var(--text2)}
+#bidResults .tadawul{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid var(--border2);color:var(--text2);background:var(--surface)}
+#bidResults .tadawul.yes{color:var(--st-ok);border-color:color-mix(in srgb,var(--accent3) 35%,transparent);background:var(--ok-tint)}
+#bidResults .bc-notes{font-size:10.5px;color:var(--text3);margin-top:4px;font-family:var(--fm)}
+#bidResults .bc-meta{display:flex;align-items:center;gap:16px;margin-top:8px;flex-wrap:wrap}
+#bidResults .mi{display:flex;flex-direction:column;gap:1px}
+#bidResults .mi .mk{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.02em}
+#bidResults .mi .mv{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:600;color:var(--text)}
+#bidResults .mi .mv .npp{color:var(--accent-ink)}
+#bidResults .mi .mv.adj{color:var(--accent-ink)}
+
+#bidResults .bc-score{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;min-width:140px}
+#bidResults .scorebig{display:flex;align-items:baseline;gap:5px}
+#bidResults .scorebig .lbl{font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.03em}
+#bidResults .scorebig .val{font-family:var(--fm);font-variant-numeric:tabular-nums;font-weight:700;font-size:28px;letter-spacing:-.02em;color:var(--text);line-height:1}
+#bidResults .bid-card.is-winner .scorebig .val{color:var(--accent-ink)}
+#bidResults .scorebig .max{font-family:var(--fm);font-size:12px;color:var(--text3);font-weight:500}
+
+#bidResults .bc-status{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent}
+#bidResults .bc-status.win{color:var(--accent-ink);background:var(--al);border-color:color-mix(in srgb,var(--accent) 30%,transparent)}
+#bidResults .bc-status.ok{color:var(--st-ok);background:var(--st-ok-bg);border-color:var(--st-ok-bd)}
+#bidResults .bc-status.warn{color:var(--st-warn);background:var(--st-warn-bg);border-color:var(--st-warn-bd)}
+#bidResults .bc-status.bad{color:var(--st-bad);background:var(--st-bad-bg);border-color:var(--st-bad-bd)}
+
+/* two-envelope breakdown band */
+#bidResults .bc-break{border-top:1px solid var(--border);background:var(--surface2);display:grid;grid-template-columns:1.05fr 2fr;gap:0}
+#bidResults .bid-card.is-winner .bc-break{background:color-mix(in srgb,var(--al) 55%,var(--surface2))}
+#bidResults .bk-tech,#bidResults .bk-comm{padding:13px 18px}
+#bidResults .bk-tech{border-inline-end:1px solid var(--border)}
+#bidResults .bk-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}
+#bidResults .bk-title .sc{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--text);font-size:13px;font-weight:700}
+#bidResults .bk-title .sc .of{color:var(--text3);font-weight:400}
+#bidResults .meter{height:6px;border-radius:4px;background:var(--surface3);position:relative;overflow:hidden}
+[data-theme=dark] #bidResults .meter{background:#222732}
+#bidResults .meter i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:4px;display:block}
+#bidResults .meter i.tech{background:var(--series-tech)}
+#bidResults .meter i.comm{background:var(--series-comm)}
+#bidResults .bk-techmeta{margin-top:7px;font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:11px;color:var(--text3)}
+#bidResults .bk-techmeta b{color:var(--text2);font-weight:600}
+
+#bidResults .subrows{display:flex;flex-direction:column;gap:8px}
+#bidResults .subrow{display:grid;grid-template-columns:92px 1fr auto;align-items:center;gap:11px}
+#bidResults .subrow .sk{font-size:11px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px}
+#bidResults .subrow .sk .sw{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+#bidResults .subrow .sk .sw.price{background:var(--series-price)}
+#bidResults .subrow .sk .sw.lc{background:var(--series-lc)}
+#bidResults .subrow .sk .sw.tad{background:var(--series-tad)}
+#bidResults .subrow .smeter{height:5px;border-radius:3px;background:var(--surface3);position:relative;overflow:hidden}
+[data-theme=dark] #bidResults .subrow .smeter{background:#222732}
+#bidResults .subrow .smeter i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:3px;display:block}
+#bidResults .subrow .smeter i.price{background:var(--series-price)}
+#bidResults .subrow .smeter i.lc{background:var(--series-lc)}
+#bidResults .subrow .smeter i.tad{background:var(--series-tad)}
+#bidResults .subrow .sval{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:11.5px;font-weight:600;color:var(--text);text-align:end;white-space:nowrap}
+#bidResults .subrow .sval .of{color:var(--text3);font-weight:400;font-size:10.5px}
+
+/* exclusion reasons band */
+#bidResults .bc-excl{padding:13px 18px;border-top:1px solid var(--border);background:var(--bad-tint)}
+#bidResults .bc-excl .ex-t{font-size:10.5px;font-weight:700;color:var(--st-bad);text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:6px;margin-bottom:8px}
+#bidResults .bc-excl ul{list-style:none;display:flex;flex-direction:column;gap:6px;margin:0;padding:0}
+#bidResults .bc-excl li{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text2);line-height:1.45}
+#bidResults .bc-excl li::before{content:"✕";color:var(--st-bad);font-weight:700;flex-shrink:0}
+
+/* award-decision action panel (wired to openAwardFinalize) */
+#bidResults .bc-winact{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:14px;padding:13px 16px;border:1px solid color-mix(in srgb,var(--accent) 24%,var(--border));border-radius:var(--r);background:var(--al);box-shadow:var(--sh)}
+#bidResults .bc-winact .wa-note{font-size:12px;color:var(--text2);display:flex;align-items:center;gap:7px;flex:1;min-width:200px}
+#bidResults .bc-winact .wa-note strong{color:var(--text)}
+#bidResults .bc-winact .wa-note .wa-ic{font-size:15px}
+#bidResults .bc-winact .wa-btns{display:flex;flex-wrap:wrap;gap:8px}
+#bidResults .bc-winact .v55-award-select{font-size:12px;font-weight:600;padding:7px 14px}
+#bidResults .bc-winact .wa-top{font-weight:700}
+
+@media(max-width:820px){
+  #bidResults .bc-break{grid-template-columns:1fr}
+  #bidResults .bk-tech{border-inline-end:0;border-bottom:1px solid var(--border)}
+  #bidResults .bc-ctxbar .cb-grid{grid-template-columns:repeat(2,1fr)}
+  #bidResults .bc-ctxbar .cb-cell:nth-child(3),#bidResults .bc-ctxbar .cb-cell:nth-child(4){border-top:1px solid var(--border)}
+  #bidResults .bc-ctxbar .cb-cell:nth-child(3){border-inline-start:0}
+}
+@media(max-width:560px){
+  #bidResults .bc-ctxbar .cb-grid{grid-template-columns:1fr}
+  #bidResults .bc-ctxbar .cb-cell{border-inline-start:0;border-top:1px solid var(--border)}
+  #bidResults .bc-ctxbar .cb-cell:first-child{border-top:0}
+  #bidResults .bc-formula .fx-basis{display:none}
+}
+@media(max-width:640px){
+  #bidResults .bc-main{grid-template-columns:auto 1fr;gap:13px}
+  #bidResults .bc-score{grid-column:1 / -1;flex-direction:row;align-items:center;justify-content:space-between;min-width:0;padding-top:11px;border-top:1px solid var(--border)}
+}
+
+/* =============================================================
+   EVOLVE HYGIENE — neutralize pre-existing ban-violating CSS so the
+   old Boardroom look can never resurface (gradient-text, glass blur,
+   rainbow washes, sidebar/hv-row side-stripes). Loaded last → wins.
+   ============================================================= */
+/* gradient TEXT → solid ink */
+.dh-title,.fun-n,.fun-step.gold .fun-n,.fun-step.teal .fun-n,.fun-step.green .fun-n,.fun-step.red .fun-n,
+[data-theme=dark] #page-dashboard .dc .dc-val{
+  background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
+  -webkit-text-fill-color:currentColor!important;color:var(--text)!important;animation:none!important}
+.dh-title{color:#fff!important}
+.fun-n{color:var(--accent)!important}
+.fun-step.gold .fun-n{color:var(--gold)!important}
+.fun-step.green .fun-n{color:var(--accent3)!important}
+.fun-step.teal .fun-n{color:var(--info)!important}
+.fun-step.red .fun-n{color:var(--danger)!important}
+.dash-hero::after{display:none!important}
+/* glassmorphism blur → flat neutral surface */
+#page-dashboard .dr-kpi .dc{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.dash-hero .dbtn-pdf{backdrop-filter:none!important}
+/* rainbow radial washes on KPI cards → flat surface */
+#page-dashboard .dr-kpi .dc.dc-blue,#page-dashboard .dr-kpi .dc.dc-green,#page-dashboard .dr-kpi .dc.dc-teal,#page-dashboard .dr-kpi .dc.dc-purple,#page-dashboard .dr-kpi .dc.dc-red,#page-dashboard .dr-kpi .dc.dc-amber,
+[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-blue,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-green,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-teal,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-purple,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-red,[data-theme=dark] #page-dashboard .dr-kpi .dc.dc-amber{
+  background:var(--surface)!important;box-shadow:var(--sh)!important}
+/* sidebar: drop dark gradient + active border-left side-stripe */
+.sidebar{background:var(--surface)!important;border-right:1px solid var(--border)!important}
+body.rtl .sidebar{border-right:none!important;border-left:1px solid var(--border)!important}
+.sidebar .slt{color:var(--text)!important}
+.sidebar .sls,.sidebar .ns{color:var(--text3)!important}
+.sidebar .ni-wrap{color:var(--text2)!important;border-left:0!important;border-radius:var(--rs)!important;margin:1px 8px!important}
+.sidebar .ni-wrap:hover{color:var(--text)!important;background:var(--surface2)!important}
+.sidebar .ni-wrap.active{color:var(--accent-ink)!important;background:var(--al)!important;border-left-color:transparent!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent)!important}
+.sidebar .sl{border-bottom:1px solid var(--border)!important}
+/* hv-row: drop violet side-stripe → hairline box */
+.hv-row{border-left:0!important;border-right:0!important;border:1px solid var(--border)!important}
+body.rtl .hv-row{border:1px solid var(--border)!important}
+.hv-spotlight{background:var(--surface)!important;border:1px solid var(--border)!important;box-shadow:var(--sh)!important}
+/* dsec top-accent stripe is a thin top border (not a side-stripe) — keep, but ensure no L/R bleed */
 </style>
 <div id="loginOverlay"><div class="login-card">
   <div class="login-logo">LC</div>

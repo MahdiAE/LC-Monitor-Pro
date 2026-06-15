@@ -6,7 +6,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%232563eb'/><text x='32' y='45' font-size='32' font-family='sans-serif' font-weight='800' fill='white' text-anchor='middle'>LC</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
 <script src="vendor/chart.umd.min.js"></script>
 <script>window.Chart||document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"><\/script>');</script>
 <script src="vendor/xlsx.full.min.js"></script>
@@ -15,32 +15,47 @@
 <script>window.PDFLib||document.write('<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"><\/script>');</script>
 <style>
 :root{
-  --bg:#f4f6fb;--surface:#ffffff;--surface2:#f7f9fd;--surface3:#eef1f8;
-  --border:#e4e9f2;--border2:#cdd6e4;
-  --accent:#2563eb;--al:rgba(37,99,235,.09);--accent2:#7c3aed;--accent3:#0d9488;
-  --warn:#d97706;--danger:#dc2626;--info:#0284c7;
-  --gold:#f59e0b;
-  --text:#0b1324;--text2:#42526b;--text3:#8c9bb3;
-  --sh:0 1px 2px rgba(15,30,70,.06),0 6px 20px rgba(15,30,70,.06);
-  --shl:0 14px 44px rgba(15,30,70,.16);
+  /* Evolve token values — names preserved, values remapped */
+  --bg:#f4f5f7;--surface:#ffffff;--surface2:#fafbfc;--surface3:#eef0f3;
+  --border:#e3e6ec;--border2:#cdd2db;
+  --accent:#2563eb;--al:#eef2ff;--accent2:#7c3aed;--accent3:#0f8a4a;
+  --warn:#9a6400;--danger:#c0241f;--info:#1d4ed8;
+  --gold:#9a6400;
+  --text:#171a21;--text2:#3d4350;--text3:#5a6373;
+  /* Evolve semantic tints (icon+label status surfaces) */
+  --ok:#0f8a4a;--ok-bg:#e7f6ec;--ok-ink:#0a6b39;
+  --warn-bg:#fbf0d9;--warn-ink:#82540a;
+  --bad:#c0241f;--bad-bg:#fbe7e6;--bad-ink:#9c1a1a;
+  --neutral:#5a6373;--neutral-bg:#eef0f3;
+  --accent-ink:#1d4ed8;--accent-soft:#eef2ff;--focus:#2563eb;
+  /* bid-eval categorical series */
+  --series-tech:#3b6fd6;--series-comm:#7c5fd6;--series-price:#2f8f63;--series-lc:#7c5fd6;--series-tad:#b08400;
+  --sh:0 1px 2px rgba(16,21,33,.05);
+  --shl:0 4px 16px -4px rgba(16,21,33,.12),0 1px 3px rgba(16,21,33,.06);
   --r:14px;--rs:8px;--rl:20px;--sb:236px;
-  --fn:'Bricolage Grotesque',sans-serif;--far:'IBM Plex Sans Arabic',sans-serif;--fm:'JetBrains Mono',monospace;
-  --grad-brand:linear-gradient(135deg,#2563eb 0%,#7c3aed 100%);
+  --fn:'Bricolage Grotesque',sans-serif;--fs:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;--far:'IBM Plex Sans Arabic','Inter',sans-serif;--fm:'JetBrains Mono',monospace;
+  --grad-brand:linear-gradient(100deg,#2563eb 0%,#7c3aed 100%);
   --grad-side:linear-gradient(180deg,#0c1530 0%,#101c3f 55%,#16234d 100%);
   --tr:.18s ease}
 [data-theme=dark]{
-  --bg:#0a1226;--surface:#111c3a;--surface2:#0d1730;--surface3:#1a2750;
-  --border:rgba(140,170,255,.14);--border2:rgba(140,170,255,.26);
-  --accent:#4f8cff;--al:rgba(79,140,255,.14);--accent2:#a78bfa;--accent3:#2dd4bf;
-  --warn:#fbbf24;--danger:#fb7185;--info:#38bdf8;
-  --gold:#fbbf24;
-  --text:#eaf0ff;--text2:#aebcd8;--text3:#6e7ca6;
-  --sh:0 1px 3px rgba(0,0,0,.5),0 10px 30px -8px rgba(0,0,0,.6);
-  --shl:0 24px 70px -16px rgba(0,0,0,.8);
+  --bg:#0c0e13;--surface:#14171d;--surface2:#181c23;--surface3:#222732;
+  --border:#262b34;--border2:#363d49;
+  --accent:#5b8bff;--al:#1a2540;--accent2:#a489ee;--accent3:#34c878;
+  --warn:#e0a93a;--danger:#f0716c;--info:#86a8ff;
+  --gold:#e0a93a;
+  --text:#eef0f4;--text2:#c3c9d4;--text3:#9aa2b1;
+  --ok:#34c878;--ok-bg:#0e2a1c;--ok-ink:#5fd996;
+  --warn-bg:#2c220c;--warn-ink:#f0bf5e;
+  --bad:#f0716c;--bad-bg:#2e1413;--bad-ink:#f78c87;
+  --neutral:#9aa2b1;--neutral-bg:#222732;
+  --accent-ink:#86a8ff;--accent-soft:#1a2540;--focus:#6c97ff;
+  --series-tech:#6f97e6;--series-comm:#a489ee;--series-price:#4cae82;--series-lc:#a489ee;--series-tad:#d3a73f;
+  --sh:0 1px 2px rgba(0,0,0,.4);
+  --shl:0 6px 22px -6px rgba(0,0,0,.6),0 1px 3px rgba(0,0,0,.4);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{background:var(--bg);color:var(--text);font-family:var(--fn);min-height:100vh;overflow:auto;transition:background var(--tr),color var(--tr);}
+body{background:var(--bg);color:var(--text);font-family:var(--fs);min-height:100vh;overflow:auto;transition:background var(--tr),color var(--tr);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
 body.rtl{direction:rtl;font-family:var(--far);}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(ellipse 60% 40% at 10% 10%,rgba(0,87,255,.04),transparent 60%),radial-gradient(ellipse 50% 30% at 90% 90%,rgba(124,58,237,.03),transparent 60%);}
@@ -1722,7 +1737,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div id="bidResults"><div class="empty"><div class="ei">📊</div><p>Click Calculate to see results</p></div></div>
       <div style="margin-top:10px;display:flex;gap:7px;flex-wrap:wrap">
         <button class="btn btn-p" onclick="calcBids()">⚡ Calculate &amp; Rank</button>
-        <button class="btn btn-sm" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:800" onclick="openAwardFinalize()">🏆 Award &amp; Finalize</button>
+        <button class="btn btn-p btn-sm" style="font-weight:800" onclick="openAwardFinalize()">🏆 Award &amp; Finalize</button>
         <button class="btn btn-p btn-sm" onclick="exportBidMoMPDF()">📄 Export MoM PDF</button>
         <button class="btn btn-s" onclick="exportBidReport()">📥 Export CSV</button>
       </div>
@@ -5563,14 +5578,14 @@ function confirmAward(){
   closeModal('awardModal');
   // v55: Prominent success banner
   var _ab=document.createElement('div');
-  _ab.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:20px 28px;font-size:16px;font-weight:800;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.25)';
+  _ab.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:var(--grad-brand);color:#fff;padding:20px 28px;font-size:16px;font-weight:800;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.25)';
   _ab.innerHTML='🏆 Award Confirmed — <strong>'+pendingAwardName+'</strong> has been awarded'+(override?' <span style="opacity:.85">(override recorded)</span>':'')+'<br><span style="font-size:12px;font-weight:400;opacity:.85">Status updated to Awarded • '+new Date().toLocaleDateString('en-GB')+'</span>';
   document.body.appendChild(_ab);
   setTimeout(function(){_ab.style.transition='opacity .5s';_ab.style.opacity='0';setTimeout(function(){_ab.remove();},500);},4000);
   toast('🏆 Awarded to '+pendingAwardName+(override?' (override recorded)':''),'ok');
   // persistent on-page confirmation so the result is obvious
   var _br=document.getElementById('bidResults');
-  if(_br){var _wb=document.createElement('div');_wb.className='award-banner';_wb.style.cssText='background:linear-gradient(135deg,#059669,#047857);color:#fff;padding:13px 16px;border-radius:12px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 22px -8px rgba(5,150,105,.6)';_wb.innerHTML='🏆 Awarded to <strong>'+pendingAwardName+'</strong>'+(override?' <span style="font-weight:500;opacity:.9">(override recorded)</span>':'');var _old=_br.querySelector('.award-banner');if(_old)_old.remove();_br.insertBefore(_wb,_br.firstChild);}
+  if(_br){var _wb=document.createElement('div');_wb.className='award-banner';_wb.style.cssText='background:var(--ok-bg);color:var(--ok-ink);border:1px solid color-mix(in srgb,var(--ok) 38%,transparent);padding:13px 16px;border-radius:12px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:8px';_wb.innerHTML='🏆 Awarded to <strong>'+pendingAwardName+'</strong>'+(override?' <span style="font-weight:500;opacity:.9">(override recorded)</span>':'');var _old=_br.querySelector('.award-banner');if(_old)_old.remove();_br.insertBefore(_wb,_br.firstChild);}
   if(typeof renderBiddersList==='function')renderBiddersList();
   pendingAwardName=null;awardEvBuf=[];
 }
@@ -8439,52 +8454,118 @@ calcBids=function(){
   var sA=isNPP||isSME||isHybrid;
   var sL=showLC||isHybrid;
 
-  // Award guidance
+  // \u2500\u2500 EVOLVE RENDER \u2500\u2500 (markup reskin only; all scoring above is unchanged)
+  var _esc=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+  var _icoTrophy='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4zM7 5H4v2a3 3 0 0 0 3 3M17 5h3v2a3 3 0 0 1-3 3"/></svg>';
+  var _icoCheck='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 12l2.4 2.4L15.8 9.5"/></svg>';
+  var _icoX='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M15 9l-6 6M9 9l6 6"/></svg>';
+  var _icoWarn='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9l-8 13.9A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.2l-8-13.9a2 2 0 0 0-3.4 0z"/></svg>';
+
+  // Award guidance banner (info, tinted, no side-stripe)
   var awardGuide="";
+  var _wName=w?w.name:'';
   if(sL){
-    awardGuide='<div style="background:rgba(5,150,105,0.08);border:1.5px solid var(--accent3);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:11px"><strong>\u2139\ufe0f Award Guidance:</strong> Bidders ranked by <strong>highest combined score</strong> (Price + LC'+(tadawulOn?' + Tadawul':'')+').'+(isThreshold?' Threshold enforced for: '+(blEnforced?'Baseline ':'')+(tgEnforced?'Target ':'')+'.':'')+' Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.</div>';
+    awardGuide='<div class="award-band"><div class="aw-ic">'+_icoCheck+'</div><div><div class="aw-title">'+L('Award guidance','\u062A\u0648\u0635\u064A\u0629 \u0627\u0644\u062A\u0631\u0633\u064A\u0629')+'</div><div class="aw-text">'+
+      (_wName?('<b>'+_esc(_wName)+'</b> '+L('ranks #1 on combined score','\u0641\u064A \u0627\u0644\u0645\u0631\u062A\u0628\u0629 \u0627\u0644\u0623\u0648\u0644\u0649 \u0628\u0627\u0644\u062F\u0631\u062C\u0629 \u0627\u0644\u0645\u062C\u0645\u0651\u0639\u0629')+(w?(' ('+w.score.toFixed(1)+' / 100)'):'')+'. '):'')+
+      L('Bidders ranked by highest combined score','\u062A\u0631\u062A\u064A\u0628 \u0627\u0644\u0639\u0627\u0631\u0636\u064A\u0646 \u062D\u0633\u0628 \u0623\u0639\u0644\u0649 \u062F\u0631\u062C\u0629 \u0645\u062C\u0645\u0651\u0639\u0629')+' ('+L('Price','\u0627\u0644\u0633\u0639\u0631')+' + '+L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+(tadawulOn?(' + '+L('Tadawul','\u062A\u062F\u0627\u0648\u0644')):'')+').'+
+      (isThreshold?(' '+L('Threshold enforced for','\u064A\u064F\u0637\u0628\u064E\u0651\u0642 \u0627\u0644\u062D\u062F \u0627\u0644\u0623\u062F\u0646\u0649 \u0639\u0644\u0649')+': '+(blEnforced?(L('Baseline','\u0627\u0644\u0623\u0633\u0627\u0633')+' '):'')+(tgEnforced?(L('Target','\u0627\u0644\u0645\u0633\u062A\u0647\u062F\u0641')+' '):'')+'.'):'')+
+      ' '+L('Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.','\u062A\u064F\u0643\u0633\u064E\u0631 \u0627\u0644\u062A\u0639\u0627\u062F\u0644\u0627\u062A \u0628\u0640: \u0623\u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u2192 \u0623\u0639\u0644\u0649 \u0645\u0633\u062A\u0647\u062F\u0641 \u2192 \u0623\u0639\u0644\u0649 \u0639\u0644\u0627\u0648\u0629 \u0645\u0646\u062A\u062C \u0648\u0637\u0646\u064A.')+
+      '</div></div></div>';
   } else if(isNPP&&!showLC){
-    awardGuide='<div style="background:rgba(59,130,246,0.08);border:1.5px solid var(--accent);border-radius:var(--rs);padding:10px 14px;margin-bottom:12px;font-size:11px"><strong>\u2139\ufe0f Award Guidance (NPP):</strong> Ranked by <strong>Adjusted Bid Price</strong> (lowest wins). Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.</div>';
+    awardGuide='<div class="award-band"><div class="aw-ic">'+_icoCheck+'</div><div><div class="aw-title">'+L('Award guidance (NPP)','\u062A\u0648\u0635\u064A\u0629 \u0627\u0644\u062A\u0631\u0633\u064A\u0629 (\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A)')+'</div><div class="aw-text">'+
+      L('Ranked by Adjusted Bid Price (lowest wins).','\u0627\u0644\u062A\u0631\u062A\u064A\u0628 \u062D\u0633\u0628 \u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644 (\u0627\u0644\u0623\u062F\u0646\u0649 \u064A\u0641\u0648\u0632).')+' '+
+      L('Ties broken by: highest LC Baseline \u2192 highest LC Target \u2192 highest NPP%.','\u062A\u064F\u0643\u0633\u064E\u0631 \u0627\u0644\u062A\u0639\u0627\u062F\u0644\u0627\u062A \u0628\u0640: \u0623\u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u2192 \u0623\u0639\u0644\u0649 \u0645\u0633\u062A\u0647\u062F\u0641 \u2192 \u0623\u0639\u0644\u0649 \u0639\u0644\u0627\u0648\u0629 \u0645\u0646\u062A\u062C \u0648\u0637\u0646\u064A.')+
+      '</div></div></div>';
   }
 
+  // Formula / scoring-basis strip
+  var _mechName=document.getElementById("bidMech")?document.getElementById("bidMech").value:"";
+  var formulaStrip='<div class="formula-strip"><div class="fs-head"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16M4 20h6M14 8l-4 12M9 8h7l-3 6h-2"/></svg><h4>'+L('How the winner is chosen','\u0643\u064A\u0641 \u064A\u064F\u062E\u062A\u0627\u0631 \u0627\u0644\u0641\u0627\u0626\u0632')+'</h4><span class="basis">'+_esc(_mechName||L('two-envelope','\u0645\u0638\u0631\u0648\u0641\u0627\u0646'))+'</span></div><div class="fs-body"><span class="feq">';
+  if(sL){
+    formulaStrip+='<b>'+L('Total','\u0627\u0644\u0643\u0644\u064A')+'</b> <span class="op">=</span> <b>'+L('Price','\u0627\u0644\u0633\u0639\u0631')+'</b><span class="op">\u00D7</span><span class="w">'+Math.round(priceWt*100)+'%</span> <span class="op">+</span> <b>'+L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+'</b><span class="op">\u00D7</span><span class="w">'+Math.round(lcWt*100)+'%</span>'+(tadawulOn?(' <span class="op">+</span> '+L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+' <span class="w">'+(tadawulPct*100).toFixed(0)+'%</span>'):'');
+  } else {
+    formulaStrip+='<b>'+L('Rank','\u0627\u0644\u062A\u0631\u062A\u064A\u0628')+'</b> <span class="op">\u2190</span> '+L('lowest Adjusted Bid Price','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644')+' <span class="op">(</span>'+L('NPP-adjusted','\u0645\u0639\u062F\u0651\u0644 \u0628\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A')+'<span class="op">)</span>';
+  }
+  formulaStrip+='</span></div></div>';
+
   // Results display
-  document.getElementById("bidResults").innerHTML=awardGuide+fin.map(function(b){
+  document.getElementById("bidResults").innerHTML=awardGuide+formulaStrip+fin.map(function(b){
     var qi=b.rank||999,isW=!b.excluded&&qi===1&&!b.art19Shifted;
-    var cd='<div class="'+(b.excluded?"excluded-overlay ":"")+(b.art19Shifted&&!b.excluded?"excluded-overlay ":"")+'bid-card" style="position:relative">';
+    var cls='bidder'+(isW?' winner':'')+(b.excluded?' excluded':'')+(b.art19Shifted&&!b.excluded?' shifted':'');
+    var cd='<article class="'+cls+'" tabindex="0">';
 
-    if(b.excluded) cd+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:var(--danger);color:#fff;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700">\uD83D\uDEAB EXCLUDED</div>';
-    if(b.art19Shifted&&!b.excluded) cd+='<div style="position:absolute;top:8px;right:8px;z-index:2;background:#f59e0b;color:#fff;padding:3px 9px;border-radius:10px;font-size:10px;font-weight:700">Art.19</div>';
-
-    cd+='<div class="bid-card-hd"><div style="display:flex;align-items:center;gap:8px">';
-    if(isW) cd+='<span style="font-size:18px">\uD83C\uDFC6</span>';
-    if(!b.excluded) cd+='<span style="font-size:18px;font-weight:800;color:var(--text3)">#'+qi+'</span>';
-    cd+='<div><div class="bid-name">'+b.name+'</div>'+(b.notes?'<div style="font-size:10px;color:var(--text3)">'+b.notes+'</div>':'')+'</div></div>';
-    cd+='<div class="bid-score" style="color:'+(b.excluded?"var(--danger)":b.art19Shifted?"#f59e0b":isW?"var(--accent3)":"var(--text)")+'">'+(b.excluded?"Excl.":(sL?b.score.toFixed(1):fSAR(Math.round(b.adjustedPrice))))+'</div></div>';
-
+    /* main row */
+    cd+='<div class="b-main">';
+    /* rank badge */
     if(b.excluded){
-      cd+='<div style="font-size:11px;color:var(--danger);padding:4px 0">'+b.exclusionReasons.join(", ")+'</div>';
+      cd+='<div class="rankbadge muted">'+_icoX+'<span class="rlabel">'+L('Out','\u0645\u0633\u062A\u0628\u0639\u062F')+'</span></div>';
+    } else if(isW){
+      cd+='<div class="rankbadge gold">'+_icoTrophy+'<span class="rnum">1</span></div>';
+    } else {
+      cd+='<div class="rankbadge"><span class="rnum">'+qi+'</span><span class="rlabel">'+L('Rank','\u0627\u0644\u062A\u0631\u062A\u064A\u0628')+'</span></div>';
     }
+    /* identity */
+    cd+='<div class="b-id"><div class="b-name"><span>'+_esc(b.name)+'</span>';
     if(!b.excluded){
-      cd+='<div class="bid-row"><span class="bid-row-lbl">Original Bid Price</span><span class="bid-row-val">'+fSAR(b.price||b.origPrice||0)+'</span></div>';
-      if(sA) cd+='<div class="bid-row" style="background:rgba(59,130,246,0.06)"><span class="bid-row-lbl">Adjusted Bid Price</span><span class="bid-row-val" style="color:var(--accent);font-weight:800">'+fSAR(Math.round(b.adjustedPrice))+'</span></div>';
-      if(sL){
-        cd+='<div class="bid-row"><span class="bid-row-lbl">LC Baseline %</span><span class="bid-row-val">'+(b.lcBaseline||b.baselinePct||0)+'%</span></div>';
-        cd+='<div class="bid-row"><span class="bid-row-lbl">LC Target %</span><span class="bid-row-val">'+(b.lcPct||0)+'%</span></div>';
-        cd+='<div style="background:var(--al);border:1px solid var(--border);border-radius:var(--rs);padding:8px;margin-top:6px;font-size:11px">';
-        cd+='<div style="font-weight:700;margin-bottom:4px;font-size:10px;color:var(--accent)">SCORE BREAKDOWN</div>';
-        cd+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">';
-        cd+='<div>Price Score: <strong>'+(b.priceScore?(b.priceScore*100).toFixed(1):"\u2014")+'</strong></div>';
-        cd+='<div>LC Score: <strong>'+(b.lcScore?(b.lcScore*100).toFixed(1):"\u2014")+'</strong></div>';
-        cd+='<div>Tadawul: <strong>'+(b.tadawulScore?(b.tadawulScore*100).toFixed(1):"0")+'</strong></div>';
-        cd+='</div>';
-        cd+='<div style="font-weight:800;margin-top:4px;color:var(--text)">Combined: '+b.score.toFixed(1)+'</div>';
-        cd+='</div>';
-      }
-      if(isNPP&&!showLC) cd+='<div class="bid-row"><span class="bid-row-lbl">NPP %</span><span class="bid-row-val">'+(b.nppPct||0)+'%</span></div>';
-      var pw2=sL?(mx>0?b.score/mx*100:0):100;
-      cd+='<div style="margin-top:8px"><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:'+pw2+'%;background:'+(isW?"var(--accent3)":"var(--accent)")+'"></div></div><span class="pg-p">'+(sL?b.score.toFixed(1):fSAR(Math.round(b.adjustedPrice)))+'</span></div></div>';
+      if(b.isTadawul) cd+='<span class="b-tadawul yes">'+_icoCheck+'<span>'+L('Tadawul-listed','\u0645\u062F\u0631\u062C\u0629 \u0641\u064A \u062A\u062F\u0627\u0648\u0644')+'</span></span>';
     }
     cd+='</div>';
+    /* meta */
+    cd+='<div class="b-meta">';
+    cd+='<div class="mi"><span class="mk">'+L('Original price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0623\u0635\u0644\u064A')+'</span><span class="mv">'+fSAR(b.price||b.origPrice||0)+'</span></div>';
+    if(sA) cd+='<div class="mi"><span class="mk">'+L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="mv">'+(b.excluded?'<span style="color:var(--text3)">'+L('\u2014 not scored','\u2014 \u063A\u064A\u0631 \u0645\u064F\u0642\u064A\u0651\u0645')+'</span>':fSAR(Math.round(b.adjustedPrice)))+'</span></div>';
+    if(sL){
+      var _tgt=(b.lcPct||0), _base=(b.lcBaseline||b.baselinePct||0);
+      cd+='<div class="mi"><span class="mk">'+L('LC target / baseline','\u0645\u0633\u062A\u0647\u062F\u0641 / \u0623\u0633\u0627\u0633')+'</span><span class="mv">'+(b.excluded&&!_tgt?'<span style="color:var(--bad-ink)">'+L('none','\u063A\u064A\u0631 \u0645\u062D\u062F\u062F')+'</span>':(_tgt+'% <span class="sub">'+L('vs','\u0645\u0642\u0627\u0628\u0644')+'</span> '+_base+'%'))+'</span></div>';
+    }
+    if(isNPP) cd+='<div class="mi"><span class="mk">'+L('NPP premium','\u0639\u0644\u0627\u0648\u0629 \u0627\u0644\u0645\u0646\u062A\u062C \u0627\u0644\u0648\u0637\u0646\u064A')+'</span><span class="mv"><span class="npp">'+(b.nppPct||0)+'%</span></span></div>';
+    cd+='</div></div>';
+    /* score */
+    cd+='<div class="b-score"><div class="sbig"><span class="lbl">'+(sL?L('Total','\u0627\u0644\u0643\u0644\u064A'):L('AdjPrice','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644'))+'</span>';
+    if(b.excluded){
+      cd+='<span class="val" style="color:var(--text3)">\u2014</span></div>';
+      cd+='<span class="st-pill bad">'+_icoX+'<span>'+L('Excluded','\u0645\u0633\u062A\u0628\u0639\u062F')+'</span></span>';
+    } else if(sL){
+      cd+='<span class="val">'+b.score.toFixed(1)+'</span><span class="max">/100</span></div>';
+      if(isW) cd+='<span class="st-pill accent">'+_icoTrophy+'<span>'+L('Winner','\u0627\u0644\u0641\u0627\u0626\u0632')+'</span></span>';
+      else if(b.art19Shifted) cd+='<span class="st-pill warn">'+_icoWarn+'<span>'+L('Art.19 shift','\u0625\u0632\u0627\u062D\u0629 \u0627\u0644\u0645\u0627\u062F\u0629 19')+'</span></span>';
+      else cd+='<span class="st-pill ok">'+_icoCheck+'<span>'+L('Qualified','\u0645\u0624\u0647\u0644')+'</span></span>';
+    } else {
+      cd+='<span class="val">'+fSAR(Math.round(b.adjustedPrice))+'</span></div>';
+      if(isW) cd+='<span class="st-pill accent">'+_icoTrophy+'<span>'+L('Winner','\u0627\u0644\u0641\u0627\u0626\u0632')+'</span></span>';
+      else if(b.art19Shifted) cd+='<span class="st-pill warn">'+_icoWarn+'<span>'+L('Art.19 shift','\u0625\u0632\u0627\u062D\u0629 \u0627\u0644\u0645\u0627\u062F\u0629 19')+'</span></span>';
+      else cd+='<span class="st-pill ok">'+_icoCheck+'<span>'+L('Qualified','\u0645\u0624\u0647\u0644')+'</span></span>';
+    }
+    cd+='</div></div>'; /* /b-main */
+
+    if(b.excluded){
+      cd+='<div class="exreasons"><div class="ex-title">'+_icoWarn+'<span>'+L('Exclusion reasons','\u0623\u0633\u0628\u0627\u0628 \u0627\u0644\u0627\u0633\u062A\u0628\u0639\u0627\u062F')+'</span></div><ul>';
+      (b.exclusionReasons||[]).forEach(function(r){ cd+='<li>'+_icoX+'<span>'+_esc(r)+'</span></li>'; });
+      cd+='</ul></div>';
+    } else if(sL){
+      /* two-envelope breakdown */
+      var techPct=(b.priceScore!=null||b.lcScore!=null)?100:100; void techPct;
+      var commScore=((b.priceScore||0)+(b.lcScore||0))*100;
+      var psPct=priceWt>0?Math.max(0,Math.min(100,(b.priceScore/priceWt)*100)):0;
+      var lsCore=Math.max(0,(b.lcScore||0)-(b.tadawulScore||0));
+      var lsPct=lcWt>0?Math.max(0,Math.min(100,(lsCore/lcWt)*100)):0;
+      var tadPct=(b.tadawulScore&&b.tadawulScore>0)?100:0;
+      cd+='<div class="b-break">';
+      cd+='<div class="bk bk-tech"><div class="bk-title"><span>'+L('Commercial envelope','\u0627\u0644\u0645\u0638\u0631\u0648\u0641 \u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</span><span class="sc">'+commScore.toFixed(1)+'<span class="of">/100</span></span></div>';
+      cd+='<div class="meter"><i class="comm" style="width:'+Math.max(0,Math.min(100,commScore)).toFixed(0)+'%"></i></div>';
+      cd+='<div class="bk-foot">'+L('Combined','\u0627\u0644\u0645\u062C\u0645\u0651\u0639')+' <b>'+b.score.toFixed(1)+'</b> \u00B7 '+L('rank','\u0627\u0644\u062A\u0631\u062A\u064A\u0628')+' <b>#'+qi+'</b></div></div>';
+      cd+='<div class="bk bk-comm"><div class="bk-title"><span>'+L('Score components','\u0645\u0643\u0648\u0651\u0646\u0627\u062A \u0627\u0644\u062F\u0631\u062C\u0629')+'</span><span class="sc">'+(b.score).toFixed(1)+'<span class="of">/100</span></span></div><div class="subrows">';
+      cd+='<div class="subrow"><span class="sk"><span class="swatch price"></span>'+L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span><span class="smeter"><i class="price" style="width:'+psPct.toFixed(0)+'%"></i></span><span class="sval">'+(b.priceScore?(b.priceScore*100).toFixed(1):'\u2014')+' <span class="of">\u00D7'+Math.round(priceWt*100)+'%</span></span></div>';
+      cd+='<div class="subrow"><span class="sk"><span class="swatch lc"></span>'+L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649 \u0627\u0644\u0645\u062D\u0644\u064A')+'</span><span class="smeter"><i class="lc" style="width:'+lsPct.toFixed(0)+'%"></i></span><span class="sval">'+(lsCore?(lsCore*100).toFixed(1):'\u2014')+' <span class="of">\u00D7'+Math.round(lcWt*100)+'%</span></span></div>';
+      if(tadawulOn) cd+='<div class="subrow"><span class="sk"><span class="swatch tad"></span>'+L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+'</span><span class="smeter"><i class="tad" style="width:'+tadPct+'%"></i></span><span class="sval">'+(b.tadawulScore?(b.tadawulScore*100).toFixed(1):'0.0')+' <span class="of">'+L('bonus','\u0639\u0644\u0627\u0648\u0629')+'</span></span></div>';
+      cd+='</div></div></div>';
+    } else {
+      /* price-only (NPP/SME): single meter row vs benchmark */
+      var pwBar=mx>0&&b.score?Math.max(4,Math.min(100,b.score/mx*100)):100;
+      cd+='<div class="b-break" style="grid-template-columns:1fr"><div class="bk"><div class="bk-title"><span>'+L('Adjusted price competitiveness','\u062A\u0646\u0627\u0641\u0633\u064A\u0629 \u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="sc">'+fSAR(Math.round(b.adjustedPrice))+'</span></div><div class="meter"><i class="comm" style="width:'+pwBar.toFixed(0)+'%"></i></div>'+(b.notes?'<div class="bk-foot">'+_esc(b.notes)+'</div>':'')+'</div></div>';
+    }
+
+    cd+='</article>';
     return cd;
   }).join("");
 
@@ -8541,13 +8622,13 @@ calcBids=function(){
     if(!resultsDiv) return;
     if(resultsDiv.querySelector('.v55-award-select')) return;
     if(!curBid || !curBid.lastResults || !curBid.lastResults.length) return;
-    var btnHtml = '<div style="margin-top:12px;padding:12px;background:rgba(5,150,105,.06);border:1.5px solid var(--accent3);border-radius:var(--rs)">';
-    btnHtml += '<div style="font-weight:700;font-size:12px;margin-bottom:8px">🏆 Select Winner for Award</div>';
+    var btnHtml = '<div class="v55-award-select" style="margin-top:12px;padding:12px;border-radius:var(--rs)">';
+    btnHtml += '<div class="v55-aw-hd" style="font-weight:700;font-size:12px;margin-bottom:8px">'+L('Select bidder for award','اختر العارض للترسية')+'</div>';
     btnHtml += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
     curBid.lastResults.forEach(function(r){
       if(r.excluded) return;
       var nm = r.name || r.bidder || '';
-      btnHtml += '<button class="btn btn-sm v55-award-select" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:700;font-size:11px;padding:6px 14px;border-radius:8px;cursor:pointer" onclick="pendingAwardName=\x27'+nm.replace(/'/g,"\\\'")+"\x27;openAwardFinalize()"+'">✅ '+nm+'</button>';
+      btnHtml += '<button class="btn btn-sm v55-award-select" style="font-weight:700;font-size:11px;padding:6px 14px;border-radius:8px;cursor:pointer" onclick="pendingAwardName=\x27'+nm.replace(/'/g,"\\\'")+"\x27;openAwardFinalize()"+'">'+nm+'</button>';
     });
     btnHtml += '</div></div>';
     resultsDiv.insertAdjacentHTML('beforeend', btnHtml);
@@ -9037,6 +9118,273 @@ body.mobile-mode .cmd-band,body.mobile-mode .brd-hero,body.mobile-mode .dash-her
 body.mobile-mode .btn,body.mobile-mode .tbtn,body.mobile-mode .fsel,body.mobile-mode .fi,body.mobile-mode .fsel2{min-height:38px}
 body.mobile-mode #dashEntitySel{max-width:100%!important}
 body.mobile-mode .fb{flex-wrap:wrap}
+
+/* ============================================================
+   EVOLVE GLOBAL RESKIN  (token-cascade companion — restrained
+   accent, hairline borders, no side-stripes, no gradient text,
+   no glassmorphism-by-default, focus-visible rings, mono figures)
+   ============================================================ */
+
+/* --- Type: Bricolage = display only (titles + wordmark); Inter elsewhere --- */
+.page-title,#pageTitle,.md-title,.fsec-title,.card-title,.sc-title,.dsec-hd b,
+.dash-sec-hdr .ds-title,.login-title,.cmd-org,.cmd-logo-txt{font-family:var(--fn);}
+body:not(.rtl) .dc-val,body:not(.rtl) .vt-val,body:not(.rtl) .kpi-val,
+body:not(.rtl) .bid-score,body:not(.rtl) .td-m{font-family:var(--fm);font-variant-numeric:tabular-nums;}
+
+/* --- Kill gradient TEXT (impeccable ban) → solid ink --- */
+#pageTitle{background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
+  color:var(--text)!important;-webkit-text-fill-color:var(--text)!important;font-family:var(--fn);font-weight:700;letter-spacing:-.02em;}
+.dsec-hd .dsi{background:var(--al)!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;color:var(--accent-ink)!important;-webkit-text-fill-color:initial!important;}
+.fun-n,.fun-step.gold .fun-n,.fun-step.teal .fun-n,.fun-step.green .fun-n,.fun-step.red .fun-n{
+  background:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;-webkit-text-fill-color:currentColor!important;color:var(--text)!important;}
+.dash-hero .dh-title{background:none!important;-webkit-text-fill-color:#fff!important;color:#fff!important;animation:none!important;}
+
+/* --- Topbar: solid hairline surface, no glass wash --- */
+.topbar{background:var(--surface)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+  border-bottom:1px solid var(--border)!important;box-shadow:none!important;}
+[data-theme=dark] .topbar{background:var(--surface)!important;}
+
+/* --- Remove decorative side-stripe borders (>1px colored edge) --- */
+.kpi{border-left:1px solid var(--border)!important;}
+.kpi.kpi-blue,.kpi.kpi-green,.kpi.kpi-red,.kpi.kpi-amber,.kpi.kpi-purple,.kpi.kpi-teal{
+  border-left:1px solid var(--border)!important;box-shadow:var(--sh)!important;}
+.al-item,body.rtl .al-item,.al-item.warn,.al-item.info{
+  border-left:1px solid var(--border)!important;border-right:1px solid var(--border)!important;border:1px solid var(--border)!important;}
+.toast.ok,.toast.err,.toast.info{border-left:1px solid var(--border)!important;}
+.toast{box-shadow:var(--shl)!important;backdrop-filter:none!important;}
+.hv-row,body.rtl .hv-row{border-left:1px solid var(--border)!important;border-right:1px solid var(--border)!important;border:1px solid var(--border)!important;}
+.bl-entry.active-bl,body.rtl .bl-entry.active-bl{border-left:1px solid var(--border2)!important;border-right:1px solid var(--border2)!important;border:1px solid var(--border2)!important;}
+
+/* keep a small semantic dot where the stripe was carrying meaning */
+.al-item{position:relative;}
+.bl-entry.active-bl{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--danger) 32%,transparent);}
+
+/* --- Restrained shadows everywhere (cards/sections) --- */
+.card,.fsec,.sc,.review-card,.bid-card,.dsec,.dash-sec,.tc-contract,.ev-contract,
+.pf-card,.sup-card,.sim-email,.fb,.vc-banner{box-shadow:var(--sh);}
+
+/* --- Primary button = the one restrained gradient accent --- */
+.btn-p{background:var(--grad-brand)!important;border:none!important;color:#fff!important;
+  box-shadow:0 1px 2px rgba(37,99,235,.35)!important;}
+.btn-p:hover{filter:none!important;box-shadow:0 3px 10px -2px rgba(37,99,235,.5)!important;background:linear-gradient(100deg,#2159db,#7232d6)!important;}
+
+/* --- Focus-visible rings (semantic, AA) --- */
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+.btn:focus-visible,.tbtn:focus-visible,.fc:focus-visible,a:focus-visible,
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,
+.ni-wrap:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+/* --- Mono tabular figures --- */
+.mono,.kpi-val,.dc-val,.vt-val,.bid-score,.td-m,.dt,.num{font-variant-numeric:tabular-nums;}
+
+/* --- Page wash: Evolve surfaces are pure flat-neutral (remove the radial glow) --- */
+body::before{display:none!important;content:none!important;}
+#page-dashboard::before{display:none!important;content:none!important;}
+
+/* ============================================================
+   EVOLVE CASCADE — route the remaining hardcoded rainbow hex
+   through semantic tokens (donut cards, funnel, review, verdict).
+   These were literal hex, so the :root token-value remap missed them.
+   ============================================================ */
+/* dashboard donut/value cards: label + value + icon tint → restrained
+   accent for portfolio metrics, semantic tokens for status cards */
+.dc.dc-blue .dc-lbl,.dc.dc-teal .dc-lbl,.dc.dc-purple .dc-lbl{color:var(--accent-ink)!important;}
+.dc.dc-green .dc-lbl{color:var(--ok-ink)!important;}
+.dc.dc-amber .dc-lbl{color:var(--warn-ink)!important;}
+.dc.dc-red .dc-lbl{color:var(--bad-ink)!important;}
+.dc-blue .dc-val,.dc-teal .dc-val,.dc-purple .dc-val{color:var(--accent-ink)!important;}
+.dc-green .dc-val{color:var(--ok-ink)!important;}
+.dc-amber .dc-val{color:var(--warn-ink)!important;}
+.dc-red .dc-val{color:var(--bad-ink)!important;}
+.dc.dc-blue .dc-icon,.dc.dc-teal .dc-icon,.dc.dc-purple .dc-icon{background:var(--accent-soft)!important;color:var(--accent-ink)!important;}
+.dc.dc-green .dc-icon{background:var(--ok-bg)!important;color:var(--ok-ink)!important;}
+.dc.dc-amber .dc-icon{background:var(--warn-bg)!important;color:var(--warn-ink)!important;}
+.dc.dc-red .dc-icon{background:var(--bad-bg)!important;color:var(--bad-ink)!important;}
+/* section accent rules (acc-teal etc.) → restrained accent hairline */
+.dsec.acc-teal,.dsec.acc-green,.dsec.acc-blue,.dsec.acc-purple,.dsec.acc-amber,.dsec.acc-red{border-top-color:var(--border)!important;}
+/* funnel numbers: solid ink, no rainbow gradient text (delete the look) */
+.fun-n,.fun-step.gold .fun-n,.fun-step.teal .fun-n,.fun-step.green .fun-n,.fun-step.red .fun-n{
+  background:none!important;background-image:none!important;-webkit-background-clip:border-box!important;background-clip:border-box!important;
+  -webkit-text-fill-color:var(--text)!important;color:var(--text)!important;}
+#page-dashboard .fun-step.fun-end.st-ok .fun-n{color:var(--ok-ink)!important;-webkit-text-fill-color:var(--ok-ink)!important;}
+#page-dashboard .fun-step.fun-end.st-warn .fun-n{color:var(--warn-ink)!important;-webkit-text-fill-color:var(--warn-ink)!important;}
+#page-dashboard .fun-step.fun-end.st-bad .fun-n{color:var(--bad-ink)!important;-webkit-text-fill-color:var(--bad-ink)!important;}
+/* reports-review action buttons: download → neutral, approve → semantic ok */
+#page-review .ev-btn.dl{background:var(--neutral-bg)!important;border-color:var(--border2)!important;color:var(--text2)!important;}
+#page-review .ev-btn.app{background:var(--ok-bg)!important;border-color:color-mix(in srgb,var(--ok) 30%,transparent)!important;color:var(--ok-ink)!important;}
+/* MoM / report PDF verdict chips → semantic tokens */
+.pdf-verdict.ok{background:var(--ok-bg)!important;border:1px solid color-mix(in srgb,var(--ok) 40%,transparent)!important;color:var(--ok-ink)!important;}
+.pdf-verdict.bad,.pdf-verdict.no{background:var(--bad-bg)!important;border:1px solid color-mix(in srgb,var(--bad) 40%,transparent)!important;color:var(--bad-ink)!important;}
+
+/* ============================================================
+   EVOLVE — demote the dashboard COMMAND BAND from a dark
+   animated-gradient hero-metric to a flat, neutral KPI strip
+   (matches the Evolve dashboard sample: hairline surface, small
+   labels, mono tabular figures, semantic status only). Structure
+   and all JS untouched — CSS-only restyle.
+   ============================================================ */
+#page-dashboard .cmd-band{
+  background:var(--surface)!important;background-image:none!important;animation:none!important;
+  border:1px solid var(--border)!important;box-shadow:var(--sh)!important;color:var(--text)!important;
+  padding:16px 18px!important;border-radius:var(--rl)!important;}
+[data-theme=dark] #page-dashboard .cmd-band{background:var(--surface)!important;}
+#page-dashboard .cmd-band::after{display:none!important;content:none!important;}
+#page-dashboard .cmd-org{color:var(--text)!important;}
+#page-dashboard .cmd-sub{color:var(--text2)!important;}
+#page-dashboard .cmd-date{color:var(--text3)!important;}
+#page-dashboard .cmd-logo-txt{background:var(--grad-brand)!important;color:#fff!important;}
+/* portfolio selector + export: neutral, not white-on-dark */
+#page-dashboard .cmd-id label{color:var(--text3)!important;}
+#page-dashboard #dashEntitySel{background:var(--surface2)!important;color:var(--text)!important;border:1px solid var(--border2)!important;}
+#page-dashboard .cmd-export{background:var(--surface2)!important;color:var(--text)!important;border:1px solid var(--border2)!important;}
+#page-dashboard .cmd-export:hover{background:var(--surface3)!important;border-color:var(--border2)!important;}
+/* verdict tiles → flat neutral KPI cells, NOT oversized hero figures */
+#page-dashboard .verdict-tile{background:var(--surface2)!important;border:1px solid var(--border)!important;}
+#page-dashboard .verdict-tile:hover{background:var(--surface3)!important;border-color:var(--border2)!important;}
+#page-dashboard .vt-lbl{color:var(--text3)!important;}
+#page-dashboard .vt-sub,#page-dashboard .vt-target,#page-dashboard .vt-foot-t,#page-dashboard .gauge-num span{color:var(--text3)!important;}
+#page-dashboard .vt-val{color:var(--text)!important;font-size:19px!important;}/* demote from 23px hero → KPI scale */
+#page-dashboard .vt-unit{color:var(--text3)!important;}
+#page-dashboard .gauge-num{color:var(--text)!important;font-size:17px!important;}
+#page-dashboard .vt-ic{background:var(--neutral-bg)!important;color:var(--text2)!important;}
+#page-dashboard .g-track,#page-dashboard .vt-bar,#page-dashboard .vt-meter{background:var(--neutral-bg)!important;}
+/* status semantics preserved — recolor for light surface, no neon-on-dark */
+#page-dashboard .vt-stat.st-ok{color:var(--ok-ink)!important;}
+#page-dashboard .vt-stat.st-warn{color:var(--warn-ink)!important;}
+#page-dashboard .vt-stat.st-bad{color:var(--bad-ink)!important;}
+#page-dashboard .vt-stat.st-neutral{color:var(--text3)!important;}
+#page-dashboard .vt-stat.st-ok .vt-ic{background:var(--ok-bg)!important;color:var(--ok-ink)!important;}
+#page-dashboard .vt-stat.st-warn .vt-ic{background:var(--warn-bg)!important;color:var(--warn-ink)!important;}
+#page-dashboard .vt-stat.st-bad .vt-ic{background:var(--bad-bg)!important;color:var(--bad-ink)!important;}
+#page-dashboard .g-fill.st-ok{stroke:var(--ok)!important;}
+#page-dashboard .g-fill.st-warn{stroke:var(--warn)!important;}
+#page-dashboard .g-fill.st-bad{stroke:var(--bad)!important;}
+#page-dashboard .g-fill.st-neutral{stroke:var(--neutral)!important;}
+
+/* ============================================================
+   EVOLVE — v55 "Select Winner for Award" box: drop the off-brand
+   green gradient + emoji; render as neutral box with brand-only
+   gradient action buttons (same as .btn-p) — functionality intact.
+   ============================================================ */
+.v55-award-select{background:var(--surface2)!important;border:1px solid var(--border)!important;}
+.v55-award-select .v55-aw-hd{color:var(--text)!important;}
+.btn.v55-award-select{}/* noop guard */
+button.v55-award-select{background:var(--grad-brand)!important;background-image:var(--grad-brand)!important;
+  color:#fff!important;border:none!important;box-shadow:0 1px 2px rgba(37,99,235,.35)!important;}
+button.v55-award-select:hover{filter:none!important;box-shadow:0 3px 10px -2px rgba(37,99,235,.5)!important;background:linear-gradient(100deg,#2159db,#7232d6)!important;}
+
+/* ============================================================
+   STATUS CHIP (icon + label, semantic only) — used by bid page
+   ============================================================ */
+.st-pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;
+  padding:4px 9px 4px 8px;border-radius:999px;white-space:nowrap;border:1px solid transparent;font-family:var(--fs);}
+body.rtl .st-pill{font-family:var(--far);}
+.st-pill svg{width:13px;height:13px;flex-shrink:0;}
+.st-pill.ok{color:var(--ok-ink);background:var(--ok-bg);border-color:color-mix(in srgb,var(--ok) 28%,transparent);}
+.st-pill.warn{color:var(--warn-ink);background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 32%,transparent);}
+.st-pill.bad{color:var(--bad-ink);background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 30%,transparent);}
+.st-pill.accent{color:var(--accent-ink);background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 30%,transparent);}
+.st-pill.neutral{color:var(--text2);background:var(--neutral-bg);border-color:var(--border2);}
+
+/* ============================================================
+   BID EVALUATION — Evolve ranked-results rebuild
+   ============================================================ */
+#bidResults .award-band{display:flex;align-items:flex-start;gap:13px;background:var(--accent-soft);
+  border:1px solid color-mix(in srgb,var(--accent) 28%,transparent);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;}
+#bidResults .award-band .aw-ic{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;
+  background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);color:var(--accent-ink);}
+#bidResults .award-band .aw-ic svg{width:18px;height:18px;}
+#bidResults .award-band .aw-title{font-weight:700;color:var(--text);font-size:13px;margin-bottom:3px;}
+#bidResults .award-band .aw-text{font-size:12.5px;color:var(--text2);line-height:1.5;}
+#bidResults .award-band .aw-text b{color:var(--text);font-weight:700;}
+
+#bidResults .bidder{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  box-shadow:var(--sh);overflow:hidden;margin-bottom:12px;transition:border-color var(--tr),box-shadow var(--tr);}
+#bidResults .bidder.winner{border-color:color-mix(in srgb,var(--accent) 45%,var(--border));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent),var(--shl);}
+#bidResults .bidder.excluded{opacity:.94;background:var(--surface2);}
+#bidResults .bidder.shifted{border-color:color-mix(in srgb,var(--warn) 45%,var(--border));}
+
+#bidResults .b-main{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:15px 18px;}
+#bidResults .rankbadge{display:flex;flex-direction:column;align-items:center;gap:3px;width:50px;flex-shrink:0;}
+#bidResults .rankbadge .rnum{font-family:var(--fm);font-variant-numeric:tabular-nums;font-weight:700;font-size:18px;color:var(--text3);line-height:1;}
+#bidResults .rankbadge .rlabel{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
+#bidResults .rankbadge.gold{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);border-radius:9px;padding:8px 0;}
+#bidResults .rankbadge.gold .rnum{color:var(--accent-ink);}
+#bidResults .rankbadge.gold svg{width:18px;height:18px;color:var(--accent-ink);}
+#bidResults .rankbadge.muted svg{width:18px;height:18px;color:var(--bad);}
+
+#bidResults .b-id{min-width:0;}
+#bidResults .b-name{font-weight:700;color:var(--text);font-size:15px;display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+#bidResults .b-tadawul{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;border:1px solid var(--border2);color:var(--text2);background:var(--surface);}
+#bidResults .b-tadawul svg{width:11px;height:11px;}
+#bidResults .b-tadawul.yes{color:var(--ok-ink);border-color:color-mix(in srgb,var(--ok) 30%,transparent);background:var(--ok-bg);}
+#bidResults .b-meta{display:flex;align-items:flex-start;gap:14px;margin-top:8px;flex-wrap:wrap;}
+#bidResults .b-meta .mi{display:flex;flex-direction:column;gap:1px;}
+#bidResults .b-meta .mk{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.02em;}
+#bidResults .b-meta .mv{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12.5px;font-weight:600;color:var(--text);}
+#bidResults .b-meta .mv .npp{color:var(--accent-ink);}
+#bidResults .b-meta .mv .sub{font-size:10px;color:var(--text3);font-weight:400;}
+
+#bidResults .b-score{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;min-width:140px;}
+body.rtl #bidResults .b-score{align-items:flex-start;}
+#bidResults .b-score .sbig{display:flex;align-items:baseline;gap:6px;}
+#bidResults .b-score .sbig .lbl{font-size:11px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.03em;}
+#bidResults .b-score .sbig .val{font-family:var(--fm);font-variant-numeric:tabular-nums;font-weight:700;font-size:28px;letter-spacing:-.02em;color:var(--text);line-height:1;}
+#bidResults .bidder.winner .b-score .sbig .val{color:var(--accent-ink);}
+#bidResults .b-score .sbig .max{font-family:var(--fm);font-size:12px;color:var(--text3);font-weight:500;}
+
+/* breakdown band — two envelopes */
+#bidResults .b-break{border-top:1px solid var(--border);background:var(--surface2);display:grid;grid-template-columns:1.1fr 2fr;gap:0;}
+#bidResults .bidder.winner .b-break{background:color-mix(in srgb,var(--accent-soft) 55%,var(--surface2));}
+#bidResults .b-break .bk{padding:13px 18px;}
+#bidResults .b-break .bk.bk-tech{border-inline-end:1px solid var(--border);}
+#bidResults .bk-title{font-size:10.5px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px;}
+#bidResults .bk-title .sc{font-family:var(--fm);font-variant-numeric:tabular-nums;color:var(--text);font-size:13px;font-weight:700;}
+#bidResults .bk-title .sc .of{color:var(--text3);font-weight:400;}
+#bidResults .meter{height:6px;border-radius:4px;background:var(--neutral-bg);position:relative;overflow:hidden;}
+#bidResults .meter i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:4px;display:block;}
+#bidResults .meter i.tech{background:var(--series-tech);}
+#bidResults .meter i.comm{background:var(--series-comm);}
+#bidResults .bk-foot{margin-top:7px;font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:11.5px;color:var(--text3);}
+#bidResults .bk-foot b{color:var(--text2);font-weight:600;}
+#bidResults .subrows{display:flex;flex-direction:column;gap:8px;}
+#bidResults .subrow{display:grid;grid-template-columns:92px 1fr auto;align-items:center;gap:11px;}
+#bidResults .subrow .sk{font-size:11.5px;font-weight:600;color:var(--text2);display:flex;align-items:center;gap:6px;}
+#bidResults .subrow .sk .swatch{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+#bidResults .subrow .sk .swatch.price{background:var(--series-price);}
+#bidResults .subrow .sk .swatch.lc{background:var(--series-lc);}
+#bidResults .subrow .sk .swatch.tad{background:var(--series-tad);}
+#bidResults .subrow .smeter{height:5px;border-radius:3px;background:var(--neutral-bg);position:relative;overflow:hidden;}
+#bidResults .subrow .smeter i{position:absolute;inset-block:0;inset-inline-start:0;border-radius:3px;display:block;}
+#bidResults .subrow .smeter i.price{background:var(--series-price);}
+#bidResults .subrow .smeter i.lc{background:var(--series-lc);}
+#bidResults .subrow .smeter i.tad{background:var(--series-tad);}
+#bidResults .subrow .sval{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;color:var(--text);text-align:end;white-space:nowrap;}
+#bidResults .subrow .sval .of{color:var(--text3);font-weight:400;font-size:11px;}
+
+/* exclusion reasons */
+#bidResults .exreasons{padding:13px 18px;border-top:1px solid var(--border);background:var(--bad-bg);}
+#bidResults .exreasons .ex-title{font-size:11px;font-weight:700;color:var(--bad-ink);text-transform:uppercase;letter-spacing:.03em;display:flex;align-items:center;gap:6px;margin-bottom:8px;}
+#bidResults .exreasons .ex-title svg{width:14px;height:14px;}
+#bidResults .exreasons ul{list-style:none;display:flex;flex-direction:column;gap:7px;margin:0;padding:0;}
+#bidResults .exreasons li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:var(--text2);line-height:1.45;}
+#bidResults .exreasons li svg{width:14px;height:14px;color:var(--bad-ink);flex-shrink:0;margin-top:1px;}
+
+/* formula strip + weight chips */
+#bidResults .formula-strip{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);margin-bottom:14px;overflow:hidden;}
+#bidResults .formula-strip .fs-head{display:flex;align-items:center;gap:9px;padding:11px 18px;border-bottom:1px solid var(--border);}
+#bidResults .formula-strip .fs-head svg{width:16px;height:16px;color:var(--text3);}
+#bidResults .formula-strip .fs-head h4{font-size:13px;font-weight:700;color:var(--text);margin:0;}
+#bidResults .formula-strip .fs-head .basis{margin-inline-start:auto;font-size:12px;color:var(--text3);font-weight:500;}
+#bidResults .formula-strip .fs-body{padding:13px 18px;}
+#bidResults .formula-strip .feq{font-family:var(--fm);font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--text2);line-height:1.7;}
+#bidResults .formula-strip .feq b{color:var(--text);font-weight:600;}
+#bidResults .formula-strip .feq .w{color:var(--accent-ink);font-weight:600;}
+#bidResults .formula-strip .feq .op{color:var(--text3);}
+
+@media(max-width:820px){#bidResults .b-break{grid-template-columns:1fr;}#bidResults .b-break .bk.bk-tech{border-inline-end:0;border-bottom:1px solid var(--border);}}
+@media(max-width:640px){#bidResults .b-main{grid-template-columns:auto 1fr;}#bidResults .b-score{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;min-width:0;padding-top:12px;border-top:1px solid var(--border);}}
 </style>
 <div id="loginOverlay"><div class="login-card">
   <div class="login-logo">LC</div>
