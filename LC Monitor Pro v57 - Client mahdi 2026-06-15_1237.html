@@ -1488,9 +1488,10 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <aside class="sidebar" id="sidebar">
   <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro</div><div class="sls">منصة المحتوى المحلي</div></div></div></div>
   <div class="ns">OVERVIEW</div>
+  <div class="ni-wrap" onclick="homeGoLanding()"><span class="ni">🏠</span><span>Home</span></div>
   <div class="ni-wrap active" onclick="nav(&#39;dashboard&#39;,this)"><span class="ni">⬛</span><span>Executive Dashboard</span></div>
   <div class="ns">PRE-TENDERING</div>
-  <div class="ni-wrap" onclick="nav(&#39;mechwiz&#39;,this)"><span class="ni">🧭</span><span>Identified RFPs</span></div>
+  <div class="ni-wrap" onclick="nav(&#39;mechwiz&#39;,this)"><span class="ni">🧭</span><span>Mechanisms Identifier</span></div>
   <div class="ni-wrap" onclick="nav(&#39;mlwiz&#39;,this)"><span class="ni">📋</span><span>Mandatory List Identifier</span></div>
   <div class="ns">AWARDING</div>
   <div class="ni-wrap" onclick="nav(&#39;evalassist&#39;,this)"><span class="ni">⚖️</span><span>Evaluation Assistant</span><span class="nbadge" id="nbBids"></span></div>
@@ -1508,6 +1509,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
   <div class="ni-wrap" onclick="openSettingsNav(this)" style="position:relative;cursor:pointer"><span class="ni">⚙</span><span>Settings &amp; Admin</span><span id="settArrow" style="margin-left: auto; font-size: 9px; transition: transform 0.2s;" onclick="event.stopPropagation();toggleSettSubs()">▼</span></div>
   <div id="settSubNav" style="display: none; padding-left: 20px;">
       <div class="ns" style="font-size:8px;opacity:.65;padding-left:4px">GENERAL</div>
+  <div class="ni-wrap" onclick="openSetupWizard()" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">🪄</span><span>Setup Wizard</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-account&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>👤 User Settings</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-dashboard&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>📊 Dashboard KPIs</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-data&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🗄️ Data</span></div>
@@ -1922,6 +1924,14 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <!-- =================== PAGE: SETTINGS =================== -->
 <div class="page" id="page-settings">
   <div class="fsec" id="settSec-account">
+    <div class="sw-launch" onclick="openSetupWizard()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openSetupWizard();}">
+      <div class="sw-launch-ic">🪄</div>
+      <div class="sw-launch-tx">
+        <div class="card-title" style="margin:0">First-time Setup</div>
+        <div class="card-sub" style="margin:3px 0 0">Configure the whole tool in one step — choose your entity type and we set the evaluation weights, thresholds and penalty rules for you.</div>
+      </div>
+      <button class="btn btn-p" onclick="event.stopPropagation();openSetupWizard()">Start Setup</button>
+    </div>
     <div class="fsec-title">👤 User Settings — My Account</div>
     <div style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Set up your profile and password. This prepares your account for the upcoming <b>Login &amp; Roles</b> — the login page is not active yet, so changes here are saved locally for now. Your role is assigned in <b>Roles &amp; Permissions</b>.</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -2400,7 +2410,21 @@ let EMAIL_TPL=JSON.parse(localStorage.getItem('lcEmailTpl')||JSON.stringify({per
 let REM_LOG=JSON.parse(localStorage.getItem('lcRemLog')||'[]');
 let EJS=Object.assign({serviceId:'',templateId:'',publicKey:'',configured:false},JSON.parse(localStorage.getItem('lcEJS')||'{}'));
 var auditMode='all',pfMode='all',certMode='all',editEUIdx=-1,editCertIdx=-1;
-var RTYPE_LBL={period:'Periodic Report (any year)',penalty:'Penalty Notice',period_1:'1st Year Periodic Report',period_2:'2nd Year Periodic Report',period_3:'3rd Year Periodic Report',period_4:'4th Year Periodic Report',period_5:'5th Year Periodic Report',final:'Final Report',npp:'National Products Price Preferencing Final Supply Report',mlnp:'Mandatory List Final Supply Report',improvement:'Improvement Plan'};
+var RTYPE_LBL={period:'Periodic Report (all years)',penalty:'Penalty Notice',period_1:'1st Year Periodic Report',period_2:'2nd Year Periodic Report',period_3:'3rd Year Periodic Report',period_4:'4th Year Periodic Report',period_5:'5th Year Periodic Report',final:'Final Report',npp:'National Products Price Preferencing Final Supply Report',mlnp:'Mandatory List Final Supply Report',improvement:'Improvement Plan'};
+/* v57 mahdi — ONE periodic email template covers every contract year. {{REPORT_PERIOD}} auto-fills the localized year label; emailTplKey() routes any 'period_N' to the single 'period' template. */
+function emailTplKey(rtKey){return (typeof rtKey==='string'&&rtKey.indexOf('period_')===0)?'period':rtKey;}
+function reportPeriodLabel(rtKey){
+  var _ar=(typeof lang!=='undefined'&&lang==='ar');
+  if(typeof rtKey==='string'&&rtKey.indexOf('period_')===0){
+    var y=parseInt(rtKey.split('_')[1],10)||0;
+    var ord=(function(n){var s=['th','st','nd','rd'],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);})(y);
+    var arOrd={1:'الأولى',2:'الثانية',3:'الثالثة',4:'الرابعة',5:'الخامسة',6:'السادسة',7:'السابعة',8:'الثامنة',9:'التاسعة',10:'العاشرة'};
+    return _ar?('التقرير الدوري للسنة '+(arOrd[y]||('رقم '+y))):(ord+' Year Periodic Report');
+  }
+  if(rtKey==='period')return _ar?'التقرير الدوري':'Periodic Report';
+  return (typeof RTYPE_LBL!=='undefined'&&RTYPE_LBL[rtKey])||rtKey;
+}
+window.emailTplKey=emailTplKey;window.reportPeriodLabel=reportPeriodLabel;
 function logAudit(type,desc,num){AUDIT_LOG.unshift({id:Date.now(),type:type,desc:desc,num:num||'',ts:new Date().toLocaleString('en-GB'),actor:(typeof CURRENT_USER!=='undefined'&&CURRENT_USER)?CURRENT_USER.name:''});/* v57: uncapped, no expiry */lsSet('lcAudit',JSON.stringify(AUDIT_LOG));}
 
 // ============================================================
@@ -4672,8 +4696,8 @@ function buildQueue(){
       var dl=Math.ceil((new Date(r.due)-new Date())/86400000);
       if(dl<0||dl>rem)return;
       var rtKey=r.type==='period'?'period_'+r.year:r.type;
-      var tpl=EMAIL_TPL[rtKey];if(!tpl)return;
-      var vars={CONTRACT_NAME:c.name||'',CONTRACT_NUM:c.num,DUE_DATE:fD(r.due),REPORT_TYPE:RTYPE_LBL[rtKey]||rtKey,DAYS_LEFT:String(dl),LC_TARGET:pct(c.agreedPct),CONTACT_NAME:eu.contact||eu.name};
+      var tpl=EMAIL_TPL[(typeof emailTplKey==='function')?emailTplKey(rtKey):rtKey];if(!tpl)return;
+      var vars={CONTRACT_NAME:c.name||'',CONTRACT_NUM:c.num,DUE_DATE:fD(r.due),REPORT_TYPE:RTYPE_LBL[rtKey]||rtKey,REPORT_PERIOD:(typeof reportPeriodLabel==='function'?reportPeriodLabel(rtKey):(RTYPE_LBL[rtKey]||rtKey)),DAYS_LEFT:String(dl),LC_TARGET:pct(c.agreedPct),CONTACT_NAME:eu.contact||eu.name};
       q.push({contractNum:c.num,contractName:c.name,reportType:rtKey,toEmail:eu.email,toName:eu.contact||eu.name,subject:fillTpl(tpl.subject,vars),body:fillTpl(tpl.body,vars),daysLeft:dl,attachments:tpl.attachments||[]});
     });
   });
@@ -4698,8 +4722,8 @@ function renderReminders(){
 function previewReminder(num,rt){
   var c=DB.find(function(x){return x.num===num;});if(!c)return;
   var eu=ENDUSERS.find(function(e){return e.name===c.endUser;});
-  var tpl=EMAIL_TPL[rt];if(!tpl)return;
-  var vars={CONTRACT_NAME:c.name||'',CONTRACT_NUM:c.num,DUE_DATE:fD(c.end),REPORT_TYPE:RTYPE_LBL[rt]||rt,DAYS_LEFT:'5',LC_TARGET:pct(c.agreedPct),CONTACT_NAME:eu?eu.contact||eu.name:'Contact'};
+  var tpl=EMAIL_TPL[(typeof emailTplKey==='function')?emailTplKey(rt):rt];if(!tpl)return;
+  var vars={CONTRACT_NAME:c.name||'',CONTRACT_NUM:c.num,DUE_DATE:fD(c.end),REPORT_TYPE:RTYPE_LBL[rt]||rt,REPORT_PERIOD:(typeof reportPeriodLabel==='function'?reportPeriodLabel(rt):(RTYPE_LBL[rt]||rt)),DAYS_LEFT:'5',LC_TARGET:pct(c.agreedPct),CONTACT_NAME:eu?eu.contact||eu.name:'Contact'};
   var area=document.getElementById('emailPreviewArea');if(!area)return;
   area.innerHTML='<div class="sim-email">'
     +'<div class="sim-email-from">From: lc-monitor@org.gov.sa</div>'
@@ -4710,9 +4734,9 @@ function previewReminder(num,rt){
     +'</div>';
 }
 function renderEmailPreview(){
-  var rtEl=document.getElementById('previewRT');var rt=rtEl?rtEl.value:'period_1';
-  var tpl=EMAIL_TPL[rt];var area=document.getElementById('emailPreviewArea');if(!tpl||!area)return;
-  var sV={CONTRACT_NAME:'Sample Contract',CONTRACT_NUM:'2024-001',DUE_DATE:'01 Jan 2025',REPORT_TYPE:RTYPE_LBL[rt]||rt,DAYS_LEFT:'15',LC_TARGET:'35%',CONTACT_NAME:'Ahmed Al-Rashidi'};
+  var rtEl=document.getElementById('previewRT');var rt=rtEl?rtEl.value:'period';
+  var tpl=EMAIL_TPL[(typeof emailTplKey==='function')?emailTplKey(rt):rt];var area=document.getElementById('emailPreviewArea');if(!tpl||!area)return;
+  var sV={CONTRACT_NAME:'Sample Contract',CONTRACT_NUM:'2024-001',DUE_DATE:'01 Jan 2025',REPORT_TYPE:RTYPE_LBL[rt]||rt,REPORT_PERIOD:(typeof reportPeriodLabel==='function'?reportPeriodLabel(rt):(RTYPE_LBL[rt]||rt)),DAYS_LEFT:'15',LC_TARGET:'35%',CONTACT_NAME:'Ahmed Al-Rashidi'};
   area.innerHTML='<div class="sim-email">'
     +'<div class="sim-email-from">From: lc-monitor@org.gov.sa</div>'
     +'<div class="sim-email-to">To: Ahmed Al-Rashidi &lt;alrashidi@entity.gov.sa&gt;</div>'
@@ -4735,16 +4759,13 @@ function renderEmailTplList(){
   // These are the SAME keys the reminder-send path reads (rtKey = 'period_'+r.year),
   // so editing one here changes the email that is actually sent for that year.
   if(typeof EMAIL_TPL!=='undefined'){
-    for(var _py=1;_py<=5;_py++){
-      var _pk='period_'+_py;
-      if(!EMAIL_TPL[_pk]){
-        var _ord=({1:'1st',2:'2nd',3:'3rd',4:'4th',5:'5th'})[_py];
-        EMAIL_TPL[_pk]={subject:'Reminder: '+_ord+' Periodic LC Report Due — Contract {{CONTRACT_NUM}}',body:'Dear {{CONTACT_NAME}},\n\nThe '+_ord+' Periodic LC Report for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}) is due in {{DAYS_LEFT}} days on {{DUE_DATE}}.\n\nLC Target: {{LC_TARGET}}\n\nBest regards,\nLC Monitor Pro',attachments:[]};
-      }
+    // v57 mahdi — ONE periodic template for all contract years; {{REPORT_PERIOD}} auto-fills the year label.
+    if(!EMAIL_TPL.period){
+      EMAIL_TPL.period={subject:'Reminder: {{REPORT_PERIOD}} Due — Contract {{CONTRACT_NUM}}',body:'Dear {{CONTACT_NAME}},\n\nThe {{REPORT_PERIOD}} for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}) is due in {{DAYS_LEFT}} days on {{DUE_DATE}}.\n\nLC Target: {{LC_TARGET}}\n\nBest regards,\nLC Monitor Pro',attachments:[]};
     }
     if(!EMAIL_TPL.penalty)EMAIL_TPL.penalty={subject:'Penalty Notice — {{CONTRACT_NAME}} (#{{CONTRACT_NUM}})',body:'Dear {{CONTACT_NAME}},\n\nThis is a formal Local Content penalty notice for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}).\nPenalty: {{PENALTY_TYPE}} — {{PENALTY_AMOUNT}}.\nReason: {{PENALTY_REASON}}.\n\nThe full details are shown below.\n\nRegards.',attachments:[]};
   }
-  var tplKeys=['period_1','period_2','period_3','period_4','period_5','final','npp','mlnp','penalty'];
+  var tplKeys=['period','final','npp','mlnp','penalty'];
   var container=document.getElementById('emailTemplateList');if(!container)return;
   container.innerHTML='';
   tplKeys.forEach(function(rt){
@@ -4753,7 +4774,7 @@ function renderEmailTplList(){
     var div=document.createElement('div');div.className='mech-tc-item';div.style.marginBottom='8px';
     div.innerHTML='<div style="font-weight:700;font-size:11px;margin-bottom:7px">'+(RTYPE_LBL[rt]||rt)+'</div>'
       +'<div class="fg" style="margin-bottom:5px"><label class="fl2">Subject</label><input class="fi" id="etS_'+k+'" style="font-size:11px;padding:5px 8px"/></div>'
-      +'<div class="fg" style="margin-bottom:5px"><label class="fl2">Body <small style="font-weight:400">(placeholders: CONTRACT_NUM, CONTRACT_NAME, CONTACT_NAME, DUE_DATE, DAYS_LEFT, LC_TARGET)</small></label><textarea class="fta" id="etB_'+k+'" style="min-height:80px;font-size:11px"></textarea></div>'
+      +'<div class="fg" style="margin-bottom:5px"><label class="fl2">Body <small style="font-weight:400">(placeholders: '+(rt==='period'?'REPORT_PERIOD, ':'')+'CONTRACT_NUM, CONTRACT_NAME, CONTACT_NAME, DUE_DATE, DAYS_LEFT, LC_TARGET)</small></label><textarea class="fta" id="etB_'+k+'" style="min-height:80px;font-size:11px"></textarea></div>'
       +'<div class="fg" style="margin-bottom:5px"><label class="fl2">Attachments</label>'
       +'<div class="az" style="padding:7px;cursor:pointer" id="etDZ_'+k+'"><div style="font-size:10px;color:var(--text2)">&#128206; Click to attach PDF/Word files</div></div>'
       +'<input type="file" id="etF_'+k+'" multiple accept=".pdf,.doc,.docx" style="display:none"/>'
@@ -5417,7 +5438,7 @@ function saveRoles(){lsSet('lcRoles',JSON.stringify(ROLES));lsSet('lcRolePerms',
 var PERM_CATALOG=[
  {group:'Executive Dashboard',perms:[
    ['dash.view','View the executive dashboard, KPIs & drill-downs'],['dash.edit','Configure dashboard KPIs & export'],['dash.admin','Full dashboard administration']]},
- {group:'Identified RFPs',perms:[
+ {group:'Mechanisms Identifier',perms:[
    ['rfp.view','View identified RFPs, drafts & mechanisms'],['rfp.edit','Create / edit RFPs, run the mechanism identifier & BoQ'],['rfp.admin','Delete RFPs & full RFP administration']]},
  {group:'Mandatory List Identifier',perms:[
    ['mlid.view','View the Mandatory List Identifier'],['mlid.edit','Map RFP BoQ to the Mandatory List & finalize'],['mlid.admin','Manage the Mandatory List & import the LCGPA list']]},
@@ -8100,7 +8121,14 @@ var _rsV30=renderSettings;renderSettings=function(){if(typeof _rsV30==="function
 var _saV30=saveAll;saveAll=function(){if(typeof _saV30==="function")_saV30();saveDTRulesStore();};window.saveAll=saveAll;
 var _ejV30=exportJSON;exportJSON=function(){var d={contracts:DB,settings:S,mechanisms:MECHS,endUsers:ENDUSERS,formulas:FORMULAS,exclusions:EXCLUSIONS,aiControls:AI_CONTROLS,mechTC:MECH_TC,rfps:RFPS,bids:BIDS,decisionRules:DECISION_RULES,suppliers:(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]),submissions:(typeof SUBMISSIONS!=='undefined'?SUBMISSIONS:[]),supEvals:(typeof SUP_EVALS!=='undefined'?SUP_EVALS:[]),blacklist:(typeof BLACKLIST!=='undefined'?BLACKLIST:[]),certs:(typeof CERTS!=='undefined'?CERTS:[]),emailTpl:(typeof EMAIL_TPL!=='undefined'?EMAIL_TPL:{}),mlnp:(typeof MLNP_LIST!=='undefined'?MLNP_LIST:[]),roles:(typeof ROLES!=='undefined'?ROLES:[]),rolePerms:(typeof ROLE_PERMS!=='undefined'?ROLE_PERMS:{}),users:(typeof USERS!=='undefined'?USERS.map(function(u){var x=Object.assign({},u);delete x.password;delete x.pwHash;delete x.pwSalt;return x;}):[]),audit:(typeof AUDIT_LOG!=='undefined'?AUDIT_LOG:[]),_v:56,_exportedAt:new Date().toISOString()};var b=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='lc_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();toast('Full backup exported (includes users + audit trail)','ok');};window.exportJSON=exportJSON;
 var _ijV30=importJSON;importJSON=function(file){var rd=new FileReader();rd.onload=function(e){try{var d=JSON.parse(e.target.result);if(typeof d!=='object'||d===null||(!('contracts' in d)&&!('rfps' in d)&&!('bids' in d)&&!('suppliers' in d))){toast('Not a valid LC Monitor backup file','err');return;}if(!_confirmTyped('This will REPLACE all current data with the imported backup.'))return;_autoBackup('before_import');var n=0;if(d.contracts){DB=d.contracts;n++;}if(d.settings)Object.assign(S,d.settings);if(d.mechanisms)MECHS=d.mechanisms;if(d.endUsers)ENDUSERS=d.endUsers;if(d.formulas)Object.assign(FORMULAS,d.formulas);if(d.exclusions)EXCLUSIONS=d.exclusions;if(d.aiControls)AI_CONTROLS=d.aiControls;if(d.mechTC)Object.assign(MECH_TC,d.mechTC);if(d.rfps){RFPS=d.rfps;n++;}if(d.bids){BIDS=d.bids;n++;}if(d.decisionRules){DECISION_RULES=d.decisionRules;if(typeof saveDTRulesStore==='function')saveDTRulesStore();}if(d.suppliers&&typeof SUPPLIERS!=='undefined'){SUPPLIERS=d.suppliers;n++;}if(d.submissions&&typeof SUBMISSIONS!=='undefined')SUBMISSIONS=d.submissions;if(d.supEvals&&typeof SUP_EVALS!=='undefined'){SUP_EVALS=d.supEvals;if(typeof saveSupEvals==='function')saveSupEvals();}if(d.blacklist&&typeof BLACKLIST!=='undefined'){BLACKLIST=d.blacklist;if(typeof saveBlacklistData==='function')saveBlacklistData();}if(d.certs&&typeof CERTS!=='undefined'){CERTS=d.certs;lsSet('lcCerts',JSON.stringify(CERTS));}if(d.emailTpl&&typeof EMAIL_TPL!=='undefined'){EMAIL_TPL=d.emailTpl;lsSet('lcEmailTpl',JSON.stringify(EMAIL_TPL));}if(d.mlnp&&typeof MLNP_LIST!=='undefined'){MLNP_LIST=d.mlnp;lsSet('lcMLNP',JSON.stringify(MLNP_LIST));}if(d.roles&&typeof ROLES!=='undefined'){ROLES=d.roles;lsSet('lcRoles',JSON.stringify(ROLES));}if(d.rolePerms&&typeof ROLE_PERMS!=='undefined'){ROLE_PERMS=d.rolePerms;lsSet('lcRolePerms',JSON.stringify(ROLE_PERMS));}if(d.users&&typeof USERS!=='undefined'){USERS=d.users;if(typeof saveUsers==='function')saveUsers();}if(d.audit&&typeof AUDIT_LOG!=='undefined'){AUDIT_LOG=d.audit;lsSet('lcAudit',JSON.stringify(AUDIT_LOG));}if(typeof saveSuppliers==='function')saveSuppliers();saveAll();if(typeof logAudit==='function')logAudit('edit','Data restored from backup ('+n+' core datasets)');toast('Backup restored ('+n+' core datasets)','ok');renderCurrentPage();}catch(err){toast('Invalid backup file: '+err.message,'err');}};rd.readAsText(file);};window.importJSON=importJSON;
-if(typeof AR!=="undefined"){AR['Decision Tree Rules']='\u0642\u0648\u0627\u0639\u062f \u0634\u062c\u0631\u0629 \u0627\u0644\u0642\u0631\u0627\u0631';AR['Origin']='\u0627\u0644\u0645\u0646\u0634\u0623';AR['Mandatory List']='\u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064a\u0629';AR['Local']='\u0645\u062d\u0644\u064a';AR['Foreign']='\u0623\u062c\u0646\u0628\u064a';}
+if(typeof AR!=="undefined"){AR['Decision Tree Rules']='\u0642\u0648\u0627\u0639\u062f \u0634\u062c\u0631\u0629 \u0627\u0644\u0642\u0631\u0627\u0631';AR['Origin']='\u0627\u0644\u0645\u0646\u0634\u0623';AR['Mandatory List']='\u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064a\u0629';AR['Local']='\u0645\u062d\u0644\u064a';AR['Foreign']='\u0623\u062c\u0646\u0628\u064a';
+/* v57 mahdi \u2014 new labels */
+AR['Home']='\u0627\u0644\u0631\u0626\u064a\u0633\u064a\u0629';
+AR['Mechanisms Identifier']='\u0645\u062d\u062f\u0651\u062f \u0622\u0644\u064a\u0627\u062a \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u062d\u0644\u064a';
+AR['Setup Wizard']='\u0645\u0639\u0627\u0644\u062c \u0627\u0644\u0625\u0639\u062f\u0627\u062f';
+AR['First-time Setup']='\u0627\u0644\u0625\u0639\u062f\u0627\u062f \u0644\u0623\u0648\u0644 \u0645\u0631\u0651\u0629';
+AR['Configure the whole tool in one step \u2014 choose your entity type and we set the evaluation weights, thresholds and penalty rules for you.']='\u0627\u0636\u0628\u0637 \u0627\u0644\u0623\u062f\u0627\u0629 \u0628\u0627\u0644\u0643\u0627\u0645\u0644 \u0641\u064a \u062e\u0637\u0648\u0629 \u0648\u0627\u062d\u062f\u0629 \u2014 \u0627\u062e\u062a\u0631 \u0646\u0648\u0639 \u062c\u0647\u062a\u0643 \u0648\u0633\u0646\u0636\u0628\u0637 \u0644\u0643 \u0623\u0648\u0632\u0627\u0646 \u0627\u0644\u062a\u0642\u064a\u064a\u0645 \u0648\u0627\u0644\u062d\u062f\u0648\u062f \u0648\u0642\u0648\u0627\u0639\u062f \u0627\u0644\u063a\u0631\u0627\u0645\u0627\u062a.';
+AR['Start Setup']='\u0627\u0628\u062f\u0623 \u0627\u0644\u0625\u0639\u062f\u0627\u062f';}
 </script>
 
 </div></div></div></div></div>
@@ -10011,7 +10039,7 @@ function recvSubmit(cid){
    ============================================================ */
 (function(){
   // page titles
-  try{ PT.mechwiz='Identified RFPs'; PT.mlwiz='Mandatory List Identifier'; PT.evalassist='Evaluation Assistant'; PT.supdash='Suppliers'; }catch(e){}
+  try{ PT.mechwiz='Mechanisms Identifier'; PT.mlwiz='Mandatory List Identifier'; PT.evalassist='Evaluation Assistant'; PT.supdash='Suppliers'; }catch(e){}
   // route the three new pages, keeping the badge/lang tail
   var _v57RCP=renderCurrentPage;
   renderCurrentPage=function(){
@@ -10802,7 +10830,7 @@ function c1SendReminder(id){
   var tpl=(typeof EMAIL_TPL!=='undefined'&&EMAIL_TPL[tplKey])?EMAIL_TPL[tplKey]:{subject:'Reminder: report due — {{CONTRACT_NAME}}',body:'Dear {{CONTACT_NAME}},\n\nThe {{REPORT_TYPE}} for Contract {{CONTRACT_NUM}} ({{CONTRACT_NAME}}) is due on {{DUE_DATE}}.\n\nBest regards.'};
   var eu=(typeof ENDUSERS!=='undefined')?ENDUSERS.find(function(e){return e.name===c.endUser;}):null;
   var days=rep.due?Math.ceil((new Date(rep.due)-new Date())/86400000):'';
-  var vars={CONTACT_NAME:c.contractorContact||c.contractor||'Contractor',CONTRACTOR:c.contractor||'',CONTRACT_NAME:c.name||'',CONTRACT_NUM:c.num,DUE_DATE:(rep.due?fD(rep.due):'soon'),DAYS_LEFT:(days===''?'':days),REPORT_TYPE:(typeof RTYPE_LBL!=='undefined'&&RTYPE_LBL[key])||key,END_USER:c.endUser||''};
+  var vars={CONTACT_NAME:c.contractorContact||c.contractor||'Contractor',CONTRACTOR:c.contractor||'',CONTRACT_NAME:c.name||'',CONTRACT_NUM:c.num,DUE_DATE:(rep.due?fD(rep.due):'soon'),DAYS_LEFT:(days===''?'':days),REPORT_TYPE:(typeof RTYPE_LBL!=='undefined'&&RTYPE_LBL[key])||key,REPORT_PERIOD:(typeof reportPeriodLabel==='function'?reportPeriodLabel(key):((typeof RTYPE_LBL!=='undefined'&&RTYPE_LBL[key])||key)),LC_TARGET:(typeof pct==='function'?pct(c.agreedPct):(c.agreedPct||'')),END_USER:c.endUser||''};
   function fill(s){return String(s||'').replace(/\{\{(\w+)\}\}/g,function(m,k){return vars[k]!=null?vars[k]:m;});}
   var subj=fill(tpl.subject),body=fill(tpl.body);
   var to=(c.contractorEmail||'').trim(),cc=(eu&&eu.email||'').trim();
@@ -11190,7 +11218,7 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
   window.renderSupDash=function(){
     var wrap=document.getElementById('sdTableWrap');if(!wrap)return;
     var _ss=document.getElementById('sdSearch');if(_ss)_ss.placeholder=L('Search supplier…','بحث عن مورّد…');
-    var _sh=document.getElementById('sdSubhead');if(_sh)_sh.textContent=L('Read-only overview across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status. Click any supplier to view its full read-only profile.','نظرة للقراءة فقط على جميع الموردين — شهادة المحتوى المحلي، العروض، التقييمات، الامتثال لتقارير العقود، وحالة القائمة السوداء. اضغط أي مورّد لعرض ملفه الكامل للقراءة فقط.');
+    var _sh=document.getElementById('sdSubhead');if(_sh)_sh.textContent=L('Read-only overview across all suppliers — LC certification, submissions and contract-report compliance. Click any supplier to view its full read-only profile.','نظرة للقراءة فقط على جميع الموردين — شهادة المحتوى المحلي، العروض، والامتثال لتقارير العقود. اضغط أي مورّد لعرض ملفه الكامل للقراءة فقط.');
     var SUP=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]);
     if(typeof syncSupplierCerts==='function'){try{syncSupplierCerts();}catch(e){}}
     var aggs=SUP.map(aggSupplier);
@@ -11200,25 +11228,17 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
     var avgLCcert=lcVals.length?(lcVals.reduce(function(a,b){return a+b;},0)/lcVals.length):null;
     var expiring=aggs.filter(function(a){return a.certStatus==='soon';}).length;
     var expired=aggs.filter(function(a){return a.certStatus==='expired';}).length;
-    var compVals=aggs.filter(function(a){return a.evLC!=null;}).map(function(a){return a.evLC;});
-    var avgComp=compVals.length?(compVals.reduce(function(a,b){return a+b;},0)/compVals.length):null;
-    var nppVals=aggs.filter(function(a){return a.evNPP!=null;}).map(function(a){return a.evNPP;});
-    var avgNPP=nppVals.length?(nppVals.reduce(function(a,b){return a+b;},0)/nppVals.length):null;
-    var blCount=aggs.filter(function(a){return a.activeBL>0;}).length;
-    var perf=aggs.filter(function(a){return a.evOverall!=null;});
-    var topP=perf.length?perf.reduce(function(b,a){return a.evOverall>(b.evOverall||-1)?a:b;},perf[0]):null;
-    var under=perf.filter(function(a){return a.evOverall<50;}).length;
+    var underContract=aggs.filter(function(a){return a.cons.length>0;}).length;
+    var repVals=aggs.filter(function(a){return a.repPct!=null;}).map(function(a){return a.repPct;});
+    var avgRep=repVals.length?(repVals.reduce(function(a,b){return a+b;},0)/repVals.length):null;
     function kpi(cls,lbl,val,sub){return '<div class="kpi '+cls+'"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">'+esc(lbl)+'</div><div class="kpi-val">'+val+'</div><div class="kpi-s">'+esc(sub||'')+'</div></div></div>';}
     var kEl=document.getElementById('sdKPIs');
     if(kEl)kEl.innerHTML=
       kpi('blue',L('Total Suppliers','إجمالي الموردين'),total,L('registered','مُسجَّل'))
      +kpi('green',L('Avg LC-Certified','متوسط شهادة المحتوى'),avgLCcert==null?'—':pct(avgLCcert),L('across certified suppliers','عبر الموردين المعتمدين'))
      +kpi('amber',L('Certs Expiring / Expired','شهادات قرب/منتهية'),expiring+' / '+expired,L('within 60 days / past due','خلال 60 يومًا / متأخرة'))
-     +kpi('purple',L('Avg LC Compliance','متوسط الالتزام'),avgComp==null?'—':pct(avgComp),L('evaluation metric','مؤشر التقييم'))
-     +kpi('teal',L('Avg NPP Score','متوسط درجة المنتج الوطني'),avgNPP==null?'—':pct(avgNPP),L('evaluation metric','مؤشر التقييم'))
-     +kpi('red',L('Active Blacklist','حظر نشط'),blCount,L('suppliers flagged','موردون موسومون'))
-     +kpi('green',L('Top Performer','الأفضل أداءً'),'<span style="font-size:14px">'+esc(topP&&topP.name?topP.name.substring(0,16):'—')+'</span>',topP&&topP.evOverall!=null?pct(topP.evOverall):'')
-     +kpi('amber',L('Under-performers','ضعيفو الأداء'),under,L('overall < 50%','الإجمالي < 50%'));
+     +kpi('teal',L('Suppliers Under Contract','موردون بعقود'),underContract,L('active as contractors','نشطون كمقاولين'))
+     +kpi('purple',L('Avg Report Compliance','متوسط التزام التقارير'),avgRep==null?'—':pct(avgRep),L('reports received / due','تقارير مستلمة / مستحقة'));
     // ---- table ----
     var q=((document.getElementById('sdSearch')||{}).value||'').toLowerCase();
     var rows=aggs.filter(function(a){return !q||a.name.toLowerCase().indexOf(q)>=0;});
@@ -11227,21 +11247,18 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
       +'<th>'+L('Supplier','المورّد')+'</th>'
       +'<th>'+L('LC Cert','شهادة المحتوى')+'</th>'
       +'<th>'+L('Submissions','العروض')+'</th>'
-      +'<th>'+L('Evaluation','التقييم')+'</th>'
       +'<th>'+L('Report Compliance','التزام التقارير')+'</th>'
       +'<th>'+L('Status','الحالة')+'</th>'
       +'<th></th></tr></thead><tbody>';
     var body=rows.map(function(a){
       var i=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]).indexOf(a.s);
       var subTxt=a.subs.length?('<b>'+a.subs.length+'</b> · LC '+pct(a.subLC)+' · NPP '+pct(a.subNPP)):'<span style="color:var(--text3)">—</span>';
-      var evTxt=a.evals.length?('<span class="sd-score '+scoreCls(a.evOverall)+'">'+pct(a.evOverall)+'</span> <span style="color:var(--text3);font-size:10px">('+a.evals.length+')</span>'):'<span style="color:var(--text3)">—</span>';
       var repTxt=a.repDue?('<b>'+a.repRecv+'</b>/'+a.repDue+' <span class="sd-score '+scoreCls(a.repPct)+'">'+pct(a.repPct)+'</span>'):'<span style="color:var(--text3)">'+L('no contracts','لا عقود')+'</span>';
       var status=a.activeBL>0?badge(L('Blacklisted','محظور'),'br'):badge(L('Active','نشط'),'bg');
       return '<tr class="sd-row" onclick="sdOpenSupplier('+i+')" tabindex="0" onkeydown="if(event.key===\'Enter\')sdOpenSupplier('+i+')">'
         +'<td><div class="sd-supname">'+esc(a.name||'—')+'</div><div class="sd-supsub">'+esc(a.s.city||'')+(a.s.isSME?' · SME':'')+'</div></td>'
         +'<td>'+(a.lcCertPct!=null?'<b>'+pct(a.lcCertPct)+'</b> ':'')+certBadge(a)+'</td>'
         +'<td style="font-size:11px">'+subTxt+'</td>'
-        +'<td>'+evTxt+'</td>'
         +'<td style="font-size:11px">'+repTxt+'</td>'
         +'<td>'+status+'</td>'
         +'<td style="text-align:right;color:var(--text3)">›</td></tr>';
@@ -11276,16 +11293,11 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
       +kv(L('LC Certificate %','نسبة الشهادة'),a.lcCertPct!=null?'<b>'+pct(a.lcCertPct)+'</b> '+certBadge(a):certBadge(a))
       +kv(L('LC Cert Expiry','انتهاء الشهادة'),a.exp?(esc((typeof fD==='function'?fD(a.exp):a.exp))+(a.daysLeft!=null?' ('+a.daysLeft+'d)':'')):null)
       +'</div>';
-    // metrics row
-    function metric(lbl,v){return '<div class="sd-metric"><div class="sd-metric-v sd-score '+scoreCls(v)+'">'+pct(v)+'</div><div class="sd-metric-l">'+esc(lbl)+'</div></div>';}
-    var metrics='<div class="sd-metrics">'+metric(L('LC Compliance','الالتزام'),a.evLC)+metric('NPP',a.evNPP)+metric(L('Timeliness','الالتزام بالمواعيد'),a.evTime)+metric(L('Quality','الجودة'),a.evQual)+metric(L('Overall','الإجمالي'),a.evOverall)+'</div>';
     var quick='<div class="sd-quicklinks">'
       +'<button class="btn btn-s btn-sm" onclick="sdOpenSubs('+i+')">📨 '+L('Submissions','العروض')+' ('+a.subs.length+')</button>'
-      +'<button class="btn btn-s btn-sm" onclick="sdOpenEvals('+i+')">🏆 '+L('Evaluations','التقييمات')+' ('+a.evals.length+')</button>'
       +'<button class="btn btn-s btn-sm" onclick="sdOpenContracts('+i+')">📄 '+L('Contracts','العقود')+' ('+a.cons.length+')</button>'
       +'</div>';
-    var blBox=a.bl.length?('<div class="sd-blbox">'+sect(L('Blacklist','القائمة السوداء'))+a.bl.map(function(b){return '<div class="sd-blrow"><span class="badge '+(b.status==='active'?'br':'bg')+'">'+(b.status==='active'?L('Active','نشط'):L('Cleared','مُزال'))+'</span> '+esc(b.notes||'')+' <span style="color:var(--text3);font-size:10px">'+esc(typeof fD==='function'?fD(b.dateFlagged):b.dateFlagged)+'</span></div>';}).join('')+'</div>'):'';
-    sdModal('🏭 '+esc(s.name||'Supplier'),sect(L('Profile','الملف'))+prof+sect(L('Evaluation Scores','درجات التقييم'))+metrics+sect(L('Report Compliance','التزام التقارير'))+kv(L('Reports received / due','مستلمة / مستحقة'),a.repDue?('<b>'+a.repRecv+'</b> / '+a.repDue+' ('+pct(a.repPct)+')'):L('No contracts','لا عقود'))+blBox+sect(L('Related','ذات صلة'))+quick);
+    sdModal('🏭 '+esc(s.name||'Supplier'),sect(L('Profile','الملف'))+prof+sect(L('Report Compliance','التزام التقارير'))+kv(L('Reports received / due','مستلمة / مستحقة'),a.repDue?('<b>'+a.repRecv+'</b> / '+a.repDue+' ('+pct(a.repPct)+')'):L('No contracts','لا عقود'))+sect(L('Related','ذات صلة'))+quick);
   };
 
   window.sdOpenSubs=function(i){
@@ -11328,7 +11340,7 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
      enD:'Identify the right LCGPA mechanism and the Mandatory-List items before issuing the RFP.',
      arD:'حدّد آلية المحتوى المحلي المناسبة وبنود القائمة الإلزامية قبل طرح المنافسة.',
      subs:[
-       {key:'mechwiz',icon:'🧭',en:'Identified RFPs',ar:'المنافسات المحددة',enD:'Decision-tree wizard that recommends the LCGPA mechanism and builds the RFP BoQ.',arD:'معالج شجرة القرار الذي يوصي بالآلية ويبني جدول الكميات.'},
+       {key:'mechwiz',icon:'🧭',en:'Mechanisms Identifier',ar:'محدّد آليات المحتوى المحلي',enD:'Decision-tree wizard that recommends the LCGPA mechanism and builds the RFP BoQ.',arD:'معالج شجرة القرار الذي يوصي بالآلية ويبني جدول الكميات.'},
        {key:'mlwiz',icon:'📋',en:'Mandatory List Identifier',ar:'مُحدِّد القائمة الإلزامية',enD:'Map the RFP BoQ to the LCGPA Mandatory List with Etimad codes.',arD:'مطابقة جدول الكميات مع القائمة الإلزامية ورموز اعتماد.'}
      ]},
     {icon:'⚖️',en:'Awarding',ar:'الترسية',
@@ -11455,6 +11467,142 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
       if(typeof lang!=='undefined'&&lang==='ar'){var en=document.getElementById('hlEN'),ar=document.getElementById('hlAR');if(en)en.classList.remove('active');if(ar)ar.classList.add('active');}
     },260);
   });
+})();
+</script>
+
+<!-- ════════════════════════════════════════════════════════════════
+     v57 mahdi — 1-TIME SETUP WIZARD (full-page overlay)
+     Choose Government / Portfolio → applies bid-eval + penalty defaults →
+     animated success + countdown → Home landing.
+     ════════════════════════════════════════════════════════════════ -->
+<style id="setupWizardCSS">
+/* launch card (top of Settings → General) */
+.sw-launch{display:flex;align-items:center;gap:14px;padding:16px 18px;margin-bottom:18px;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,rgba(37,99,235,.10),rgba(124,58,237,.10));border:1px solid var(--border);transition:.18s;}
+.sw-launch:hover{border-color:var(--accent);box-shadow:0 6px 20px rgba(37,99,235,.14);transform:translateY(-1px);}
+.sw-launch-ic{font-size:26px;flex-shrink:0;width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);box-shadow:0 6px 16px rgba(124,58,237,.30);}
+.sw-launch-tx{flex:1;min-width:0;}
+@media(max-width:640px){.sw-launch{flex-direction:column;text-align:center}}
+/* full-page wizard overlay */
+#setupWizard{position:fixed;inset:0;z-index:6000;display:none;overflow:auto;
+  background:radial-gradient(1200px 600px at 50% -8%,rgba(124,58,237,.18),transparent),var(--bg);}
+#setupWizard.open{display:flex;align-items:flex-start;justify-content:center;}
+.swz-card{width:min(920px,92vw);margin:5vh auto;}
+.swz-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.swz-brand{display:flex;align-items:center;gap:10px;font-weight:800;}
+.swz-mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#7c3aed);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;}
+.swz-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text3);line-height:1;}
+.swz-eyebrow{font-family:var(--fm);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700;}
+.swz-title{font-family:var(--fn);font-size:30px;line-height:1.12;margin:6px 0;font-weight:800;color:var(--text);}
+.swz-sub{color:var(--text2);font-size:14px;margin:0 0 26px;max-width:640px;line-height:1.6;}
+.swz-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+@media(max-width:680px){.swz-grid{grid-template-columns:1fr}.swz-title{font-size:24px}}
+.swz-opt{position:relative;text-align:left;border:1.5px solid var(--border);border-radius:18px;padding:26px 24px;cursor:pointer;background:var(--card);transition:.18s;}
+.swz-opt:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 16px 40px rgba(37,99,235,.16);}
+.swz-opt-ic{font-size:42px;line-height:1;margin-bottom:14px;}
+.swz-opt-h{font-family:var(--fn);font-size:21px;font-weight:800;margin-bottom:6px;color:var(--text);}
+.swz-opt-d{font-size:12.5px;color:var(--text2);line-height:1.6;margin-bottom:14px;}
+.swz-opt-list{list-style:none;padding:0;margin:0;font-size:11.5px;color:var(--text2);}
+.swz-opt-list li{display:flex;gap:8px;padding:3px 0;align-items:flex-start;}
+.swz-opt-list li::before{content:"";width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0;background:linear-gradient(135deg,#2563eb,#7c3aed);}
+.swz-cur{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent);color:#fff;}
+body.rtl .swz-cur{right:auto;left:14px;}
+body.rtl .swz-opt,body.rtl .swz-sub{text-align:right;}
+.swz-back{background:none;border:none;color:var(--text3);font-size:12px;cursor:pointer;margin-bottom:14px;padding:0;}
+.swz-q{border:1.5px solid var(--border);border-radius:18px;padding:32px;background:var(--card);max-width:640px;margin:0 auto;text-align:center;}
+.swz-q-txt{font-size:18px;font-weight:700;line-height:1.55;margin:12px 0 26px;color:var(--text);}
+.swz-yn{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.swz-yn .btn{min-width:130px;padding:12px 26px;font-size:14px;}
+.swz-done{text-align:center;max-width:560px;margin:4vh auto 0;}
+.swz-check{width:92px;height:92px;border-radius:50%;margin:0 auto 18px;background:linear-gradient(135deg,#2563eb,#7c3aed);display:flex;align-items:center;justify-content:center;color:#fff;font-size:46px;box-shadow:0 12px 34px rgba(124,58,237,.34);animation:swzPop .5s cubic-bezier(.2,.9,.3,1.3);}
+@keyframes swzPop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.swz-summary{text-align:left;display:inline-block;margin:6px auto 22px;font-size:13px;color:var(--text2);line-height:1.5;}
+.swz-summary div{padding:3px 0;}
+body.rtl .swz-summary{text-align:right;}
+.swz-count{font-size:13px;color:var(--text3);}
+.swz-ring{font-weight:800;color:var(--accent);font-family:var(--fm);}
+</style>
+<div id="setupWizard" aria-label="Setup Wizard" role="dialog" aria-modal="true"><div class="swz-card" id="swzBody"></div></div>
+<script>
+/* v57 mahdi — Setup Wizard behaviour */
+(function(){
+  function L(en,ar){return (typeof lang!=='undefined'&&lang==='ar')?ar:en;}
+  var ov,host,timer=null;
+  function grab(){ov=document.getElementById('setupWizard');host=document.getElementById('swzBody');}
+  function close(){ if(timer){clearInterval(timer);timer=null;} grab(); if(ov)ov.classList.remove('open'); document.body.style.overflow=''; }
+  window.closeSetupWizard=close;
+  window.openSetupWizard=function(){ grab(); if(!ov)return; ov.classList.add('open'); document.body.style.overflow='hidden'; stepChoose(); };
+
+  function topBar(){
+    return '<div class="swz-top"><div class="swz-brand"><div class="swz-mark">LC</div><span>'+L('LC Monitor Pro','منصة المحتوى المحلي')+'</span></div>'
+      +'<button class="swz-close" onclick="closeSetupWizard()" title="'+L('Close','إغلاق')+'" aria-label="'+L('Close','إغلاق')+'">✕</button></div>';
+  }
+  function optCard(type,icon,title,desc,list,cur){
+    return '<div class="swz-opt" onclick="swzPick(\''+type+'\')" role="button" tabindex="0" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();swzPick(\''+type+'\');}">'
+      +(cur===type?'<span class="swz-cur">'+L('Current','الحالي')+'</span>':'')
+      +'<div class="swz-opt-ic">'+icon+'</div><div class="swz-opt-h">'+title+'</div><div class="swz-opt-d">'+desc+'</div>'
+      +'<ul class="swz-opt-list">'+list.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
+  }
+  function stepChoose(){
+    var cur=(typeof S!=='undefined'&&S.entityType)||'';
+    host.innerHTML=topBar()
+      +'<div class="swz-eyebrow">'+L('1-Time Setup','إعداد لمرة واحدة')+'</div>'
+      +'<h1 class="swz-title">'+L('Please choose your entity type','يرجى اختيار نوع جهتك')+'</h1>'
+      +'<p class="swz-sub">'+L('We’ll configure your bid-evaluation weights, high-value threshold, listed-company bonus and periodic-report penalty to match your organization. You can fine-tune everything later in Settings.','سنضبط أوزان تقييم العروض وحد القيمة العالية وحافز الشركات المدرجة وغرامة التقارير الدورية بما يناسب جهتك، ويمكنك تعديل كل ذلك لاحقًا من الإعدادات.')+'</p>'
+      +'<div class="swz-grid">'
+      +optCard('gov','🏛️',L('Government Entity','جهة حكومية'),L('Public / government procurement under LCGPA rules.','مشتريات حكومية وفق أنظمة هيئة المحتوى المحلي.'),
+          [L('Price / LC weight 70 / 30','وزن السعر / المحتوى 70 / 30'),L('LC split 50 / 50','تقسيم المحتوى 50 / 50'),L('Listed-company bonus 5%','حافز الشركات المدرجة 5%'),L('High-value threshold SAR 25M','حد القيمة العالية 25 مليون ريال'),L('Periodic-report penalty OFF','غرامة التقارير الدورية متوقفة')],cur)
+      +optCard('portfolio','🏢',L('Portfolio Company','شركة محفظة'),L('PIF / portfolio company applying its own Local Content policy.','شركة ضمن محفظة تطبّق سياسة المحتوى المحلي الخاصة بها.'),
+          [L('Price / LC weight 60 / 40','وزن السعر / المحتوى 60 / 40'),L('LC split 50 / 50','تقسيم المحتوى 50 / 50'),L('Listed-company bonus OFF','حافز الشركات المدرجة متوقف'),L('High-value threshold SAR 50M','حد القيمة العالية 50 مليون ريال'),L('Periodic-report penalty — you choose','غرامة التقارير الدورية — باختيارك')],cur)
+      +'</div>';
+  }
+  window.swzPick=function(type){ if(type==='gov'){applyProfile('gov',null);} else {stepPenalty();} };
+  function stepPenalty(){
+    host.innerHTML=topBar()
+      +'<button class="swz-back" onclick="openSetupWizard()">‹ '+L('Back','رجوع')+'</button>'
+      +'<div class="swz-eyebrow">'+L('Step 2 of 2 — Portfolio Company','الخطوة 2 من 2 — شركة محفظة')+'</div>'
+      +'<h1 class="swz-title" style="font-size:22px">'+L('One more question','سؤال أخير')+'</h1>'
+      +'<div class="swz-q"><div class="swz-opt-ic">⚖️</div>'
+      +'<div class="swz-q-txt">'+L('Does your Local Content policy empower penalizing suppliers for non-compliance on periodic reports?','هل تخوّل سياسة المحتوى المحلي لديكم فرض غرامات على المورّد عند عدم الالتزام بالتقارير الدورية؟')+'</div>'
+      +'<div class="swz-yn"><button class="btn btn-p" onclick="swzPenalty(true)">'+L('Yes','نعم')+'</button><button class="btn btn-s" onclick="swzPenalty(false)">'+L('No','لا')+'</button></div></div>';
+  }
+  window.swzPenalty=function(on){ applyProfile('portfolio',!!on); };
+  function applyProfile(type,penaltyYes){
+    if(typeof S==='undefined')return;
+    S.targetSplit=50; S.baselineSplit=50;
+    if(type==='gov'){ S.priceWeight=70; S.lcWeight=30; S.listedBonus=true;  S.listedBonusPct=5; S.highValueThreshold=25; S.periodicPenOn=false;        S.entityType='gov'; }
+    else            { S.priceWeight=60; S.lcWeight=40; S.listedBonus=false; S.listedBonusPct=0; S.highValueThreshold=50; S.periodicPenOn=!!penaltyYes; S.entityType='portfolio'; }
+    try{if(typeof saveS==='function')saveS();}catch(e){}
+    try{if(typeof renderBidEvalSettings==='function')renderBidEvalSettings();}catch(e){}
+    try{if(typeof renderPPENGrid==='function')renderPPENGrid();}catch(e){}
+    try{if(typeof recalcAllPenalties==='function')recalcAllPenalties();}catch(e){}
+    try{if(typeof updateBadges==='function')updateBadges();}catch(e){}
+    try{if(typeof logAudit==='function')logAudit('edit','Setup wizard applied '+(type==='gov'?'Government Entity':'Portfolio Company')+' profile');}catch(e){}
+    stepDone(type,penaltyYes);
+  }
+  function stepDone(type,penaltyYes){
+    var isGov=type==='gov', pen=isGov?false:!!penaltyYes;
+    var rows=[
+      [L('Profile','النمط'), isGov?L('Government Entity','جهة حكومية'):L('Portfolio Company','شركة محفظة')],
+      [L('Price / LC weight','وزن السعر / المحتوى'), isGov?'70 / 30':'60 / 40'],
+      [L('LC split (Target / Baseline)','تقسيم المحتوى (مستهدف / أساس)'),'50 / 50'],
+      [L('Listed-company bonus','حافز الشركات المدرجة'), isGov?L('On · 5%','مُفعّل · 5%'):L('Off','متوقف')],
+      [L('High-value threshold','حد القيمة العالية'), isGov?L('SAR 25M+','25 مليون+'):L('SAR 50M+','50 مليون+')],
+      [L('Periodic-report penalty','غرامة التقارير الدورية'), pen?L('On','مُفعّل'):L('Off','متوقف')]
+    ];
+    var sum=rows.map(function(r){return '<div>✓ <b>'+r[0]+':</b> '+r[1]+'</div>';}).join('');
+    host.innerHTML=topBar()
+      +'<div class="swz-done"><div class="swz-check">✓</div>'
+      +'<div class="swz-eyebrow">'+L('All set','تمّ الإعداد')+'</div>'
+      +'<h1 class="swz-title">'+L('Settings updated','تم تحديث الإعدادات')+'</h1>'
+      +'<div class="swz-summary">'+sum+'</div>'
+      +'<div class="swz-count">'+L('Taking you Home in','سنأخذك إلى الرئيسية خلال')+' <span class="swz-ring" id="swzCount">3</span> '+L('seconds','ثوانٍ')+' · <button class="swz-back" style="display:inline" onclick="swzGoHome()">'+L('Go now','اذهب الآن')+'</button></div></div>';
+    var n=3, cEl=document.getElementById('swzCount');
+    if(timer)clearInterval(timer);
+    timer=setInterval(function(){ n--; if(cEl)cEl.textContent=String(Math.max(n,0)); if(n<=0)swzGoHome(); },1000);
+  }
+  window.swzGoHome=function(){ if(timer){clearInterval(timer);timer=null;} close(); try{if(typeof homeGoLanding==='function')homeGoLanding();}catch(e){} };
 })();
 </script>
 
