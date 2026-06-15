@@ -117,6 +117,7 @@ body.rtl .si{padding:6px 30px 6px 11px;} body.rtl .sic{left:auto;right:10px;}
 .kpi{background:var(--surface);border-radius:10px;padding:18px 16px;text-align:center;cursor:pointer;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden;border-left:4px solid transparent;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .kpi:hover{transform:translateY(-1px);box-shadow:var(--shl);}
 .kpi-bar{position:absolute;left:0;top:50%;transform:translateY(-50%);width:4px;height:28px;border-radius:2px;}
+.sd-kpis .kpi-bar{left:0;right:0;top:0;bottom:auto;transform:none;width:auto;height:3px;border-radius:10px 10px 0 0}
 body.rtl .kpi-bar{left:auto;right:0;}
 .kpi-in{padding-left:11px;}
 body.rtl .kpi-in{padding-left:0;padding-right:11px;}
@@ -2197,7 +2198,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div class="card-title">🏭 <span data-i18n="Supplier Performance">Supplier Performance</span></div>
       <input class="si" id="sdSearch" placeholder="Search supplier…" style="width:200px;padding-left:10px" oninput="renderSupDash()">
     </div>
-    <div style="font-size:11px;color:var(--text2);margin:2px 0 12px" data-i18n="Read-only overview across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status. Click any supplier to view its full read-only profile.">Read-only overview across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status. Click any supplier to view its full read-only profile.</div>
+    <div id="sdSubhead" style="font-size:11px;color:var(--text2);margin:2px 0 12px" data-i18n="Read-only overview across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status. Click any supplier to view its full read-only profile.">Read-only overview across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status. Click any supplier to view its full read-only profile.</div>
     <div id="sdTableWrap"></div>
   </div>
 </div>
@@ -11188,6 +11189,8 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
 
   window.renderSupDash=function(){
     var wrap=document.getElementById('sdTableWrap');if(!wrap)return;
+    var _ss=document.getElementById('sdSearch');if(_ss)_ss.placeholder=L('Search supplier…','بحث عن مورّد…');
+    var _sh=document.getElementById('sdSubhead');if(_sh)_sh.textContent=L('Read-only overview across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status. Click any supplier to view its full read-only profile.','نظرة للقراءة فقط على جميع الموردين — شهادة المحتوى المحلي، العروض، التقييمات، الامتثال لتقارير العقود، وحالة القائمة السوداء. اضغط أي مورّد لعرض ملفه الكامل للقراءة فقط.');
     var SUP=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]);
     if(typeof syncSupplierCerts==='function'){try{syncSupplierCerts();}catch(e){}}
     var aggs=SUP.map(aggSupplier);
