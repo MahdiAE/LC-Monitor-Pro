@@ -1694,7 +1694,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div class="rfp-step-hd"><div class="rfp-step-num">2</div><div><div class="rfp-step-title">Scope &amp; Bill of Quantities</div><div class="rfp-step-desc">Describe the scope, define the BoQ line items, and attach the source document</div></div></div>
       <div class="fg full" style="margin-bottom:14px"><label class="fl2">Scope of Work</label><textarea class="fta" id="rfpScope" rows="3" placeholder="Describe the scope..."></textarea></div>
       <div style="overflow-x:auto"><table style="width:100%;font-size:11px" id="boqTable"><thead id="boqHead"><tr><th>#</th><th>Item Description</th><th>Qty</th><th>UoM</th><th>Est. Cost (SAR)</th><th>Nature</th><th></th></tr></thead><tbody id="boqBody"></tbody></table></div>
-      <div style="display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap"><button class="btn btn-s btn-sm" onclick="addBoQRow()">+ Add Row</button><button class="btn btn-s btn-sm" onclick="addBoQRows(5)">+ Add 5 Rows</button><button class="btn btn-s btn-sm" disabled aria-disabled="true" style="opacity:.5;cursor:not-allowed;background:var(--surface2);color:var(--text3)" title="Coming soon">🤖 Import BoQ Data using AI</button></div>
+      <div style="display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap"><button class="btn btn-s btn-sm" onclick="addBoQRow()">+ Add Row</button><button class="btn btn-s btn-sm" onclick="addBoQRows(5)">+ Add 5 Rows</button><button class="btn btn-s btn-sm" onclick="aiComingSoon()" title="AI-assisted BoQ import">🤖 Import BoQ Data using AI</button></div>
       <div style="margin-top:16px">
         <label class="fl2">Upload BoQ / Scope Document</label>
         <div class="az" id="rfpDropZ" onclick="document.getElementById(&#39;rfpFile&#39;).click()" ondragover="dOver(event,&#39;rfpDropZ&#39;)" ondragleave="dLeave(&#39;rfpDropZ&#39;)" ondrop="dDropRFP(event)">
@@ -4335,10 +4335,6 @@ function togglePeriodicPen(on){
   toast('Periodic penalties '+(on?'enabled':'disabled')+' — recalculated','ok');
 }
 window.togglePeriodicPen=togglePeriodicPen;
-// legacy no-ops (the per-year grid was replaced by a single switch)
-function savePPENConfig(){togglePeriodicPen(S.periodicPenOn!==false);}
-function enableAllPPEN(){togglePeriodicPen(true);}
-function disableAllPPEN(){togglePeriodicPen(false);}
 
 // MECHANISM FORMULA SETTINGS
 function renderMechFormulaList(){
@@ -4521,7 +4517,6 @@ function dOver(e,id){e.preventDefault();var _sb=document.getElementById('saveCon
 function dLeave(id){document.getElementById(id)?.classList.remove('dv');}
 function dDrop(e){e.preventDefault();dLeave('dropZ');addFiles(e.dataTransfer.files);}
 function dDropRFP(e){e.preventDefault();dLeave('rfpDropZ');addRFPFiles(e.dataTransfer.files);}
-function dDropXL(e){e.preventDefault();dLeave('xlDropZ');if(e.dataTransfer.files[0])importExcel(e.dataTransfer.files[0]);}
 function dDropMLNP(e){e.preventDefault();dLeave('mlnpDropZ');if(e.dataTransfer.files[0])importMLNP(e.dataTransfer.files[0]);}
 function addFiles(files){for(const f of files)pendingFiles.push({name:f.name,size:fSize(f.size)});document.getElementById('attachList').innerHTML=pendingFiles.map((f,i)=>`<div class="afile"><div><div class="af-name">📎 ${f.name}</div><div class="af-size">${f.size}</div></div><button class="af-rm" onclick="pendingFiles.splice(${i},1);addFiles([])">✕</button></div>`).join('');}
 function submitContract(e){
@@ -4577,7 +4572,6 @@ function removeEntryBoQRow(i){entryBoQ.splice(i,1);renderEntryBoQ();}
 window.renderEntryBoQ=renderEntryBoQ;window.addEntryBoQRow=addEntryBoQRow;window.updateEntryBoQ=updateEntryBoQ;window.removeEntryBoQRow=removeEntryBoQRow;
 
 // IMPORT/EXPORT
-function importExcel(file){if(!file)return;const r=new FileReader();r.onload=e=>{try{const wb=XLSX.read(e.target.result,{type:'binary'});const ws=wb.Sheets['Project X']||wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:null});let added=0,updated=0;const prev=[];rows.forEach(r=>{const num=String(r['Contract Number']||r['Contract #']||'').trim();if(!num)return;const amt=parseFloat(r['Amount']||0)||0;const name=String(r['Contract Name']||r['Name']||'').trim();const mech=String(r['Mechanisim']||r['Mechanism']||'').trim();const start=r['Start Date']?new Date(r['Start Date']).toISOString().split('T')[0]:null;const dur=parseInt(r['Duration']||0)||0;const apR=r['Agreed %']?parseFloat(r['Agreed %']):null;const ap=apR&&apR>1?apR/100:apR;const endDate=r['Contract End Date']?new Date(r['Contract End Date']).toISOString().split('T')[0]:null;const ex=DB.find(c=>c.num===num);if(ex){ex.name=name||ex.name;ex.mechanism=mech||ex.mechanism;ex.amount=amt||ex.amount;if(start)ex.start=start;if(dur)ex.duration=dur;if(endDate)ex.end=endDate;if(ap)ex.agreedPct=ap;updated++;prev.push(`<span class="badge ba">Updated</span> #${num} ${name.substring(0,28)}`);}else{DB.push({id:uid(),num,endUser:'',contractor:'',name,mechanism:mech,amount:amt,start:start||'',duration:dur,end:endDate||'',agreedPct:ap,lcAmount:ap&&amt?amt*ap:null,baseline:null,natProdAmount:0,mandatoryListAmount:0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:[],evidence:{},notes:''});added++;prev.push(`<span class="badge bg">Added</span> #${num} ${name.substring(0,28)}`);}});if(added+updated===0){toast('No valid contract rows found — check the sheet has a "Contract Number" column','err');return;}saveDB();document.getElementById('importPreview').innerHTML=`<div class="card" style="margin-top:10px"><div class="card-hd"><div class="card-title">Import Done</div><div class="badge bg">${added} added · ${updated} updated</div></div><div style="display:flex;flex-direction:column;gap:4px;max-height:200px;overflow-y:auto">${prev.map(p=>`<div style="font-size:11px;padding:4px 0;border-bottom:1px solid var(--border)">${p}</div>`).join('')}</div></div>`;toast(`${added} added, ${updated} updated`,'ok');}catch(err){toast('Error: '+err.message,'err');}};r.readAsBinaryString(file);}
 function exportExcel(){if(typeof XLSX==='undefined'){toast('Excel library not loaded — check your connection','err');return;}if(!DB.length){toast('No contracts to export','err');return;}try{const rows=DB.map(c=>({'Contract Number':c.num,'Contract Name':c.name,'End User':c.endUser,'Contractor':c.contractor,'Mechanism':c.mechanism,'Amount (SAR)':c.amount,'Start Date':c.start,'Duration (months)':c.duration,'Contract End Date':c.end,'Agreed Local Content %':c.agreedPct?+(c.agreedPct*100).toFixed(2):null,'Local Content Amount':c.lcAmount,'Total Penalty':tPen(c),'Missing Reports':mCnt(c),'Notes':c.notes||''}));const ws=XLSX.utils.json_to_sheet(rows);const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,'Project X',ws);XLSX.writeFile(wb,'LC_Monitor_Export_'+new Date().toISOString().split('T')[0]+'.xlsx');toast('Excel exported ('+rows.length+' contracts)','ok');}catch(err){toast('Excel export failed: '+err.message,'err');}}
 function exportCSV(){if(!DB.length){toast('No contracts to export','err');return;}const h=['#','Name','End User','Mechanism','Amount','Start','End','Agreed%','Penalty','Missing'];const rows=DB.map(c=>[c.num,`"${c.name||''}"`,`"${c.endUser||''}"`,`"${c.mechanism||''}"`,c.amount,c.start,c.end,c.agreedPct?+(c.agreedPct*100).toFixed(1):'',tPen(c),mCnt(c)]);const csv=[h,...rows].map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='contracts.csv';a.click();toast('CSV exported','ok');}
 function exportJSON(){const blob=new Blob([JSON.stringify({contracts:DB,settings:S,mechanisms:MECHS,endUsers:ENDUSERS,formulas:FORMULAS,exclusions:EXCLUSIONS,aiControls:AI_CONTROLS,mechTC:MECH_TC,rfps:RFPS,bids:BIDS},null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='lc_backup_'+new Date().toISOString().split('T')[0]+'.json';a.click();toast('JSON exported','ok');}
@@ -4745,14 +4739,6 @@ function renderEmailPreview(){
     +(tpl.attachments&&tpl.attachments.length?'<div style="margin-top:8px">'+tpl.attachments.map(function(a){return '<span class="badge bt">&#128206; '+escSub(a&&typeof a==='object'?(a.name||'attachment'):a)+'</span>';}).join(' ')+'</div>':'')
     +'</div>';
 }
-function runReminderScan(){
-  var q=buildQueue();if(!q.length){toast('No reminders due right now','info');return;}
-  q.forEach(function(r){REM_LOG.push({num:r.contractNum,rt:r.reportType,email:r.toEmail,ts:new Date().toLocaleString('en-GB'),real:EJS.configured});});
-  if(EJS.configured&&window.emailjs){
-    Promise.all(q.map(function(r){return window.emailjs.send(EJS.serviceId,EJS.templateId,{to_email:r.toEmail,to_name:r.toName,subject:r.subject,body:r.body}).catch(function(){return null;});}))
-    .then(function(){saveAll();toast(q.length+' real email(s) sent','ok');renderReminders();});
-  }else{saveAll();toast(q.length+' reminder(s) queued (simulated). Configure EmailJS in Settings to send real emails.','info');renderReminders();}
-}
 function renderEmailTplList(){
   // v57: five per-year Periodic templates (period_1..5) — each independently editable
   // with its own subject/body/attachments — plus Final, NPP, MLNP and a Penalty Notice template.
@@ -4869,7 +4855,6 @@ function renderAudit(){
 // ============================================================
 // PORTFOLIO BY ENTITY
 // ============================================================
-function pfChip(m){pfMode=m;['pf-all','pf-active','pf-pen'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('on');});var a=document.getElementById('pf-'+m);if(a)a.classList.add('on');renderPortfolio();}
 function renderPortfolio(){
   var q=(document.getElementById('pfSearch')?document.getElementById('pfSearch').value:'').toLowerCase();
   var entities=[];DB.forEach(function(c){if(c.endUser&&entities.indexOf(c.endUser)<0)entities.push(c.endUser);});
@@ -4920,7 +4905,6 @@ function renderPortfolio(){
 // ============================================================
 // CERTIFICATE TRACKER
 // ============================================================
-function certChip(m){certMode=m;['ct-all','ct-ok','ct-soon','ct-exp'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('on');});var a=document.getElementById('ct-'+m);if(a)a.classList.add('on');renderCerts();}
 // Pull LC certificates straight from the Supplier Registry (dates + attachment) into the tracker
 function syncSupplierCerts(){
   if(typeof SUPPLIERS==='undefined'||typeof CERTS==='undefined')return;
@@ -6394,31 +6378,6 @@ function renderSubs(){
    }).join('')+'</tbody></table>'):'<div class="empty"><div class="ei">📨</div><p>No submissions yet</p></div>';
 }
 function removeSub(id){if(typeof requirePerm==='function'&&!requirePerm('subm.delete'))return;var s=SUBMISSIONS.find(function(x){return String(x.id)===String(id);});if(!confirm('Remove this submission'+(s&&s.supplierName?' from "'+s.supplierName+'"':'')+'?'))return;SUBMISSIONS=SUBMISSIONS.filter(function(x){return String(x.id)!==String(id);});saveSuppliers();renderSubs();if(typeof logAudit==='function')logAudit('delete','Submission removed'+(s&&s.supplierName?': '+s.supplierName:''));toast('Submission removed','info');}
-// normalise a submission/supplier file to {name,dataUrl,mimeType} for the bidder file slots
-function _impFile(f){if(!f)return null;var d=f.dataUrl||f.data;if(!d)return {name:f.name,_stripped:true};return {name:f.name,dataUrl:d,mimeType:f.mimeType||''};}
-// ---- import supplier bids into evaluation ----
-function importSupplierBids(){
-  if(!curBid){toast('Open an evaluation first','err');return;}
-  if(!curBid.rfpId){toast('This evaluation is not linked to an RFP','err');return;}
-  var subs=SUBMISSIONS.filter(function(x){return String(x.rfpId)===String(curBid.rfpId);});
-  if(!subs.length){toast('No supplier submissions for this RFP','info');return;}
-  var added=0;
-  subs.forEach(function(x){
-    if(curBidders.some(function(b){return b.name===x.supplierName;}))return;
-    var s=SUPPLIERS.find(function(ss){return String(ss.id)===String(x.supplierId);})||{};
-    curBidders.push({id:uid(),name:x.supplierName,price:x.price,lcPct:x.lcPct||0,nppPct:x.nppPct||0,
-      isSME:!!s.isSME,isTadawul:!!s.isTadawul,hasCert:!!(s.lcCertId||s.lcFile),lcBaseline:(x.lcBaseline!=null?x.lcBaseline:(s.lcPct||null)),baselinePct:(x.lcBaseline!=null?x.lcBaseline:0),
-      boqItems:(x.boqItems||[]).map(function(r){var q=parseFloat(r.qty)||1;return {desc:r.desc||'',nature:r.nature||'Goods',qty:q,uom:r.uom||'Unit',price:(parseFloat(r.unitPrice)||0)*q,origin:r.origin||'Local',isMandatoryRFP:!!r.mandatory,isMandatoryResp:!!r.mandatoryResponse,respStatus:r.respStatus||'',exceptionFile:r.exceptionFile||null,exceptionStatus:r.exceptionStatus||(r.exceptionFile?'pending':'')};}),
-      _techFile:_impFile(x.files&&x.files.tech),_techFileName:(x.files&&x.files.tech)?x.files.tech.name:null,
-      _commFile:_impFile(x.files&&x.files.fin),_commFileName:(x.files&&x.files.fin)?x.files.fin.name:null,
-      _mlFile:_impFile(x.files&&x.files.mand),_mlFileName:(x.files&&x.files.mand)?x.files.mand.name:null,
-      _lcBaselineFile:_impFile(s.lcFile),_lcBaselineFileName:s.lcFile?s.lcFile.name:null,
-      _fromSubmission:x.id});
-    added++;
-  });
-  if(typeof renderBiddersList==='function')renderBiddersList();
-  toast(added+' supplier bid(s) imported','ok');
-}
 // ---- supplier LC requirements portal ----
 // ===== Improvement Plan entry (shared by Supplier LC Requirements + Receiving) =====
 function _impFinalTargetPct(ip){var ft=(ip&&ip.planTargets||[]).find(function(p){return p.key==='final';});return (ft&&ft.pct!=null&&ft.pct!=='')?+ft.pct:null;}
@@ -6923,207 +6882,13 @@ function saveSupEvals(){lsSet('lcSupEvals',JSON.stringify(SUP_EVALS));}
   };
 })();
 
-function renderSupEval(){
-  if(!document.getElementById('seKPIs'))return; /* v57 CHANGE 4 — page-supeval removed; no-op when its DOM is absent */
-  var sel=document.getElementById('seContractF');
-  if(sel&&!sel.dataset.init){
-    sel.innerHTML='<option value="">All Contracts</option>'+DB.map(function(c){return '<option value="'+c.id+'">#'+c.num+' \u2014 '+(c.name||'').substring(0,25)+'</option>';}).join('');
-    sel.dataset.init='1';
-  }
-  var selId=sel&&sel.value?parseInt(sel.value):null;
-  var data=selId?SUP_EVALS.filter(function(e){return e.contractId===selId;}):SUP_EVALS;
-
-  var totalEvals=data.length;
-  var avgScore=totalEvals?data.reduce(function(s,e){return s+((e.lcCompliance+e.nppScore+e.timeliness+e.quality)/4);},0)/totalEvals:0;
-  var topPerformer=data.length?data.reduce(function(best,e){var sc=(e.lcCompliance+e.nppScore+e.timeliness+e.quality)/4;return sc>(best._sc||0)?Object.assign({},e,{_sc:sc}):best;},{_sc:0}):null;
-  var underperformers=data.filter(function(e){return (e.lcCompliance+e.nppScore+e.timeliness+e.quality)/4<50;}).length;
-
-  document.getElementById('seKPIs').innerHTML=
-    '<div class="kpi kpi-blue blue"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Total Evaluations</div><div class="kpi-val">'+totalEvals+'</div><div class="kpi-s">suppliers evaluated</div></div></div>'+
-    '<div class="kpi kpi-green green"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Avg Score</div><div class="kpi-val">'+avgScore.toFixed(1)+'%</div><div class="kpi-s">across all metrics</div></div></div>'+
-    '<div class="kpi kpi-purple purple"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Top Performer</div><div class="kpi-val" style="font-size:14px">'+(topPerformer&&topPerformer.supplier?topPerformer.supplier.substring(0,15):'\u2014')+'</div><div class="kpi-s">'+(topPerformer&&topPerformer._sc?topPerformer._sc.toFixed(1)+'%':'')+'</div></div></div>'+
-    '<div class="kpi kpi-red red"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Underperformers</div><div class="kpi-val">'+underperformers+'</div><div class="kpi-s">&lt;50% score</div></div></div>';
-
-  var content=document.getElementById('seContent');
-  if(!data.length){
-    content.innerHTML='<div class="empty"><div class="ei">\uD83C\uDFC6</div><p>No supplier evaluations yet. Click "+ Add Evaluation" to start.</p></div>';
-    return;
-  }
-
-  content.innerHTML=data.map(function(e){
-    var overall=(e.lcCompliance+e.nppScore+e.timeliness+e.quality)/4;
-    var ringClass=overall>=80?'ring-green':overall>=50?'ring-amber':'ring-red';
-    var c=DB.find(function(x){return x.id===e.contractId;});
-    return '<div class="sup-card"><div class="sup-card-hd"><div><div style="font-size:13px;font-weight:700;color:var(--text)">'+e.supplier+'</div><div style="font-size:10px;color:var(--text3)">'+(c?'#'+c.num+' \u2014 '+(c.name||'').substring(0,30):'No contract')+' \u2022 '+fD(e.date)+'</div></div><div style="display:flex;align-items:center;gap:10px"><div class="sup-score-ring '+ringClass+'">'+overall.toFixed(0)+'%</div></div></div>'+
-      '<div class="sup-metrics"><div class="sup-metric"><div class="sm-val" style="color:'+(e.lcCompliance>=80?'var(--accent3)':e.lcCompliance>=50?'var(--warn)':'var(--danger)')+'">'+e.lcCompliance+'%</div><div class="sm-lbl">LC Compliance</div></div>'+
-      '<div class="sup-metric"><div class="sm-val" style="color:'+(e.nppScore>=80?'var(--accent3)':e.nppScore>=50?'var(--warn)':'var(--danger)')+'">'+e.nppScore+'%</div><div class="sm-lbl">NPP Score</div></div>'+
-      '<div class="sup-metric"><div class="sm-val" style="color:'+(e.timeliness>=80?'var(--accent3)':e.timeliness>=50?'var(--warn)':'var(--danger)')+'">'+e.timeliness+'%</div><div class="sm-lbl">Timeliness</div></div>'+
-      '<div class="sup-metric"><div class="sm-val" style="color:'+(e.quality>=80?'var(--accent3)':e.quality>=50?'var(--warn)':'var(--danger)')+'">'+e.quality+'%</div><div class="sm-lbl">Quality</div></div></div>'+
-      (e.notes?'<div style="font-size:11px;color:var(--text2);padding:8px 10px;background:var(--surface2);border-radius:var(--rs);margin-top:6px">'+e.notes+'</div>':'')+
-      '</div>';
-  }).join('');
-}
-
-function openAddSupEvalModal(){
-  var contractOpts=DB.map(function(c){return '<option value="'+c.id+'">#'+c.num+' \u2014 '+(c.name||'').substring(0,30)+'</option>';}).join('');
-  var supplierList=DB.map(function(c){return c.contractor||'';}).filter(function(v,i,a){return v&&a.indexOf(v)===i;});
-  var datalistOpts=supplierList.map(function(s){return '<option value="'+s+'">';}).join('');
-
-  document.getElementById('mT').textContent='Add Supplier Evaluation';
-  document.getElementById('mS').textContent='Post-contract LC performance evaluation';
-  document.getElementById('mB').innerHTML=
-    '<div class="fg2" style="gap:10px">'+
-    '<div class="fg"><label class="fl2">Contract <span class="req">*</span></label><select class="fsel2" id="seContract">'+contractOpts+'</select></div>'+
-    '<div class="fg"><label class="fl2">Supplier Name <span class="req">*</span></label><input class="fi" id="seSupplier" list="seDL" placeholder="Supplier name"/><datalist id="seDL">'+datalistOpts+'</datalist></div>'+
-    '<div class="fg"><label class="fl2">Evaluation Date</label><input class="fi" id="seDate" type="date" value="'+new Date().toISOString().split('T')[0]+'"/></div>'+
-    '<div class="fg"><label class="fl2">LC Compliance % <span class="req">*</span></label><input class="fi" id="seLCPct" type="number" min="0" max="100" placeholder="0-100"/></div>'+
-    '<div class="fg"><label class="fl2">NPP Score % <span class="req">*</span></label><input class="fi" id="seNPP" type="number" min="0" max="100" placeholder="0-100"/></div>'+
-    '<div class="fg"><label class="fl2">Report Timeliness % <span class="req">*</span></label><input class="fi" id="seTime" type="number" min="0" max="100" placeholder="0-100"/></div>'+
-    '<div class="fg"><label class="fl2">Quality Score % <span class="req">*</span></label><input class="fi" id="seQual" type="number" min="0" max="100" placeholder="0-100"/></div>'+
-    '<div class="fg full"><label class="fl2">Notes</label><textarea class="fta" id="seNotes" placeholder="Evaluation notes..."></textarea></div>'+
-    '</div>'+
-    '<div class="fa-row"><button class="btn btn-s" onclick="closeModal(\'cModal\')">Cancel</button><button class="btn btn-p" onclick="saveSupEval()">\u2713 Save Evaluation</button></div>';
-  openModal('cModal');
-}
-
-function saveSupEval(){
-  var supplier=(document.getElementById('seSupplier')||{}).value;
-  var contractId=parseInt((document.getElementById('seContract')||{}).value)||0;
-  if(!supplier){toast('Enter supplier name','err');return;}
-  var ev={
-    id:uid(),
-    contractId:contractId,
-    supplier:supplier.trim(),
-    date:(document.getElementById('seDate')||{}).value||new Date().toISOString().split('T')[0],
-    lcCompliance:parseFloat((document.getElementById('seLCPct')||{}).value)||0,
-    nppScore:parseFloat((document.getElementById('seNPP')||{}).value)||0,
-    timeliness:parseFloat((document.getElementById('seTime')||{}).value)||0,
-    quality:parseFloat((document.getElementById('seQual')||{}).value)||0,
-    notes:(document.getElementById('seNotes')||{}).value||''
-  };
-  SUP_EVALS.push(ev);
-  saveSupEvals();
-  logAudit('create','Supplier eval added: '+ev.supplier,String(contractId));
-  closeModal('cModal');
-  renderSupEval();
-  toast('Evaluation saved','ok');
-}
 
 // ============================================================
 // V19: SUPPLIER BLACKLISTING
 // ============================================================
-/* v57 CHANGE 6 — Blacklisting Rules engine removed (settings section + rule data deleted).
-   Kept as an empty stub only so legacy (now-unreachable) blacklist-page code doesn't ReferenceError. */
-var BLACKLIST_RULES=[];
 var BLACKLIST=JSON.parse(localStorage.getItem('lcBlacklist')||'[]');
-var blFilterMode='all';
 function saveBlacklistData(){lsSet('lcBlacklist',JSON.stringify(BLACKLIST));}
 
-function renderBlacklist(){
-  if(!document.getElementById('blKPIs'))return; /* v57 CHANGE 4 — page-blacklist removed; no-op when its DOM is absent */
-  var rulesEl=document.getElementById('blRules');
-  if(rulesEl){
-    rulesEl.innerHTML=BLACKLIST_RULES.map(function(r){
-      var sevClass=r.severity==='Critical'?'sev-critical':r.severity==='High'?'sev-high':'sev-medium';
-      return '<div class="bl-rule"><div><div style="font-size:11px;font-weight:600;color:var(--text)">'+r.name+'</div><div style="font-size:9px;color:var(--text3);margin-top:2px">'+r.ref+'</div></div><span class="bl-sev '+sevClass+'">'+r.severity+'</span></div>';
-    }).join('');
-  }
-
-  var data=blFilterMode==='all'?BLACKLIST:BLACKLIST.filter(function(b){return b.status===blFilterMode;});
-  var totalFlagged=BLACKLIST.length;
-  var activeBL=BLACKLIST.filter(function(b){return b.status==='active';}).length;
-  var clearedBL=BLACKLIST.filter(function(b){return b.status==='cleared';}).length;
-
-  document.getElementById('blKPIs').innerHTML=
-    '<div class="kpi kpi-red red"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Total Flagged</div><div class="kpi-val">'+totalFlagged+'</div><div class="kpi-s">all time</div></div></div>'+
-    '<div class="kpi kpi-amber amber"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Active Blacklisted</div><div class="kpi-val">'+activeBL+'</div><div class="kpi-s">currently flagged</div></div></div>'+
-    '<div class="kpi kpi-green green"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Cleared</div><div class="kpi-val">'+clearedBL+'</div><div class="kpi-s">resolved</div></div></div>';
-
-  var content=document.getElementById('blContent');
-  if(!data.length){
-    content.innerHTML='<div class="empty"><div class="ei">\uD83D\uDEAB</div><p>No blacklisted suppliers. Click "+ Flag Supplier" to add.</p></div>';
-    return;
-  }
-
-  content.innerHTML=data.map(function(b){
-    var rule=BLACKLIST_RULES.find(function(r){return r.id===b.ruleId;})||{name:'Custom',severity:'Medium'};
-    var c=DB.find(function(x){return x.id===b.contractId;});
-    var isActive=b.status==='active';
-    return '<div class="bl-entry '+(isActive?'active-bl':'cleared-bl')+'"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px"><div><div style="font-size:13px;font-weight:700;color:var(--text)">'+escSub(b.supplier)+'</div><div style="font-size:10px;color:var(--text3);margin-top:2px">'+(c?'#'+c.num+' \u2014 '+(c.name||'').substring(0,25):'No contract')+' \u2022 Flagged: '+fD(b.dateFlagged)+'</div><div style="font-size:11px;color:var(--text2);margin-top:4px"><span class="badge '+(rule.severity==='Critical'?'br':rule.severity==='High'?'ba':'bb')+'">'+rule.severity+'</span> '+rule.name+'</div>'+(b.notes?'<div style="font-size:10px;color:var(--text3);margin-top:4px;font-style:italic">'+b.notes+'</div>':'')+'</div><div style="display:flex;gap:5px;align-items:center"><span class="badge '+(isActive?'br':'bg')+'">'+(isActive?'\u26A0 Active':'\u2713 Cleared')+'</span>'+(isActive?'<button class="btn btn-g btn-sm" onclick="clearBlacklistEntry('+b.id+')">\u2705 Clear</button>':'')+'</div></div></div>';
-  }).join('');
-}
-
-function openAddBlacklistModal(){
-  var contractOpts=DB.map(function(c){return '<option value="'+c.id+'">#'+c.num+' \u2014 '+(c.name||'').substring(0,30)+'</option>';}).join('');
-  var ruleOpts=BLACKLIST_RULES.map(function(r){return '<option value="'+r.id+'">'+r.name.substring(0,60)+' ('+r.ref+')</option>';}).join('');
-  var supplierList=DB.map(function(c){return c.contractor||'';}).filter(function(v,i,a){return v&&a.indexOf(v)===i;});
-  var datalistOpts=supplierList.map(function(s){return '<option value="'+s+'">';}).join('');
-
-  document.getElementById('mT').textContent='Flag Supplier for Blacklisting';
-  document.getElementById('mS').textContent='Based on LCGPA / MOF predefined controls';
-  document.getElementById('mB').innerHTML=
-    '<div class="fg2" style="gap:10px">'+
-    '<div class="fg"><label class="fl2">Contract <span class="req">*</span></label><select class="fsel2" id="blContract">'+contractOpts+'</select></div>'+
-    '<div class="fg"><label class="fl2">Supplier Name <span class="req">*</span></label><input class="fi" id="blSupplier" list="blDL" placeholder="Supplier name"/><datalist id="blDL">'+datalistOpts+'</datalist></div>'+
-    '<div class="fg full"><label class="fl2">Blacklisting Rule <span class="req">*</span></label><select class="fsel2" id="blRule">'+ruleOpts+'</select></div>'+
-    '<div class="fg"><label class="fl2">Date Flagged</label><input class="fi" id="blDate" type="date" value="'+new Date().toISOString().split('T')[0]+'"/></div>'+
-    '<div class="fg full"><label class="fl2">Notes / Evidence</label><textarea class="fta" id="blNotes" placeholder="Evidence or additional notes..."></textarea></div>'+
-    '</div>'+
-    '<div class="fa-row"><button class="btn btn-s" onclick="closeModal(\'cModal\')">Cancel</button><button class="btn btn-d" onclick="saveBlacklistEntry()">\uD83D\uDEAB Flag Supplier</button></div>';
-  openModal('cModal');
-}
-
-function saveBlacklistEntry(){
-  var supplier=(document.getElementById('blSupplier')||{}).value;
-  var contractId=parseInt((document.getElementById('blContract')||{}).value)||0;
-  var ruleId=parseInt((document.getElementById('blRule')||{}).value)||1;
-  if(!supplier){toast('Enter supplier name','err');return;}
-  var entry={
-    id:uid(),
-    contractId:contractId,
-    supplier:supplier.trim(),
-    ruleId:ruleId,
-    dateFlagged:(document.getElementById('blDate')||{}).value||new Date().toISOString().split('T')[0],
-    notes:(document.getElementById('blNotes')||{}).value||'',
-    status:'active'
-  };
-  BLACKLIST.push(entry);
-  saveBlacklistData();
-  logAudit('create','Supplier blacklisted: '+entry.supplier,String(contractId));
-  closeModal('cModal');
-  renderBlacklist();
-  toast('Supplier flagged','ok');
-}
-
-function clearBlacklistEntry(id){
-  if(!confirm('Clear this blacklist entry?'))return;
-  var entry=BLACKLIST.find(function(b){return b.id===id;});
-  if(entry){
-    entry.status='cleared';
-    entry.dateCleared=new Date().toISOString().split('T')[0];
-    saveBlacklistData();
-    logAudit('edit','Blacklist cleared: '+entry.supplier);
-    renderBlacklist();
-    toast('Entry cleared','ok');
-  }
-}
-
-function filterBlacklist(el,mode){
-  blFilterMode=mode;
-  ['bl-all','bl-active','bl-cleared'].forEach(function(id){var e=document.getElementById(id);if(e)e.classList.remove('on');});
-  if(el)el.classList.add('on');
-  renderBlacklist();
-}
-
-// Expose to window
-window.renderSupEval=renderSupEval;
-window.openAddSupEvalModal=openAddSupEvalModal;
-window.saveSupEval=saveSupEval;
-window.renderBlacklist=renderBlacklist;
-window.openAddBlacklistModal=openAddBlacklistModal;
-window.saveBlacklistEntry=saveBlacklistEntry;
-window.clearBlacklistEntry=clearBlacklistEntry;
-window.filterBlacklist=filterBlacklist;
 
 // Add to AR translations
 AR['Supplier Evaluation']='\u062A\u0642\u064A\u064A\u0645 \u0627\u0644\u0645\u0648\u0631\u062F\u064A\u0646';
@@ -7132,77 +6897,6 @@ AR['PERFORMANCE']='\u0627\u0644\u0623\u062F\u0627\u0621';
 </script>
 
 
-<script>
-// v57 CHANGE 6 — Editable Blacklist Rules settings UI + lcBLRules persistence + renderSettings hook REMOVED.
-// V21: Evidence on blacklist
-var pendingBLEv=[];
-function handleBLEvUpload(files){
-  var arr=Array.from(files);var done=0;
-  arr.forEach(function(f){
-    var rd=new FileReader();
-    rd.onload=function(ev){
-      pendingBLEv.push({name:f.name,size:fSize(f.size),dataUrl:ev.target.result,mimeType:f.type});
-      if(++done===arr.length){var pv=document.getElementById('blEvPreview');if(pv)pv.innerHTML=pendingBLEv.map(function(ef){return '<div class="afile" style="margin-bottom:2px"><div class="af-name">📎 '+ef.name+'</div><div class="af-size">'+ef.size+'</div></div>';}).join('');toast(arr.length+' file(s) attached','ok');}
-    };rd.readAsDataURL(f);
-  });
-}
-window.handleBLEvUpload=handleBLEvUpload;
-var origOpenBL21=openAddBlacklistModal;
-openAddBlacklistModal=function(){
-  pendingBLEv=[];origOpenBL21();
-  var mb=document.getElementById('mB');if(!mb)return;
-  var fa=mb.querySelector('.fa-row');if(!fa)return;
-  var d=document.createElement('div');d.className='fg full';d.style.marginTop='8px';
-  d.innerHTML='<label class="fl2">📎 Evidence Files</label><div class="az" style="padding:8px;cursor:pointer" onclick="document.getElementById(\x27blEvFile\x27).click()"><div style="font-size:10px;color:var(--text2)">Click to attach evidence (PDF, images, docs)</div></div><input type="file" id="blEvFile" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx" style="display:none" onchange="handleBLEvUpload(this.files)"/><div id="blEvPreview" style="margin-top:4px"></div>';
-  fa.parentNode.insertBefore(d,fa);
-};window.openAddBlacklistModal=openAddBlacklistModal;
-var origSaveBL21=saveBlacklistEntry;
-saveBlacklistEntry=function(){
-  var supplier=(document.getElementById('blSupplier')||{}).value;
-  var contractId=parseInt((document.getElementById('blContract')||{}).value)||0;
-  var ruleId=parseInt((document.getElementById('blRule')||{}).value)||1;
-  if(!supplier){toast('Enter supplier name','err');return;}
-  var entry={id:uid(),contractId:contractId,supplier:supplier.trim(),ruleId:ruleId,
-    dateFlagged:(document.getElementById('blDate')||{}).value||new Date().toISOString().split('T')[0],
-    notes:(document.getElementById('blNotes')||{}).value||'',status:'active',evidence:pendingBLEv.slice()};
-  BLACKLIST.push(entry);saveBlacklistData();pendingBLEv=[];
-  logAudit('create','Supplier blacklisted: '+entry.supplier,String(contractId));
-  closeModal('cModal');renderBlacklist();toast('Supplier flagged','ok');
-};window.saveBlacklistEntry=saveBlacklistEntry;
-var origRBL21=renderBlacklist;
-renderBlacklist=function(){
-  origRBL21();
-  var ct=document.getElementById('blContent');if(!ct)return;
-  var entries=ct.querySelectorAll('.bl-entry');
-  var filtered=blFilterMode==='all'?BLACKLIST:BLACKLIST.filter(function(x){return x.status===blFilterMode;});
-  entries.forEach(function(el,idx){
-    if(idx>=filtered.length)return;var b=filtered[idx];
-    if(!b||!b.evidence||!b.evidence.length)return;
-    var h='<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">';
-    h+='<div style="font-size:10px;font-weight:700;color:var(--text3);margin-bottom:4px">📎 Evidence ('+b.evidence.length+')</div>';
-    var bi=BLACKLIST.indexOf(b);
-    b.evidence.forEach(function(f,fi){
-      h+='<div class="ev-file" style="padding:3px 7px;margin-bottom:2px"><div><div class="ev-file-name" style="font-size:10px">'+f.name+'</div><div class="ev-file-size" style="font-size:8px">'+f.size+'</div></div><div class="ev-actions" style="gap:3px">';
-      if(f.dataUrl){h+='<button class="ev-btn" style="font-size:9px;padding:1px 5px" onclick="viewBLEv('+bi+','+fi+')">👁</button>';
-      h+='<a class="ev-btn" style="font-size:9px;padding:1px 5px;text-decoration:none" href="'+f.dataUrl+'" download="'+f.name+'">⬇</a>';}
-      h+='</div></div>';
-    });h+='</div>';el.insertAdjacentHTML('beforeend',h);
-  });
-};window.renderBlacklist=renderBlacklist;
-function viewBLEv(bi,fi){
-  var b=BLACKLIST[bi];if(!b||!b.evidence||!b.evidence[fi])return;
-  var f=b.evidence[fi];if(!f.dataUrl){toast('No preview','info');return;}
-  var t=document.getElementById('fvTitle');if(t)t.textContent=f.name;
-  var dl=document.getElementById('fvDownload');if(dl){dl.href=f.dataUrl;dl.download=f.name;}
-  var body=document.getElementById('fvBody');if(!body)return;
-  var m=f.mimeType||'';
-  if(m.indexOf('image/')===0)body.innerHTML='<img src="'+f.dataUrl+'" style="max-width:100%;display:block;margin:auto;padding:12px"/>';
-  else if(m==='application/pdf'||f.name.toLowerCase().indexOf('.pdf')>=0)body.innerHTML='<iframe src="'+f.dataUrl+'" sandbox="allow-popups" style="width:100%;height:75vh;border:none"></iframe>';
-  else body.innerHTML='<div style="padding:32px;text-align:center"><div style="font-size:36px;margin-bottom:12px">📄</div><div style="font-weight:700">'+f.name+'</div><a href="'+f.dataUrl+'" download="'+f.name+'" class="btn btn-p" style="margin-top:16px;display:inline-flex">⬇ Download</a></div>';
-  openModal('fileViewerModal');
-}
-window.viewBLEv=viewBLEv;
-</script>
 <script>
 PT.contractadmin="Contracts Administration";
 var _orcpCA=renderCurrentPage;
@@ -9180,7 +8874,6 @@ subItems.forEach(function(item){item.addEventListener('click',function(e){e.stop
 (function(){
   if(typeof KPI_DEFS!=='undefined')window.KPI_DEFS=KPI_DEFS;
   if(typeof MECHS!=='undefined')window.MECHS=MECHS;
-  if(typeof BLACKLIST_RULES!=='undefined')window.BLACKLIST_RULES=BLACKLIST_RULES;
 })();
 
 // ===== v55 FIX 7: Mechanism drag reorder =====
@@ -10294,7 +9987,7 @@ function mwCreateRFP(){
     +'</div>'
     +'<div style="display:flex;gap:8px;align-items:center;margin-top:16px;flex-wrap:wrap">'
       +'<button class="btn btn-p btn-sm" onclick="mwSaveRFP()">💾 '+L('Save Draft','حفظ المسودة')+'</button>'
-      +'<button class="btn btn-s btn-sm" disabled aria-disabled="true" style="opacity:.5;cursor:not-allowed;background:var(--surface2);color:var(--text3)" title="'+L('Coming soon — activated later','قريباً — يُفعَّل لاحقاً')+'">🤖 '+L('Import RFP data using AI','استيراد بيانات المنافسة بالذكاء الاصطناعي')+'</button>'
+      +'<button class="btn btn-s btn-sm" onclick="aiComingSoon()" title="'+L('AI-assisted import','استيراد بمساعدة الذكاء الاصطناعي')+'">🤖 '+L('Import RFP data using AI','استيراد بيانات المنافسة بالذكاء الاصطناعي')+'</button>'
     +'</div>'
   +'</div></div>';
   document.body.appendChild(d);
@@ -10634,7 +10327,7 @@ function eaOpen(id){
     '<div id="eaTableWrap" style="overflow-x:auto"></div>'+
     '<div style="display:flex;gap:7px;margin-top:12px;flex-wrap:wrap">'+
       (locked?'':'<button class="btn btn-s btn-sm" onclick="eaAddBidder()">+ Add Bidder</button>')+
-      '<button class="btn btn-s btn-sm" disabled title="AI proposal reading — coming soon" style="opacity:.55;cursor:not-allowed">✨ AI Read Proposals (coming soon)</button>'+
+      '<button class="btn btn-s btn-sm" onclick="aiComingSoon()" title="AI proposal reading">✨ AI Read Proposals</button>'+
       (locked?'':(b.techWeight!=null?'<button class="btn btn-p btn-sm" onclick="eaCalc()">⚡ Calculate &amp; Rank</button>':'<button class="btn btn-p btn-sm" disabled style="opacity:.5;cursor:not-allowed" title="Confirm Technical/Commercial weights first">⚡ Calculate &amp; Rank</button>'))+
       (locked?'':'<button class="btn btn-sm" style="background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border:none;font-weight:800" onclick="eaAwardFinalize()">🏆 Award &amp; Finalize</button>')+
       '<button class="btn btn-p btn-sm" onclick="if(typeof exportBidMoMPDF===\'function\'){_eaSync();exportBidMoMPDF();}">📄 Export MoM</button>'+
@@ -11468,6 +11161,12 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
     },260);
   });
 })();
+</script>
+
+<!-- v57 mahdi — AI buttons re-enabled (scaffold for future AI import/read features) -->
+<script>
+function aiComingSoon(){try{toast((typeof lang!=='undefined'&&lang==='ar')?'🤖 ميزة الذكاء الاصطناعي — قيد التفعيل قريباً':'🤖 AI feature — coming soon','info');}catch(e){}}
+window.aiComingSoon=aiComingSoon;
 </script>
 
 <!-- ════════════════════════════════════════════════════════════════
