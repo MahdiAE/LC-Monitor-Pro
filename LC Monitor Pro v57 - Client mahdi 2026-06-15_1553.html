@@ -2712,6 +2712,15 @@ window._v57NppShare=function(boq){
   var sumLocalGoods=goods.filter(function(r){return r.origin==='Local';}).reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
   return +(sumLocalGoods/sumAll*100).toFixed(2);
 };
+// F1 (Art.11(2)) — NPP loading BASE = Σ(price of non-Mandatory-List GOODS lines). Mandatory-List items carry their own
+// compliance regime (not price-preferenced) and services are outside national-products preferencing, so both are excluded.
+// This is the exact denominator population of _v57NppShare, so loading = pref% × base × (1 − share) = pref% × (foreign non-ML goods value).
+// Pure-services (or any BoQ with no non-ML goods) → base 0 → zero loading. Single source of truth for every adjusted-price site.
+window._v57NppBase=function(boq){
+  boq=(boq&&boq.length)?boq:[];
+  return boq.filter(function(r){return !(r.isMandatoryRFP||r.isMandatory)&&window._v57IsGoods(r);})
+            .reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
+};
 // D1: per-item pending-award panel for divisible competitions (Art.9). Ranks the COMPLIANT bidders for each excluded Mandatory item by line price.
 function _v57ItemLinePrice(it){return it?(parseFloat(it.price)||((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0))||0):0;}
 function _v57ItemCompliant(it){return !!it&&((it.exceptionStatus==='approved')||(it.isMandatoryResp&&it.origin!=='Foreign'));}
@@ -5952,7 +5961,7 @@ function exportBidMoMPDF(){
   var _methodEq='<ul style="margin-'+(AR_MODE?'right':'left')+':18px;font-size:11px">';
   if(_hasNPP){
     _methodEq+='<li><b>'+L('National Products Price Preferencing — Price Adjustment','تفضيل أسعار المنتجات الوطنية — تعديل السعر')+':</b>'
-      +_eqBox('<b>'+L('Adjusted Price','السعر المعدّل')+'</b> = '+L('Bid Price','سعر العطاء')+' + '+(S.nppPref||10)+'% × '+L('Bid Price','سعر العطاء')+' × (1 − '+L('National Products Percentage','نسبة المنتجات الوطنية')+')<br/><b>'+L('Award','الترسية')+'</b>: '+L('the lowest <u>original</u> bid price among the qualified bidders','أقل سعر عطاء <u>أصلي</u> بين المتقدمين المؤهلين'))
+      +_eqBox('<b>'+L('Adjusted Price','السعر المعدّل')+'</b> = '+L('Bid Price','سعر العطاء')+' + '+(S.nppPref||10)+'% × '+L('Non-Mandatory Goods Value','قيمة السلع غير الإلزامية')+' × (1 − '+L('National Products Percentage','نسبة المنتجات الوطنية')+')<br/><b>'+L('Award','الترسية')+'</b>: '+L('the lowest <u>original</u> bid price among the qualified bidders','أقل سعر عطاء <u>أصلي</u> بين المتقدمين المؤهلين'))
       +'</li>';
   }
   if(_hasWt){
@@ -5960,7 +5969,7 @@ function exportBidMoMPDF(){
     var _tadEN=S.listedBonus?(' + '+_tad+'% Tadawul-listed bonus'):'';
     var _tadAR=S.listedBonus?(' + '+_tad+'% علاوة الإدراج في تداول'):'';
     _methodEq+='<li><b>'+L('Local Content Weight in the Commercial Evaluation','وزن المحتوى المحلي في التقييم التجاري')+':</b>'
-      +_eqBox((_hasNPP?'<b>'+L('Adjusted Price','السعر المعدّل')+'</b> = '+L('Bid Price','سعر العطاء')+' + '+(S.nppPref||10)+'% × '+L('Bid Price','سعر العطاء')+' × (1 − '+L('National Products Percentage','نسبة المنتجات الوطنية')+') <i>'+L('(applied to every bidder first)','(يُطبَّق على كل متقدم أولًا)')+'</i><br/>':'')
+      +_eqBox((_hasNPP?'<b>'+L('Adjusted Price','السعر المعدّل')+'</b> = '+L('Bid Price','سعر العطاء')+' + '+(S.nppPref||10)+'% × '+L('Non-Mandatory Goods Value','قيمة السلع غير الإلزامية')+' × (1 − '+L('National Products Percentage','نسبة المنتجات الوطنية')+') <i>'+L('(applied to every bidder first)','(يُطبَّق على كل متقدم أولًا)')+'</i><br/>':'')
         +'<b>'+L('Price Score','درجة السعر')+'</b> = ( '+L('Lowest','أقل')+' '+(_hasNPP?L('Adjusted ','معدّل '):'')+L('Price','سعر')+' ÷ '+L('This','هذا')+' '+(_hasNPP?L('Adjusted ','المعدّل '):'')+L('Price','السعر')+' ) × '+_pw+'%<br/>'
         +'<b>'+L('Local Content Score','درجة المحتوى المحلي')+'</b> = ( '+L('Baseline Percentage','نسبة خط الأساس')+' × '+_bs+'% + '+L('Target Percentage','نسبة المستهدف')+' × '+_ts+'%'+L(_tadEN,_tadAR)+' ) × '+_lw+'%<br/>'
         +'<b>'+L('Final Score','الدرجة النهائية')+'</b> = '+L('Price Score','درجة السعر')+' + '+L('Local Content Score','درجة المحتوى المحلي')+' → '+L('the highest score wins','الأعلى يفوز'))
@@ -8228,7 +8237,7 @@ renderBiddersList=function(){
     var bSum=b.boqItems.reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
     if(b.boqItems.length)b.price=bSum;
     b.nppPct=window._v57NppShare(b.boqItems); // #2 read-only: Local GOODS (excl. ML) / all lines (excl. ML)
-    var adjBid=isNPP?bSum+(((S.nppPref||10)/100)*bSum*(1-b.nppPct/100)):bSum;
+    var adjBid=isNPP?bSum+(((S.nppPref||10)/100)*window._v57NppBase(b.boqItems)*(1-b.nppPct/100)):bSum;/* F1: load non-ML goods base, not full bid */
     b._adjBid=+adjBid.toFixed(0);
 
     // ── BoQ table rows (v42: mandatory+foreign highlight) ──
@@ -8248,7 +8257,7 @@ renderBiddersList=function(){
         +'</tr>';
     }).join('');
 
-    var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">\uD83D\uDCCB BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Mandatory List Exception</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="9" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="9" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Bid \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
+    var bqT=b.boqItems.length?'<div style="margin-top:8px;overflow-x:auto"><div style="font-size:11px;font-weight:700;margin-bottom:4px">\uD83D\uDCCB BoQ Line Items</div><table style="width:100%;font-size:11px;border-collapse:collapse"><thead><tr style="background:var(--accent);color:#fff"><th style="padding:5px 7px">#</th><th style="padding:5px 7px">Description</th><th style="padding:5px 7px">Nature</th><th style="padding:5px 7px">Qty</th><th style="padding:5px 7px">UoM</th><th style="padding:5px 7px">Origin</th><th style="padding:5px 7px">Mandatory RFP</th><th style="padding:5px 7px">Mandatory Response</th><th style="padding:5px 7px">Mandatory List Exception</th><th style="padding:5px 7px">Price (SAR)</th></tr></thead><tbody>'+bqR+'<tr style="font-weight:700;background:var(--surface2)"><td colspan="9" style="padding:5px 7px;text-align:right">Original Bid Total</td><td style="padding:5px 7px">'+bSum.toLocaleString()+' SAR</td></tr>'+(isNPP?'<tr style="font-weight:700;background:rgba(59,130,246,0.08)"><td colspan="9" style="padding:5px 7px;text-align:right">Adjusted Bid Price <span style="font-weight:400;font-size:10px">(Bid + 10% \u00d7 Non-Mand. Goods \u00d7 (1-NPP%))</span></td><td style="padding:5px 7px;color:var(--accent)">'+b._adjBid.toLocaleString()+' SAR</td></tr>':'')+'</tbody></table></div>':'';
 
     var tFn=b._techFileName||'';var cFn=b._commFileName||'';var mlFn=b._mlFileName||'';
     var blCertFn=b._lcBaselineFileName||'';var tgCertFn=b._lcTargetFileName||'';
@@ -8451,11 +8460,11 @@ calcBids=function(){
   var lpAll=Math.min.apply(null,q.map(function(b){return b.price||Infinity;}));
   if(isSME&&!showLC){
     // SME (and SME + NPP + ML): apply the SME loading on non-SME prices; if NPP applies, adjust the loaded price too
-    q.forEach(function(b){var ev=b.isSME?b.price:b.price*(1+smeP);if(isNPP){var ns=(b.nppPct||0)/100;ev=ev+nppP*ev*(1-ns);}b.adjustedPrice=ev;b.notes=(b.isSME?'SME':'Non-SME +'+(smeP*100)+'%')+(isNPP?' · NPP '+(b.nppPct||0)+'%':'');});
+    q.forEach(function(b){var ev=b.isSME?b.price:b.price*(1+smeP);if(isNPP){var ns=(b.nppPct||0)/100;ev=ev+nppP*window._v57NppBase(b.boqItems)*(1-ns);/* F1: NPP loads non-ML goods base, not the SME-loaded full price */}b.adjustedPrice=ev;b.notes=(b.isSME?'SME':'Non-SME +'+(smeP*100)+'%')+(isNPP?' · NPP '+(b.nppPct||0)+'%':'');});
     var laS=Math.min.apply(null,q.map(function(b){return b.adjustedPrice||Infinity;}));
     q.forEach(function(b){b.commFrac=laS/(b.adjustedPrice||1);b.priceScore=b.commFrac;b.lcScore=0;});
   } else if(isNPP&&!showLC){
-    q.forEach(function(b){var ns=(b.nppPct||0)/100;b.adjustedPrice=b.price+nppP*b.price*(1-ns);b.notes="NPP "+(b.nppPct||0)+"%";});
+    q.forEach(function(b){var ns=(b.nppPct||0)/100;b.adjustedPrice=b.price+nppP*window._v57NppBase(b.boqItems)*(1-ns);/* F1: load non-ML goods base only */b.notes="NPP "+(b.nppPct||0)+"%";});
     var laN=Math.min.apply(null,q.map(function(b){return b.adjustedPrice||Infinity;}));
     q.forEach(function(b){b.commFrac=laN/(b.adjustedPrice||1);b.priceScore=b.commFrac;b.lcScore=0;});
   } else if(showLC&&!isNPP){
@@ -8466,7 +8475,7 @@ calcBids=function(){
       b.notes="Price:"+(ps*100).toFixed(1)+" LC:"+(ls*100).toFixed(1)+(tb>0?" (incl. Tadawul +"+(tb*lcWt*100).toFixed(1)+")":"");
     });
   } else if(isHybrid){
-    q.forEach(function(b){var ns=(b.nppPct||0)/100;b.adjustedPrice=b.price+nppP*b.price*(1-ns);});
+    q.forEach(function(b){var ns=(b.nppPct||0)/100;b.adjustedPrice=b.price+nppP*window._v57NppBase(b.boqItems)*(1-ns);/* F1: load non-ML goods base only */});
     var la=Math.min.apply(null,q.map(function(b){return b.adjustedPrice||Infinity;}));
     q.forEach(function(b){
       var ps=(la/(b.adjustedPrice||1))*priceWt;var tl=(b.lcPct||0)/100,bl=(b.lcBaseline||b.baselinePct||0)/100;
@@ -8547,7 +8556,7 @@ calcBids=function(){
   if(sL){
     formula+='<div class="bf-row"><span class="bf-l">'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</span><span class="bf-eq"><span class="pill">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span> (Lowest'+(sA?'Adj':'')+'Price \u00F7 '+(sA?'Adj':'')+'Price) \u00D7 <span class="w">'+_PW+'%</span> + <span class="pill">'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span> ('+(S.targetSplit||50)+'%\u00B7'+_L('Target','\u0645\u0633\u062A\u0647\u062F\u0641')+' + '+(S.baselineSplit||50)+'%\u00B7'+_L('Baseline','\u0623\u0633\u0627\u0633')+(tadawulOn?' + '+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+' '+(S.listedBonusPct||5)+'%':'')+') \u00D7 <span class="w">'+_LW+'%</span></span></div>';
   } else if(isNPP&&!showLC){
-    formula+='<div class="bf-row"><span class="bf-l">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="bf-eq">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+' + <span class="w">'+(S.nppPref||10)+'%</span>\u00B7Price\u00B7(1 \u2212 NationalShare) \u2014 '+_L('lowest adjusted price wins','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u0641\u0648\u0632')+'</span></div>';
+    formula+='<div class="bf-row"><span class="bf-l">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="bf-eq">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+' + <span class="w">'+(S.nppPref||10)+'%</span>\u00B7'+_L('Non-Mand. Goods','\u0627\u0644\u0633\u0644\u0639 \u063A\u064A\u0631 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064A\u0629')+'\u00B7(1 \u2212 NationalShare) \u2014 '+_L('lowest adjusted price wins','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u0641\u0648\u0632')+'</span></div>';
   } else if(isSME&&!showLC){
     formula+='<div class="bf-row"><span class="bf-l">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="bf-eq">'+_L('non-SME prices loaded','\u062A\u062D\u0645\u064A\u0644 \u0623\u0633\u0639\u0627\u0631 \u063A\u064A\u0631 \u0627\u0644\u0635\u063A\u064A\u0631\u0629')+' +<span class="w">'+(S.smePref||10)+'%</span> \u2014 '+_L('lowest adjusted price wins','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u0641\u0648\u0632')+'</span></div>';
   }
@@ -10994,11 +11003,30 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
     var auditsPerWeek=Math.round(audits.length/weeks);
     var rfpComplete=rfps.length?Math.round(rfps.filter(function(r){return r.title&&r.ref&&r.endUser&&r.value&&r.nature;}).length/rfps.length*100):0;
     var readyN=rfps.filter(function(r){return ((r.status==='ready'||r.status==='finalized'||r.status==='processed')&&!r.awardedEvalId);}).length;
+    var _isCoC=function(c){return (typeof mechClass==='function')&&mechClass(c.mechanism).base==='company';}; // K1
     var _ach=activeC.map(cAchieved).filter(function(v){return v!=null;});
     var lcAchieved=_ach.length?(_ach.reduce(function(s,v){return s+v;},0)/_ach.length):null;
+    // K1: company-level achieved is establishment-wide, not per-project — average it separately from project-level
+    var _achProj=activeC.filter(function(c){return !_isCoC(c);}).map(cAchieved).filter(function(v){return v!=null;});
+    var _achCo=activeC.filter(_isCoC).map(cAchieved).filter(function(v){return v!=null;});
+    var lcAchievedProj=_achProj.length?(_achProj.reduce(function(s,v){return s+v;},0)/_achProj.length):null;
+    var lcAchievedCo=_achCo.length?(_achCo.reduce(function(s,v){return s+v;},0)/_achCo.length):null;
+    var coActiveN=activeC.filter(_isCoC).length;
+    // K1: per-contract Achieved vs Agreed drill — company-level rows in their own labeled sub-section (establishment-wide ≠ project compliance)
+    (function(){
+      var hdr=[L('Contract','العقد'),L('Name','الاسم'),L('Agreed','المتعاقد'),L('Achieved','المحقق'),L('Ratio','النسبة')];
+      var _row=function(c){var a=cAchieved(c),ag=(c.agreedPct||0)*100,rt=(a!=null&&ag)?(a/ag*100):null;
+        var col=rt==null?'var(--text3)':rt>=100?'#0d9488':rt>=80?'#d4a017':'#dc2626';
+        return ['#'+_esc(c.num),_esc((c.name||'').substring(0,26)),ag?ag.toFixed(1)+'%':'—',a!=null?a.toFixed(1)+'%':'<span style="color:var(--text3)">'+L('No data','لا بيانات')+'</span>','<span style="color:'+col+';font-weight:700">'+(rt!=null?rt.toFixed(0)+'%':'—')+'</span>'];};
+      var lcc=activeC.filter(function(c){return c.agreedPct;});
+      var pj=lcc.filter(function(c){return !_isCoC(c);}), co=lcc.filter(_isCoC);
+      var bd=tw(hdr,pj.map(_row));
+      if(co.length){bd+='<div style="margin-top:12px;font-weight:700;font-size:12px">'+L('Company-level (establishment-wide)','مستوى الشركة (على مستوى المنشأة)')+' <span style="font-weight:400;color:var(--text3)">— '+L('achieved % is establishment-wide, not project-specific','النسبة المحققة على مستوى المنشأة بالكامل، وليست خاصة بالمشروع')+'</span></div>'+tw(hdr,co.map(_row));}
+      DR.lcCompliance={title:L('LC Achieved vs Agreed','المحقق مقابل المتعاقد'),sub:(lcAchievedProj!=null?lcAchievedProj.toFixed(1)+'%':'—')+' '+L('project','مشروع')+(lcAchievedCo!=null?' · '+lcAchievedCo.toFixed(1)+'% '+L('company','منشأة'):''),body:bd};
+    })();
 
     return {range:R,years:_exYears(),portHealth:portHealth,portDelta:portDelta,healthyN:healthyN,activeN:activeC.length,
-      pipelineN:pipeline.length,pipelineVal:pipelineVal,evidenceQueue:evidenceQueue,penContractsN:penContractsN,rfpComplete:rfpComplete,readyN:readyN,lcAchieved:lcAchieved,
+      pipelineN:pipeline.length,pipelineVal:pipelineVal,evidenceQueue:evidenceQueue,penContractsN:penContractsN,rfpComplete:rfpComplete,readyN:readyN,lcAchieved:lcAchieved,lcAchievedProj:lcAchievedProj,lcAchievedCo:lcAchievedCo,coActiveN:coActiveN,
       smeShare:smeShare,tadShare:tadShare,nppShare:nppShare,certShare:certShare,avgBoq:avgBoq,mixLC:mixLC,mixNPP:mixNPP,mixML:mixML,art19:art19,topMatch:topMatch,penTrendPct:penTrendPct,auditsPerWeek:auditsPerWeek,
       penTotal:penTotal,conc:conc,penByYear:penByYear,throughput:throughput,rfpN:rfpsCreated.length,evalN:evalsCreated.length,awardN:awardedBids.length,ctrN:contractsCreated.length,
       autoPct:autoPct,autoN:autoN,processedN:processed.length,matched:matched,flagged:flagged,unmapped:unmapped,covTot:covTot,
@@ -11080,7 +11108,10 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
     h+='<div class="exr-band" style="--bandc:#ca8a04;--bandsoft:rgba(202,138,4,.14)"><div class="exr-band-hd"><span class="exr-band-ic">⚖️</span><div class="exr-band-t">'+L('Awarding','الترسية')+'</div><div class="exr-band-sum">'+M.awardN+' '+L('awards','ترسية')+' · '+_money(M.throughput)+'</div></div><div class="exr-tiles">'+awTiles+'</div>'+plBlock+awFoot+'</div>';
     // -- Monitoring --
     var gap=(M.lcAchieved!=null)?(M.lcAchieved-M.portTarget):null;
-    var moTiles=tile('reports',L('LC Achieved vs Agreed','المحقق مقابل المتعاقد'),(M.lcAchieved!=null?M.lcAchieved.toFixed(1)+'%':'—'),L('target','المستهدف')+' '+M.portTarget.toFixed(0)+'% · '+L('gap','الفجوة')+' '+(gap==null?'—':(gap>=0?'+':'')+gap.toFixed(1))+' '+L('pts','نقطة'))+
+    var _lcVal,_lcSub; // K1: project-level vs company-level (establishment-wide) achieved as two separate averages
+    if(M.coActiveN){_lcVal=(M.lcAchievedProj!=null?M.lcAchievedProj.toFixed(1):'—')+'% / '+(M.lcAchievedCo!=null?M.lcAchievedCo.toFixed(1):'—')+'%';_lcSub=L('Project / Company-level','مشروع / منشأة')+' · '+L('target','المستهدف')+' '+M.portTarget.toFixed(0)+'%';}
+    else{_lcVal=(M.lcAchieved!=null?M.lcAchieved.toFixed(1)+'%':'—');_lcSub=L('target','المستهدف')+' '+M.portTarget.toFixed(0)+'% · '+L('gap','الفجوة')+' '+(gap==null?'—':(gap>=0?'+':'')+gap.toFixed(1))+' '+L('pts','نقطة');}
+    var moTiles=tile('lcCompliance',L('LC Achieved vs Agreed','المحقق مقابل المتعاقد'),_lcVal,_lcSub)+
       tile('portHealth',L('Contracts at Risk','عقود معرّضة'),String(M.activeN-M.healthyN),L('of','من')+' '+M.activeN+' '+L('active','نشط'),(M.activeN-M.healthyN)>0)+
       tile('reports',L('Reports On-Time','التقارير في وقتها'),M.onTimePct+'%',M.overdueN+' '+L('overdue','متأخر')+' · '+M.worstLate+'d '+L('worst','أسوأ'))+
       tile('evidence',L('Evidence Rejection','رفض الأدلة'),M.evRej+'%',M.evRejected+' '+L('of','من')+' '+M.evReviewed);
