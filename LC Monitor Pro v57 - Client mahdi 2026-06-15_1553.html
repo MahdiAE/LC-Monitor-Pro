@@ -8259,13 +8259,14 @@ renderBiddersList=function(){
 
     if(showLC){
       // LC Baseline Response % — show RFP requirement + enforce status
-      fields+='<div class="fg"><label class="fl2">LC Baseline Response %</label>';
+      fields+='<div class="fg"><label class="fl2" title="'+L('The LC Baseline is the LCGPA-accredited starting Local-Content % declared by the bidder; it combines with the Target % inside the Local-Content weight to form the LC score.','خط أساس المحتوى المحلي هو نسبة المحتوى المحلي المعتمدة من الهيئة والمعلنة من العارض، وتُدمج مع النسبة المستهدفة ضمن وزن المحتوى المحلي لتكوين درجة المحتوى المحلي.')+'">LC Baseline Response %</label>'; /* H3 */
       if(showLC&&minBL>0){
         fields+='<div style="font-size:9px;margin-bottom:2px;color:'+(blEnforced?'var(--accent)':'var(--text3)')+'">RFP Min: '+minBL+'% '+(blEnforced?'\uD83D\uDD12 Enforced':'\uD83D\uDD13 Not enforced')+'</div>';
       }
       var blVal=b.lcBaseline||b.baselinePct||0;
       var blWarn=showLC&&blEnforced&&minBL>0&&blVal<minBL;
       fields+='<input class="fi" type="number" step="0.1" value="'+(blVal||'')+'" style="font-size:11px;padding:5px 8px'+(blWarn?';border-color:var(--danger);background:rgba(220,38,38,0.05)':'')+'" onchange="curBidders['+i+'].lcBaseline=parseFloat(this.value)||0;curBidders['+i+'].baselinePct=parseFloat(this.value)||0;renderBiddersList()"/>';
+      if(!blVal) fields+='<div style="font-size:9px;color:var(--text3);margin-top:1px">\u2139 '+L('Baseline 0% \u2014 not submitted','\u062e\u0637 \u0627\u0644\u0623\u0633\u0627\u0633 0% \u2014 \u0644\u0645 \u064a\u064f\u0642\u062f\u064e\u0651\u0645')+'</div>'; /* H3 */
       if(blWarn) fields+='<div style="font-size:9px;color:var(--danger);margin-top:1px">\u26a0 Below enforced RFP minimum ('+minBL+'%)</div>';
       fields+='</div>';
 
