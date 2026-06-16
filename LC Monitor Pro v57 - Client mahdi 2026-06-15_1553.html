@@ -1659,6 +1659,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div class="fg"><label class="fl2">RFP Reference #</label><input class="fi" id="rfpRef" placeholder="RFP-2024-001"></div>
         <div class="fg"><label class="fl2">Estimated Value (SAR) <span class="req">*</span></label><input class="fi" id="rfpValue" type="number" placeholder="0" oninput="runMechWizard()"></div>
         <div class="fg"><label class="fl2">Contract Duration (months) <span class="req">*</span></label><input class="fi" id="rfpDuration" type="number" min="1" placeholder="e.g. 36" title="Tender contract period — shown to suppliers &amp; evaluators, imported into the contract"></div>
+        <div class="fg"><label class="fl2" title="Art.9: in a divisible competition a Mandatory-List failure excludes only that item, not the whole bidder">Divisible Competition (Art.9)</label><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><label class="sw-toggle"><input type="checkbox" id="rfpDivisible"><span class="sw-slider"></span></label><span style="font-size:9px;color:var(--text3)">Mandatory failure excludes the item, not the bidder</span></div></div>
       </div>
       <div class="fsec" style="margin-top:14px;padding:14px;background:var(--al);border:1.5px solid var(--accent)">
         <div class="fsec-title" style="border:none;margin-bottom:8px;padding-bottom:0">🧙 Smart Mechanism Wizard</div>
@@ -2705,11 +2706,44 @@ window._v57NppShare=function(boq){
   boq=(boq&&boq.length)?boq:[];
   if(!boq.length)return 0;
   var nonML=boq.filter(function(r){return !(r.isMandatoryRFP||r.isMandatory);});
-  var sumAll=nonML.reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
+  var goods=nonML.filter(function(r){return window._v57IsGoods(r);}); // F4: national-products share is goods-only on BOTH sides (services excluded from numerator and denominator)
+  var sumAll=goods.reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
   if(sumAll<=0)return 0;
-  var sumLocalGoods=nonML.filter(function(r){return r.origin==='Local'&&window._v57IsGoods(r);}).reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
+  var sumLocalGoods=goods.filter(function(r){return r.origin==='Local';}).reduce(function(s,r){return s+(parseFloat(r.price)||0);},0);
   return +(sumLocalGoods/sumAll*100).toFixed(2);
 };
+// D1: per-item pending-award panel for divisible competitions (Art.9). Ranks the COMPLIANT bidders for each excluded Mandatory item by line price.
+function _v57ItemLinePrice(it){return it?(parseFloat(it.price)||((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0))||0):0;}
+function _v57ItemCompliant(it){return !!it&&((it.exceptionStatus==='approved')||(it.isMandatoryResp&&it.origin!=='Foreign'));}
+function _v57PendingPanel(){
+  if(typeof curBid==='undefined'||!curBid||!curBid.divisible||!curBid._excludedItems||!curBid._excludedItems.length)return '';
+  curBid.pendingAwards=curBid.pendingAwards||{};
+  var _L=(typeof window.L==='function')?window.L:function(a){return a;};
+  var h='<div style="margin-top:12px;padding:12px;background:rgba(245,158,11,.07);border:1.5px solid #f59e0b;border-radius:var(--rs)">';
+  h+='<div style="font-weight:700;font-size:12px;margin-bottom:4px">⚠ '+_L('Incomplete award — '+curBid._excludedItems.length+' Mandatory item(s) pending (Art.9, divisible tender)','ترسية غير مكتملة — '+curBid._excludedItems.length+' بند إلزامي معلّق (المادة 9)')+'</div>';
+  h+='<div style="font-size:10px;color:var(--text3);margin-bottom:8px">'+_L('Excluded from the main apple-to-apple award; award each to the cheapest compliant bidder.','استُبعدت من الترسية الرئيسية؛ ارسِ كل بند على أقل عرض مطابق.')+'</div>';
+  curBid._excludedItems.forEach(function(ii){
+    var desc=''; for(var bi=0;bi<curBidders.length;bi++){var dit=(curBidders[bi].boqItems||[])[ii]; if(dit&&dit.desc){desc=dit.desc;break;}}
+    var rows=curBidders.map(function(b){var it=(b.boqItems||[])[ii]; if(!_v57ItemCompliant(it))return null; if(checkExclusions(b,curBid.mechanism).length)return null; return {name:b.name||'',price:_v57ItemLinePrice(it)};}).filter(Boolean).sort(function(a,b){return a.price-b.price;});
+    h+='<div style="margin-bottom:8px;padding:8px;background:var(--surface);border:1px solid var(--border);border-radius:6px">';
+    h+='<div style="font-size:11px;font-weight:700">'+_L('Item','بند')+' #'+(ii+1)+': '+escSub(desc||('#'+(ii+1)))+'</div>';
+    if(!rows.length){h+='<div style="font-size:10px;color:var(--danger);margin-top:3px">'+_L('No compliant bidder for this item','لا يوجد عارض مطابق لهذا البند')+'</div>';}
+    else{h+='<table style="width:100%;font-size:10px;border-collapse:collapse;margin-top:4px"><tr style="color:var(--text3)"><th style="text-align:left;padding:2px 4px">'+_L('Compliant bidder','عارض مطابق')+'</th><th style="text-align:right;padding:2px 4px">'+_L('Line price','سعر البند')+'</th><th></th></tr>';
+      rows.forEach(function(r,ri){var awd=curBid.pendingAwards[ii]===r.name;h+='<tr><td style="padding:2px 4px">'+(ri===0?'🥇 ':'')+escSub(r.name)+'</td><td style="text-align:right;padding:2px 4px">'+fSAR(r.price)+'</td><td style="text-align:right;padding:2px 4px"><button class="btn btn-sm" style="font-size:9px;padding:2px 8px'+(awd?';background:var(--accent3);color:#fff':'')+'" onclick="_v57AwardPending('+ii+',\''+(r.name||'').replace(/\\/g,"\\\\").replace(/'/g,"\\'")+'\')">'+(awd?'✓ '+_L('Awarded','مُرسى'):_L('Award','ترسية'))+'</button></td></tr>';});
+      h+='</table>';}
+    h+='</div>';
+  });
+  h+='</div>';return h;
+}
+function _v57AwardPending(ii,name){if(typeof curBid==='undefined'||!curBid)return;curBid.pendingAwards=curBid.pendingAwards||{};curBid.pendingAwards[ii]=(curBid.pendingAwards[ii]===name?null:name);try{var idx=BIDS.findIndex(function(b){return b.id===curBid.id;});if(idx>=0)BIDS[idx]=curBid;if(typeof lsSet==='function')lsSet('lcBIDS',JSON.stringify(BIDS));}catch(e){}if(typeof calcBids==='function')calcBids();}
+window._v57PendingPanel=_v57PendingPanel;window._v57AwardPending=_v57AwardPending;
+// K2: clamp percentage inputs to valid ranges (0-100 for %, 0-1 for rate multipliers). Single delegated listener — covers existing + dynamically-rendered inputs.
+(function(){
+  var PCT=['fAP','fBL','fNPPct','pGap','pFin','pCapPerFine','pCapAgg','pGoodsDev','sLCW','sPriceW','sTargetSplit','sBaselineSplit','sListedPct','sMaxDev','sNPPPref','sSMEPref','rfpMinBaseline','rfpMinTarget','a1MinBaseline','a1MinTarget','subLC','subNPP','subBaseline','supLCPct','cLC','eaCommW','eaTechW','meditAP','meditBL'];
+  var RATE=['pDev','pNPP','pML'];
+  function clamp(el,lo,hi){var v=parseFloat(el.value);if(isNaN(v))return;var c=Math.max(lo,Math.min(hi,v));if(c!==v)el.value=c;}
+  document.addEventListener('change',function(e){var t=e.target;if(!t||t.tagName!=='INPUT'||t.type!=='number')return;if(PCT.indexOf(t.id)>=0)clamp(t,0,100);else if(RATE.indexOf(t.id)>=0)clamp(t,0,1);},true);
+})();
 
 // ============================================================
 // KPI registry — clustered + semantic stroke icons (status-colored at render)
@@ -3292,7 +3326,13 @@ function checkExclusions(bidder,mech){
     if(e.label.includes('LC% below')&&minLCVal>0&&(bidder.lcPct||0)<minLCVal)reasons.push(`LC% ${bidder.lcPct||0}% below minimum ${minLCVal}%`);
     if(e.label.includes('budget')&&e.threshold&&curBid?.value&&bidder.price>(curBid.value*(1+e.threshold/100)))reasons.push(`Bid price exceeds budget by >${e.threshold}%`);
   });
-  if(bidder.boqItems&&bidder.boqItems.length){bidder.boqItems.forEach(function(r,ri){if(!r.isMandatoryRFP)return;if(r.exceptionStatus==='approved')return;if(r.exceptionStatus==='rejected'){reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') exception rejected');return;}if(!r.isMandatoryResp||r.origin==='Foreign')reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(r.origin==='Foreign'?'has Foreign origin'+(r.exceptionFile?' — exception pending':' (no exception letter)'):'response not confirmed'));});}
+  // H2: documented-minimum baseline/target enforcement (Art.25) — excludes when its toggle is ON, for Threshold AND LC-Weight (incl. mixed)
+  (function(){ var _m=mech||(curBid&&curBid.mechanism)||''; if(!(typeof mechIsLC==='function'&&mechIsLC(_m))||!curBid)return;
+    if(curBid.minBaselineOn&&(+curBid.minBaseline>0)){var _bl=parseFloat(bidder.lcBaseline||bidder.baselinePct||0)||0;if(_bl<+curBid.minBaseline)reasons.push('LC baseline '+_bl+'% below documented minimum '+curBid.minBaseline+'% (Art.25)');}
+    if(curBid.minTargetOn&&(+curBid.minTarget>0)){var _tg=parseFloat(bidder.lcPct||bidder.target||0)||0;if(_tg<+curBid.minTarget)reasons.push('Target LC '+_tg+'% below documented minimum '+curBid.minTarget+'% (Art.25)');}
+  })();
+  var _div=curBid&&curBid.divisible; // D1: divisible competition → a Mandatory failure excludes the ITEM (Art.9), not the whole bidder
+  if(bidder.boqItems&&bidder.boqItems.length){bidder.boqItems.forEach(function(r,ri){if(!r.isMandatoryRFP)return;r._mlFail=false;if(r.exceptionStatus==='approved')return;var _rej=(r.exceptionStatus==='rejected');var _bad=_rej||(!r.isMandatoryResp||r.origin==='Foreign');if(!_bad)return;r._mlFail=true;if(_div)return;if(_rej){reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') exception rejected');return;}reasons.push('Mandatory item #'+(ri+1)+' ('+((r.desc||'').substring(0,30))+') '+(r.origin==='Foreign'?'has Foreign origin'+(r.exceptionFile?' — exception pending':' (no exception letter)'):'response not confirmed'));});}
   return reasons;
 }
 async function aiBidAnalysis(){
@@ -4623,7 +4663,10 @@ function submitContract(e){
   if(typeof mechClass==='function'){var _b=mechClass(mech).base;if((_b==='company'||_b==='project'||_b==='threshold')&&!award){toast('Awarding Date is required for Local-Content mechanisms','err');var _af=document.getElementById('fAward');if(_af)_af.focus();return;}}
   const endDt=new Date(start);endDt.setMonth(endDt.getMonth()+dur);
   DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,contractorContact:((document.getElementById('fContact')||{}).value||'').trim(),contractorEmail:((document.getElementById('fContEmail')||{}).value||'').trim(),name,mechanism:mech,regime:(document.getElementById('fRegime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov',amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
-  var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;var _srcB=BIDS.find(function(b){return String(b.id)===String(window._importedFromBidId);});if(_srcB){_srcB.status='contractCreated';_srcB.contractCreatedAt=new Date().toISOString();_srcB.contractId=_newC.id;}window._importedFromBidId=null;}window._importedDocs=null;if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;_newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
+  var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;var _srcB=BIDS.find(function(b){return String(b.id)===String(window._importedFromBidId);});if(_srcB){_srcB.status='contractCreated';_srcB.contractCreatedAt=new Date().toISOString();_srcB.contractId=_newC.id;}window._importedFromBidId=null;}window._importedDocs=null;if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;
+  // D2: Mandatory-List amount = Σ (unit×qty) of Mandatory lines from the awarded evaluation's BoQ (authoritative when lines exist)
+  if(_newC.boqItems&&_newC.boqItems.length){_newC.mandatoryListAmount=_newC.boqItems.reduce(function(s,it){return s+(it.isMandatoryRFP?((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0)||(parseFloat(it.price)||0)):0);},0);_newC.mlAmountDerived=true;}
+  _newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
   saveDB();logAudit('create','Contract #'+num,num);var _bn=document.createElement('div');_bn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;background:#059669;color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px';_bn.textContent='\u2705 Contract #'+num+' saved!';document.body.appendChild(_bn);setTimeout(function(){_bn.remove();},3500);toast('Saved #'+num,'ok');resetForm();setTimeout(function(){nav('contracts',null);},800);
 }
 function resetForm(){if(typeof _unlockContractForm==='function')_unlockContractForm();document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');var _fr0=document.getElementById('fRegime');if(_fr0)_fr0.value=(typeof S!=='undefined'&&S.entityType)||'gov';pendingFiles=[];document.getElementById('attachList').innerHTML='';entryBoQ=[];renderEntryBoQ();}
@@ -4649,6 +4692,9 @@ function renderEntryBoQ(){
     return h;
   }).join('')||'<tr><td colspan="12" style="text-align:center;color:var(--text3);padding:10px">No BoQ items — add manually or Import from an awarded evaluation.</td></tr>';
   var sm=document.getElementById('entryBoQSummary');if(sm)sm.innerHTML='<span>Subtotal: '+fSAR(sub)+'</span><span>VAT 15%: '+fSAR(vat)+'</span><span style="color:var(--accent2)">Grand Total: '+fSAR(sub+vat)+'</span>';
+  // D2: when BoQ lines exist, the Mandatory-List amount is derived (Σ Mandatory lines) and the field is locked
+  var _fml=document.getElementById('fML');
+  if(_fml){ if(entryBoQ.length){ var _ms=entryBoQ.reduce(function(s,it){return s+(it.isMandatoryRFP?((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0)):0);},0); _fml.value=_ms; _fml.readOnly=true; _fml.title='Auto-derived from Mandatory BoQ lines (D2)'; _fml.style.background='#f0f0f0'; } else { _fml.readOnly=false; _fml.title=''; _fml.style.background=''; } }
   // Imported BoQ is read-only: disable inputs and hide the per-row remove button.
   if(window._contractImported){tb.querySelectorAll('input,select').forEach(function(el){el.setAttribute('disabled','disabled');el.style.background='var(--surface2)';el.style.cursor='not-allowed';});tb.querySelectorAll('.ev-btn.rej').forEach(function(el){el.style.display='none';});}
 }
@@ -5532,7 +5578,7 @@ function newBidFromRFPChoice(){
   curBid={
     id:uid(),title:rfp.title||"",ref:rfp.ref||"",
     mechanism:(typeof canonicalMechName==='function'?(canonicalMechName(rfp.suggestedMech||rfp.mechanism||'')||rfp.suggestedMech||rfp.mechanism||''):(rfp.suggestedMech||rfp.mechanism||"")),rfpId:rfp.id,value:rfp.value||0,duration:rfp.duration||0,
-    endUser:rfp.endUser||"",nature:rfp.nature||"",expenditure:rfp.expenditure||"",regime:rfp.regime||(typeof S!=='undefined'&&S.entityType)||'gov',
+    endUser:rfp.endUser||"",nature:rfp.nature||"",divisible:!!rfp.divisible,expenditure:rfp.expenditure||"",regime:rfp.regime||(typeof S!=='undefined'&&S.entityType)||'gov',
     boqItems:rfp.boqItems?JSON.parse(JSON.stringify(rfp.boqItems)):[],
     rfpBoQ:rfp.boq?JSON.parse(JSON.stringify(rfp.boq)):[],
     mlnpItems:rfp.mlnpItems?JSON.parse(JSON.stringify(rfp.mlnpItems)):[],
@@ -5942,6 +5988,12 @@ function exportBidMoMPDF(){
     +(_hasNPP?L('Under National Products Price Preferencing, bids are ranked by their Adjusted Bid Price, while the award is decided on the original bid price.','وفقًا لتفضيل أسعار المنتجات الوطنية، تُرتَّب العطاءات حسب السعر المعدّل، بينما تُحدَّد الترسية على السعر الأصلي.'):L('Scores combine price competitiveness with the committed Local Content weighting and any applicable Small &amp; Medium Enterprises bonus. Exclusion conditions were applied before ranking.','تجمع الدرجات بين تنافسية السعر ووزن المحتوى المحلي الملتزم به وأي علاوة للمنشآت الصغيرة والمتوسطة عند الانطباق. وطُبقت شروط الاستبعاد قبل الترتيب.'))
     +'<div style="margin-top:8px;font-weight:700">'+L('Applicable scoring equations:','معادلات الاحتساب المطبقة:')+'</div>'+_methodEq+'</div>';
 
+  // D1: divisible competition — excluded/pending Mandatory items (Art.9)
+  if(curBid&&curBid.divisible&&curBid._excludedItems&&curBid._excludedItems.length){
+    var _dvN='<h2>'+L('Divisible Competition — Excluded Items (Art.9)','منافسة قابلة للتجزئة — البنود المستبعدة (المادة 9)')+'</h2><div class="box"><p>'+L('Under Article 9 (divisible competition), the following Mandatory-List items were excluded from the main apple-to-apple award — the non-compliant bidder was NOT excluded as a whole — and are awarded separately:','بموجب المادة 9 (منافسة قابلة للتجزئة)، استُبعدت بنود القائمة الإلزامية التالية من الترسية الرئيسية، ولم يُستبعد العارض بالكامل، وتُرسى بشكل منفصل:')+'</p><ul style="margin-'+(AR_MODE?'right':'left')+':18px;font-size:11px">';
+    curBid._excludedItems.forEach(function(ii){var _d='';for(var _bi=0;_bi<(curBidders||[]).length;_bi++){var _it=(curBidders[_bi].boqItems||[])[ii];if(_it&&_it.desc){_d=_it.desc;break;}}var _aw=(curBid.pendingAwards||{})[ii];_dvN+='<li><b>'+L('Item','بند')+' #'+(ii+1)+'</b> — '+escSub(_d||'')+': '+(_aw?(L('awarded to ','رُسي على ')+'<b>'+escSub(_aw)+'</b>'):'<span style="color:#dc2626">'+L('pending separate award','معلّق لترسية منفصلة')+'</span>')+'</li>';});
+    _dvN+='</ul></div>';h+=_dvN;
+  }
   // 2. Per-bidder detail
   h+='<h2>2. '+L('Bidder-by-Bidder Assessment','تقييم كل متقدم')+'</h2>';
   res.forEach(function(r){
@@ -7236,9 +7288,9 @@ function _supplierMatchesFilters(s){var f=window._rfpFilters||{};if(f.sme&&!s.is
 function rfpRenderSupplierPick(){var el=document.getElementById('rfpSupplierPick');if(!el)return;window._rfpInvites=window._rfpInvites||[];var sl=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]).filter(_supplierMatchesFilters);el.innerHTML=sl.length?sl.map(function(s){var inv=window._rfpInvites.indexOf(String(s.id))>=0;return '<label style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid var(--border);font-size:11px;cursor:pointer"><input type="checkbox" '+(inv?'checked':'')+' onchange="rfpToggleInvite(\''+s.id+'\',this.checked)"/><span style="font-weight:600;flex:1">'+s.name+'</span>'+(s.isSME?'<span class="badge bb" style="font-size:8px">SME</span> ':'')+(s.isTadawul?'<span class="badge bp" style="font-size:8px">Tadawul</span>':'')+'</label>';}).join(''):'<div style="font-size:10px;color:var(--text3);padding:8px">No suppliers match the filters — adjust filters or register a supplier.</div>';var c=document.getElementById('rfpInvitedCount');if(c)c.textContent=window._rfpInvites.length;}
 function rfpToggleInvite(id,on){window._rfpInvites=window._rfpInvites||[];id=String(id);var idx=window._rfpInvites.indexOf(id);if(on&&idx<0)window._rfpInvites.push(id);else if(!on&&idx>=0)window._rfpInvites.splice(idx,1);var c=document.getElementById('rfpInvitedCount');if(c)c.textContent=window._rfpInvites.length;}
 window.rfpToggleClosed=rfpToggleClosed;window.rfpToggleFilter=rfpToggleFilter;window.rfpToggleInvite=rfpToggleInvite;window.rfpRenderSupplierPick=rfpRenderSupplierPick;
-var _oSR=saveRFP;saveRFP=function(s){if(curRFP){curRFP.boq=rfpBoQ.filter(function(r){return r.desc;});var ts=document.getElementById('rfpTenderStyle');curRFP.tenderStyle=ts?ts.value:(curRFP.tenderStyle||'open');curRFP.invitedSuppliers=(curRFP.tenderStyle==='closed')?((window._rfpInvites||[]).slice()):[];}_oSR(s);};window.saveRFP=saveRFP;
-var _oNR=newRFP;newRFP=function(){rfpBoQ=[];_oNR();var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="none";var cw=document.getElementById("rfpCapexWrap");if(cw)cw.style.display="none";var wr=document.getElementById("mechWizardResult");if(wr)wr.innerHTML="";populateEUSelectFor("rfpEU");};window.newRFP=newRFP;
-var _oER=editRFP;editRFP=function(id){_oER(id);if(curRFP&&curRFP.boq){rfpBoQ=JSON.parse(JSON.stringify(curRFP.boq));var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";renderBoQ();}var ts=document.getElementById('rfpTenderStyle');if(ts){ts.value=(curRFP&&curRFP.tenderStyle)||'open';}window._rfpInvites=(curRFP&&curRFP.invitedSuppliers||[]).map(String);window._rfpFilters={};if(typeof rfpToggleClosed==='function')rfpToggleClosed();};window.editRFP=editRFP;
+var _oSR=saveRFP;saveRFP=function(s){if(curRFP){curRFP.boq=rfpBoQ.filter(function(r){return r.desc;});var _rdv=document.getElementById('rfpDivisible');if(_rdv)curRFP.divisible=_rdv.checked; /* D1 */ var ts=document.getElementById('rfpTenderStyle');curRFP.tenderStyle=ts?ts.value:(curRFP.tenderStyle||'open');curRFP.invitedSuppliers=(curRFP.tenderStyle==='closed')?((window._rfpInvites||[]).slice()):[];}_oSR(s);};window.saveRFP=saveRFP;
+var _oNR=newRFP;newRFP=function(){rfpBoQ=[];_oNR();var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="none";var cw=document.getElementById("rfpCapexWrap");if(cw)cw.style.display="none";var wr=document.getElementById("mechWizardResult");if(wr)wr.innerHTML="";var _rdv4=document.getElementById('rfpDivisible');if(_rdv4)_rdv4.checked=false;populateEUSelectFor("rfpEU");};window.newRFP=newRFP;
+var _oER=editRFP;editRFP=function(id){_oER(id);if(curRFP&&curRFP.boq){rfpBoQ=JSON.parse(JSON.stringify(curRFP.boq));var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";renderBoQ();}var ts=document.getElementById('rfpTenderStyle');if(ts){ts.value=(curRFP&&curRFP.tenderStyle)||'open';}window._rfpInvites=(curRFP&&curRFP.invitedSuppliers||[]).map(String);window._rfpFilters={};if(typeof rfpToggleClosed==='function')rfpToggleClosed();var _rdv2=document.getElementById('rfpDivisible');if(_rdv2)_rdv2.checked=!!(curRFP&&curRFP.divisible); /* D1 */};window.editRFP=editRFP;
 // reset tendering UI when starting a NEW RFP
 var _oNR2=(typeof newRFP==='function')?newRFP:null;if(_oNR2){newRFP=function(){_oNR2.apply(this,arguments);window._rfpInvites=[];window._rfpFilters={};var ts=document.getElementById('rfpTenderStyle');if(ts)ts.value='open';if(typeof rfpToggleClosed==='function')rfpToggleClosed();};window.newRFP=newRFP;}
 var _oRML=renderMechList;renderMechList=function(){document.getElementById("mechList").innerHTML=MECHS.map(function(m,i){var fr=(typeof mechFrozen==='function'&&mechFrozen(m));return '<div class="mi"'+(fr?' style="opacity:.6"':'')+'><div class="mi-n" title="'+m+'" style="display:flex;align-items:center;gap:8px;max-width:300px;white-space:normal;line-height:1.3"><span style="color:var(--accent);cursor:grab;font-size:16px;line-height:1;user-select:none" title="Drag to reorder">⠿</span><span>'+m+(fr?' <span class="badge bgy" style="font-size:8px">❄ Frozen</span>':'')+'</span></div><div class="ma"><button class="mb" onclick="editMechName('+i+')">Edit</button><button class="mb" title="'+(fr?'Unfreeze (show in new pickers)':'Freeze (hide from new pickers, keep existing)')+'" onclick="toggleMechFreeze('+i+')">'+(fr?'❄ Unfreeze':'❄ Freeze')+'</button><button class="mb del" onclick="removeMech('+i+')">X</button></div></div>';}).join("");};window.renderMechList=renderMechList;
@@ -8017,7 +8069,7 @@ window.toggleThresholdField=function(which){
 // ── Show/hide threshold step ──
 function toggleThresholdStep(mech){
   var ts=document.getElementById("rfpThresholdStep");
-  if(ts) ts.style.display=(mech&&mech.indexOf("Threshold")>=0)?"block":"none";
+  if(ts) ts.style.display=(mech&&typeof mechIsLC==='function'&&mechIsLC(mech))?"block":"none"; // H2: show for Threshold AND LC-Weight (company/project), incl. mixed
 }
 
 // ── handleRFPThresholdFile ──
@@ -8208,21 +8260,21 @@ renderBiddersList=function(){
     if(showLC){
       // LC Baseline Response % — show RFP requirement + enforce status
       fields+='<div class="fg"><label class="fl2">LC Baseline Response %</label>';
-      if(isThreshold&&minBL>0){
+      if(showLC&&minBL>0){
         fields+='<div style="font-size:9px;margin-bottom:2px;color:'+(blEnforced?'var(--accent)':'var(--text3)')+'">RFP Min: '+minBL+'% '+(blEnforced?'\uD83D\uDD12 Enforced':'\uD83D\uDD13 Not enforced')+'</div>';
       }
       var blVal=b.lcBaseline||b.baselinePct||0;
-      var blWarn=isThreshold&&blEnforced&&minBL>0&&blVal<minBL;
+      var blWarn=showLC&&blEnforced&&minBL>0&&blVal<minBL;
       fields+='<input class="fi" type="number" step="0.1" value="'+(blVal||'')+'" style="font-size:11px;padding:5px 8px'+(blWarn?';border-color:var(--danger);background:rgba(220,38,38,0.05)':'')+'" onchange="curBidders['+i+'].lcBaseline=parseFloat(this.value)||0;curBidders['+i+'].baselinePct=parseFloat(this.value)||0;renderBiddersList()"/>';
       if(blWarn) fields+='<div style="font-size:9px;color:var(--danger);margin-top:1px">\u26a0 Below enforced RFP minimum ('+minBL+'%)</div>';
       fields+='</div>';
 
       // LC Target Ratio Response % — show RFP requirement + enforce status
       fields+='<div class="fg"><label class="fl2">LC Target Ratio Response %</label>';
-      if(isThreshold&&minTG>0){
+      if(showLC&&minTG>0){
         fields+='<div style="font-size:9px;margin-bottom:2px;color:'+(tgEnforced?'var(--accent)':'var(--text3)')+'">RFP Min: '+minTG+'% '+(tgEnforced?'\uD83D\uDD12 Enforced':'\uD83D\uDD13 Not enforced')+'</div>';
       }
-      var tgWarn=isThreshold&&tgEnforced&&minTG>0&&(b.lcPct||0)<minTG;
+      var tgWarn=showLC&&tgEnforced&&minTG>0&&(b.lcPct||0)<minTG;
       fields+='<input class="fi" type="number" step="0.1" value="'+(b.lcPct||'')+'" style="font-size:11px;padding:5px 8px'+(tgWarn?';border-color:var(--danger);background:rgba(220,38,38,0.05)':'')+'" onchange="curBidders['+i+'].lcPct=parseFloat(this.value)||0;renderBiddersList()"/>';
       if(tgWarn) fields+='<div style="font-size:9px;color:var(--danger);margin-top:1px">\u26a0 Below enforced RFP minimum ('+minTG+'%)</div>';
       fields+='</div>';
@@ -8382,6 +8434,14 @@ calcBids=function(){
 
     return Object.assign({},b,{excluded:excl.length>0,exclusionReasons:excl,adjustedPrice:b.price||0,score:0,priceScore:0,lcScore:0,tadawulScore:0,notes:"",rank:999,art19Shifted:false});
   });
+
+  // D1: divisible competition — pull failed Mandatory ITEMS out of the main apple-to-apple comparison (Art.9); each goes to a per-item pending round.
+  if(curBid&&curBid.divisible){
+    var _exSet={}; results.forEach(function(r){(r.boqItems||[]).forEach(function(it,ii){ if(it&&it.isMandatoryRFP&&it._mlFail)_exSet[ii]=true; });});
+    var _exIdx=Object.keys(_exSet).map(Number).sort(function(a,b){return a-b;});
+    if(_exIdx.length){ results.forEach(function(r){ var ded=0; _exIdx.forEach(function(ii){var it=(r.boqItems||[])[ii]; if(it)ded+=(parseFloat(it.price)||((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0))||0);}); r._fullPrice=r.price; r.price=Math.max(0,(r.price||0)-ded); r.adjustedPrice=r.price; }); }
+    curBid._excludedItems=_exIdx; curBid._incomplete=(_exIdx.length>0);
+  } else if(curBid){ curBid._excludedItems=[]; curBid._incomplete=false; }
 
   var q=results.filter(function(r){return !r.excluded;});
   if(!q.length){document.getElementById("bidResults").innerHTML='<div class="bidev-award"><div class="bidev-award__icon" style="border-color:color-mix(in srgb,var(--bad) 30%,transparent);color:var(--bad-ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div><div class="bidev-award__body"><div class="bidev-award__title">'+((typeof window.L==="function")?window.L("All bidders excluded","استُبعد جميع العارضين"):"All bidders excluded")+'</div><div class="bidev-award__text">'+((typeof window.L==="function")?window.L("No qualified bid remains under the current mechanism and exclusion gates.","لا يوجد عطاء مؤهل وفق الآلية وبوابات الاستبعاد الحالية."):"No qualified bid remains under the current mechanism and exclusion gates.")+'</div></div></div>';return;}
@@ -8639,6 +8699,7 @@ calcBids=function(){
     });
     btnHtml += '</div></div>';
     resultsDiv.insertAdjacentHTML('beforeend', btnHtml);
+    var _pp=(typeof _v57PendingPanel==='function')?_v57PendingPanel():''; if(_pp) resultsDiv.insertAdjacentHTML('beforeend', _pp); // D1: divisible pending-items panel (Art.9)
   };
   window.calcBids = calcBids;
 })();
