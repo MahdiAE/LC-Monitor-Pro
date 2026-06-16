@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC Monitor Pro - Redesign Proposals</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
+    <style>
+        :root {
+            --bg: #f4f5f7; --surface: #ffffff; --surface2: #fafbfc; --surface3: #eef1f8;
+            --border: #e3e6ec; --border2: #cdd2db;
+            --accent: #2563eb; --accent2: #7c3aed; --accent3: #0f8a4a;
+            --text: #171a21; --text2: #3d4350; --text3: #5a6373;
+            --ok: #0f8a4a; --ok-bg: #e7f6ec; --ok-ink: #0a6b39;
+            --warn-bg: #fbf0d9; --warn-ink: #82540a;
+            --bad: #c0241f; --bad-bg: #fbe7e6; --bad-ink: #9c1a1a;
+            --sh: 0 1px 2px rgba(16,21,33,.05);
+            --shl: 0 4px 16px -4px rgba(16,21,33,.12), 0 1px 3px rgba(16,21,33,.06);
+            --r: 10px; --rs: 7px; --rl: 14px;
+            --fn: 'Bricolage Grotesque', sans-serif;
+            --fs: 'Inter', sans-serif;
+            --far: 'IBM Plex Sans Arabic', sans-serif;
+            --fm: 'JetBrains Mono', monospace;
+        }
+        body { font-family: var(--fs); background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .proposal-container { max-width: 1200px; margin: 0 auto 60px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; box-shadow: var(--shl); }
+        .proposal-hd { padding: 24px; border-bottom: 1px solid var(--border); background: var(--surface2); }
+        .proposal-hd h2 { margin: 0; font-family: var(--fn); font-size: 24px; color: var(--accent); }
+        .proposal-hd p { margin: 8px 0 0; color: var(--text3); font-size: 14px; }
+        .proposal-body { padding: 32px; background: var(--bg); }
+
+        /* Utility Classes */
+        .grid { display: grid; gap: 20px; }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; box-shadow: var(--sh); }
+        .kpi-val { font-family: var(--fm); font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+        .kpi-lbl { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge { display: inline-flex; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        .badge-ok { background: var(--ok-bg); color: var(--ok-ink); }
+        .badge-warn { background: var(--warn-bg); color: var(--warn-ink); }
+        .badge-bad { background: var(--bad-bg); color: var(--bad-ink); }
+
+        /* Dashboard 1: Pulse Overview */
+        .pulse-center { display: flex; align-items: center; justify-content: center; height: 300px; position: relative; }
+        .pulse-ring { width: 220px; height: 220px; border: 15px solid var(--border); border-radius: 50%; border-top-color: var(--accent); position: relative; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+        .pulse-ring .val { font-size: 48px; font-weight: 800; font-family: var(--fm); }
+        .pulse-ring .lbl { font-size: 12px; color: var(--text3); }
+
+        /* Dashboard 2: Risk Monitor */
+        .risk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 4px; }
+        .risk-cell { aspect-ratio: 1; border-radius: 4px; background: var(--ok-bg); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; color: var(--ok-ink); }
+        .risk-cell.high { background: var(--bad-bg); color: var(--bad-ink); }
+        .risk-cell.mid { background: var(--warn-bg); color: var(--warn-ink); }
+
+        /* Dashboard 3: Funnel */
+        .funnel-v2 { display: flex; align-items: stretch; gap: 4px; background: var(--surface); border-radius: var(--r); padding: 4px; }
+        .fun-v2-step { flex: 1; padding: 20px; background: var(--surface2); position: relative; text-align: center; clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%, 10% 50%); }
+        .fun-v2-step:first-child { clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%); }
+        .fun-v2-step:last-child { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 10% 50%); background: var(--accent); color: #fff; }
+
+        /* Site Redesign 1: Command Sidebar */
+        .sidebar-v2 { width: 260px; height: 400px; background: #0c1530; color: rgba(255,255,255,0.7); display: flex; flex-direction: column; padding: 12px; border-radius: var(--r); }
+        .nav-grp { margin-bottom: 20px; }
+        .nav-grp-hd { font-size: 10px; font-weight: 800; letter-spacing: 1px; color: rgba(255,255,255,0.3); padding: 8px 12px; text-transform: uppercase; }
+        .nav-it { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .nav-it:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-it.active { background: var(--accent); color: #fff; }
+
+        /* Site Redesign 2: Audit Grid */
+        .table-v2 { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--r); overflow: hidden; }
+        .table-v2 th { background: var(--surface3); text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 800; color: var(--text3); text-transform: uppercase; }
+        .table-v2 td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+        .table-v2 tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <h1 style="font-family: var(--fn); text-align: center; margin-bottom: 40px;">LC Monitor Pro Redesign Proposals</h1>
+
+    <!-- DASHBOARD PROPOSAL 1 -->
+    <div class="proposal-container" id="dash-1">
+        <div class="proposal-hd">
+            <h2>KPI Proposal 1: The "Pulse" Dashboard</h2>
+            <p>Target: Compliance Officer. Focuses on overall health with a central achievement ring.</p>
+        </div>
+        <div class="proposal-body">
+            <div class="grid grid-4" style="margin-bottom: 20px;">
+                <div class="card"><div class="kpi-lbl">Portfolio Value</div><div class="kpi-val">SAR 42.5M</div><div class="badge badge-ok">↑ 12% vs LY</div></div>
+                <div class="card"><div class="kpi-lbl">Active Contracts</div><div class="kpi-val">128</div><div class="badge badge-ok">Healthy</div></div>
+                <div class="card"><div class="kpi-lbl">Penalty Exposure</div><div class="kpi-val">SAR 840K</div><div class="badge badge-bad">High Alert</div></div>
+                <div class="card"><div class="kpi-lbl">Missing Reports</div><div class="kpi-val">14</div><div class="badge badge-warn">Needs Action</div></div>
+            </div>
+            <div class="card pulse-center">
+                <div class="pulse-ring">
+                    <div class="lbl">Achieved LC</div>
+                    <div class="val">38.2%</div>
+                    <div class="lbl">vs 45.0% Target</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PROPOSAL 2 -->
+    <div class="proposal-container" id="dash-2">
+        <div class="proposal-hd">
+            <h2>KPI Proposal 2: The "Risk Monitor"</h2>
+            <p>Target: CFO / Auditor. Focuses on financial exposure and penalty heatmaps.</p>
+        </div>
+        <div class="proposal-body">
+            <div class="grid grid-2">
+                <div class="card">
+                    <div class="kpi-lbl" style="margin-bottom: 12px;">Contract Exposure Heatmap</div>
+                    <div class="risk-grid">
+                        <div class="risk-cell">#01</div><div class="risk-cell high">#02</div><div class="risk-cell">#03</div>
+                        <div class="risk-cell">#04</div><div class="risk-cell mid">#05</div><div class="risk-cell">#06</div>
+                        <div class="risk-cell mid">#07</div><div class="risk-cell">#08</div><div class="risk-cell high">#09</div>
+                        <div class="risk-cell">#10</div><div class="risk-cell">#11</div><div class="risk-cell">#12</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="kpi-lbl" style="margin-bottom: 12px;">Top Penalties by Entity</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;"><span>IT Department</span><span style="font-family: var(--fm); font-weight: 700;">SAR 120,400</span></div>
+                        <div style="height: 8px; background: var(--bg); border-radius: 4px;"><div style="width: 80%; height: 100%; background: var(--bad); border-radius: 4px;"></div></div>
+                        <div style="display: flex; justify-content: space-between; font-size: 13px;"><span>Operations</span><span style="font-family: var(--fm); font-weight: 700;">SAR 45,000</span></div>
+                        <div style="height: 8px; background: var(--bg); border-radius: 4px;"><div style="width: 30%; height: 100%; background: var(--warn-ink); border-radius: 4px;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PROPOSAL 3 -->
+    <div class="proposal-container" id="dash-3">
+        <div class="proposal-hd">
+            <h2>KPI Proposal 3: The "Procurement Funnel"</h2>
+            <p>Target: Procurement Manager. Focuses on the lifecycle from RFP to Award.</p>
+        </div>
+        <div class="proposal-body">
+            <div class="funnel-v2">
+                <div class="fun-v2-step">
+                    <div style="font-size: 24px; font-weight: 800;">24</div>
+                    <div style="font-size: 11px; opacity: 0.8;">Draft RFPs</div>
+                </div>
+                <div class="fun-v2-step">
+                    <div style="font-size: 24px; font-weight: 800;">12</div>
+                    <div style="font-size: 11px; opacity: 0.8;">In Process</div>
+                </div>
+                <div class="fun-v2-step">
+                    <div style="font-size: 24px; font-weight: 800;">8</div>
+                    <div style="font-size: 11px; opacity: 0.8;">Evaluations</div>
+                </div>
+                <div class="fun-v2-step">
+                    <div style="font-size: 24px; font-weight: 800;">156</div>
+                    <div style="font-size: 11px; opacity: 0.8;">Awarded</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PROPOSAL 4 -->
+    <div class="proposal-container" id="dash-4">
+        <div class="proposal-hd">
+            <h2>KPI Proposal 4: Strategic Achievement</h2>
+            <p>Target: Executive Leadership. Focuses on Sector-based performance vs National Goals.</p>
+        </div>
+        <div class="proposal-body">
+            <div class="card">
+                <div class="kpi-lbl" style="margin-bottom: 16px;">LC Performance by Sector</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                    <div style="text-align: center;">
+                        <div style="font-family: var(--fm); font-weight: 800; font-size: 18px; color: var(--ok);">42%</div>
+                        <div style="font-size: 10px; color: var(--text3);">Pharmaceuticals</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: var(--fm); font-weight: 800; font-size: 18px; color: var(--accent);">35%</div>
+                        <div style="font-size: 10px; color: var(--text3);">Construction</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: var(--fm); font-weight: 800; font-size: 18px; color: var(--warn-ink);">28%</div>
+                        <div style="font-size: 10px; color: var(--text3);">IT & Tech</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-family: var(--fm); font-weight: 800; font-size: 18px; color: var(--bad);">12%</div>
+                        <div style="font-size: 10px; color: var(--text3);">Food & Agri</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD PROPOSAL 5 -->
+    <div class="proposal-container" id="dash-5">
+        <div class="proposal-hd">
+            <h2>KPI Proposal 5: Operational Scorecard</h2>
+            <p>Target: Team Lead. Focuses on daily work volume and officer throughput.</p>
+        </div>
+        <div class="proposal-body">
+            <div class="grid grid-4">
+                <div class="card" style="text-align: center;">
+                    <div class="kpi-lbl">Reviewed Today</div>
+                    <div class="kpi-val" style="color: var(--accent);">24</div>
+                    <div style="font-size: 10px; color: var(--text3);">Target: 30</div>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div class="kpi-lbl">New Submissions</div>
+                    <div class="kpi-val" style="color: var(--ok);">8</div>
+                    <div style="font-size: 10px; color: var(--text3);">Pending review</div>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div class="kpi-lbl">ML Matches</div>
+                    <div class="kpi-val">142</div>
+                    <div style="font-size: 10px; color: var(--text3);">AI Assisted</div>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <div class="kpi-lbl">Avg Response</div>
+                    <div class="kpi-val">1.2d</div>
+                    <div style="font-size: 10px; color: var(--text3);">Turnaround time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SITE REDESIGN 1 -->
+    <div class="proposal-container" id="site-1">
+        <div class="proposal-hd">
+            <h2>Site Proposal 1: The "Command Center" Navigation</h2>
+            <p>Improved information hierarchy with a modern, dark-themed sidebar and grouped actions.</p>
+        </div>
+        <div class="proposal-body" style="display: flex; gap: 20px;">
+            <div class="sidebar-v2">
+                <div style="padding: 12px; font-weight: 800; font-size: 18px; color: #fff; margin-bottom: 20px;">LC Monitor <span style="color: var(--accent);">Pro</span></div>
+                <div class="nav-grp">
+                    <div class="nav-grp-hd">Main</div>
+                    <div class="nav-it active">Dashboard</div>
+                    <div class="nav-it">Projects</div>
+                </div>
+                <div class="nav-grp">
+                    <div class="nav-grp-hd">Procurement</div>
+                    <div class="nav-it">RFP Preparation</div>
+                    <div class="nav-it">Bid Evaluation</div>
+                </div>
+                <div class="nav-grp">
+                    <div class="nav-grp-hd">Compliance</div>
+                    <div class="nav-it">Contract Monitoring</div>
+                    <div class="nav-it">Penalties Hub</div>
+                </div>
+            </div>
+            <div style="flex: 1;">
+                <div style="background: #fff; border: 1px solid var(--border); border-radius: var(--r); height: 100%; display: flex; align-items: center; justify-content: center; color: var(--text3); font-style: italic;">
+                    Main content area with improved spacing...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SITE REDESIGN 2 -->
+    <div class="proposal-container" id="site-2">
+        <div class="proposal-hd">
+            <h2>Site Proposal 2: The "Audit-Ready" Grid</h2>
+            <p>High-density data tables designed for experts. Sticky headers, semantic tagging, and mono figures.</p>
+        </div>
+        <div class="proposal-body">
+            <table class="table-v2">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Contract Title</th>
+                        <th>Agreed LC</th>
+                        <th>Achieved</th>
+                        <th>Status</th>
+                        <th>Next Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-family: var(--fm); font-weight: 700;">#CONT-82</td>
+                        <td>Server Fleet Expansion 2026</td>
+                        <td style="font-family: var(--fm);">42.0%</td>
+                        <td style="font-family: var(--fm);">38.5%</td>
+                        <td><span class="badge badge-warn">Slight Deviation</span></td>
+                        <td>July 15, 2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: var(--fm); font-weight: 700;">#CONT-83</td>
+                        <td>Maintenance Service Level Agreement</td>
+                        <td style="font-family: var(--fm);">30.0%</td>
+                        <td style="font-family: var(--fm);">31.2%</td>
+                        <td><span class="badge badge-ok">Compliant</span></td>
+                        <td>Aug 01, 2026</td>
+                    </tr>
+                    <tr>
+                        <td style="font-family: var(--fm); font-weight: 700;">#CONT-84</td>
+                        <td>National Cloud Infrastructure Phase 2</td>
+                        <td style="font-family: var(--fm);">50.0%</td>
+                        <td style="font-family: var(--fm);">12.0%</td>
+                        <td><span class="badge badge-bad">Critical Delay</span></td>
+                        <td>Overdue</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SITE REDESIGN 3 -->
+    <div class="proposal-container" id="site-3">
+        <div class="proposal-hd">
+            <h2>Site Proposal 3: Bilingual Split-View Editor</h2>
+            <p>Perfect parity for RFP T&Cs and BoQ descriptions. Edit both languages simultaneously.</p>
+        </div>
+        <div class="proposal-body">
+            <div class="grid grid-2">
+                <div>
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 8px;">ENGLISH DESCRIPTION</div>
+                    <textarea style="width: 100%; height: 120px; border: 1px solid var(--border); border-radius: var(--rs); padding: 12px; font-family: var(--fs); font-size: 13px;">The contractor shall commit to using local pharmaceutical products as listed in the Mandatory List...</textarea>
+                </div>
+                <div dir="rtl" style="font-family: var(--far);">
+                    <div style="font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 8px;">الوصف العربي</div>
+                    <textarea style="width: 100%; height: 120px; border: 1px solid var(--border); border-radius: var(--rs); padding: 12px; font-family: var(--far); font-size: 13px;">يجب على المقاول الالتزام باستخدام المنتجات الدوائية المحلية كما هي مدرجة في القائمة الإلزامية...</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SITE REDESIGN 4 -->
+    <div class="proposal-container" id="site-4">
+        <div class="proposal-hd">
+            <h2>Site Proposal 4: The Evidence Timeline</h2>
+            <p>Vertical chronological view of contract activity, audits, and evidence submissions.</p>
+        </div>
+        <div class="proposal-body">
+            <div style="border-left: 2px solid var(--border); margin-left: 20px; padding-left: 30px; position: relative;">
+                <div style="margin-bottom: 30px; position: relative;">
+                    <div style="position: absolute; left: -41px; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--ok);"></div>
+                    <div style="font-size: 12px; color: var(--text3); font-family: var(--fm);">2026-06-15</div>
+                    <div style="font-weight: 700; font-size: 14px;">Periodic Report #4 Approved</div>
+                    <div style="font-size: 12px; color: var(--text2);">Achieved 42% LC. Evidence verified by Officer Ahmed.</div>
+                </div>
+                <div style="margin-bottom: 30px; position: relative;">
+                    <div style="position: absolute; left: -41px; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--bad);"></div>
+                    <div style="font-size: 12px; color: var(--text3); font-family: var(--fm);">2026-05-12</div>
+                    <div style="font-weight: 700; font-size: 14px;">Deviation Penalty Issued</div>
+                    <div style="font-size: 12px; color: var(--text2);">SAR 12,500 fine for non-local product usage in Lot 4.</div>
+                </div>
+                <div style="margin-bottom: 10px; position: relative;">
+                    <div style="position: absolute; left: -41px; top: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--accent);"></div>
+                    <div style="font-size: 12px; color: var(--text3); font-family: var(--fm);">2026-01-01</div>
+                    <div style="font-weight: 700; font-size: 14px;">Contract Awarded</div>
+                    <div style="font-size: 12px; color: var(--text2);">Initial agreed LC: 40%.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SITE REDESIGN 5 -->
+    <div class="proposal-container" id="site-5">
+        <div class="proposal-hd">
+            <h2>Site Proposal 5: The Settings Hub</h2>
+            <p>Unified interface for managing system configuration, users, and organization data.</p>
+        </div>
+        <div class="proposal-body">
+            <div style="display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden;">
+                <div style="width: 200px; border-right: 1px solid var(--border); background: var(--surface2);">
+                    <div style="padding: 12px 16px; font-size: 12px; font-weight: 700; color: var(--accent); background: var(--surface);">General Settings</div>
+                    <div style="padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text2);">Organization Profile</div>
+                    <div style="padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text2);">User Permissions</div>
+                    <div style="padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text2);">Mechanism Tuning</div>
+                    <div style="padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--text2);">Data Export/Import</div>
+                </div>
+                <div style="flex: 1; padding: 24px;">
+                    <h3 style="font-family: var(--fn); font-size: 18px; margin-top: 0;">General Settings</h3>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 4px;">ORGANIZATION NAME</label>
+                        <input type="text" value="Saudi Government Entity X" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;">
+                    </div>
+                    <div style="display: flex; gap: 20px;">
+                        <div style="flex: 1;">
+                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 4px;">DEFAULT CURRENCY</label>
+                            <select style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;"><option>SAR - Saudi Riyal</option></select>
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; font-size: 11px; font-weight: 800; color: var(--text3); margin-bottom: 4px;">TIMEZONE</label>
+                            <select style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px;"><option>Riyadh (GMT+3)</option></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
