@@ -332,7 +332,7 @@ body.rtl .tc{right:auto;left:18px;}
 .tp-lbl{font-size:8px;text-transform:uppercase;letter-spacing:.4px;opacity:.7;}
 .tp-st{font-size:12px;}
 .tp-pct{font-size:9px;margin-top:1px;font-family:var(--fm);}
-.tp.recv{background:rgba(5,150,105,.08);border-color:rgba(5,150,105,.2);color:var(--accent3);}
+
 .tp.miss{background:rgba(220,38,38,.08);border-color:rgba(220,38,38,.2);color:var(--danger);}
 .tp.na{background:var(--surface2);border-color:var(--border);color:var(--text3);}
 /* TIMELINE */
@@ -554,6 +554,12 @@ body.rtl .tl-dot{left:auto;right:-17px;}
 [data-theme=dark] .dash-export-btn.ppt-btn{border-color:var(--accent);color:var(--accent)}
 [data-theme=dark] .dash-export-btn.ppt-btn:hover{background:var(--accent);color:#fff}
 
+.profile-badge{display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;letter-spacing:.8px;padding:2px 8px;border-radius:999px;cursor:pointer;transition:opacity .15s;user-select:none;}
+.profile-badge:hover{opacity:.75}
+.pbg-gov{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.pbg-pf{background:#f5f3ff;color:#6d28d9;border:1px solid #ddd6fe;}
+[data-theme=dark] .pbg-gov{background:rgba(37,99,235,.2);color:#93c5fd;border-color:rgba(37,99,235,.4);}
+[data-theme=dark] .pbg-pf{background:rgba(124,58,237,.2);color:#c4b5fd;border-color:rgba(124,58,237,.4);}
 /* Print styles for PDF export */
 @media print{
   body *{visibility:hidden}
@@ -1486,7 +1492,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <div class="app" id="app">
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro</div><div class="sls">منصة المحتوى المحلي</div></div></div></div>
+  <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro</div><div class="sls">منصة المحتوى المحلي</div></div></div><div style="text-align:center;padding:5px 0 0"><span id="profileBadge" class="profile-badge pbg-gov" onclick="openSetupWizard()" title="Active profile — click to switch">GOV</span></div></div>
   <div class="ns">OVERVIEW</div>
   <div class="ni-wrap" onclick="homeGoLanding()"><span class="ni">🏠</span><span>Home</span></div>
   <div class="ni-wrap active" onclick="nav(&#39;dashboard&#39;,this)"><span class="ni">⬛</span><span>Executive Dashboard</span></div>
@@ -1822,7 +1828,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div class="fg2">
         <div class="fg"><label class="fl2">Contract # <span class="req">*</span></label><input class="fi" id="fNum" type="text" required="" placeholder="e.g. 2024-001"></div>
         <div class="fg"><label class="fl2">End-User <span class="req">*</span></label><select class="fsel2" id="fEU" required=""><option value="">Select end-user…</option><option value="Ministry of Environment">Ministry of Environment</option><option value="Ministry of Defense">Ministry of Defense</option><option value="Ministry of Interior">Ministry of Interior</option><option value="ARAMCO">ARAMCO</option><option value="SABIC">SABIC</option><option value="NEOM">NEOM</option></select></div>
-        <div class="fg"><label class="fl2">Regime</label><select class="fsel2" id="fRegime"><option value="gov">Government (≥SAR 25M)</option><option value="portfolio">Portfolio / PIF (≥SAR 50M)</option></select></div>
         <div class="fg full"><label class="fl2">Contract Name <span class="req">*</span></label><input class="fi" id="fName" type="text" required=""></div>
         <div class="fg"><label class="fl2">Contractor</label><input class="fi" id="fCont" type="text"></div>
         <div class="fg"><label class="fl2">Contractor Contact Person</label><input class="fi" id="fContact" type="text" placeholder="Full name"></div>
@@ -1886,19 +1891,6 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <!-- v57 CHANGE 5 — page-import (Import/Export Excel) DELETED. -->
 
 
-<!-- =================== PAGE: REVIEW =================== -->
-<div class="page" id="page-receiving">
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-hd"><div><div class="card-title">📦 Receiving — End-User Portfolio</div><div class="card-sub" style="font-size:11px;color:var(--text3)">Pick your entity and a contract to receive due reports and goods deliveries. Everything you receive or verify is sent to Reports Review for approval before it counts on the contract.</div></div></div>
-    <div style="display:grid;grid-template-columns:1fr 1.2fr 1.4fr auto;gap:10px;align-items:end;margin-top:6px">
-      <div class="fg"><label class="fl2">End-User (Portfolio)</label><select class="fsel2" id="recvEU" onchange="recvOnEU()"></select></div>
-      <div class="fg"><label class="fl2">Search Contract</label><input class="fi" id="recvSearch" placeholder="# or contract name…" oninput="recvPopulateContracts()"/></div>
-      <div class="fg"><label class="fl2">Contract</label><select class="fsel2" id="recvContract" onchange="recvRenderContract()"></select></div>
-      <button class="btn btn-p" onclick="recvPopulateContracts()" title="Search contracts for this end-user">🔎 Search</button>
-    </div>
-  </div>
-  <div id="recvContent"><div class="empty"><div class="ei">📦</div><p>Select an end-user and a contract to view items due to receive.</p></div></div>
-</div>
 <div class="page" id="page-review">
   <div class="fb"><span class="fl">STATUS:</span>
     <div class="fc on" id="rv-all" onclick="rvChip(&#39;all&#39;)">All</div>
@@ -2112,27 +2104,37 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div class="pr"><span class="pr-l">Final Report Non-Submission</span><div class="pr-r"><input class="pr-in" id="pFin" type="number" step="0.01" value="10"><span class="pr-u">% of Amount</span></div></div>
         <div class="pr"><span class="pr-l">National Products Price Preferencing Shortfall Multiplier</span><div class="pr-r"><input class="pr-in" id="pNPP" type="number" step="0.01" value="0.30"><span class="pr-u">× Shortfall</span></div></div>
         <div class="pr"><span class="pr-l">Mandatory List Shortfall Multiplier</span><div class="pr-r"><input class="pr-in" id="pML" type="number" step="0.01" value="0.30"><span class="pr-u">× Shortfall</span></div></div>
-        <div class="pr"><span class="pr-l">Local-Content Report Grace Period</span><div class="pr-r"><input class="pr-in" id="pGraceLC" type="number" step="1" value="7"><span class="pr-u">months</span></div></div>
-        <div class="pr"><span class="pr-l">National Products / Mandatory List Grace</span><div class="pr-r"><input class="pr-in" id="pGraceNPP" type="number" step="1" value="30"><span class="pr-u">days</span></div></div>
       </div>
       <div class="sc"><div class="sc-title">Reminders</div><div class="sc-desc">Alert lead time</div>
         <div class="pr"><span class="pr-l">Days Before Due Date</span><div class="pr-r"><input class="pr-in" id="pRem" type="number" value="15"><span class="pr-u">days</span></div></div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px" id="remHelp">Reminders are sent this many days before each report due date.</div>
       </div>
-      <div class="sc"><div class="sc-title" id="pcadTitle">Periodic Report Cadence</div><div class="sc-desc" id="pcadDesc">Government: no reports in the first 6 months; 15 working-day approval window</div>
-        <div class="pr"><span class="pr-l" id="pcadLbl">Apply government periodic cadence to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pPeriodicPortfolio"><span class="sw-slider"></span></label></div></div>
-      </div>
-      <div class="sc"><div class="sc-title" id="exTitle">Minimum-LC Activity Exemption</div><div class="sc-desc" id="exDesc">Government: 11 activities exempt from the Minimum-LC mechanism (LCGPA circular 9/46214/2)</div>
-        <div class="pr"><span class="pr-l" id="exLbl">Apply the exempted-activity list to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pExemptPortfolio"><span class="sw-slider"></span></label></div></div>
-      </div>
-      <div class="sc"><div class="sc-title" id="docMinTitle">Documented Minimum (Art.25)</div><div class="sc-desc" id="docMinDesc">Government: the documented minimum baseline/target always applies. Portfolio companies: opt-in below (off by default).</div>
-        <div class="pr"><span class="pr-l" id="docMinLbl">Apply Art.25 documented minimum (baseline / target) to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pDocMinPortfolio"><span class="sw-slider"></span></label></div></div>
-      </div>
-      <div class="sc"><div class="sc-title" id="capTitle">Penalty Caps</div><div class="sc-desc" id="capDesc">Government: hard-coded 10% per fine / 20% aggregate (Art.31/34). Portfolio: set your own below.</div>
-        <div class="pr"><span class="pr-l" id="capLbl">Apply penalty caps to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pCapPortfolio"><span class="sw-slider"></span></label></div></div>
-        <div class="pr"><span class="pr-l" id="capPFLbl">Portfolio per-fine cap</span><div class="pr-r"><input class="pr-in" id="pCapPerFine" type="number" step="1" value="10"><span class="pr-u">%</span></div></div>
-        <div class="pr"><span class="pr-l" id="capAGLbl">Portfolio aggregate cap</span><div class="pr-r"><input class="pr-in" id="pCapAgg" type="number" step="1" value="20"><span class="pr-u">%</span></div></div>
-        <div class="pr"><span class="pr-l" id="gdLbl">Goods Deviation Rate (per-line)</span><div class="pr-r"><input class="pr-in" id="pGoodsDev" type="number" step="1" value="30"><span class="pr-u">%</span></div></div>
+      <div style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="sc" style="border-top:3px solid #2563eb;margin:0">
+          <div class="sc-title" style="color:#2563eb">🏛️ Government Entity</div>
+          <div class="sc-desc">Statutory settings — always applied</div>
+          <div class="pr"><span class="pr-l">LC Report Grace Period</span><div class="pr-r"><input class="pr-in" id="pGovGraceLC" type="number" step="1" value="7"><span class="pr-u">months</span></div></div>
+          <div class="pr"><span class="pr-l">NPP / MLNP Grace Period</span><div class="pr-r"><input class="pr-in" id="pGovGraceNPP" type="number" step="1" value="30"><span class="pr-u">days</span></div></div>
+          <div style="margin-top:8px;padding:8px 10px;background:rgba(37,99,235,.07);border-radius:6px;font-size:10px;color:var(--text2);line-height:1.8">
+            <div>✓ Penalty caps: 10% per-fine / 20% aggregate (Art.31/34)</div>
+            <div>✓ Periodic cadence — 6-month hold + 15 working-day review</div>
+            <div>✓ Exempted activities — 11 activities (LCGPA circular 9/46214/2)</div>
+            <div>✓ Art.25 documented minimum — baseline / target always applies</div>
+          </div>
+        </div>
+        <div class="sc" style="border-top:3px solid #7c3aed;margin:0">
+          <div class="sc-title" style="color:#7c3aed">🏢 Portfolio Company</div>
+          <div class="sc-desc">Configure your policy below</div>
+          <div class="pr"><span class="pr-l">LC Report Grace Period</span><div class="pr-r"><input class="pr-in" id="pPFGraceLC" type="number" step="1" value="7"><span class="pr-u">months</span></div></div>
+          <div class="pr"><span class="pr-l">NPP / MLNP Grace Period</span><div class="pr-r"><input class="pr-in" id="pPFGraceNPP" type="number" step="1" value="30"><span class="pr-u">days</span></div></div>
+          <div class="pr"><span class="pr-l" id="pcadLbl">Periodic cadence (6-mo hold + 15-wd review)</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pPeriodicPortfolio"><span class="sw-slider"></span></label></div></div>
+          <div class="pr"><span class="pr-l" id="exLbl">Exempted activity list (11 activities)</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pExemptPortfolio"><span class="sw-slider"></span></label></div></div>
+          <div class="pr"><span class="pr-l" id="docMinLbl">Art.25 documented minimum (baseline / target)</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pDocMinPortfolio"><span class="sw-slider"></span></label></div></div>
+          <div class="pr"><span class="pr-l" id="capLbl">Penalty caps</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pCapPortfolio"><span class="sw-slider"></span></label></div></div>
+          <div class="pr"><span class="pr-l" id="capPFLbl">Per-fine cap</span><div class="pr-r"><input class="pr-in" id="pCapPerFine" type="number" step="1" value="10"><span class="pr-u">%</span></div></div>
+          <div class="pr"><span class="pr-l" id="capAGLbl">Aggregate cap</span><div class="pr-r"><input class="pr-in" id="pCapAgg" type="number" step="1" value="20"><span class="pr-u">%</span></div></div>
+          <div class="pr"><span class="pr-l">Periodic-report penalties</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pPFPeriodicPen"><span class="sw-slider"></span></label></div></div>
+        </div>
       </div>
       <div class="sc" style="grid-column:1/-1"><div class="sc-title">Organization</div><div class="sc-desc">Platform identity &amp; branding</div>
         <div class="fg" style="margin-bottom:7px"><label class="fl2">Org Name</label><input class="fi" id="orgN" value="My Organization" style="padding:5px 9px;font-size:11px"></div>
@@ -2500,10 +2502,10 @@ const SEED_MECH_TC={};
 let DB=JSON.parse(localStorage.getItem('lcDB')||JSON.stringify(SEED_CONTRACTS));
 let MECHS=JSON.parse(localStorage.getItem('lcMechs')||JSON.stringify(SEED_MECHS));
 let ENDUSERS=JSON.parse(localStorage.getItem('lcEU')||JSON.stringify(SEED_EU));
-let S=JSON.parse(localStorage.getItem('lcS')||JSON.stringify({dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,graceLCMonths:7,graceNPPDays:30,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10,periodicForPortfolio:false,exemptForPortfolio:false,capPortfolioOn:false,capPerFinePct:10,capAggPct:20,goodsDev:0.30}));
-if(S.graceLCMonths==null)S.graceLCMonths=7;if(S.graceNPPDays==null)S.graceNPPDays=30;if(S.periodicPenOn==null)S.periodicPenOn=true;if(S.periodicForPortfolio==null)S.periodicForPortfolio=false;if(S.exemptForPortfolio==null)S.exemptForPortfolio=false;if(S.capPortfolioOn==null)S.capPortfolioOn=false;if(S.capPerFinePct==null)S.capPerFinePct=10;if(S.capAggPct==null)S.capAggPct=20;if(S.goodsDev==null)S.goodsDev=0.30;if(S.docMinForPortfolio==null)S.docMinForPortfolio=false;
+let S=JSON.parse(localStorage.getItem('lcS')||JSON.stringify({dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,graceLCMonths:7,graceNPPDays:30,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10,periodicForPortfolio:false,exemptForPortfolio:false,capPortfolioOn:false,capPerFinePct:10,capAggPct:20,activeProfile:'gov',gov:{graceLCMonths:7,graceNPPDays:30},portfolio:{graceLCMonths:7,graceNPPDays:30,periodicCadence:false,exempt:false,docMin:false,capsOn:false,capPerFine:10,capAgg:20,periodicPenOn:false}}));
+if(S.graceLCMonths==null)S.graceLCMonths=7;if(S.graceNPPDays==null)S.graceNPPDays=30;if(S.periodicPenOn==null)S.periodicPenOn=true;if(S.periodicForPortfolio==null)S.periodicForPortfolio=false;if(S.exemptForPortfolio==null)S.exemptForPortfolio=false;if(S.capPortfolioOn==null)S.capPortfolioOn=false;if(S.capPerFinePct==null)S.capPerFinePct=10;if(S.capAggPct==null)S.capAggPct=20;if(S.docMinForPortfolio==null)S.docMinForPortfolio=false;if(S.activeProfile==null)S.activeProfile=(S.entityType||'gov');if(!S.gov||typeof S.gov!=='object')S.gov={graceLCMonths:(S.graceLCMonths||7),graceNPPDays:(S.graceNPPDays||30)};if(!S.portfolio||typeof S.portfolio!=='object')S.portfolio={graceLCMonths:(S.graceLCMonths||7),graceNPPDays:(S.graceNPPDays||30),periodicCadence:!!S.periodicForPortfolio,exempt:!!S.exemptForPortfolio,docMin:!!S.docMinForPortfolio,capsOn:!!S.capPortfolioOn,capPerFine:(S.capPerFinePct||10),capAgg:(S.capAggPct||20),periodicPenOn:(S.periodicPenOn!==false)};
 // I5: the Art.25 documented-minimum (baseline/target) applies to Government ALWAYS; to Portfolio companies only when this Settings toggle is ON (default OFF).
-window._docMinAllowed=function(regime){var rg=regime||(typeof S!=='undefined'&&S.entityType)||'gov';return rg!=='portfolio'||!!(typeof S!=='undefined'&&S.docMinForPortfolio);};
+window._docMinAllowed=function(regime){var rg=(typeof S!=='undefined'&&S.activeProfile)||'gov';return rg!=='portfolio'||!!(typeof S!=='undefined'&&S.docMinForPortfolio);};
 // Single global switch for periodic-report non-submission penalties (replaces the old per-year PPEN grid).
 function _pPenOff(){return typeof S!=='undefined'&&S.periodicPenOn===false;}
 let KPICFG=JSON.parse(localStorage.getItem('lcKPI')||JSON.stringify({total:true,active:true,portfolio:true,compliance:true,complianceScore:true,penalties:true,withPen:true,missing:true,reportsReceived:true,reviews:true,npp:true,mlnp:true,rfps:true,bids:true,awarded:true,awardCycle:true,supplierRisk:true,avgSupScore:true}));
@@ -2628,7 +2630,7 @@ window.toggleMobileMode=toggleMobileMode;
 (function(){try{var pref=localStorage.getItem('lcMobile');var on=(pref==='1')||(pref==null&&window.innerWidth<768);if(on){document.body.classList.add('mobile-mode');var b=document.getElementById('mobileToggleBtn');if(b)b.classList.add('on');}}catch(e){}})();
 
 // NAV
-const PT={dashboard:'Executive Dashboard',rfp:'RFP Preparation',contracts:'Contracts & Monitoring',entry:'New Contract',review:'Reports Review',penalties:'Penalties',annual:'Annual LCGPA Report',settings:'Settings & Admin',audit:'Audit Trail',supdash:'Suppliers',contractadmin:'Contract Administration',receiving:'Receiving',permissions:'Roles & Permissions'};
+const PT={dashboard:'Executive Dashboard',rfp:'RFP Preparation',contracts:'Contracts & Monitoring',entry:'New Contract',review:'Reports Review',penalties:'Penalties',annual:'Annual LCGPA Report',settings:'Settings & Admin',audit:'Audit Trail',supdash:'Suppliers',contractadmin:'Contract Administration',permissions:'Roles & Permissions'};
 function nav(p,el){
   if(typeof PAGE_PERM!=='undefined'&&typeof hasPerm==='function'){var _need=PAGE_PERM[p];if(_need&&!hasPerm(_need)){toast((typeof lang!=='undefined'&&lang==='ar')?'ليس لديك صلاحية للوصول إلى هذا القسم':'You do not have access to this section','err');return;}}
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
@@ -2653,7 +2655,7 @@ function renderCurrentPage(){
   else if(curPage==='supdash'&&typeof renderSupDash==='function')renderSupDash();
   else if(curPage==='contractadmin')renderContractAdmin();
   else if(curPage==='permissions')renderPermissions();
-  else if(curPage==='receiving'&&typeof renderReceiving==='function')renderReceiving();
+
   updateBadges();
   if(curPage==='entry'&&typeof refreshAwardImportSel==='function')refreshAwardImportSel();
   if(curPage==='entry'&&typeof renderEntryBoQ==='function')renderEntryBoQ();
@@ -2669,7 +2671,7 @@ function updateBadges(){
   var _sb=function(id,v){var e=document.getElementById(id);if(e)e.textContent=v||'';};
   _sb('nbMiss',tm);_sb('nbPen',tp);_sb('nbReview',pending);_sb('nbBids',openBids);
 }
-function getAllPendingEvidence(){let n=0;DB.forEach(c=>{Object.values(c.evidence||{}).forEach(arr=>arr.forEach(f=>{if((f.status||'pending')==='pending')n++;}));(c.boqItems||[]).forEach(it=>{if(it.nature&&!/good/i.test(it.nature))return;var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;if(recd&&!it.recvApproved&&!it._recvRejected)n++;});});return n;}
+function getAllPendingEvidence(){let n=0;DB.forEach(c=>{Object.values(c.evidence||{}).forEach(arr=>arr.forEach(f=>{if((f.status||'pending')==='pending')n++;}));});return n;}
 
 // KPI DEFS
 // ============================================================
@@ -2774,7 +2776,7 @@ function _v57AwardNppItem(ii,name){if(typeof curBid==='undefined'||!curBid)retur
 window._v57NppItemPanel=_v57NppItemPanel;window._v57AwardNppItem=_v57AwardNppItem;
 // K2: clamp percentage inputs to valid ranges (0-100 for %, 0-1 for rate multipliers). Single delegated listener — covers existing + dynamically-rendered inputs.
 (function(){
-  var PCT=['fAP','fBL','fNPPct','pGap','pFin','pCapPerFine','pCapAgg','pGoodsDev','sLCW','sPriceW','sTargetSplit','sBaselineSplit','sListedPct','sMaxDev','sNPPPref','sSMEPref','rfpMinBaseline','rfpMinTarget','a1MinBaseline','a1MinTarget','subLC','subNPP','subBaseline','supLCPct','cLC','eaCommW','eaTechW','meditAP','meditBL'];
+  var PCT=['fAP','fBL','fNPPct','pGap','pFin','pCapPerFine','pCapAgg','sLCW','sPriceW','sTargetSplit','sBaselineSplit','sListedPct','sMaxDev','sNPPPref','sSMEPref','rfpMinBaseline','rfpMinTarget','a1MinBaseline','a1MinTarget','subLC','subNPP','subBaseline','supLCPct','cLC','eaCommW','eaTechW','meditAP','meditBL'];
   var RATE=['pDev','pNPP','pML'];
   function clamp(el,lo,hi){var v=parseFloat(el.value);if(isNaN(v))return;var c=Math.max(lo,Math.min(hi,v));if(c!==v)el.value=c;}
   document.addEventListener('change',function(e){var t=e.target;if(!t||t.tagName!=='INPUT'||t.type!=='number')return;if(PCT.indexOf(t.id)>=0)clamp(t,0,100);else if(RATE.indexOf(t.id)>=0)clamp(t,0,1);},true);
@@ -3475,7 +3477,7 @@ function openContractModal(id){
   function evSection(rtKey){
     var files=(c.evidence||{})[rtKey]||[];
     var pendN=files.filter(function(f){return(f.status||'pending')==='pending';}).length;
-    var h='<div style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:9px;color:var(--text3)"><span>&#128206; Evidence (from Receiving — view only)</span>';
+    var h='<div style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:9px;color:var(--text3)"><span>&#128206; Evidence</span>';
     if(pendN)h+='<span class="badge ba" style="font-size:9px">'+pendN+' pending review</span>';
     h+='<span>'+files.length+' file(s)</span></div>';
     if(files.length){
@@ -3624,23 +3626,7 @@ function openContractModal(id){
     });
     h+='</div></div>';
   }
-  if(c.boqItems&&c.boqItems.length){
-    var _gl=c.boqItems.map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return !o.it.nature||/good/i.test(o.it.nature);});
-    if(_gl.length){
-      h+='<div class="md-sec"><div class="md-sec-title">BoQ Line Items — Receiving</div>';
-      _gl.forEach(function(o){
-        var it=o.it,idx=o.idx,rl=parseFloat(it.recvLocal)||0,rf=parseFloat(it.recvForeign)||0;
-        h+='<div class="ev-row" style="padding:8px 10px;margin-bottom:6px">';
-        h+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:4px"><span style="font-size:12px;font-weight:700">'+(it.desc||('Item #'+(idx+1)))+'</span><span style="font-size:10px;color:var(--text3)">Ordered <b style="color:var(--text);font-weight:800">'+(it.qty||0)+'</b> '+(it.uom||'')+' &middot; Promised <b style="color:var(--text)">'+(it.origin||'Local')+'</b></span></div>';
-        h+='<div style="font-size:11px">Received: <b>'+rl+'</b> Local + <b>'+rf+'</b> Foreign'+(it.recvOrigin?' ('+it.recvOrigin+')':'')+(it.recvApproved?' &middot; <span style="color:var(--accent3);font-weight:700">Approved</span>':'')+'</div>';
-        if(it.recvDevPenalty>0)h+='<div style="font-size:10px;color:var(--danger);font-weight:700;margin-top:2px">&#9888;&#65039; Local-content deviation penalty: '+fSAR(it.recvDevPenalty)+'</div>';
-        h+='<div style="font-size:9px;color:var(--text3);margin-top:4px">National Products Evidences:</div>'+evSection('li_'+idx);
-        if(((c.evidence||{})['liexc_'+idx]||[]).length){h+='<div style="font-size:9px;color:var(--text3);margin-top:4px">Exception Letter:</div>'+evSection('liexc_'+idx);}
-        h+='</div>';
-      });
-      h+='</div>';
-    }
-  }
+
   if(p>0){
     h+='<div class="md-sec"><div class="ph"><span style="font-size:18px">&#9888;&#65039;</span><div><div class="ph-lbl">Total Penalty</div><div class="ph-amt">'+fSAR(p)+'</div></div></div>';
     h+='<div style="margin-top:8px">'+(c.penalties||[]).map(function(pn){return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:3px 0;border-top:1px solid var(--border)"><span style="color:var(--text2)">'+penTypeLabel(pn.type||'')+(pn.reason?' — '+pn.reason:'')+'</span><span style="font-weight:700;color:var(--danger);white-space:nowrap">'+fSAR(pn.amount)+'</span></div>';}).join('')+'</div>';
@@ -3714,6 +3700,7 @@ function toggleModalReceived(rtKey){
   var st=modalEditState.reports[rtKey];
   if(!st){modalEditState.reports[rtKey]={received:true};st=modalEditState.reports[rtKey];}
   else{st.received=!st.received;}
+  if(st.received&&!st.receivedDate)st.receivedDate=new Date().toISOString().split('T')[0];
   var badge=document.getElementById('mbadge_'+rtKey);
   if(badge){
     var isRcv=st.received;
@@ -3831,30 +3818,11 @@ function renderReview(){
     var allFiles=[];
     Object.keys(ev).forEach(function(rt){if(rt.indexOf('li_')===0||rt.indexOf('liexc_')===0)return;(ev[rt]||[]).forEach(function(f){allFiles.push(Object.assign({},f,{rt:rt}));});});
     var filtered=allFiles.filter(fMatch);
-    // Goods-line receipts (visible even with NO attached evidence file)
-    function rcStatus(it){return it.recvApproved?'approved':it._recvRejected?'rejected':'pending';}
-    var goods=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){
-      var it=o.it; if(it.nature&&!/good/i.test(it.nature))return false;
-      var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;
-      var hasFiles=((ev['li_'+o.idx]||[]).length+(ev['liexc_'+o.idx]||[]).length)>0;
-      return recd||hasFiles;
-    });
-    function lineMatches(o){
-      if(rvMode==='all')return true;
-      var fs=rvMode==='pend'?'pending':rvMode==='app'?'approved':'rejected';
-      if(rcStatus(o.it)===fs)return true;
-      return (ev['li_'+o.idx]||[]).concat(ev['liexc_'+o.idx]||[]).some(function(f){return (f.status||'pending')===fs;});
-    }
-    var goodsShown=goods.filter(lineMatches);
     var pushedPens=(rvMode==='all')?(c.penalties||[]).map(function(p,pi){return {p:p,pi:pi};}).filter(function(o){return o.p.pushedToSupplier&&!(o.p.type==='Periodic'&&o.p.year&&typeof _pPenOff==='function'&&_pPenOff());}):[];
-    if(!filtered.length&&!goodsShown.length&&!pushedPens.length)return;
+    if(!filtered.length&&!pushedPens.length)return;
     // counts
     var pendN=filtered.filter(function(f){return (f.status||'pending')==='pending';}).length;
     var appN=filtered.filter(function(f){return f.status==='approved';}).length;
-    goodsShown.forEach(function(o){
-      var s=rcStatus(o.it); if(s==='pending')pendN++; else if(s==='approved')appN++;
-      (ev['li_'+o.idx]||[]).concat(ev['liexc_'+o.idx]||[]).forEach(function(f){var fs=f.status||'pending';if(fs==='pending')pendN++;else if(fs==='approved')appN++;});
-    });
     var html='<div class="review-card">'
       +'<div class="review-hd"><div>'
       +'<div style="font-size:13px;font-weight:700">#'+c.num+' \u2014 '+(c.name||'')+'</div>'
@@ -3867,24 +3835,6 @@ function renderReview(){
       html+='<div style="margin-bottom:6px"><div style="font-size:11px;font-weight:600;padding:2px 6px;background:var(--surface2);border-radius:var(--rs);margin-bottom:3px;display:inline-block">'+evLabel(rt,c)+'</div>';
       if(rt==='improvement')html+=_impReviewTargetsHTML(c);
       grouped[rt].forEach(function(f){html+=fileRow(rt,f);});
-      html+='</div>';
-    });
-    // goods-receipt blocks
-    goodsShown.forEach(function(o){
-      var it=o.it,idx=o.idx,rs=rcStatus(it);
-      var rl=parseFloat(it.recvLocal)||0,rf=parseFloat(it.recvForeign)||0,qty=parseFloat(it.qty)||0;
-      var rsColor=rs==='approved'?'var(--accent3)':rs==='rejected'?'var(--danger)':'var(--warn)';
-      var rsLabel=rs.charAt(0).toUpperCase()+rs.slice(1);
-      var promisedLocal=(it.origin==='Local');
-      html+='<div style="margin-bottom:8px;border:1px solid var(--border);border-radius:var(--rs);padding:8px 10px;background:var(--surface)">';
-      html+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:11px;font-weight:700">&#129534; Goods Receipt \u2014 '+(it.desc||('Line Item #'+(idx+1)))+'</span><span class="rv-status" style="font-weight:700;color:'+rsColor+'">'+rsLabel+'</span></div>';
-      html+='<div style="font-size:10px;color:var(--text3);margin:3px 0 6px">Ordered <b style="color:var(--text)">'+qty+'</b> '+(it.uom||'')+' &middot; Promised <b style="color:'+(promisedLocal?'var(--accent3)':'var(--warn)')+'">'+(it.origin||'Local')+'</b> &middot; Received <b>'+rl+'</b> Local + <b>'+rf+'</b> Foreign'+(it.recvOrigin?' ('+it.recvOrigin+')':'')+'</div>';
-      if(it.recvDevPenalty>0)html+='<div style="font-size:10px;color:var(--danger);font-weight:700;margin-bottom:5px">&#9888;&#65039; Local-content deviation penalty: '+fSAR(it.recvDevPenalty)+'</div>';
-      if(rs==='pending')html+='<div class="rv-file-actions" style="margin-bottom:5px"><button class="ev-btn app" onclick="reviewLineReceipt('+c.id+','+idx+',\'approved\')">&#10003; Approve Receipt</button><button class="ev-btn rej" onclick="reviewLineReceipt('+c.id+','+idx+',\'rejected\')">&#10007; Reject Receipt</button></div>';
-      var npFiles=ev['li_'+idx]||[],exFiles=ev['liexc_'+idx]||[];
-      if(npFiles.length){html+='<div style="font-size:10px;font-weight:600;color:var(--text2);margin:4px 0 2px">&#128206; National Products Evidence</div>';npFiles.forEach(function(f){html+=fileRow('li_'+idx,f);});}
-      else if(rs!=='approved'){html+='<div style="font-size:9px;color:var(--warn);margin-top:2px">&#9888;&#65039; No National Products evidence attached.</div>';}
-      if(exFiles.length){html+='<div style="font-size:10px;font-weight:600;color:var(--text2);margin:4px 0 2px">&#128206; Exception Letter</div>';exFiles.forEach(function(f){html+=fileRow('liexc_'+idx,f);});}
       html+='</div>';
     });
     // Penalty notices pushed to the supplier — view-only (no approval workflow)
@@ -3949,7 +3899,7 @@ function replyPushBack(cid,rt,fi,ctx){
   f.status='pending';
   saveAll();if(typeof logAudit==='function')logAudit('edit',role+' replied to pushed-back evidence for '+(typeof evLabel==='function'?evLabel(rt,c):rt)+' · #'+c.num,c.num);
   toast('Reply sent — back to reviewer','ok');
-  if(ctx==='recv'){if(typeof recvRenderContract==='function')recvRenderContract();}else{if(typeof renderSupReq==='function')renderSupReq();}
+  if(typeof renderSupReq==='function')renderSupReq();
   if(typeof updateBadges==='function')updateBadges();
 }
 window.replyPushBack=replyPushBack;
@@ -3965,20 +3915,7 @@ function reviewEvidence(cid,rt,fi,status){
   toast(`Evidence ${status}`,'ok');
 }
 
-// Approve/reject a received BoQ goods line (the receipt quantities & origin), independent of attached files.
-function reviewLineReceipt(cid,idx,status){
-  if(typeof requirePerm==='function'&&!requirePerm(status==='rejected'?'ev.reject':'ev.approve'))return;
-  var c=DB.find(function(x){return x.id===cid;});if(!c||!c.boqItems||!c.boqItems[idx])return;
-  var it=c.boqItems[idx];
-  if(status==='approved'){it.recvApproved=true;it._recvRejected=false;}
-  else{it.recvApproved=false;it._recvRejected=true;}
-  it._recvReviewBy='Admin';it._recvReviewAt=new Date().toLocaleDateString('en-GB');
-  if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);
-  saveDB();renderReview();updateBadges();
-  if(typeof renderContracts==='function')renderContracts();if(typeof renderDashboard==='function')renderDashboard();if(typeof renderPenalties==='function')renderPenalties();
-  if(typeof logAudit==='function')logAudit('approve','Goods receipt '+status+(status==='approved'?' → reflected on contract':'')+' for line "'+(it.desc||('#'+(idx+1)))+'" ('+(parseFloat(it.recvLocal)||0)+' Local + '+(parseFloat(it.recvForeign)||0)+' Foreign) · #'+c.num,c.num);
-  toast('Goods receipt '+status,'ok');
-}
+
 
 // Evidence upload from contract view
 function addEvidenceFile(cid,rt){document.getElementById(`ef_${cid}_${rt}`).click();}
@@ -4047,7 +3984,7 @@ function renderPenalties(){
   var penLeg=document.getElementById('penLegend');if(!penLeg){penLeg=document.createElement('div');penLeg.id='penLegend';penLeg.style.cssText='display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:9px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:14px;box-shadow:var(--sh)';var pk=document.getElementById('penKPIs');if(pk&&pk.parentNode)pk.parentNode.insertBefore(penLeg,pk.nextSibling);}
   penLeg.innerHTML='<span style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px">\u25cf Legend</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent2);flex-shrink:0"></span> Periodic</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--danger);flex-shrink:0"></span> Final Submission</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--warn);flex-shrink:0"></span> Deviation</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--info);flex-shrink:0"></span> National Products Price Preferencing</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent3);flex-shrink:0"></span> Mandatory List</span>';
   let per=0,fs=0,dv=0,np=0,ml=0;
-  DB.forEach(c=>(c.penalties||[]).forEach(p=>{if(p.type==='Periodic'){if(PPEN[p.year]!==false)per+=p.amount;}else if(p.type==='FinalSub')fs+=p.amount;else if(p.type==='Deviation'||p.type==='GoodsDeviation')dv+=p.amount;else if(p.type==='NPP')np+=p.amount;else if(p.type==='MLNP')ml+=p.amount;}));
+  DB.forEach(c=>(c.penalties||[]).forEach(p=>{if(p.type==='Periodic'){if(PPEN[p.year]!==false)per+=p.amount;}else if(p.type==='FinalSub')fs+=p.amount;else if(p.type==='Deviation')dv+=p.amount;else if(p.type==='NPP')np+=p.amount;else if(p.type==='MLNP')ml+=p.amount;}));
   const bk=[{l:'Periodic LC',v:per,c:'var(--accent2)'},{l:'Final Submission',v:fs,c:'var(--danger)'},{l:'LC Deviation',v:dv,c:'var(--warn)'},{l:'National Products Price Preferencing',v:np,c:'var(--info)'},{l:'Mandatory List',v:ml,c:'var(--accent3)'}].filter(x=>x.v>0);
   if(typeof recalcArt38Flags==='function')recalcArt38Flags(); // M2: refresh cross-contract recidivism flags for display
   var _c4f=DB.filter(function(c){return c._c4;});
@@ -4061,7 +3998,7 @@ function renderPenalties(){
   document.getElementById('penBreak').innerHTML=_c4Banner+bk.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">${b.l}</span><span style="font-size:11px;font-weight:700;color:${b.c};font-family:var(--fm)">${fSAR(b.v)}</span></div><div class="pg-b"><div class="pg-f" style="width:${pt?b.v/pt*100:0}%;background:${b.c}"></div></div></div>`).join('')||'<div class="empty"><div class="ei">✅</div><p>No penalties</p></div>';
   const pdEl=document.getElementById('cPenD');if(pdEl){if(charts.penD)charts.penD.destroy();const _pmax=Math.max.apply(null,DB.map(c=>tPen(c)).concat([0]));const _useM=_pmax>=1000000;const _div=_useM?1000000:1000;const _suf=_useM?'M':'K';const pv=DB.map(c=>+(tPen(c)/_div).toFixed(_useM?2:0));charts.penD=new Chart(pdEl,{type:'bar',data:{labels:DB.map(c=>`#${c.num}`),datasets:[{data:pv,backgroundColor:pv.map(v=>v>0?'rgba(220,38,38,.45)':'rgba(16,185,129,.2)'),borderColor:pv.map(v=>v>0?'#dc2626':'#10b981'),borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:function(evt,elems){if(elems.length>0){var idx=elems[0].index;var cc=DB[idx];if(cc)openContractModal(cc.id);}},plugins:{tooltip:{callbacks:{label:function(ctx){return 'SAR '+ctx.parsed.y+_suf;}},backgroundColor:'rgba(15,23,42,.92)',titleColor:'#f1f5f9',bodyColor:'#e2e8f0',titleFont:{size:12,weight:'700'},bodyFont:{size:11},padding:10,cornerRadius:8,displayColors:true,boxPadding:4},legend:{display:false}},scales:{x:{ticks:{color:gc()},grid:{color:gg()}},y:{ticks:{color:gc(),callback:v=>v+_suf},grid:{color:gg()}}}}});}
   const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&_pPenOff());rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis,pushed:!!p.pushedToSupplier,pushedAt:p.pushedAt||'',ackStatus:p.ackStatus||''});}));
-  document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':(r.type==='Deviation'||r.type==='GoodsDeviation')?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center;white-space:nowrap">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button> ${r.pushed?`<span class="badge ${r.ackStatus==='disputed'?'br':r.ackStatus==='acknowledged'?'bg':'bb'}" style="font-size:9px" title="Sent to the supplier${r.pushedAt?' on '+r.pushedAt:''}">${r.ackStatus==='disputed'?'⚠ Disputed':r.ackStatus==='acknowledged'?'✓ Acknowledged':'✓ Sent'}</span> <button class="btn btn-d btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="recallPenalty(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Rescind this penalty notice — removes it from the supplier &amp; Reports Review">↩ Recall</button>`:`<button class="btn btn-s btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="sendPenaltyToSupplier(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Push this penalty + letter to the supplier's LC Requirements and Reports Review">📨 Send to Supplier</button>`}`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
+  document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':r.type==='Deviation'?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center;white-space:nowrap">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button> ${r.pushed?`<span class="badge ${r.ackStatus==='disputed'?'br':r.ackStatus==='acknowledged'?'bg':'bb'}" style="font-size:9px" title="Sent to the supplier${r.pushedAt?' on '+r.pushedAt:''}">${r.ackStatus==='disputed'?'⚠ Disputed':r.ackStatus==='acknowledged'?'✓ Acknowledged':'✓ Sent'}</span> <button class="btn btn-d btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="recallPenalty(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Rescind this penalty notice — removes it from the supplier &amp; Reports Review">↩ Recall</button>`:`<button class="btn btn-s btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="sendPenaltyToSupplier(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Push this penalty + letter to the supplier's LC Requirements and Reports Review">📨 Send to Supplier</button>`}`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
 }
 // Push a penalty (details + letter) to its supplier's LC Requirements + Reports Review (view-only).
 function sendPenaltyToSupplier(cid,pidx){
@@ -4160,7 +4097,7 @@ function renderAlerts(){
 // ============================================================
 function renderSettings(){setTimeout(function(){renderColorPalette();var sl=localStorage.getItem("lcLogo");var pv=document.getElementById("logoPreview");if(pv&&sl)pv.innerHTML='<img src="'+sl+'" style="width:100%;height:100%;object-fit:cover;border-radius:6px"/>';},120);
   renderEmailTplList();
-  document.getElementById('pDev').value=S.dev;document.getElementById('pGap').value=S.gap;document.getElementById('pFin').value=S.fin;document.getElementById('pNPP').value=S.npp;document.getElementById('pML').value=S.ml;document.getElementById('pRem').value=S.rem;var _gl=document.getElementById('pGraceLC');if(_gl)_gl.value=(S.graceLCMonths!=null?S.graceLCMonths:7);var _gn=document.getElementById('pGraceNPP');if(_gn)_gn.value=(S.graceNPPDays!=null?S.graceNPPDays:30);document.getElementById('orgN').value=S.org;document.getElementById('orgP').value=S.proj;
+  document.getElementById('pDev').value=S.dev;document.getElementById('pGap').value=S.gap;document.getElementById('pFin').value=S.fin;document.getElementById('pNPP').value=S.npp;document.getElementById('pML').value=S.ml;document.getElementById('pRem').value=S.rem;var _govs=S.gov||{};var _gl=document.getElementById('pGovGraceLC');if(_gl)_gl.value=(_govs.graceLCMonths!=null?_govs.graceLCMonths:(S.graceLCMonths!=null?S.graceLCMonths:7));var _gn=document.getElementById('pGovGraceNPP');if(_gn)_gn.value=(_govs.graceNPPDays!=null?_govs.graceNPPDays:(S.graceNPPDays!=null?S.graceNPPDays:30));var _pfs=S.portfolio||{};var _pfl=document.getElementById('pPFGraceLC');if(_pfl)_pfl.value=(_pfs.graceLCMonths!=null?_pfs.graceLCMonths:(S.graceLCMonths!=null?S.graceLCMonths:7));var _pfn=document.getElementById('pPFGraceNPP');if(_pfn)_pfn.value=(_pfs.graceNPPDays!=null?_pfs.graceNPPDays:(S.graceNPPDays!=null?S.graceNPPDays:30));var _pfpp=document.getElementById('pPFPeriodicPen');if(_pfpp)_pfpp.checked=(_pfs.periodicPenOn===true);document.getElementById('orgN').value=S.org;document.getElementById('orgP').value=S.proj;
   renderKPICfg();renderPPENGrid();renderExclusionList();renderMechList();renderSectorsList();renderTenderFilters();renderMechTCList();renderEUList();renderAIControlsList();renderBidEvalSettings();
   var _pfp=document.getElementById('pPeriodicPortfolio');if(_pfp)_pfp.checked=(S.periodicForPortfolio===true);
   var _exp=document.getElementById('pExemptPortfolio');if(_exp)_exp.checked=(S.exemptForPortfolio===true);
@@ -4168,7 +4105,7 @@ function renderSettings(){setTimeout(function(){renderColorPalette();var sl=loca
   var _dmp=document.getElementById('pDocMinPortfolio');if(_dmp)_dmp.checked=(S.docMinForPortfolio===true);
   var _cpf=document.getElementById('pCapPerFine');if(_cpf)_cpf.value=(S.capPerFinePct!=null?S.capPerFinePct:10);
   var _cag=document.getElementById('pCapAgg');if(_cag)_cag.value=(S.capAggPct!=null?S.capAggPct:20);
-  var _gd=document.getElementById('pGoodsDev');if(_gd)_gd.value=Math.round((S.goodsDev!=null?S.goodsDev:0.30)*100);
+
   (function(){var m={remHelp:L('Reminders are sent this many days before each report due date.','تُرسل التذكيرات قبل الموعد المحدد لكل تقرير بهذا العدد من الأيام.'),pcadTitle:L('Periodic Report Cadence','جدولة التقارير الدورية'),pcadDesc:L('Government: no reports in the first 6 months; 15 working-day approval window','حكومي: لا تقارير في أول 6 أشهر؛ ونافذة اعتماد 15 يوم عمل'),pcadLbl:L('Apply government periodic cadence to portfolio companies','تطبيق الجدولة الحكومية على شركات المحافظ'),exTitle:L('Minimum-LC Activity Exemption','إعفاء الأنشطة من الحد الأدنى'),exDesc:L('Government: 11 activities exempt from the Minimum-LC mechanism (LCGPA circular 9/46214/2)','حكومي: 11 نشاطًا معفى من آلية الحد الأدنى (تعميم 9/46214/2)'),exLbl:L('Apply the exempted-activity list to portfolio companies','تطبيق قائمة الأنشطة المعفاة على شركات المحافظ'),capTitle:L('Penalty Caps','حدود الغرامات'),capDesc:L('Government: hard-coded 10% per fine / 20% aggregate (Art.31/34). Portfolio: set your own below.','حكومي: 10% لكل غرامة / 20% إجمالي (المادتان 31/34). المحافظ: حدد قيمك أدناه.'),capLbl:L('Apply penalty caps to portfolio companies','تطبيق حدود الغرامات على شركات المحافظ'),capPFLbl:L('Portfolio per-fine cap','حد الغرامة الواحدة (محافظ)'),capAGLbl:L('Portfolio aggregate cap','الحد الإجمالي (محافظ)'),gdLbl:L('Goods Deviation Rate (per-line)','معدل انحراف السلع (لكل بند)'),docMinTitle:L('Documented Minimum (Art.25)','الحد الأدنى الموثّق (المادة 25)'),docMinDesc:L('Government: the documented minimum baseline/target always applies. Portfolio companies: opt-in below (off by default).','حكومي: يُطبَّق الحد الأدنى الموثّق لخط الأساس/المستهدف دائمًا. شركات المحافظ: تفعيل اختياري أدناه (متوقف افتراضيًا).'),docMinLbl:L('Apply Art.25 documented minimum (baseline / target) to portfolio companies','تطبيق الحد الأدنى الموثّق (المادة 25) لخط الأساس/المستهدف على شركات المحافظ')};for(var k in m){var el=document.getElementById(k);if(el)el.textContent=m[k];}})();
 }
 function renderKPICfg(){document.getElementById('kpiCfg').innerHTML=KPI_DEFS.map((k,i)=>`<div class="kpi-cfg-item"><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3);font-size:13px;cursor:grab" title="Drag to reorder">⠿</span><div class="kpi-cfg-lbl">${k.label}</div></div><label class="sw-toggle"><input type="checkbox" ${KPICFG[k.key]!==false?'checked':''} onchange="KPICFG['${k.key}']=this.checked"/><span class="sw-slider"></span></label></div>`).join('');attachDnD('kpiCfg','KPI_DEFS',function(){lsSet('lcKPIDefsOrder',JSON.stringify(KPI_DEFS.map(function(k){return k.key;})));renderKPICfg();});}
@@ -4229,7 +4166,7 @@ function buildReportsFor(c){
   var dur=c.duration||12;
   var startISO=c.start||new Date().toISOString().split('T')[0];
   var endISO=c.end||_addMonthsISO(startISO,dur);
-  var _gov=(typeof S==='undefined'||!S.entityType||S.entityType==='gov');
+  var _gov=(typeof S==='undefined'||!S.activeProfile||S.activeProfile==='gov');
   var _j2=_gov||(typeof S!=='undefined'&&S.periodicForPortfolio===true); // J2 cadence (6-mo guard + 15-wd review): gov always, portfolio only if opted in
   var _sixMo=new Date(_addMonthsISO(startISO,6));
   if(cl.base==='company'||cl.base==='project'||cl.base==='threshold'){
@@ -4293,10 +4230,31 @@ function reportTitle(r){
 }
 // Contract value meets the high-value threshold (Settings, in SAR millions) — gates Improvement-Plan KPI/log counting.
 // A1: per-contract regime helpers
-function _regimeOf(rec){return (rec&&rec.regime)||(typeof S!=='undefined'&&S.entityType)||'gov';}
+function _regimeOf(rec){return (typeof S!=='undefined'&&S.activeProfile)||'gov';}
 function _regimeThrM(rg){return rg==='portfolio'?50:25;}
 function _regimeWeights(rg){return rg==='portfolio'?{pw:70,lw:30}:(rg==='gov'?{pw:60,lw:40}:null);}
-function isHighValue(c){var thrM=(c&&c.regime)?_regimeThrM(c.regime):((typeof S!=='undefined'&&S.highValueThreshold)||25);return (c&&c.amount||0)>=thrM*1000000;}
+function _applyProfile(prof){
+  if(typeof S==='undefined')return;
+  var p=prof||(S.activeProfile||'gov');
+  S.activeProfile=p;S.entityType=p;
+  if(!S.gov)S.gov={graceLCMonths:7,graceNPPDays:30};
+  if(!S.portfolio)S.portfolio={graceLCMonths:7,graceNPPDays:30,periodicCadence:false,exempt:false,docMin:false,capsOn:false,capPerFine:10,capAgg:20,periodicPenOn:false};
+  var sub=S[p]||{};
+  S.graceLCMonths=sub.graceLCMonths!=null?sub.graceLCMonths:7;
+  S.graceNPPDays=sub.graceNPPDays!=null?sub.graceNPPDays:30;
+  if(p==='gov'){
+    S.periodicForPortfolio=false;S.exemptForPortfolio=false;S.docMinForPortfolio=true;
+    S.capPortfolioOn=true;S.capPerFinePct=10;S.capAggPct=20;
+  }else{
+    S.periodicForPortfolio=!!sub.periodicCadence;S.exemptForPortfolio=!!sub.exempt;S.docMinForPortfolio=!!sub.docMin;
+    S.capPortfolioOn=!!sub.capsOn;S.capPerFinePct=sub.capPerFine!=null?sub.capPerFine:10;S.capAggPct=sub.capAgg!=null?sub.capAgg:20;
+    if(sub.periodicPenOn!=null)S.periodicPenOn=!!sub.periodicPenOn;
+  }
+  var _sb=document.getElementById('profileBadge');
+  if(_sb){_sb.textContent=p==='gov'?'GOV':'PF';_sb.className='profile-badge '+(p==='gov'?'pbg-gov':'pbg-pf');}
+}
+window._applyProfile=_applyProfile;
+function isHighValue(c){return (c&&c.amount||0)>=_regimeThrM(_regimeOf(c))*1000000;}
 // Whether a report should be COUNTED in KPIs / requirement / overdue tallies.
 // The Improvement Plan is only counted on high-value contracts (it never carries a penalty either way).
 function reportCountsForKPI(c,r){if(r&&r.type==='improvement')return isHighValue(c);return true;}
@@ -4312,7 +4270,7 @@ function reportStateBadge(c,r){
 }
 // Full-name label for a penalty type code (no short names shown to users).
 function penTypeLabel(t){
-  return {Periodic:'Periodic LC',FinalSub:'Final Submission',Deviation:'LC Deviation',GoodsDeviation:'Goods Deviation',NPP:'National Products Price Preferencing',MLNP:'Mandatory List'}[t]||t;
+  return {Periodic:'Periodic LC',FinalSub:'Final Submission',Deviation:'LC Deviation',NPP:'National Products Price Preferencing',MLNP:'Mandatory List'}[t]||t;
 }
 // Map any (possibly legacy/short) mechanism string to its canonical full-name form.
 // Canonical mechanism component names (v57 LOCKED):
@@ -4422,56 +4380,25 @@ function recalcContractPenalties(c){
       }
     }
     else if(r.type==='npp'){
-      var committed=c.natProdAmount||0;
+      var committed=c.natProdAmount||0;var _nppTotal=0;
       if(committed>0){
-        if(r.received!==true&&overdue){
-          r.penalty=Math.round(S.npp*committed);
-          newPenalties.push({type:'NPP',amount:r.penalty,reason:'National Products Price Preferencing final supply report not received (grace period elapsed)'});
-        }else if(r.received===true&&r.actual!=null&&r.actual<committed){
-          var sf=committed-r.actual;
-          r.penalty=Math.round(S.npp*sf);
-          newPenalties.push({type:'NPP',amount:r.penalty,reason:'National Products Price Preferencing supply shortfall: '+fSAR(sf)});
-        }
+        if(r.received!==true&&overdue){var _nsp=Math.round(S.npp*committed);_nppTotal+=_nsp;newPenalties.push({type:'NPP',amount:_nsp,reason:'National Products Price Preferencing final supply report not received (grace period elapsed)'});}
+        if(r.actual!=null&&r.actual<committed){var sf=committed-r.actual;var _sfp=Math.round(S.npp*sf);_nppTotal+=_sfp;newPenalties.push({type:'NPP',amount:_sfp,reason:'National Products Price Preferencing supply shortfall: '+fSAR(sf)});}
       }
+      r.penalty=_nppTotal;
     }
     else if(r.type==='mlnp'){
-      var mCom=c.mandatoryListAmount||0;
+      var mCom=c.mandatoryListAmount||0;var _mlTotal=0;
       if(mCom>0){
-        if(r.received!==true&&overdue){
-          r.penalty=Math.round(S.ml*mCom);
-          newPenalties.push({type:'MLNP',amount:r.penalty,reason:'Mandatory List final supply report not received (grace period elapsed)'});
-        }else if(r.received===true&&r.actual!=null&&r.actual<mCom){
-          var ms=mCom-r.actual;
-          r.penalty=Math.round(S.ml*ms);
-          newPenalties.push({type:'MLNP',amount:r.penalty,reason:'Mandatory List supply shortfall: '+fSAR(ms)});
-        }
+        if(r.received!==true&&overdue){var _msp=Math.round(S.ml*mCom);_mlTotal+=_msp;newPenalties.push({type:'MLNP',amount:_msp,reason:'Mandatory List final supply report not received (grace period elapsed)'});}
+        if(r.actual!=null&&r.actual<mCom){var ms=mCom-r.actual;var _msfp=Math.round(S.ml*ms);_mlTotal+=_msfp;newPenalties.push({type:'MLNP',amount:_msfp,reason:'Mandatory List supply shortfall: '+fSAR(ms)});}
       }
+      r.penalty=_mlTotal;
     }
   });
-  // Local-content goods deviation: a Local-origin goods line received partly as Foreign,
-  // without an approved (or pending) exception letter, incurs lineTotal × (localShortfall / qty) × 30%.
-  (c.boqItems||[]).forEach(function(it,idx){
-    it.recvDevPenalty=0;
-    var isLocalGoods=(it.origin==='Local')&&(!it.nature||/good/i.test(it.nature));
-    if(!isLocalGoods)return;
-    var qty=parseFloat(it.qty)||0;if(qty<=0)return;
-    var recvLocal=parseFloat(it.recvLocal)||0,recvForeign=parseFloat(it.recvForeign)||0;
-    if(recvLocal<=0&&recvForeign<=0)return;
-    var shortfall=qty-recvLocal;if(shortfall<=0)return;
-    var exc=(c.evidence||{})['liexc_'+idx]||[];
-    var excApproved=exc.some(function(f){return f.status==='approved';});
-    var excPending=exc.some(function(f){return (f.status||'pending')==='pending';});
-    if(excApproved||excPending)return;
-    var lineTotal=(parseFloat(it.unitPrice)||0)*qty;
-    var _gRate=(typeof S!=='undefined'&&S.goodsDev!=null)?S.goodsDev:0.30; // C3: configurable goods-deviation rate
-    var pen=Math.round(lineTotal*(shortfall/qty)*_gRate);
-    var _gRg=(typeof _regimeOf==='function')?_regimeOf(c):'gov'; // C3 per-line cap: Gov 10% of line (Art.30); Portfolio via portfolio-caps toggle
-    var _gCap=(_gRg==='portfolio')?(S.capPortfolioOn?Math.round((S.capPerFinePct!=null?S.capPerFinePct:10)/100*lineTotal):Infinity):Math.round(0.10*lineTotal);
-    if(pen>_gCap)pen=_gCap;
-    if(pen>0){it.recvDevPenalty=pen;newPenalties.push({type:'GoodsDeviation',line:idx,amount:pen,reason:'Local-content goods deviation — "'+String(it.desc||('Item #'+(idx+1))).substring(0,40)+'": received '+recvLocal+' Local of '+qty+' (shortfall '+shortfall+')'});}
-  });
+
   // C1: statutory caps (Art.31/34). Government: 10% per fine / 20% aggregate (hard-coded). Portfolio: optional via Settings.
-  (function(){var _rg=(c.regime||(typeof S!=='undefined'&&S.entityType)||'gov');var pf=null,ag=null;
+  (function(){var _rg=_regimeOf(c);var pf=null,ag=null;
     if(_rg==='portfolio'){ if(S.capPortfolioOn){pf=(S.capPerFinePct!=null?S.capPerFinePct:10)/100;ag=(S.capAggPct!=null?S.capAggPct:20)/100;} }
     else { pf=0.10; ag=0.20; }
     if(pf==null)return; var amt=c.amount||0; if(amt<=0)return;
@@ -4527,8 +4454,8 @@ function recalcAllPenalties(){
   saveDB();
 }
 
-function saveSettings(){function _num(id,dflt){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?dflt:v;}function _int(id,dflt){var v=parseInt(document.getElementById(id).value);return isNaN(v)?dflt:v;}S.dev=_num('pDev',0.30);S.gap=_num('pGap',5);S.fin=_num('pFin',10);S.npp=_num('pNPP',0.30);S.ml=_num('pML',0.30);S.rem=_int('pRem',15);S.graceLCMonths=_int('pGraceLC',7);S.graceNPPDays=_int('pGraceNPP',30);S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;var _opfp=S.periodicForPortfolio;var _pfpEl=document.getElementById('pPeriodicPortfolio');if(_pfpEl)S.periodicForPortfolio=_pfpEl.checked;var _expEl=document.getElementById('pExemptPortfolio');if(_expEl)S.exemptForPortfolio=_expEl.checked;var _cpEl=document.getElementById('pCapPortfolio');if(_cpEl)S.capPortfolioOn=_cpEl.checked;var _dmpEl=document.getElementById('pDocMinPortfolio');if(_dmpEl)S.docMinForPortfolio=_dmpEl.checked;var _cpfEl=document.getElementById('pCapPerFine');if(_cpfEl)S.capPerFinePct=parseFloat(_cpfEl.value)||10;var _cagEl=document.getElementById('pCapAgg');if(_cagEl)S.capAggPct=parseFloat(_cagEl.value)||20;var _gdEl=document.getElementById('pGoodsDev');if(_gdEl)S.goodsDev=(parseFloat(_gdEl.value)||30)/100;if(S.periodicForPortfolio!==_opfp&&typeof regenerateReports==='function'){DB.forEach(function(c){regenerateReports(c);});saveDB();}saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();if(typeof logAudit==='function')logAudit('edit','Penalty settings updated (deviation '+S.dev+', gap '+S.gap+'%, final '+S.fin+'%, NPP '+S.npp+', Mandatory List '+S.ml+')');toast('Settings saved — penalties recalculated','ok');}
-function resetSettings(){S={dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10,periodicForPortfolio:false,exemptForPortfolio:false,capPortfolioOn:false,capPerFinePct:10,capAggPct:20,goodsDev:0.30,docMinForPortfolio:false};saveS();renderSettings();toast('Reset','info');}
+function saveSettings(){function _num(id,dflt){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?dflt:v;}function _int(id,dflt){var v=parseInt(document.getElementById(id).value);return isNaN(v)?dflt:v;}S.dev=_num('pDev',0.30);S.gap=_num('pGap',5);S.fin=_num('pFin',10);S.npp=_num('pNPP',0.30);S.ml=_num('pML',0.30);S.rem=_int('pRem',15);if(!S.gov)S.gov={graceLCMonths:7,graceNPPDays:30};S.gov.graceLCMonths=_int('pGovGraceLC',7);S.gov.graceNPPDays=_int('pGovGraceNPP',30);if(!S.portfolio)S.portfolio={graceLCMonths:7,graceNPPDays:30,periodicCadence:false,exempt:false,docMin:false,capsOn:false,capPerFine:10,capAgg:20,periodicPenOn:false};S.portfolio.graceLCMonths=_int('pPFGraceLC',7);S.portfolio.graceNPPDays=_int('pPFGraceNPP',30);S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;var _opfp=S.periodicForPortfolio;var _pfpEl=document.getElementById('pPeriodicPortfolio');if(_pfpEl)S.periodicForPortfolio=_pfpEl.checked;var _expEl=document.getElementById('pExemptPortfolio');if(_expEl)S.exemptForPortfolio=_expEl.checked;var _cpEl=document.getElementById('pCapPortfolio');if(_cpEl)S.capPortfolioOn=_cpEl.checked;var _dmpEl=document.getElementById('pDocMinPortfolio');if(_dmpEl)S.docMinForPortfolio=_dmpEl.checked;var _cpfEl=document.getElementById('pCapPerFine');if(_cpfEl)S.capPerFinePct=parseFloat(_cpfEl.value)||10;var _cagEl=document.getElementById('pCapAgg');if(_cagEl)S.capAggPct=parseFloat(_cagEl.value)||20;S.portfolio.periodicCadence=S.periodicForPortfolio;S.portfolio.exempt=S.exemptForPortfolio;S.portfolio.docMin=S.docMinForPortfolio;S.portfolio.capsOn=S.capPortfolioOn;S.portfolio.capPerFine=S.capPerFinePct;S.portfolio.capAgg=S.capAggPct;var _pfppEl2=document.getElementById('pPFPeriodicPen');if(_pfppEl2){S.portfolio.periodicPenOn=_pfppEl2.checked;if(S.activeProfile==='portfolio')S.periodicPenOn=_pfppEl2.checked;}if(typeof _applyProfile==='function')_applyProfile(S.activeProfile);if(S.periodicForPortfolio!==_opfp&&typeof regenerateReports==='function'){DB.forEach(function(c){regenerateReports(c);});saveDB();}saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();if(typeof logAudit==='function')logAudit('edit','Penalty settings updated (deviation '+S.dev+', gap '+S.gap+'%, final '+S.fin+'%, NPP '+S.npp+', Mandatory List '+S.ml+')');toast('Settings saved — penalties recalculated','ok');}
+function resetSettings(){S={dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10,periodicForPortfolio:false,exemptForPortfolio:false,capPortfolioOn:false,capPerFinePct:10,capAggPct:20,docMinForPortfolio:false,activeProfile:'gov',entityType:'gov',gov:{graceLCMonths:7,graceNPPDays:30},portfolio:{graceLCMonths:7,graceNPPDays:30,periodicCadence:false,exempt:false,docMin:false,capsOn:false,capPerFine:10,capAgg:20,periodicPenOn:false}};saveS();renderSettings();toast('Reset','info');}
 function renderPPENGrid(){
   var on=(typeof S!=='undefined'&&S.periodicPenOn!==false);
   var cb=document.getElementById('ppenAll');if(cb)cb.checked=on;
@@ -4741,14 +4668,14 @@ function submitContract(e){
   // Awarding Date is required for Local-Content mechanisms (it drives the Improvement Plan due date).
   if(typeof mechClass==='function'){var _b=mechClass(mech).base;if((_b==='company'||_b==='project'||_b==='threshold')&&!award){toast('Awarding Date is required for Local-Content mechanisms','err');var _af=document.getElementById('fAward');if(_af)_af.focus();return;}}
   const endDt=new Date(start);endDt.setMonth(endDt.getMonth()+dur);
-  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,contractorContact:((document.getElementById('fContact')||{}).value||'').trim(),contractorEmail:((document.getElementById('fContEmail')||{}).value||'').trim(),name,mechanism:mech,regime:(document.getElementById('fRegime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov',amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
+  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,contractorContact:((document.getElementById('fContact')||{}).value||'').trim(),contractorEmail:((document.getElementById('fContEmail')||{}).value||'').trim(),name,mechanism:mech,regime:(typeof S!=='undefined'&&S.activeProfile)||'gov',amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
   var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;var _srcB=BIDS.find(function(b){return String(b.id)===String(window._importedFromBidId);});if(_srcB){_srcB.status='contractCreated';_srcB.contractCreatedAt=new Date().toISOString();_srcB.contractId=_newC.id;}window._importedFromBidId=null;}window._importedDocs=null;if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;
   // D2: Mandatory-List amount = Σ (unit×qty) of Mandatory lines from the awarded evaluation's BoQ (authoritative when lines exist)
   if(_newC.boqItems&&_newC.boqItems.length){_newC.mandatoryListAmount=_newC.boqItems.reduce(function(s,it){return s+(it.isMandatoryRFP?((parseFloat(it.unitPrice)||0)*(parseFloat(it.qty)||0)||(parseFloat(it.price)||0)):0);},0);_newC.mlAmountDerived=true;}
   _newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
   saveDB();logAudit('create','Contract #'+num,num);var _bn=document.createElement('div');_bn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;background:#059669;color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px';_bn.textContent='\u2705 Contract #'+num+' saved!';document.body.appendChild(_bn);setTimeout(function(){_bn.remove();},3500);toast('Saved #'+num,'ok');resetForm();setTimeout(function(){nav('contracts',null);},800);
 }
-function resetForm(){if(typeof _unlockContractForm==='function')_unlockContractForm();document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');var _fr0=document.getElementById('fRegime');if(_fr0)_fr0.value=(typeof S!=='undefined'&&S.entityType)||'gov';pendingFiles=[];document.getElementById('attachList').innerHTML='';entryBoQ=[];renderEntryBoQ();}
+function resetForm(){if(typeof _unlockContractForm==='function')_unlockContractForm();document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');pendingFiles=[];document.getElementById('attachList').innerHTML='';entryBoQ=[];renderEntryBoQ();}
 var entryBoQ=[];
 function renderEntryBoQ(){
   var tb=document.getElementById('entryBoQBody');if(!tb)return;
@@ -5245,21 +5172,7 @@ function generateReport(cid){
       +'<div class="pdf-f"><div class="lbl">Pending Review</div><div class="val" style="color:#d97706">'+(evAll.length-app)+'</div></div>'
       +'</div></div>';
   }
-  var _gl=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return !o.it.nature||/good/i.test(o.it.nature);});
-  if(_gl.length){
-    var _devTot=0;
-    h+='<div class="pdf-sec"><div class="pdf-sec-title">BoQ Line Items — Local-Content Receiving</div>'
-      +'<table class="pdf-tbl"><thead><tr><th>Item</th><th>Ordered</th><th>Promised</th><th>Received</th><th>Status / Penalty</th></tr></thead><tbody>';
-    _gl.forEach(function(o){
-      var it=o.it,rl=parseFloat(it.recvLocal)||0,rf=parseFloat(it.recvForeign)||0,dev=(it.recvDevPenalty||0);if(dev>0)_devTot+=dev;
-      var st=dev>0?('<span style="color:#dc2626;font-weight:700">Deviation — '+fSAR(dev)+'</span>'):(it.recvApproved?'<span style="color:#16a34a;font-weight:700">Compliant</span>':'<span style="color:#d97706">Pending receipt</span>');
-      h+='<tr><td>'+(it.desc||('Item #'+(o.idx+1)))+'</td><td>'+(it.qty||0)+' '+(it.uom||'')+'</td><td>'+(it.origin||'Local')+'</td><td>'+rl+' Local + '+rf+' Foreign</td><td>'+st+'</td></tr>';
-    });
-    if(_devTot>0)h+='<tr><td colspan="4" style="text-align:right;font-weight:700">Goods Deviation Penalty</td><td style="color:#dc2626;font-weight:800">'+fSAR(_devTot)+'</td></tr>';
-    h+='</tbody></table>';
-    if(_devTot>0)h+='<div style="font-size:11px;color:#64748b;margin-top:6px">A local-content deviation penalty is charged when goods promised as Local are received as Foreign — or below the ordered Local quantity — without an approved exception letter: line-item total × (Local shortfall ÷ Local ordered) × 30%.</div>';
-    h+='</div>';
-  }
+
   if(p>0)h+='<div class="pdf-pen"><div class="pdf-pen-lbl">TOTAL PENALTY EXPOSURE</div><div class="pdf-pen-amt">'+fSAR(p)+'</div></div>';
   var _b=brandInfo();
   h+='<div class="pdf-ft"><span>'+_b.org+' \u2014 '+((typeof lang!=='undefined'&&lang==='ar')?'\u0633\u0631\u064a':'Confidential')+'</span><span>'+((typeof lang!=='undefined'&&lang==='ar')?'\u0623\u0646\u0634\u0626 \u0641\u064a ':'Generated ')+now+'</span></div></div>';
@@ -5305,7 +5218,7 @@ var _annPS=null,_annPE=null;
 function _annDefaults(){if(!_annPS){var y=new Date().getFullYear();_annPS=y+'-01-01';_annPE=y+'-12-31';}}
 function _annNat(n){n=(n||'').toString().toLowerCase();if(/goods|supply|سلع|توريد/.test(n))return 'goods';if(/serv|خدم/.test(n))return 'services';return n;}
 function _annIsSupply(c){var sup=0,ser=0;(c.boqItems||[]).forEach(function(l){var v=(parseFloat(l.unitPrice)||0)*(parseFloat(l.qty)||0)||(parseFloat(l.price)||0);var nt=_annNat(l.nature);if(nt==='goods')sup+=v;else if(nt==='services')ser+=v;});if(sup>0||ser>0)return sup>ser;var cn=_annNat(c.nature);if(cn==='goods')return true;if(cn==='services')return false;return cn==='mixed';}
-function _annThrM(){return (typeof S!=='undefined'&&S.entityType==='portfolio')?50:25;}
+function _annThrM(){return (typeof S!=='undefined'&&S.activeProfile==='portfolio')?50:25;}
 function _annInPeriod(c,ps,pe){var d=c.start||c.awardDate;if(!d)return false;var t=new Date(d).getTime();return !isNaN(t)&&t>=ps.getTime()&&t<=pe.getTime();}
 function _annSME(m){return /small\s*&(amp;)?\s*medium|\bsme\b/i.test(m||'');}
 function _annNPP(m){return /national product/i.test(m||'');}
@@ -5630,7 +5543,7 @@ function applyLang(l){
   document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.dataset.i18n,map=(typeof AR!=='undefined')?AR:{};if(l==='ar'&&map[k])el.textContent=map[k];else if(l!=='ar'&&el.dataset.enFixed)el.textContent=el.dataset.enFixed;});
 }
 
-function lcRegimeInfo(){var et=(typeof S!=='undefined'&&S.entityType)||'';var thr=(S.highValueThreshold||25);var pw=(S.priceWeight||70);var lw=(S.lcWeight||30);var exp=et==='gov'?{thr:25,pw:60,lw:40,name:'Government',ar:'جهة حكومية',ic:'🏛️'}:(et==='portfolio'?{thr:50,pw:70,lw:30,name:'Portfolio/PIF',ar:'شركة محفظة',ic:'🏢'}:null);var configured=!!exp;var drift=configured&&(thr!==exp.thr||pw!==exp.pw||lw!==exp.lw);return{et:et,thr:thr,pw:pw,lw:lw,exp:exp,configured:configured,drift:drift,name:exp?exp.name:'',ar:exp?exp.ar:'',ic:exp?exp.ic:'⚙️',source:!configured?'unset':(drift?'manual':'wizard')};}
+function lcRegimeInfo(){var et=(typeof S!=='undefined'&&(S.activeProfile||S.entityType))||'';var thr=(S.highValueThreshold||25);var pw=(S.priceWeight||70);var lw=(S.lcWeight||30);var exp=et==='gov'?{thr:25,pw:60,lw:40,name:'Government',ar:'جهة حكومية',ic:'🏛️'}:(et==='portfolio'?{thr:50,pw:70,lw:30,name:'Portfolio/PIF',ar:'شركة محفظة',ic:'🏢'}:null);var configured=!!exp;var drift=configured&&(thr!==exp.thr||pw!==exp.pw||lw!==exp.lw);return{et:et,thr:thr,pw:pw,lw:lw,exp:exp,configured:configured,drift:drift,name:exp?exp.name:'',ar:exp?exp.ar:'',ic:exp?exp.ic:'⚙️',source:!configured?'unset':(drift?'manual':'wizard')};}
 function lcRegimeBadge(){var i=lcRegimeInfo();var col=!i.configured?'#b91c1c':(i.drift?'#b45309':'var(--accent)');var txt=!i.configured?L('⚠ No regime set','⚠ لم تُحدَّد الجهة'):(i.ic+' '+L(i.name,i.ar)+' · ≥SAR '+i.thr+'M · '+(i.drift?L('manual ⚠','يدوي ⚠'):L('Wizard','المعالج')));var tip=!i.configured?L('Run the Setup Wizard to set regime, threshold and weights','شغّل معالج الإعداد لضبط الجهة والحد والأوزان'):(i.drift?L('Threshold/weights changed from your regime defaults','تغيّرت القيم عن إعدادات جهتك'):'');return '<span title="'+tip+'" style="display:inline-block;font-size:10px;font-weight:700;padding:2px 9px;border-radius:999px;border:1px solid '+col+';color:'+col+';white-space:nowrap;vertical-align:middle">'+txt+'</span>';}
 function renderHVUI(){var i=lcRegimeInfo();var hl=document.getElementById('hvLabel');if(hl)hl.textContent=i.configured?(L('Current','الحالي')+': SAR '+i.thr+'M+  ('+L(i.name,i.ar)+', '+(i.drift?L('manual','يدوي'):L('Wizard','المعالج'))+')'):(L('Current','الحالي')+': SAR '+i.thr+'M+  ('+L('no regime set','لم تُحدَّد الجهة')+')');var b25=document.getElementById('hvBtn25');var b50=document.getElementById('hvBtn50');if(b25)b25.className='btn btn-sm'+(i.thr===25?' btn-p':'');if(b50)b50.className='btn btn-sm'+(i.thr===50?' btn-p':'');var hn=document.getElementById('hvNum');if(hn&&document.activeElement!==hn)hn.value=i.thr;var hd=document.getElementById('hvDesc');if(hd)hd.textContent=L('Set by the Setup Wizard (Gov ≥25M / Portfolio ≥50M); override below.','يُحدَّد عبر معالج الإعداد (حكومي ≥25 مليون / محفظة ≥50 مليون)، ويمكن تجاوزه أدناه.');var hw=document.getElementById('hvWarn');if(hw){if(!i.configured){hw.style.display='';hw.style.color='#b91c1c';hw.textContent=L('⚠ No regime chosen — run the Setup Wizard to set threshold & weights.','⚠ لم يتم اختيار الجهة — شغّل معالج الإعداد لضبط الحد والأوزان.');}else if(i.drift){hw.style.display='';hw.style.color='#b45309';hw.textContent=L('⚠ Threshold/weights changed from your '+i.name+' profile (expected ≥SAR '+i.exp.thr+'M, price/LC '+i.exp.pw+'/'+i.exp.lw+'). Re-run the Setup Wizard to reset.','⚠ تم تغيير الحد/الأوزان عن إعدادات '+i.ar+' (المتوقع ≥'+i.exp.thr+' مليون، السعر/المحتوى '+i.exp.pw+'/'+i.exp.lw+'). أعد تشغيل معالج الإعداد.');}else{hw.style.display='';hw.style.color='#059669';hw.textContent=L('✓ '+i.name+' · ≥SAR '+i.thr+'M · price/LC '+i.pw+'/'+i.lw+' · from Setup Wizard','✓ '+i.ar+' · ≥'+i.thr+' مليون · السعر/المحتوى '+i.pw+'/'+i.lw+' · من معالج الإعداد');}}}
 function setHVThreshold(v){S.highValueThreshold=v;try{if(typeof saveS==='function')saveS();}catch(e){}renderHVUI();}
@@ -5678,7 +5591,7 @@ function newBidFromRFPChoice(){
   curBid={
     id:uid(),title:rfp.title||"",ref:rfp.ref||"",
     mechanism:(typeof canonicalMechName==='function'?(canonicalMechName(rfp.suggestedMech||rfp.mechanism||'')||rfp.suggestedMech||rfp.mechanism||''):(rfp.suggestedMech||rfp.mechanism||"")),rfpId:rfp.id,value:rfp.value||0,duration:rfp.duration||0,
-    endUser:rfp.endUser||"",nature:rfp.nature||"",divisible:!!rfp.divisible,expenditure:rfp.expenditure||"",regime:rfp.regime||(typeof S!=='undefined'&&S.entityType)||'gov',
+    endUser:rfp.endUser||"",nature:rfp.nature||"",divisible:!!rfp.divisible,expenditure:rfp.expenditure||"",regime:(typeof S!=='undefined'&&S.activeProfile)||'gov',
     boqItems:rfp.boqItems?JSON.parse(JSON.stringify(rfp.boqItems)):[],
     rfpBoQ:rfp.boq?JSON.parse(JSON.stringify(rfp.boq)):[],
     mlnpItems:rfp.mlnpItems?JSON.parse(JSON.stringify(rfp.mlnpItems)):[],
@@ -5703,7 +5616,7 @@ function newBidFromRFPChoice(){
   loadBidFormula();
   toast("Loaded from RFP: "+(rfp.ref||rfp.title||""),"ok");
 }
-function newBidManualChoice(){document.getElementById("newBidChoiceModal").remove();curBid={id:uid(),title:"",mechanism:"",rfpId:null,value:0,regime:(typeof S!=='undefined'&&S.entityType)||'gov',bidders:[],status:"draft",winner:"",created:new Date().toISOString().split("T")[0]};curBidders=[];openBidForm();}
+function newBidManualChoice(){document.getElementById("newBidChoiceModal").remove();curBid={id:uid(),title:"",mechanism:"",rfpId:null,value:0,regime:(typeof S!=='undefined'&&S.activeProfile)||'gov',bidders:[],status:"draft",winner:"",created:new Date().toISOString().split("T")[0]};curBidders=[];openBidForm();}
 
 
 // ============================================================
@@ -5756,7 +5669,7 @@ var _LEGACY_PERM_MAP={
   'con.create':'con.edit','con.edit':'con.edit','con.status':'con.edit','con.import':'con.edit','con.export':'con.view','con.pdf':'con.view','con.delete':'con.admin','con.admin':'con.admin',
   'rep.view':'con.view','rep.markreceived':'con.edit','rep.editactuals':'con.edit','rep.duedates':'con.edit','rep.regenerate':'con.edit',
   'ev.view':'con.view','ev.upload':'con.edit','ev.remove':'con.edit','ev.approve':'con.edit','ev.reject':'con.edit','ev.download':'con.view',
-  'recv.view':'con.view','recv.log':'con.edit','recv.verify':'con.edit','recv.approve':'con.edit','recv.exception':'con.edit',
+
   'pen.recalc':'pen.edit','pen.toggle':'pen.edit','pen.letter':'pen.edit','pen.export':'pen.view','pen.rules':'pen.admin',
   'cert.view':'sup.view','cert.create':'sup.view','cert.edit':'sup.view','cert.delete':'sup.view','cert.files':'sup.view',
   'supp.view':'sup.view','supp.create':'sup.view','supp.edit':'sup.view','supp.delete':'sup.view','supp.files':'sup.view',
@@ -6452,12 +6365,12 @@ function _buildPenaltyLetterHTML(c,pens,single){
   var bi=(typeof brandInfo==='function')?brandInfo():{org:(S&&S.org)||'LC Monitor Pro',logo:''};
   var total=pens.reduce(function(s,p){return s+(p.amount||0);},0);
   var now=new Date().toLocaleDateString(AR_MODE?'ar-SA':'en-GB',{day:'2-digit',month:'long',year:'numeric'});
-  var typeName=function(t){var m={Periodic:L('Periodic Local Content Report shortfall / non-submission','نقص/عدم تقديم التقرير الدوري'),FinalSub:L('Final Report non-submission','عدم تقديم التقرير النهائي'),Deviation:L('Local Content achievement deviation','الانحراف عن نسبة المحتوى المحلي'),GoodsDeviation:L('Local-content goods deviation (received Foreign instead of Local)','انحراف توطين السلع (استلام أجنبي بدلاً من وطني)'),NPP:L('National Products Price Preferencing delivery shortfall','نقص توريد المنتجات الوطنية'),MLNP:L('Mandatory List shortfall','نقص القائمة الإلزامية')};return m[t]||t;};
+  var typeName=function(t){var m={Periodic:L('Periodic Local Content Report shortfall / non-submission','نقص/عدم تقديم التقرير الدوري'),FinalSub:L('Final Report non-submission','عدم تقديم التقرير النهائي'),Deviation:L('Local Content achievement deviation','الانحراف عن نسبة المحتوى المحلي'),NPP:L('National Products Price Preferencing delivery shortfall','نقص توريد المنتجات الوطنية'),MLNP:L('Mandatory List shortfall','نقص القائمة الإلزامية')};return m[t]||t;};
   var meth={Deviation:L('Penalty = (Agreed Local Content % − Achieved Local Content %) × Contract Value × '+((S.dev||0.30)*100)+'% deduction factor, applied only when the shortfall exceeds the '+ (S.gap||5) +'% tolerance gap.','الغرامة = (النسبة المتفق عليها − النسبة المحققة) × قيمة العقد × عامل خصم '+((S.dev||0.30)*100)+'٪، وتُطبَّق فقط عند تجاوز النقص حد التسامح البالغ '+(S.gap||5)+'٪.'),
     Periodic:L('Each missing or late periodic Local Content report incurs a fixed deduction as set in the penalty rules.','يترتب على كل تقرير دوري مفقود أو متأخر خصم ثابت وفق قواعد الغرامات.'),
     FinalSub:L('Non-submission of the Final Local Content Report incurs a '+(S.fin||10)+'% deduction of the Local Content value.','يترتب على عدم تقديم التقرير النهائي خصم بنسبة '+(S.fin||10)+'٪ من قيمة المحتوى المحلي.'),
     NPP:L('National Products Price Preferencing shortfall = (Committed − Delivered) × '+((S.npp||0.30)*100)+'% deduction factor.','غرامة المنتجات الوطنية = (الملتزم − المورّد) × عامل خصم '+((S.npp||0.30)*100)+'٪.'),
-    GoodsDeviation:L('Goods deviation = Line item total × (shortfall in Local QTY ÷ Local QTY ordered) × '+((S.goodsDev!=null?S.goodsDev:0.30)*100)+'%, applied when Local goods are received as Foreign without an approved exception letter.','غرامة انحراف السلع = إجمالي البند × (النقص في الكمية الوطنية ÷ الكمية الوطنية المطلوبة) × '+((S.goodsDev!=null?S.goodsDev:0.30)*100)+'٪، وتُطبَّق عند استلام سلع وطنية كأجنبية دون خطاب استثناء معتمد.'),
+
     MLNP:L('Mandatory List shortfall = (Committed − Delivered) × '+((S.ml||0.30)*100)+'% deduction factor.','غرامة القائمة الإلزامية = (الملتزم − المورّد) × عامل خصم '+((S.ml||0.30)*100)+'٪.')};
   var seen={};
   var css='@page{size:A4;margin:16mm}*{box-sizing:border-box;margin:0;padding:0}body{font-family:'+(AR_MODE?"\'IBM Plex Sans Arabic\',":'')+'Segoe UI,Roboto,sans-serif;color:#0b1324;padding:26px;line-height:1.6;'+(AR_MODE?'direction:rtl;':'')+'}'
@@ -6482,7 +6395,7 @@ function _buildPenaltyLetterHTML(c,pens,single){
   if(c._c5){h+='<div class="box" style="border-color:#dc2626;font-weight:700;color:#b91c1c">⛔ '+(c._c5.kind==='blacklist'?L('Subject to blacklist (recidivism)','معرّض للقائمة السوداء (تكرار)'):L('Ban / classification downgrade (Art.38)','الحظر/تخفيض التصنيف (المادة 38)'))+' — '+escSub(c._c5.reason)+'.</div>';}
   // ---- Compliance overview (reports + BoQ line items) ----
   var _sc=null;
-  if(single){_sc={yr:{},fin:false,npp:false,ml:false,li:{}};pens.forEach(function(p){if(p.type==='Periodic'&&p.year!=null)_sc.yr[p.year]=1;else if(p.type==='FinalSub'||p.type==='Deviation')_sc.fin=true;else if(p.type==='NPP')_sc.npp=true;else if(p.type==='MLNP')_sc.ml=true;else if(p.type==='GoodsDeviation'&&p.line!=null)_sc.li[p.line]=1;});}
+  if(single){_sc={yr:{},fin:false,npp:false,ml:false};pens.forEach(function(p){if(p.type==='Periodic'&&p.year!=null)_sc.yr[p.year]=1;else if(p.type==='FinalSub'||p.type==='Deviation')_sc.fin=true;else if(p.type==='NPP')_sc.npp=true;else if(p.type==='MLNP')_sc.ml=true;});}
   var _pc=function(v){return (v==null||isNaN(v))?'—':(+(+v*100).toFixed(1))+'%';};
   var _okC='#15803d',_badC='#b91c1c',_warnC='#b45309';
   var _stat=function(txt,col){return '<span style="color:'+col+';font-weight:700">'+txt+'</span>';};
@@ -6514,20 +6427,7 @@ function _buildPenaltyLetterHTML(c,pens,single){
     h+='<h2>'+SN()+L('Reporting Compliance','امتثال التقارير')+'</h2>';
     h+='<table><thead><tr><th>'+L('Report','التقرير')+'</th><th>'+L('Required / Target','المطلوب / المستهدف')+'</th><th>'+L('Achieved','المحقق')+'</th><th>'+L('Status','الحالة')+'</th></tr></thead><tbody>'+_repRows+'</tbody></table>';
   }
-  var _liRows='',_anyDev=false;
-  (c.boqItems||[]).forEach(function(it,idx){
-    if(it.nature&&!/good/i.test(it.nature))return;
-    if(_sc&&!_sc.li[idx])return;
-    var rl=parseFloat(it.recvLocal)||0,rf=parseFloat(it.recvForeign)||0;
-    var dev=(it.recvDevPenalty||0)>0;if(dev)_anyDev=true;
-    var st=dev?_stat(L('Deviation — penalty ','انحراف — غرامة ')+fSAR(it.recvDevPenalty),_badC):(it.recvApproved?_stat(L('Compliant','مُمتثل'),_okC):_stat(L('Pending receipt','قيد الاستلام'),_warnC));
-    _liRows+='<tr><td>'+(it.desc||(L('Item #','بند #')+(idx+1)))+'</td><td>'+(it.qty||0)+' '+(it.uom||'')+'</td><td>'+(it.origin||'Local')+'</td><td>'+rl+' '+L('Local','محلي')+' + '+rf+' '+L('Foreign','أجنبي')+'</td><td>'+st+'</td></tr>';
-  });
-  if(_liRows){
-    h+='<h2>'+SN()+L('BoQ Line-Item Compliance','امتثال بنود جدول الكميات')+'</h2>';
-    h+='<table><thead><tr><th>'+L('Item','البند')+'</th><th>'+L('Ordered','المطلوب')+'</th><th>'+L('Promised','الموعود')+'</th><th>'+L('Received','المستلم')+'</th><th>'+L('Status','الحالة')+'</th></tr></thead><tbody>'+_liRows+'</tbody></table>';
-    if(_anyDev)h+='<div class="box"><b>'+L('Why a line-item penalty applies: ','سبب غرامة البند: ')+'</b>'+L('When goods promised as Local are received as Foreign — or below the ordered Local quantity — without an approved exception letter, a local-content deviation penalty is charged on that line = line-item total × (Local shortfall ÷ Local ordered) × 30%.','عند استلام سلع موعودة كمحلية بصفة أجنبية — أو أقل من الكمية المحلية المطلوبة — دون خطاب استثناء معتمد، تُحتسب غرامة انحراف للمحتوى المحلي على ذلك البند = إجمالي البند × (النقص المحلي ÷ الكمية المحلية المطلوبة) × ٣٠٪.')+'</div>';
-  }
+
   h+='<h2>'+SN()+L('Calculation Methodology','منهجية الاحتساب')+'</h2>';
   Object.keys(seen).forEach(function(t){if(meth[t])h+='<div class="box"><b>'+typeName(t)+':</b> '+meth[t]+'</div>';});
   h+='<h2>'+SN()+L('Remedy','الإجراء التصحيحي')+'</h2><div class="box">'+L('The contractor is requested to submit the outstanding evidence/reports and remedy the local-content shortfall within the period stipulated in the contract. Penalties are recalculated upon receipt and approval of valid evidence.','يُطلب من المقاول تقديم المستندات/التقارير المتأخرة ومعالجة النقص في المحتوى المحلي خلال المدة المنصوص عليها في العقد. ويُعاد احتساب الغرامات عند استلام واعتماد الإثباتات الصحيحة.')+'</div>';
@@ -6733,7 +6633,7 @@ function impThresholdWarn(c){
 }
 function improvementPlanHTML(c,ctx){
   var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip)return '';
-  var approved=ip.planApproved===true,pending=ip._recvPending&&!approved;
+  var approved=ip.planApproved===true,pending=!approved&&((ip.planTargets||[]).some(function(pt){return pt.pct!=null;}));
   var idp='ipp_'+ctx+'_'+c.id;
   var due=ip.due?('Due '+fD(ip.due)+' (award + 60d)'):'&#9888; awaiting awarding date — set it on the contract';
   var statusTxt=approved?'&#10003; Approved · targets applied':(pending?'Submitted · pending review':'Not submitted');
@@ -6750,8 +6650,7 @@ function improvementPlanHTML(c,ctx){
       +'<input class="fi" type="number" step="0.1" id="'+idp+'_'+i+'" value="'+(pt.pct!=null?pt.pct:'')+'" '+(approved?'disabled':'')+' placeholder="%" style="width:96px;font-size:11px;padding:4px 6px"/></div>';
   });
   h+='</div>';
-  if(ctx==='recv'){h+=recvEvBlock(c,'improvement','Improvement Plan');}
-  else{var evs=((c.evidence||{})['improvement']||[]);h+='<div class="rv-file-actions" style="margin:2px 0 6px;display:flex;gap:5px;align-items:center;flex-wrap:wrap">'+_evStatusBadge(evs)+'<label class="ev-btn" for="'+idp+'_file" style="cursor:pointer">&#128206; Attach Plan</label><input type="file" id="'+idp+'_file" style="display:none" onchange="supReqUpload(this,'+c.id+',\'improvement\')"/></div>';if(typeof _pushedBackPanel==='function')h+=_pushedBackPanel(c,'improvement','supreq');}
+  var evs=((c.evidence||{})['improvement']||[]);h+='<div class="rv-file-actions" style="margin:2px 0 6px;display:flex;gap:5px;align-items:center;flex-wrap:wrap">'+_evStatusBadge(evs)+'<label class="ev-btn" for="'+idp+'_file" style="cursor:pointer">&#128206; Attach Plan</label><input type="file" id="'+idp+'_file" style="display:none" onchange="supReqUpload(this,'+c.id+',\'improvement\')"/></div>';if(typeof _pushedBackPanel==='function')h+=_pushedBackPanel(c,'improvement','supreq');
   if(!approved)h+='<button class="btn btn-p btn-sm" onclick="submitImprovementPlan('+c.id+',\''+ctx+'\')">&#10003; Submit Improvement Plan</button>';
   h+='</div>';return h;
 }
@@ -6762,7 +6661,7 @@ function submitImprovementPlan(cid,ctx){
   var idp='ipp_'+ctx+'_'+cid,any=false;
   (ip.planTargets||[]).forEach(function(pt,i){var el=document.getElementById(idp+'_'+i);if(el){var v=el.value;pt.pct=(v===''||isNaN(parseFloat(v)))?null:parseFloat(v);if(pt.pct!=null)any=true;}});
   if(!any){toast('Enter at least one yearly target %','err');return;}
-  ip.planBy=(ctx==='recv'?'End User':'Supplier');ip._recvPending=true;
+  ip.planBy='Supplier';
   if(typeof saveAll==='function')saveAll();else saveDB();
   if(typeof logAudit==='function')logAudit('receive',ip.planBy+' submitted Improvement Plan targets — pending review · #'+c.num,c.num);
   toast('Improvement Plan submitted — pending review','ok');
@@ -7006,7 +6905,7 @@ function showKPIDrill(key){
     title='Total Penalties';sub=fSAR(pt)+' total exposure';
     var rows='';DB.forEach(function(c){(c.penalties||[]).forEach(function(p){
       var dis=p.type==='Periodic'&&p.year&&_pPenOff();
-      rows+=tRow(['#'+c.num,'<span class="badge '+(p.type==='Periodic'?'bp':p.type==='FinalSub'?'br':(p.type==='Deviation'||p.type==='GoodsDeviation')?'ba':p.type==='NPP'?'bt':'bg')+'">'+(p.type==='GoodsDeviation'?'Goods Dev.':p.type)+'</span>','<span style="color:var(--danger);font-weight:700'+(dis?';text-decoration:line-through':'')+'">'+ fSAR(p.amount)+'</span>',p.reason||'\u2014']);
+      rows+=tRow(['#'+c.num,'<span class="badge '+(p.type==='Periodic'?'bp':p.type==='FinalSub'?'br':p.type==='Deviation'?'ba':p.type==='NPP'?'bt':'bg')+'">'+(p.type)+'</span>','<span style="color:var(--danger);font-weight:700'+(dis?';text-decoration:line-through':'')+'">'+ fSAR(p.amount)+'</span>',p.reason||'\u2014']);
     });});
     body=rows?tWrap(['Contract','Type','Amount','Reason'],rows):'<div class="empty"><p>No penalties</p></div>';
   }
@@ -7072,7 +6971,6 @@ function showKPIDrill(key){
   else if(key==='reviews'){
     title='Pending Reviews';var pend=0;var rows='';
     DB.forEach(function(c){Object.keys(c.evidence||{}).forEach(function(rt){(c.evidence[rt]||[]).forEach(function(f){if((f.status||'pending')==='pending'){pend++;rows+=tRow(['#'+c.num,(typeof evLabel==='function'?evLabel(rt,c):(REPORT_LABELS[rt]||rt)),f.name,'<span class="badge ba">Pending</span>',f.uploaded||'\u2014']);}});});});
-    DB.forEach(function(c){(c.boqItems||[]).forEach(function(it,idx){if(it.nature&&!/good/i.test(it.nature))return;var recd=(parseFloat(it.recvLocal)||0)+(parseFloat(it.recvForeign)||0)>0;if(recd&&!it.recvApproved&&!it._recvRejected){pend++;rows+=tRow(['#'+c.num,'Goods Receipt \u2014 '+(it.desc||('Line Item #'+(idx+1))),(parseFloat(it.recvLocal)||0)+' Local + '+(parseFloat(it.recvForeign)||0)+' Foreign','<span class="badge ba">Pending</span>','\u2014']);}});});
     sub=pend+' items pending approval';
     body=rows?tWrap(['Contract','Report','File','Status','Uploaded'],rows):'<div class="empty"><p>No pending reviews</p></div>';
   }
@@ -9872,225 +9770,20 @@ body.rtl .sd-table thead th,body.rtl .sd-v{text-align:start}
 </script>
 <script>
 /* ===================== RECEIVING (End-User) workspace ===================== */
-function recvEsc(s){return (s==null?'':String(s)).replace(/[&<>"]/g,function(ch){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch];});}
-function recvFindReport(c,key){
-  if(!c||!c.reports)return null;
-  if(key.indexOf('period_')===0){var y=+key.slice(7);return c.reports.find(function(r){return r.type==='period'&&r.year===y;});}
-  return c.reports.find(function(r){return r.type===key;});
-}
-function recvEnsureReports(c){
-  if(!c.reports)c.reports=[];var ch=false;
-  if((c.natProdAmount||0)>0&&!c.reports.some(function(r){return r.type==='npp';})){c.reports.push({type:'npp',actual:null,received:false,penalty:0,due:c.end});ch=true;}
-  if((c.mandatoryListAmount||0)>0&&!c.reports.some(function(r){return r.type==='mlnp';})){c.reports.push({type:'mlnp',actual:null,received:false,penalty:0,due:c.end});ch=true;}
-  if(ch&&typeof saveAll==='function')saveAll();
-}
-/* approval cascade: called by reviewEvidence/setEvStatus when evidence is APPROVED */
+/* recvApplyApproval: stamps receivedDate on report approval + applies improvement plan targets.
+   Receiving module removed; this stub handles evidence-approval side-effects only. */
 function recvApplyApproval(c,key){
   if(!c||typeof key!=='string')return;
-  if(key.indexOf('liexc_')===0){var eidx=+key.slice(6);var eit=c.boqItems&&c.boqItems[eidx];if(eit)eit.excApproved=true;}
-  else if(key.indexOf('li_')===0){var idx=+key.slice(3);var it=c.boqItems&&c.boqItems[idx];if(it)it.recvApproved=true;}
-  else if(key==='improvement'){var ir=recvFindReport(c,key);if(ir){ir.received=true;ir._recvPending=false;if(!ir.receivedDate)ir.receivedDate=new Date().toISOString().split('T')[0];ir.planApproved=true;applyImprovementTargets(c);}}
-  else{var r=recvFindReport(c,key);if(r){r.received=true;r._recvPending=false;if(!r.receivedDate)r.receivedDate=new Date().toISOString().split('T')[0];}} // J1/J2: stamp receipt date so reportHints can render the 10-wd/15-wd review-by badge through the Receiving→Review flow
-  if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);
-}
-// On approval, write the Improvement Plan's Target % into each matching contract report (periodic target / final target), then lock.
-function applyImprovementTargets(c){
-  var ip=(c.reports||[]).find(function(r){return r.type==='improvement';});if(!ip||!ip.planTargets)return;
-  ip.planTargets.forEach(function(pt){
-    if(pt.pct==null||pt.pct==='')return;
-    var rep=(pt.key&&pt.key.indexOf('period_')===0)?(c.reports||[]).find(function(r){return r.type==='period'&&('period_'+r.year)===pt.key;}):(c.reports||[]).find(function(r){return r.type===pt.key;});
-    if(rep)rep.target=(+pt.pct)/100;
-  });
-  if(typeof logAudit==='function')logAudit('approve','Improvement Plan approved — yearly LC targets applied to #'+c.num,c.num);
-}
-function _recvWho(){return (typeof CURRENT_USER!=='undefined'&&CURRENT_USER&&CURRENT_USER.name)?CURRENT_USER.name:'End User';}
-function recvEvBlock(c,key,label){
-  var evs=(c.evidence||{})[key]||[];
-  var h='<div style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px">';
-  evs.forEach(function(f,fi){
-    var st=f.status||'pending';
-    var stc=st==='approved'?'var(--accent3)':st==='rejected'?'var(--danger)':st==='pushed_back'?'var(--info)':'var(--warn)';
-    h+='<span style="display:inline-flex;align-items:center;gap:5px;font-size:9px;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:3px 7px">';
-    h+='<b style="font-weight:600">'+recvEsc(f.name)+'</b>';
-    h+='<span style="color:var(--text3)">'+recvEsc(f.uploadedBy||'')+'</span>';
-    h+='<span style="color:'+stc+';font-weight:700">'+(f.endUserVerified?'verified · ':'')+(st==='pushed_back'?'pushed back':st)+'</span>';
-    if(f.dataUrl)h+='<button class="mb" style="font-size:8px;padding:1px 5px" onclick="viewEvFile('+c.id+',\''+key+'\','+fi+')">eye</button>'.replace('eye','&#128065;');
-    if(f.uploadedBy==='Supplier'&&!f.endUserVerified&&st==='pending')h+='<button class="mb" style="font-size:8px;padding:1px 5px;background:var(--accent3);color:#fff;border-color:var(--accent3)" onclick="verifyEvidence('+c.id+',\''+key+'\','+fi+')" title="Verify supplier evidence">&#10003; Verify</button>';
-    h+='</span>';
-  });
-  h+='<label class="ev-add-btn" style="cursor:pointer;font-size:9px" for="recvF_'+c.id+'_'+key+'">&#128206; Attach '+recvEsc(label||'')+'</label><input type="file" id="recvF_'+c.id+'_'+key+'" style="display:none" onchange="recvUpload(this,'+c.id+',\''+key+'\')"/>';
-  h+='</div>';
-  if(typeof _pushedBackPanel==='function')h+=_pushedBackPanel(c,key,'recv');
-  return h;
-}
-function renderReceiving(){
-  var euSel=document.getElementById('recvEU');
-  if(euSel&&!euSel.dataset.init){euSel.innerHTML='<option value="">Select End-User…</option>'+((typeof ENDUSERS!=='undefined'?ENDUSERS:[]).map(function(e){return '<option value="'+recvEsc(e.name)+'">'+recvEsc(e.name)+(e.frozen?' &#128274;':'')+'</option>';}).join(''));euSel.dataset.init='1';}
-  recvPopulateContracts();
-}
-function recvOnEU(){var cs=document.getElementById('recvContract');if(cs)cs.value='';recvPopulateContracts();}
-function recvPopulateContracts(){
-  var eu=(document.getElementById('recvEU')||{}).value||'';
-  var q=((document.getElementById('recvSearch')||{}).value||'').toLowerCase().trim();
-  var cSel=document.getElementById('recvContract');if(!cSel)return;
-  var list=DB.filter(function(c){return !eu||c.endUser===eu;});
-  if(q)list=list.filter(function(c){return ((c.num||'')+' '+(c.name||'')).toLowerCase().indexOf(q)>=0;});
-  var cur=cSel.value;
-  cSel.innerHTML='<option value="">'+(eu?(list.length?'Select a contract…':'No contracts for this end-user'):'— select an end-user first —')+'</option>'+list.map(function(c){return '<option value="'+c.id+'">#'+c.num+' — '+recvEsc((c.name||'').substring(0,45))+'</option>';}).join('');
-  if(cur&&list.some(function(c){return String(c.id)===String(cur);}))cSel.value=cur;else cSel.value='';
-  recvRenderContract();
-}
-function recvRenderContract(){
-  var el=document.getElementById('recvContent');if(!el)return;
-  var cid=(document.getElementById('recvContract')||{}).value;
-  if(!cid){el.innerHTML='<div class="empty"><div class="ei">&#128230;</div><p>Select an end-user and a contract to view items due to receive.</p></div>';return;}
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c){el.innerHTML='';return;}
-  recvEnsureReports(c);
-  var h='';
-  h+='<div class="card" style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">';
-  h+='<div><div style="font-size:14px;font-weight:800">#'+c.num+' — '+recvEsc(c.name||'')+'</div><div style="font-size:11px;color:var(--text3)">'+recvEsc(c.endUser||'')+' · '+recvEsc(c.mechanism||'')+' · Ends '+(typeof fD==='function'?fD(c.end):(c.end||''))+'</div></div>';
-  h+='<div style="text-align:right"><div style="font-size:16px;font-weight:800">'+fSAR(c.amount)+'</div><div style="font-size:10px;color:var(--text3)">Contract value</div></div>';
-  h+='</div></div>';
-  /* Due reports */
-  var due=(c.reports||[]).filter(function(r){return r.received!==true;}).sort(function(a,b){return (a.type==='improvement'?0:1)-(b.type==='improvement'?0:1);});
-  h+='<div class="card" style="margin-bottom:12px"><div class="card-hd"><div class="card-title">&#128203; Due Reports to Receive</div><span class="badge '+(due.length?'ba':'bg')+'">'+due.length+' due</span></div>';
-  if(!due.length)h+='<div style="font-size:11px;color:var(--text3)">All reports received &#10003;</div>';
-  else due.forEach(function(r){
-    if(r.type==='improvement'){h+=improvementPlanHTML(c,'recv');return;}
-    var key=r.type==='period'?'period_'+r.year:r.type;
-    var lbl=(typeof evLabel==='function'?evLabel(key,c):key);
-    var isAmt=(r.type==='npp'||r.type==='mlnp');
-    var committed=r.type==='npp'?(c.natProdAmount||0):r.type==='mlnp'?(c.mandatoryListAmount||0):0;
-    var curVal=isAmt?(r.actual!=null?r.actual:''):(r.type==='final'?(r.achieved!=null?+(r.achieved*100).toFixed(2):''):(r.actual!=null?+(r.actual*100).toFixed(2):''));
-    h+='<div style="padding:9px 11px;margin-bottom:7px;border:1px solid var(--border);border-radius:10px">';
-    h+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center">';
-    h+='<div><span style="font-weight:700;font-size:12px">&#128203; '+lbl+'</span><div style="font-size:10px;color:var(--text3)">'+(r.due?'Due '+(typeof fD==='function'?fD(r.due):r.due):'')+(r.target!=null?' · Target '+pct(r.target):'')+(committed?' · Committed '+fSAR(committed):'')+(r._recvPending?' · <span style="color:var(--warn);font-weight:700">Received — pending review</span>':'')+'</div></div>';
-    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
-    h+='<input class="fi" type="number" step="0.1" id="recvVal_'+key+'" value="'+curVal+'" placeholder="'+(isAmt?'SAR delivered':'Achieved %')+'" style="width:140px;font-size:11px;padding:5px 8px"/>';
-    h+='<span style="font-size:10px;color:var(--text3)">'+(isAmt?'SAR':'%')+'</span>';
-    if(!isAmt&&c.agreedPct!=null)h+='<span title="Agreed LC % from the contract" style="font-size:10px;color:var(--text2);font-weight:700;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:4px 9px">Agreed '+pct(c.agreedPct)+'</span>';
-    h+='<button class="btn btn-p btn-sm" onclick="recvReport('+c.id+',\''+key+'\')">&#10003; Receive</button>';
-    h+='</div></div>'+recvEvBlock(c,key)+'</div>';
-  });
-  h+='</div>';
-  /* Goods line items */
-  var goods=(c.boqItems||[]).map(function(it,idx){return {it:it,idx:idx};}).filter(function(o){return !o.it.nature||/good/i.test(o.it.nature);});
-  if(goods.length){
-    h+='<div class="card" style="margin-bottom:12px"><div class="card-hd"><div class="card-title">&#128230; Goods — Received Quantities</div><span class="badge bb">'+goods.length+' line(s)</span></div>';
-    goods.forEach(function(o){
-      var it=o.it,idx=o.idx,key='li_'+idx;
-      var rl=it.recvLocal!=null?it.recvLocal:'';var rf=it.recvForeign!=null?it.recvForeign:'';
-      var qty=parseFloat(it.qty)||0;
-      var rln=parseFloat(it.recvLocal)||0,rfn=parseFloat(it.recvForeign)||0;
-      var totRecv=rln+rfn;
-      var done=totRecv>0&&totRecv>=qty;
-      var promisedLocal=(it.origin==='Local');
-      var shortfall=qty-rln;
-      var needExc=promisedLocal&&rfn>0&&shortfall>0;
-      var excList=(c.evidence||{})['liexc_'+idx]||[];
-      var excApproved=excList.some(function(f){return f.status==='approved';});
-      var excPending=excList.some(function(f){return (f.status||'pending')==='pending';});
-      h+='<div style="padding:9px 11px;margin-bottom:7px;border:1px solid var(--border);border-radius:10px">';
-      h+='<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px">';
-      h+='<div><span style="font-weight:700;font-size:12px">&#128230; '+recvEsc(it.desc||('Item #'+(idx+1)))+'</span><div style="font-size:10px;color:var(--text3)">Ordered <b style="color:var(--text);font-weight:800">'+(it.qty||0)+'</b> '+recvEsc(it.uom||'')+(it.recvOrigin?' · Received as '+recvEsc(it.recvOrigin):'')+(it.recvApproved?' · <span style="color:var(--accent3);font-weight:700">Approved</span>':'')+'</div></div>';
-      h+='<div style="font-size:10px;font-weight:700;color:'+(done?'var(--accent3)':'var(--text3)')+'">Received '+totRecv+' / '+(it.qty||0)+'</div>';
-      h+='</div>';
-      h+='<div style="font-size:11px;margin-bottom:7px;padding:5px 9px;border-radius:7px;background:'+(promisedLocal?'rgba(16,185,129,.12)':'rgba(245,158,11,.12)')+';border:1px solid '+(promisedLocal?'var(--accent3)':'var(--warn)')+'">&#9878;&#65039; Per the winning evaluation, this product must be supplied as <b style="color:'+(promisedLocal?'var(--accent3)':'var(--warn)')+'">'+(promisedLocal?'LOCAL (national product)':'FOREIGN')+'</b></div>';
-      h+='<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:end">';
-      h+='<div class="fg" style="margin:0"><label class="fl2" style="font-size:9px">Received Local (QTY)</label><input class="fi" type="number" min="0" id="recvLoc_'+idx+'" value="'+rl+'" placeholder="0" style="width:130px;font-size:11px;padding:5px 8px"/></div>';
-      h+='<div class="fg" style="margin:0"><label class="fl2" style="font-size:9px">Received Foreign (QTY)</label><input class="fi" type="number" min="0" id="recvFor_'+idx+'" value="'+rf+'" placeholder="0" style="width:130px;font-size:11px;padding:5px 8px"/></div>';
-      h+='<button class="btn btn-p btn-sm" onclick="recvLine('+c.id+','+idx+')">&#10003; Receive Line</button>';
-      h+='</div>';
-      h+='<div style="font-size:10px;font-weight:700;margin:9px 0 0">&#128206; National Products Evidences <span style="color:var(--danger)">(Mandatory)</span> · <span dir="rtl">اثبات وطنية المنتج</span></div>';
-      h+=recvEvBlock(c,key,'National Products Evidence');
-      if(needExc){
-        var pen=Math.round((parseFloat(it.unitPrice)||0)*qty*(shortfall/qty)*0.30);
-        var showExc=it._wantExc||excList.length;
-        h+='<div style="margin-top:8px;padding:7px 9px;border-radius:7px;background:rgba(245,158,11,.10);border:1px dashed var(--warn)">';
-        h+='<label style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;cursor:pointer"><input type="checkbox" '+(showExc?'checked':'')+' onchange="recvToggleExc('+c.id+','+idx+',this.checked)"/> Is there an exception letter?</label>';
-        if(showExc){
-          h+='<div style="font-size:10px;color:var(--text3);margin-top:5px">Attach the exception letter — it follows the same approval cycle (End-User → Reports Review → reflected on the contract).</div>';
-          h+=recvEvBlock(c,'liexc_'+idx,'Exception Letter');
-          h+='<div style="font-size:10px;margin-top:6px;font-weight:700;color:'+(excApproved?'var(--accent3)':excPending?'var(--warn)':'var(--danger)')+'">'+(excApproved?'&#10003; Exception approved — deviation penalty waived':excPending?'&#8987; Exception pending review — penalty held':'&#9888;&#65039; No approved exception — deviation penalty '+fSAR(pen)+' will apply')+'</div>';
-        } else {
-          h+='<div style="font-size:10px;margin-top:6px;font-weight:700;color:var(--danger)">&#9888;&#65039; Without an approved exception letter, a deviation penalty of '+fSAR(pen)+' applies.</div>';
-        }
-        h+='</div>';
-      }
-      h+='</div>';
-    });
-    h+='</div>';
+  if(key==='improvement'){
+    var ir=(c.reports||[]).find(function(r){return r.type==='improvement';});
+    if(ir){ir.received=true;if(!ir.receivedDate)ir.receivedDate=new Date().toISOString().split('T')[0];ir.planApproved=true;applyImprovementTargets(c);}
+  }else if(key.indexOf('li_')!==0&&key.indexOf('liexc_')!==0){
+    var r=(c.reports||[]).find(function(rr){return rr.type===key;});
+    if(r){r.received=true;if(!r.receivedDate)r.receivedDate=new Date().toISOString().split('T')[0];}
   }
-  h+='<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><button class="btn btn-a" onclick="recvSubmit('+c.id+')">&#128233; Submit to Reports Review</button></div>';
-  el.innerHTML=h;
-}
-function recvReport(cid,key){
-  if(typeof requirePerm==='function'&&!requirePerm('recv.log'))return;
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c)return;
-  var r=recvFindReport(c,key);if(!r){toast('Report not found','err');return;}
-  var raw=(document.getElementById('recvVal_'+key)||{}).value;var v=parseFloat(raw);
-  if(isNaN(v)){toast('Enter the achieved % or delivered amount first','err');return;}
-  var disp;
-  if(r.type==='period'){r.actual=v/100;disp=v+'%';}
-  else if(r.type==='final'){r.achieved=v/100;disp=v+'%';}
-  else{r.actual=v;disp=fSAR(v);}
-  r._recvPending=true;r._recvBy=_recvWho();r._recvAt=new Date().toLocaleDateString('en-GB');
-  if(typeof saveAll==='function')saveAll();
-  if(typeof logAudit==='function')logAudit('receive','End-User received '+(typeof evLabel==='function'?evLabel(key,c):key)+' ('+disp+') — pending review · #'+c.num,c.num);
-  toast('Recorded ('+disp+'). Attach evidence — it goes to Reports Review for approval.','ok');
-  recvRenderContract();if(typeof updateBadges==='function')updateBadges();
-}
-function recvLine(cid,idx){
-  if(typeof requirePerm==='function'&&!requirePerm('recv.log'))return;
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c||!c.boqItems||!c.boqItems[idx])return;
-  var it=c.boqItems[idx];
-  var loc=parseFloat((document.getElementById('recvLoc_'+idx)||{}).value)||0;
-  var fo=parseFloat((document.getElementById('recvFor_'+idx)||{}).value)||0;
-  if(loc<=0&&fo<=0){toast('Enter a received quantity (Local and/or Foreign)','err');return;}
-  it.recvLocal=loc;it.recvForeign=fo;it.recvQty=loc+fo;it.recvOrigin=(loc>0&&fo>0)?'Mixed':(fo>0?'Foreign':'Local');
-  it._recvBy=_recvWho();it._recvAt=new Date().toLocaleDateString('en-GB');
-  it.recvApproved=false;it._recvRejected=false;/* new receipt → back to pending Reports Review */
   if(typeof recalcContractPenalties==='function')recalcContractPenalties(c);
-  if(typeof saveAll==='function')saveAll();
-  if(typeof logAudit==='function')logAudit('receive','End-User received line "'+(it.desc||('#'+(idx+1)))+'": '+loc+' Local + '+fo+' Foreign of '+(it.qty||0)+' '+(it.uom||'')+' ('+it.recvOrigin+') · #'+c.num,c.num);
-  toast('Line receipt recorded ('+it.recvOrigin+'). Attach evidence for review.','ok');
-  recvRenderContract();
 }
-function recvUpload(inp,cid,key){
-  if(typeof requirePerm==='function'&&!requirePerm('recv.log'))return;
-  var f=inp.files[0];if(!f)return;
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c)return;
-  var rd=new FileReader();
-  rd.onload=function(ev){
-    if(!c.evidence)c.evidence={};if(!c.evidence[key])c.evidence[key]=[];
-    c.evidence[key].push({name:f.name,size:fSize(f.size),dataUrl:ev.target.result,mimeType:f.type,uploaded:new Date().toLocaleDateString('en-GB'),status:'pending',uploadedBy:'End User'});
-    if(typeof saveAll==='function')saveAll();
-    if(typeof logAudit==='function')logAudit('upload','End-User evidence: '+f.name+' → '+(typeof evLabel==='function'?evLabel(key,c):key)+' · #'+c.num,c.num);
-    toast('Evidence attached — pending Reports Review','ok');recvRenderContract();if(typeof updateBadges==='function')updateBadges();
-  };
-  rd.readAsDataURL(f);inp.value='';
-}
-function verifyEvidence(cid,key,fi){
-  if(typeof requirePerm==='function'&&!requirePerm('recv.verify'))return;
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c||!(c.evidence||{})[key]||!c.evidence[key][fi])return;
-  var f=c.evidence[key][fi];f.endUserVerified=true;f.verifiedBy=_recvWho();f.verifiedAt=new Date().toLocaleDateString('en-GB');
-  if(typeof saveAll==='function')saveAll();
-  if(typeof logAudit==='function')logAudit('verify','End-User verified evidence: '+f.name+' → '+(typeof evLabel==='function'?evLabel(key,c):key)+' · #'+c.num,c.num);
-  toast('Evidence verified — pending Reports Review approval','ok');recvRenderContract();if(typeof updateBadges==='function')updateBadges();
-}
-function recvToggleExc(cid,idx,checked){
-  if(typeof requirePerm==='function'&&!requirePerm('recv.log'))return;
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c||!c.boqItems||!c.boqItems[idx])return;
-  c.boqItems[idx]._wantExc=!!checked;
-  if(typeof saveAll==='function')saveAll();
-  recvRenderContract();
-}
-function recvSubmit(cid){
-  var c=DB.find(function(x){return String(x.id)===String(cid);});if(!c)return;
-  if(typeof logAudit==='function')logAudit('submit','End-User submitted receiving for #'+c.num+' to Reports Review',c.num);
-  toast('Submitted to Reports Review. The higher authority approves it to reflect on the contract.','ok');
-}
-['renderReceiving','recvOnEU','recvPopulateContracts','recvRenderContract','recvReport','recvLine','recvUpload','verifyEvidence','recvSubmit','recvApplyApproval','recvFindReport','recvEnsureReports','recvToggleExc','recvEvBlock'].forEach(function(n){try{window[n]=eval(n);}catch(e){}});
+
 </script>
 <script>
 /* ============================================================
@@ -10133,7 +9826,7 @@ function a1OpenWizard(){
       '<div class="fg"><label class="fl2">'+L('End-User','الجهة المستفيدة')+'</label><select class="fsel2" id="a1EU"><option value="">'+L('Select end-user…','اختر الجهة…')+'</option></select></div>'+
       '<div class="fg"><label class="fl2">'+L('Estimated Value (SAR)','القيمة التقديرية (ر.س)')+' <span class="req">*</span></label><input class="fi" id="a1Value" type="number" placeholder="0" oninput="a1Identify()"></div>'+
       '<div class="fg"><label class="fl2">'+L('Nature of Procurement','طبيعة المشتريات')+' <span class="req">*</span></label><select class="fsel2" id="a1Nature" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="services">'+L('Pure Services','خدمات بحتة')+'</option><option value="supply">'+L('Pure Supply (Goods)','توريد بحت (سلع)')+'</option><option value="mixed">'+L('Mixed (Services + Supply)','مختلط (خدمات + توريد)')+'</option></select></div>'+
-      '<div class="fg"><label class="fl2">'+L('Regime','الجهة')+'</label><select class="fsel2" id="a1Regime" onchange="a1Identify()"><option value="gov"'+(((typeof S!=='undefined'&&S.entityType)||'gov')==='gov'?' selected':'')+'>'+L('Government (≥SAR 25M)','حكومي (≥25 مليون)')+'</option><option value="portfolio"'+((typeof S!=='undefined'&&S.entityType==='portfolio')?' selected':'')+'>'+L('Portfolio / PIF (≥SAR 50M)','محفظة (≥50 مليون)')+'</option></select></div>'+
+      '<div class="fg"><label class="fl2">'+L('Regime','الجهة')+'</label><select class="fsel2" id="a1Regime" onchange="a1Identify()"><option value="gov"'+(((typeof S!=='undefined'&&(S.activeProfile||S.entityType))||'gov')==='gov'?' selected':'')+'>'+L('Government (≥SAR 25M)','حكومي (≥25 مليون)')+'</option><option value="portfolio"'+((typeof S!=='undefined'&&(S.activeProfile||S.entityType)==='portfolio')?' selected':'')+'>'+L('Portfolio / PIF (≥SAR 50M)','محفظة (≥50 مليون)')+'</option></select></div>'+
       '<div class="fg" id="a1CapexWrap" style="display:none"><label class="fl2">'+L('Expenditure Type','نوع الإنفاق')+'</label><select class="fsel2" id="a1Capex" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="capex">'+L('Capex (Project Level)','رأسمالي (مستوى المشروع)')+'</option><option value="opex">'+L('Opex (Company Level)','تشغيلي (مستوى الشركة)')+'</option></select></div>'+
       '<div class="fg" id="a1ActivityWrap" style="display:none"><label class="fl2">'+L('Activity Type','نوع النشاط')+' <span style="font-size:9px;color:var(--text3)">'+L('(Min-LC exemption)','(إعفاء الحد الأدنى)')+'</span></label><select class="fsel2" id="a1Activity" onchange="a1Identify()"><option value="">'+L('None of the listed activities','لا شيء من الأنشطة المدرجة')+'</option>'+ACT_EXEMPT.map(function(a){return '<option value="'+a[0]+'">'+L(a[1],a[2])+'</option>';}).join('')+'</select></div>'+
     '</div>'+
@@ -10168,7 +9861,7 @@ function a1HandleThrFile(inp){
 function a1UpdateThrBox(){
   var box=document.getElementById('a1ThresholdBox');if(!box)return;
   var isThr=_a1Pick&&typeof mechClass==='function'&&mechClass(_a1Pick).base==='threshold';
-  var _rg=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov';
+  var _rg=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.activeProfile)||'gov';
   var _dmOk=(typeof window._docMinAllowed!=='function')||window._docMinAllowed(_rg); // I5: hide the documented-minimum box for Portfolio unless the Settings toggle is ON
   box.style.display=(isThr&&_dmOk)?'block':'none';
 }
@@ -10231,11 +9924,11 @@ var ACT_EXEMPT=[
  ['customs','Customs clearance','التخليص الجمركي'],
  ['fishing','Fishing (except catering)','الصيد (عدا الإعاشة)']
 ]; // LCGPA circular 9/46214/2, eff. 2025/05/28 — exempt from the Minimum-Required-LC mechanism
-function _exemptActive(){return (typeof S==='undefined'||!S.entityType||S.entityType==='gov')||(typeof S!=='undefined'&&S.exemptForPortfolio===true);}
+function _exemptActive(){return (typeof S==='undefined'||!S.activeProfile||S.activeProfile==='gov')||(typeof S!=='undefined'&&S.exemptForPortfolio===true);}
 function a1Identify(){
   var n=(document.getElementById('a1Nature')||{}).value||'';
   var v=parseFloat((document.getElementById('a1Value')||{}).value)||0;
-  var _a1rg=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov';var thr=_regimeThrM(_a1rg)*1e6; var isH=v>=thr;
+  var _a1rg=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.activeProfile)||'gov';var thr=_regimeThrM(_a1rg)*1e6; var isH=v>=thr;
   var cx=(document.getElementById('a1Capex')||{}).value||'';
   var res=document.getElementById('a1Result'); if(!res)return;
   var act=(document.getElementById('a1Activity')||{}).value||'';
@@ -10278,7 +9971,7 @@ function a1Save(){
   if(_exemptActive()&&act&&mechClass(_a1Pick).base==='threshold'){toast(L('This activity is exempted from the Minimum-Required-LC mechanism — choose another mechanism.','هذا النشاط معفى من آلية الحد الأدنى للمحتوى المحلي — اختر آلية أخرى.'),'err');return;}
   var rec=num?RFPS.find(function(r){return (r.ref||'').trim().toLowerCase()===num.toLowerCase();}):null;
   if(!rec){rec={id:uid(),created:new Date().toISOString().split('T')[0],boq:[]};RFPS.push(rec);}
-  rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.activityType=act;rec.regime=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov';rec.suggestedMech=_a1Pick;rec.mechAuto=(_a1Mechs.length<=1);rec.status='ready';rec.processedAt=new Date().toISOString();/* v57 CHANGE A/B — Mechanism Identifier completion → 'ready' (was 'processed') */
+  rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.activityType=act;rec.regime=(typeof S!=='undefined'&&S.activeProfile)||'gov';rec.suggestedMech=_a1Pick;rec.mechAuto=(_a1Mechs.length<=1);rec.status='ready';rec.processedAt=new Date().toISOString();/* v57 CHANGE A/B — Mechanism Identifier completion → 'ready' (was 'processed') */
   // #threshold — store LC min baseline/target + excel when the mechanism is a threshold type
   var _isThr=(typeof mechClass==='function'&&mechClass(_a1Pick).base==='threshold');
   if(_isThr){
@@ -10301,7 +9994,7 @@ function a1Edit(id){
   a1OpenWizard();
   document.getElementById('a1Name').value=r.title||'';document.getElementById('a1Num').value=r.ref||'';
   _v57EU(document.getElementById('a1EU'));document.getElementById('a1EU').value=r.endUser||'';
-  document.getElementById('a1Value').value=r.value||'';document.getElementById('a1Nature').value=r.nature||'';var _aaE=document.getElementById('a1Activity');if(_aaE)_aaE.value=r.activityType||'';var _arE=document.getElementById('a1Regime');if(_arE)_arE.value=r.regime||(typeof S!=='undefined'&&S.entityType)||'gov';
+  document.getElementById('a1Value').value=r.value||'';document.getElementById('a1Nature').value=r.nature||'';var _aaE=document.getElementById('a1Activity');if(_aaE)_aaE.value=r.activityType||'';var _arE=document.getElementById('a1Regime');if(_arE)_arE.value=r.regime||(typeof S!=='undefined'&&S.activeProfile)||'gov';
   a1Identify();var cx=document.getElementById('a1Capex');if(cx&&r.expenditure){cx.value=r.expenditure;a1Identify();}
   // repopulate threshold fields if this RFP's mechanism is a threshold type
   if(typeof mechClass==='function'&&mechClass(r.suggestedMech||_a1Pick||'').base==='threshold'){
@@ -11464,7 +11157,7 @@ window.c1AddManual=c1AddManual;window.c1ImportAward=c1ImportAward;
        {key:'contracts',icon:'📄',en:'Contracts & Monitoring',ar:'العقود والمتابعة',enD:'The system of record for active Local-Content contracts.',arD:'السجل الرسمي لعقود المحتوى المحلي النشطة.'},
        {key:'penalties',icon:'⚠️',en:'Penalties',ar:'الغرامات',enD:'Penalty exposure, breakdowns and the penalty-letter workflow.',arD:'التعرض للغرامات وتفاصيلها وسير إشعار الغرامة.'},
        {key:'review',icon:'🗂️',en:'Reports Review',ar:'مراجعة التقارير',enD:'Approve or push back evidence and reports received from end-users.',arD:'اعتماد أو إعادة الإثباتات والتقارير الواردة من الجهات.'},
-       {key:'receiving',icon:'📦',en:'Receiving',ar:'الاستلام',enD:'Receive due reports and goods deliveries with national-product evidence.',arD:'استلام التقارير المستحقة وتسليمات السلع مع إثبات المنتج الوطني.'}
+
      ]},
     {icon:'🏭',en:'Suppliers',ar:'الموردون',
      enD:'Read-only performance dashboard across all suppliers — LC certification, submissions, evaluations, contract-report compliance and blacklist status.',
@@ -11659,7 +11352,7 @@ body.rtl .swz-summary{text-align:right;}
       +'<ul class="swz-opt-list">'+list.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
   }
   function stepChoose(){
-    var cur=(typeof S!=='undefined'&&S.entityType)||'';
+    var cur=(typeof S!=='undefined'&&(S.activeProfile||S.entityType))||'';
     host.innerHTML=topBar()
       +'<div class="swz-eyebrow">'+L('1-Time Setup','إعداد لمرة واحدة')+'</div>'
       +'<h1 class="swz-title">'+L('Please choose your entity type','يرجى اختيار نوع جهتك')+'</h1>'
@@ -11685,8 +11378,8 @@ body.rtl .swz-summary{text-align:right;}
   function applyProfile(type,penaltyYes){
     if(typeof S==='undefined')return;
     S.targetSplit=50; S.baselineSplit=50;
-    if(type==='gov'){ S.priceWeight=60; S.lcWeight=40; S.listedBonus=true;  S.listedBonusPct=5; S.highValueThreshold=25; S.periodicPenOn=false;        S.entityType='gov'; }
-    else            { S.priceWeight=70; S.lcWeight=30; S.listedBonus=false; S.listedBonusPct=0; S.highValueThreshold=50; S.periodicPenOn=!!penaltyYes; S.entityType='portfolio'; }
+    if(type==='gov'){ S.priceWeight=60; S.lcWeight=40; S.listedBonus=true;  S.listedBonusPct=5; S.highValueThreshold=25; S.periodicPenOn=false;        S.entityType='gov'; S.activeProfile='gov'; if(!S.gov)S.gov={graceLCMonths:7,graceNPPDays:30}; }
+    else            { S.priceWeight=70; S.lcWeight=30; S.listedBonus=false; S.listedBonusPct=0; S.highValueThreshold=50; S.periodicPenOn=!!penaltyYes; S.entityType='portfolio'; S.activeProfile='portfolio'; if(!S.portfolio)S.portfolio={graceLCMonths:7,graceNPPDays:30,periodicCadence:false,exempt:false,docMin:false,capsOn:false,capPerFine:10,capAgg:20,periodicPenOn:false}; if(S.portfolio)S.portfolio.periodicPenOn=!!penaltyYes; }
     try{if(typeof saveS==='function')saveS();}catch(e){}
     try{if(typeof renderBidEvalSettings==='function')renderBidEvalSettings();}catch(e){}
     try{if(typeof renderPPENGrid==='function')renderPPENGrid();}catch(e){}
