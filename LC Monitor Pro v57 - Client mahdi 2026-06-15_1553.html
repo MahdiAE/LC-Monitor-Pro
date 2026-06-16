@@ -1677,11 +1677,11 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px">
         <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs)">
           <label class="sw-toggle"><input type="checkbox" id="rfpMinBaselineOn" onchange="toggleThresholdField('baseline')"><span class="sw-slider"></span></label>
-          <div style="flex:1"><label class="fl2" style="margin:0">Min Baseline Required %</label><input class="fi" id="rfpMinBaseline" type="number" step="0.1" placeholder="e.g. 20" value="0" style="width:100%;font-size:11px;padding:5px 8px;margin-top:4px;background:#f0f0f0;cursor:not-allowed" disabled></div>
+          <div style="flex:1"><label class="fl2" style="margin:0">Documented Minimum Baseline % (Art.25)</label><input class="fi" id="rfpMinBaseline" type="number" step="0.1" placeholder="e.g. 20" value="0" style="width:100%;font-size:11px;padding:5px 8px;margin-top:4px;background:#f0f0f0;cursor:not-allowed" disabled></div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs)">
           <label class="sw-toggle"><input type="checkbox" id="rfpMinTargetOn" onchange="toggleThresholdField('target')"><span class="sw-slider"></span></label>
-          <div style="flex:1"><label class="fl2" style="margin:0">Min Target LC Required %</label><input class="fi" id="rfpMinTarget" type="number" step="0.1" placeholder="e.g. 30" value="0" style="width:100%;font-size:11px;padding:5px 8px;margin-top:4px;background:#f0f0f0;cursor:not-allowed" disabled></div>
+          <div style="flex:1"><label class="fl2" style="margin:0">Documented Minimum Target LC % (Art.25)</label><input class="fi" id="rfpMinTarget" type="number" step="0.1" placeholder="e.g. 30" value="0" style="width:100%;font-size:11px;padding:5px 8px;margin-top:4px;background:#f0f0f0;cursor:not-allowed" disabled></div>
         </div>
       </div>
       <div style="margin-top:10px"><label class="fl2">📎 Threshold Excel Attachment</label>
@@ -1821,6 +1821,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div class="fg2">
         <div class="fg"><label class="fl2">Contract # <span class="req">*</span></label><input class="fi" id="fNum" type="text" required="" placeholder="e.g. 2024-001"></div>
         <div class="fg"><label class="fl2">End-User <span class="req">*</span></label><select class="fsel2" id="fEU" required=""><option value="">Select end-user…</option><option value="Ministry of Environment">Ministry of Environment</option><option value="Ministry of Defense">Ministry of Defense</option><option value="Ministry of Interior">Ministry of Interior</option><option value="ARAMCO">ARAMCO</option><option value="SABIC">SABIC</option><option value="NEOM">NEOM</option></select></div>
+        <div class="fg"><label class="fl2">Regime</label><select class="fsel2" id="fRegime"><option value="gov">Government (≥SAR 25M)</option><option value="portfolio">Portfolio / PIF (≥SAR 50M)</option></select></div>
         <div class="fg full"><label class="fl2">Contract Name <span class="req">*</span></label><input class="fi" id="fName" type="text" required=""></div>
         <div class="fg"><label class="fl2">Contractor</label><input class="fi" id="fCont" type="text"></div>
         <div class="fg"><label class="fl2">Contractor Contact Person</label><input class="fi" id="fContact" type="text" placeholder="Full name"></div>
@@ -2075,7 +2076,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div class="pr"><span class="pr-l">X% — Target Weight in LC Score</span><div class="pr-r"><input class="pr-in" id="sTargetSplit" type="number" step="1" value="50"><span class="pr-u">%</span></div></div>
         <div class="pr"><span class="pr-l">Y% — Baseline Weight in LC Score</span><div class="pr-r"><input class="pr-in" id="sBaselineSplit" type="number" step="1" value="50"><span class="pr-u">%</span></div></div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px" id="splitWarning"></div></div>
-      <div class="sc"><div class="sc-title">Listed Company Bonus (Tadawul)</div><div class="sc-desc">Tadawul-listed companies get bonus in LC score</div>
+      <div class="sc"><div class="sc-title" title="Added as +N points inside the 40% Local-Content block — it is a scoring bonus, not a price discount.">Listed Company Bonus (Tadawul)</div><div class="sc-desc">Tadawul-listed companies get bonus in LC score</div>
         <div class="pr"><span class="pr-l">Enable Listed Bonus</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="sListedOn" checked=""><span class="sw-slider"></span></label></div></div>
         <div class="pr"><span class="pr-l">Bonus Percentage</span><div class="pr-r"><input class="pr-in" id="sListedPct" type="number" step="1" value="5"><span class="pr-u">%</span></div></div></div>
       <div class="sc"><div class="sc-title">High-Value Contract Threshold</div><div class="sc-desc" id="hvDesc">Threshold is set by the Setup Wizard</div>
@@ -2084,7 +2085,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div style="font-size:11px;font-weight:600;margin-top:6px;display:none" id="hvWarn"></div></div>
       <div class="sc"><div class="sc-title">Other Preferences</div><div class="sc-desc">NPP, SME, and price deviation caps</div>
         <div class="pr"><span class="pr-l">NPP Price Preference (Art.10)</span><div class="pr-r"><input class="pr-in" id="sNPPPref" type="number" step="1" value="10"><span class="pr-u">%</span></div></div>
-        <div class="pr"><span class="pr-l">SME Price Preference (Art.4)</span><div class="pr-r"><input class="pr-in" id="sSMEPref" type="number" step="1" value="10"><span class="pr-u">%</span></div></div>
+        <div class="pr"><span class="pr-l" title="A loading applied to non-SME competitors' prices; excluded on supply and high-value tenders (Art.4(2)).">SME Price Preference (Art.4)</span><div class="pr-r"><input class="pr-in" id="sSMEPref" type="number" step="1" value="10"><span class="pr-u">%</span></div></div>
         <div class="pr"><span class="pr-l">Max Price Deviation (Art.19)</span><div class="pr-r"><input class="pr-in" id="sMaxDev" type="number" step="1" value="10"><span class="pr-u">%</span></div></div></div>
     </div>
     <div style="display:flex;gap:7px;margin-top:10px"><button class="btn btn-p" onclick="saveBidEvalSettings()">Save Bid Settings</button></div>
@@ -2115,6 +2116,19 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       </div>
       <div class="sc"><div class="sc-title">Reminders</div><div class="sc-desc">Alert lead time</div>
         <div class="pr"><span class="pr-l">Days Before Due Date</span><div class="pr-r"><input class="pr-in" id="pRem" type="number" value="15"><span class="pr-u">days</span></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px" id="remHelp">Reminders are sent this many days before each report due date.</div>
+      </div>
+      <div class="sc"><div class="sc-title" id="pcadTitle">Periodic Report Cadence</div><div class="sc-desc" id="pcadDesc">Government: no reports in the first 6 months; 15 working-day approval window</div>
+        <div class="pr"><span class="pr-l" id="pcadLbl">Apply government periodic cadence to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pPeriodicPortfolio"><span class="sw-slider"></span></label></div></div>
+      </div>
+      <div class="sc"><div class="sc-title" id="exTitle">Minimum-LC Activity Exemption</div><div class="sc-desc" id="exDesc">Government: 11 activities exempt from the Minimum-LC mechanism (LCGPA circular 9/46214/2)</div>
+        <div class="pr"><span class="pr-l" id="exLbl">Apply the exempted-activity list to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pExemptPortfolio"><span class="sw-slider"></span></label></div></div>
+      </div>
+      <div class="sc"><div class="sc-title" id="capTitle">Penalty Caps</div><div class="sc-desc" id="capDesc">Government: hard-coded 10% per fine / 20% aggregate (Art.31/34). Portfolio: set your own below.</div>
+        <div class="pr"><span class="pr-l" id="capLbl">Apply penalty caps to portfolio companies</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pCapPortfolio"><span class="sw-slider"></span></label></div></div>
+        <div class="pr"><span class="pr-l" id="capPFLbl">Portfolio per-fine cap</span><div class="pr-r"><input class="pr-in" id="pCapPerFine" type="number" step="1" value="10"><span class="pr-u">%</span></div></div>
+        <div class="pr"><span class="pr-l" id="capAGLbl">Portfolio aggregate cap</span><div class="pr-r"><input class="pr-in" id="pCapAgg" type="number" step="1" value="20"><span class="pr-u">%</span></div></div>
+        <div class="pr"><span class="pr-l" id="gdLbl">Goods Deviation Rate (per-line)</span><div class="pr-r"><input class="pr-in" id="pGoodsDev" type="number" step="1" value="30"><span class="pr-u">%</span></div></div>
       </div>
       <div class="sc" style="grid-column:1/-1"><div class="sc-title">Organization</div><div class="sc-desc">Platform identity &amp; branding</div>
         <div class="fg" style="margin-bottom:7px"><label class="fl2">Org Name</label><input class="fi" id="orgN" value="My Organization" style="padding:5px 9px;font-size:11px"></div>
@@ -2482,8 +2496,8 @@ const SEED_MECH_TC={};
 let DB=JSON.parse(localStorage.getItem('lcDB')||JSON.stringify(SEED_CONTRACTS));
 let MECHS=JSON.parse(localStorage.getItem('lcMechs')||JSON.stringify(SEED_MECHS));
 let ENDUSERS=JSON.parse(localStorage.getItem('lcEU')||JSON.stringify(SEED_EU));
-let S=JSON.parse(localStorage.getItem('lcS')||JSON.stringify({dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,graceLCMonths:7,graceNPPDays:30,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10}));
-if(S.graceLCMonths==null)S.graceLCMonths=7;if(S.graceNPPDays==null)S.graceNPPDays=30;if(S.periodicPenOn==null)S.periodicPenOn=true;
+let S=JSON.parse(localStorage.getItem('lcS')||JSON.stringify({dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,graceLCMonths:7,graceNPPDays:30,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10,periodicForPortfolio:false,exemptForPortfolio:false,capPortfolioOn:false,capPerFinePct:10,capAggPct:20,goodsDev:0.30}));
+if(S.graceLCMonths==null)S.graceLCMonths=7;if(S.graceNPPDays==null)S.graceNPPDays=30;if(S.periodicPenOn==null)S.periodicPenOn=true;if(S.periodicForPortfolio==null)S.periodicForPortfolio=false;if(S.exemptForPortfolio==null)S.exemptForPortfolio=false;if(S.capPortfolioOn==null)S.capPortfolioOn=false;if(S.capPerFinePct==null)S.capPerFinePct=10;if(S.capAggPct==null)S.capAggPct=20;if(S.goodsDev==null)S.goodsDev=0.30;
 // Single global switch for periodic-report non-submission penalties (replaces the old per-year PPEN grid).
 function _pPenOff(){return typeof S!=='undefined'&&S.periodicPenOn===false;}
 let KPICFG=JSON.parse(localStorage.getItem('lcKPI')||JSON.stringify({total:true,active:true,portfolio:true,compliance:true,complianceScore:true,penalties:true,withPen:true,missing:true,reportsReceived:true,reviews:true,npp:true,mlnp:true,rfps:true,bids:true,awarded:true,awardCycle:true,supplierRisk:true,avgSupScore:true}));
@@ -3299,15 +3313,19 @@ async function aiBidAnalysis(){
 function exportBidReport(){
   if(!curBidders||!curBidders.length){toast('No bidders to export','err');return;}
   const mech=document.getElementById('bidMech').value;
-  let csv='Rank,Bidder,Price (SAR),Local Content %,National Products Price Preferencing %,Certificate,Score,Status\n';
-  curBidders.forEach((b,i)=>{const excl=checkExclusions(b,mech);csv+=`${excl.length?'Excluded':i+1},"${b.name}",${b.price||0},${b.lcPct||0},${b.nppPct||0},${b.hasCert?'Yes':'No'},${b.score||0},"${excl.length?excl.join('; '):'Qualified'}"\n`;});
+  let csv='National Product Preference rate applied: '+(((typeof S!=='undefined'&&S.nppPref)||10))+'% (adjusted = original + rate x original x (1 - national share))\n';
+  csv+='Rank,Bidder,Original Price (SAR),Adjusted Price (SAR),Local Content %,National Products Price Preferencing %,Certificate,Score,Status\n';
+  curBidders.forEach((b,i)=>{const excl=checkExclusions(b,mech);const adj=(b._adjBid!=null?b._adjBid:(b.price||0));csv+=`${excl.length?'Excluded':i+1},"${b.name}",${b.price||0},${adj},${b.lcPct||0},${b.nppPct||0},${b.hasCert?'Yes':'No'},${b.score||0},"${excl.length?excl.join('; '):'Qualified'}"\n`;});
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=(brandInfo().org.replace(/[^\w]+/g,'_'))+'_bid_evaluation_'+Date.now()+'.csv';a.click();toast('Report exported','ok');
 }
 function saveBidEval(){
   if(!curBid)return;
   curBid.title=document.getElementById('bidTitle').value.trim()||'Untitled';
   curBid.mechanism=document.getElementById('bidMech').value;
+  if((curBid.nature||'')==='supply'&&typeof mechIsLC==='function'&&mechIsLC(curBid.mechanism)){toast(L('Pure-supply tenders cannot use a Minimum-Threshold or LC-Weight mechanism (Res.245 Art.14/23).','عقود التوريد البحت لا يمكن أن تستخدم آلية الحد الأدنى أو وزن المحتوى المحلي (المادة 14/23).'),'err');return;}
   curBid.value=parseFloat(document.getElementById('bidValue').value)||0;
+  // G1: SME preference excludes supply + high-value tenders (Art.4(2)); mixed/services low-value allowed.
+  var _smeM=(curBid.mechanism||'');if(_smeM.indexOf('SME')>=0||_smeM.indexOf('Small')>=0){var _g1thrM=(typeof _regimeThrM==='function'&&typeof _regimeOf==='function')?_regimeThrM(_regimeOf(curBid)):((S&&S.highValueThreshold)||25);if((curBid.nature||'')==='supply'||(curBid.value||0)>=_g1thrM*1e6){toast(L('SME preference does not apply to supply or high-value tenders (Art.4(2)). Choose another mechanism.','أفضلية المنشآت الصغيرة/المتوسطة لا تنطبق على عقود التوريد أو العقود عالية القيمة (المادة 4/2). اختر آلية أخرى.'),'err');return;}}
   curBid.bidders=curBidders;
   const idx=BIDS.findIndex(b=>b.id===curBid.id);
   if(idx>=0)BIDS[idx]=curBid;else BIDS.push(curBid);
@@ -3667,7 +3685,7 @@ function saveAndRecalc(cid){
   (c.reports||[]).forEach(function(r){
     var key=r.type==='period'?'period_'+r.year:r.type;
     var st=modalEditState.reports[key];
-    if(st)r.received=st.received;
+    if(st){r.received=st.received;if(r.received===true&&!r.receivedDate)r.receivedDate=new Date().toISOString().split('T')[0];if(r.received!==true)r.receivedDate=null;}
     var inp=document.getElementById('minput_'+key);
     if(inp&&inp.value!==''){
       if(r.type==='period'){r.actual=parseFloat(inp.value)/100;}
@@ -3953,7 +3971,9 @@ function renderPenalties(){
   let per=0,fs=0,dv=0,np=0,ml=0;
   DB.forEach(c=>(c.penalties||[]).forEach(p=>{if(p.type==='Periodic'){if(PPEN[p.year]!==false)per+=p.amount;}else if(p.type==='FinalSub')fs+=p.amount;else if(p.type==='Deviation'||p.type==='GoodsDeviation')dv+=p.amount;else if(p.type==='NPP')np+=p.amount;else if(p.type==='MLNP')ml+=p.amount;}));
   const bk=[{l:'Periodic LC',v:per,c:'var(--accent2)'},{l:'Final Submission',v:fs,c:'var(--danger)'},{l:'LC Deviation',v:dv,c:'var(--warn)'},{l:'National Products Price Preferencing',v:np,c:'var(--info)'},{l:'Mandatory List',v:ml,c:'var(--accent3)'}].filter(x=>x.v>0);
-  document.getElementById('penBreak').innerHTML=bk.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">${b.l}</span><span style="font-size:11px;font-weight:700;color:${b.c};font-family:var(--fm)">${fSAR(b.v)}</span></div><div class="pg-b"><div class="pg-f" style="width:${pt?b.v/pt*100:0}%;background:${b.c}"></div></div></div>`).join('')||'<div class="empty"><div class="ei">✅</div><p>No penalties</p></div>';
+  var _c4f=DB.filter(function(c){return c._c4;});
+  var _c4Banner=_c4f.length?('<div style="border:1.5px solid #fca5a5;background:rgba(220,38,38,.06);border-radius:8px;padding:8px 10px;margin-bottom:10px;font-size:11px;color:#b91c1c;font-weight:700">⚠ '+_c4f.length+' '+L('contract(s) flagged under Art.37 (committee referral / subject to blacklist) — see the penalty letter','عقد محدد بموجب المادة 37 (إحالة لجنة / معرّض للقائمة السوداء) — راجع خطاب الغرامة')+'</div>'):'';
+  document.getElementById('penBreak').innerHTML=_c4Banner+bk.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">${b.l}</span><span style="font-size:11px;font-weight:700;color:${b.c};font-family:var(--fm)">${fSAR(b.v)}</span></div><div class="pg-b"><div class="pg-f" style="width:${pt?b.v/pt*100:0}%;background:${b.c}"></div></div></div>`).join('')||'<div class="empty"><div class="ei">✅</div><p>No penalties</p></div>';
   const pdEl=document.getElementById('cPenD');if(pdEl){if(charts.penD)charts.penD.destroy();const _pmax=Math.max.apply(null,DB.map(c=>tPen(c)).concat([0]));const _useM=_pmax>=1000000;const _div=_useM?1000000:1000;const _suf=_useM?'M':'K';const pv=DB.map(c=>+(tPen(c)/_div).toFixed(_useM?2:0));charts.penD=new Chart(pdEl,{type:'bar',data:{labels:DB.map(c=>`#${c.num}`),datasets:[{data:pv,backgroundColor:pv.map(v=>v>0?'rgba(220,38,38,.45)':'rgba(16,185,129,.2)'),borderColor:pv.map(v=>v>0?'#dc2626':'#10b981'),borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:function(evt,elems){if(elems.length>0){var idx=elems[0].index;var cc=DB[idx];if(cc)openContractModal(cc.id);}},plugins:{tooltip:{callbacks:{label:function(ctx){return 'SAR '+ctx.parsed.y+_suf;}},backgroundColor:'rgba(15,23,42,.92)',titleColor:'#f1f5f9',bodyColor:'#e2e8f0',titleFont:{size:12,weight:'700'},bodyFont:{size:11},padding:10,cornerRadius:8,displayColors:true,boxPadding:4},legend:{display:false}},scales:{x:{ticks:{color:gc()},grid:{color:gg()}},y:{ticks:{color:gc(),callback:v=>v+_suf},grid:{color:gg()}}}}});}
   const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&_pPenOff());rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis,pushed:!!p.pushedToSupplier,pushedAt:p.pushedAt||'',ackStatus:p.ackStatus||''});}));
   document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':(r.type==='Deviation'||r.type==='GoodsDeviation')?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center;white-space:nowrap">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button> ${r.pushed?`<span class="badge ${r.ackStatus==='disputed'?'br':r.ackStatus==='acknowledged'?'bg':'bb'}" style="font-size:9px" title="Sent to the supplier${r.pushedAt?' on '+r.pushedAt:''}">${r.ackStatus==='disputed'?'⚠ Disputed':r.ackStatus==='acknowledged'?'✓ Acknowledged':'✓ Sent'}</span> <button class="btn btn-d btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="recallPenalty(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Rescind this penalty notice — removes it from the supplier &amp; Reports Review">↩ Recall</button>`:`<button class="btn btn-s btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="sendPenaltyToSupplier(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Push this penalty + letter to the supplier's LC Requirements and Reports Review">📨 Send to Supplier</button>`}`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
@@ -4057,6 +4077,13 @@ function renderSettings(){setTimeout(function(){renderColorPalette();var sl=loca
   renderEmailTplList();
   document.getElementById('pDev').value=S.dev;document.getElementById('pGap').value=S.gap;document.getElementById('pFin').value=S.fin;document.getElementById('pNPP').value=S.npp;document.getElementById('pML').value=S.ml;document.getElementById('pRem').value=S.rem;var _gl=document.getElementById('pGraceLC');if(_gl)_gl.value=(S.graceLCMonths!=null?S.graceLCMonths:7);var _gn=document.getElementById('pGraceNPP');if(_gn)_gn.value=(S.graceNPPDays!=null?S.graceNPPDays:30);document.getElementById('orgN').value=S.org;document.getElementById('orgP').value=S.proj;
   renderKPICfg();renderPPENGrid();renderExclusionList();renderMechList();renderSectorsList();renderTenderFilters();renderMechTCList();renderEUList();renderAIControlsList();renderBidEvalSettings();
+  var _pfp=document.getElementById('pPeriodicPortfolio');if(_pfp)_pfp.checked=(S.periodicForPortfolio===true);
+  var _exp=document.getElementById('pExemptPortfolio');if(_exp)_exp.checked=(S.exemptForPortfolio===true);
+  var _cp=document.getElementById('pCapPortfolio');if(_cp)_cp.checked=(S.capPortfolioOn===true);
+  var _cpf=document.getElementById('pCapPerFine');if(_cpf)_cpf.value=(S.capPerFinePct!=null?S.capPerFinePct:10);
+  var _cag=document.getElementById('pCapAgg');if(_cag)_cag.value=(S.capAggPct!=null?S.capAggPct:20);
+  var _gd=document.getElementById('pGoodsDev');if(_gd)_gd.value=Math.round((S.goodsDev!=null?S.goodsDev:0.30)*100);
+  (function(){var m={remHelp:L('Reminders are sent this many days before each report due date.','تُرسل التذكيرات قبل الموعد المحدد لكل تقرير بهذا العدد من الأيام.'),pcadTitle:L('Periodic Report Cadence','جدولة التقارير الدورية'),pcadDesc:L('Government: no reports in the first 6 months; 15 working-day approval window','حكومي: لا تقارير في أول 6 أشهر؛ ونافذة اعتماد 15 يوم عمل'),pcadLbl:L('Apply government periodic cadence to portfolio companies','تطبيق الجدولة الحكومية على شركات المحافظ'),exTitle:L('Minimum-LC Activity Exemption','إعفاء الأنشطة من الحد الأدنى'),exDesc:L('Government: 11 activities exempt from the Minimum-LC mechanism (LCGPA circular 9/46214/2)','حكومي: 11 نشاطًا معفى من آلية الحد الأدنى (تعميم 9/46214/2)'),exLbl:L('Apply the exempted-activity list to portfolio companies','تطبيق قائمة الأنشطة المعفاة على شركات المحافظ'),capTitle:L('Penalty Caps','حدود الغرامات'),capDesc:L('Government: hard-coded 10% per fine / 20% aggregate (Art.31/34). Portfolio: set your own below.','حكومي: 10% لكل غرامة / 20% إجمالي (المادتان 31/34). المحافظ: حدد قيمك أدناه.'),capLbl:L('Apply penalty caps to portfolio companies','تطبيق حدود الغرامات على شركات المحافظ'),capPFLbl:L('Portfolio per-fine cap','حد الغرامة الواحدة (محافظ)'),capAGLbl:L('Portfolio aggregate cap','الحد الإجمالي (محافظ)'),gdLbl:L('Goods Deviation Rate (per-line)','معدل انحراف السلع (لكل بند)')};for(var k in m){var el=document.getElementById(k);if(el)el.textContent=m[k];}})();
 }
 function renderKPICfg(){document.getElementById('kpiCfg').innerHTML=KPI_DEFS.map((k,i)=>`<div class="kpi-cfg-item"><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3);font-size:13px;cursor:grab" title="Drag to reorder">⠿</span><div class="kpi-cfg-lbl">${k.label}</div></div><label class="sw-toggle"><input type="checkbox" ${KPICFG[k.key]!==false?'checked':''} onchange="KPICFG['${k.key}']=this.checked"/><span class="sw-slider"></span></label></div>`).join('');attachDnD('kpiCfg','KPI_DEFS',function(){lsSet('lcKPIDefsOrder',JSON.stringify(KPI_DEFS.map(function(k){return k.key;})));renderKPICfg();});}
 function saveKPIConfig(){lsSet('lcKPI',JSON.stringify(KPICFG));toast('KPI layout saved','ok');if(curPage==='dashboard')renderDashboard();}
@@ -4088,6 +4115,7 @@ function _graceLCm(){return (typeof S!=='undefined'&&S.graceLCMonths!=null)?+S.g
 function _graceNPPd(){return (typeof S!=='undefined'&&S.graceNPPDays!=null)?+S.graceNPPDays:30;}
 function _addMonthsISO(iso,m){var d=new Date(iso);d.setMonth(d.getMonth()+m);return d.toISOString().split('T')[0];}
 function _addDaysISO(iso,dd){var d=new Date(iso);d.setDate(d.getDate()+dd);return d.toISOString().split('T')[0];}
+function _addWorkingDaysISO(iso,n){var d=new Date(iso);var added=0,guard=0;while(added<n&&guard<400){d.setDate(d.getDate()+1);var wd=d.getDay();if(wd!==5&&wd!==6)added++;guard++;}return d.toISOString().split('T')[0];} // KSA working days: skip Fri(5)/Sat(6)
 // Find the registered supplier linked to a contract (by contractor name) — used for Company-Level FY-end due dates.
 function _supplierForContract(c){
   if(typeof SUPPLIERS==='undefined'||!c)return null;
@@ -4115,6 +4143,9 @@ function buildReportsFor(c){
   var dur=c.duration||12;
   var startISO=c.start||new Date().toISOString().split('T')[0];
   var endISO=c.end||_addMonthsISO(startISO,dur);
+  var _gov=(typeof S==='undefined'||!S.entityType||S.entityType==='gov');
+  var _j2=_gov||(typeof S!=='undefined'&&S.periodicForPortfolio===true); // J2 cadence (6-mo guard + 15-wd review): gov always, portfolio only if opted in
+  var _sixMo=new Date(_addMonthsISO(startISO,6));
   if(cl.base==='company'||cl.base==='project'||cl.base==='threshold'){
     var count=Math.max(1,Math.ceil(dur/12)); // ceil: final replaces last periodic on exact years
     var dues=_lcDueDates(c,count,cl.base);
@@ -4123,21 +4154,28 @@ function buildReportsFor(c){
     for(var i=1;i<=count;i++){
       var dueISO=dues[i-1]||endISO;
       if(i<count){
+        if(_j2&&new Date(dueISO)<_sixMo)continue; // J2: no periodic report in the first 6 months
         var t=count>1?+(base+(target-base)*(i/count)).toFixed(4):target;
-        reports.push({type:'period',year:i,target:t,actual:null,received:false,penalty:0,due:dueISO,deadline:_addMonthsISO(dueISO,_graceLCm())});
+        var _pr={type:'period',year:i,target:t,actual:null,received:false,penalty:0,due:dueISO,deadline:_addMonthsISO(dueISO,_graceLCm())};
+        if(_j2)_pr.reviewDays=15; // J2: LCGPA approval within 15 working days (informational)
+        reports.push(_pr);
       }else{
-        reports.push({type:'final',achieved:null,received:false,penalty:0,devPenalty:0,due:dueISO,deadline:_addMonthsISO(dueISO,_graceLCm())});
+        var _fr={type:'final',achieved:null,received:false,penalty:0,devPenalty:0,due:dueISO,deadline:_addMonthsISO(dueISO,_graceLCm())};
+        if(_j2)_fr.reviewDays=15;
+        reports.push(_fr);
       }
     }
     // Improvement Plan — one per LC-base contract; due = award date + 60 days. No penalty attached.
     var _lcReps=reports.filter(function(r){return r.type==='period'||r.type==='final';});
     var _plan=_lcReps.map(function(r){return {key:(r.type==='period'?'period_'+r.year:'final'),label:reportTitle(r),pct:null};});
-    var _impDue=c.awardDate?_addDaysISO(c.awardDate,60):null;
-    reports.push({type:'improvement',received:false,penalty:0,planTargets:_plan,planBy:null,due:_impDue,deadline:_impDue});
+    var _impDue=_addDaysISO(c.awardDate||startISO,60); // J4: fall back to contract start when award date is missing
+    reports.push({type:'improvement',received:false,penalty:0,planTargets:_plan,planBy:null,due:_impDue,deadline:_impDue,dueEstimated:!c.awardDate});
   }
   // National Products Price Preferencing final supply report — due at contract end + 30-day grace.
   if(cl.npp){
-    reports.push({type:'npp',actual:null,received:false,penalty:0,due:endISO,deadline:_addDaysISO(endISO,_graceNPPd())});
+    var _npr={type:'npp',actual:null,received:false,penalty:0,due:endISO,deadline:_addDaysISO(endISO,_graceNPPd())};
+    if(_gov)_npr.reviewDays=10; // J1: government reviews within 10 working days (deemed approved) — government entities only
+    reports.push(_npr);
   }
   // Mandatory List final supply report — due at contract end + 30-day grace.
   if(cl.ml){
@@ -4168,14 +4206,23 @@ function reportTitle(r){
   return r.type;
 }
 // Contract value meets the high-value threshold (Settings, in SAR millions) — gates Improvement-Plan KPI/log counting.
-function isHighValue(c){var thr=((typeof S!=='undefined'&&S.highValueThreshold)||25)*1000000;return (c&&c.amount||0)>=thr;}
+// A1: per-contract regime helpers
+function _regimeOf(rec){return (rec&&rec.regime)||(typeof S!=='undefined'&&S.entityType)||'gov';}
+function _regimeThrM(rg){return rg==='portfolio'?50:25;}
+function _regimeWeights(rg){return rg==='portfolio'?{pw:70,lw:30}:(rg==='gov'?{pw:60,lw:40}:null);}
+function isHighValue(c){var thrM=(c&&c.regime)?_regimeThrM(c.regime):((typeof S!=='undefined'&&S.highValueThreshold)||25);return (c&&c.amount||0)>=thrM*1000000;}
 // Whether a report should be COUNTED in KPIs / requirement / overdue tallies.
 // The Improvement Plan is only counted on high-value contracts (it never carries a penalty either way).
 function reportCountsForKPI(c,r){if(r&&r.type==='improvement')return isHighValue(c);return true;}
+function reportHints(c,r){if(!r)return '';var bits=[];
+  if(r.due&&r.received!==true){var _rd=_addDaysISO(r.due,-(((typeof S!=='undefined'&&S.rem)||15)));bits.push('<span style="font-size:9px;color:var(--text3)" title="'+L('Reminder lead time before the due date','مهلة التذكير قبل الموعد')+'">'+L('reminder','تذكير')+': '+fD(_rd)+'</span>');}
+  if(r.received===true&&r.reviewDays&&r.receivedDate){var _rev=_addWorkingDaysISO(r.receivedDate,r.reviewDays);bits.push('<span class="badge bt" style="font-size:9px" title="'+L('Authority reviews within working days of receipt; deemed approved if not actioned','تراجع الجهة خلال أيام العمل من الاستلام؛ وتُعد موافقة إن لم يُتخذ إجراء')+'">'+L('review by','المراجعة بحلول')+' '+fD(_rev)+' · '+r.reviewDays+' '+L('wd','يوم عمل')+'</span>');}
+  if(r.type==='improvement'&&r.dueEstimated){bits.push('<span class="badge bgy" style="font-size:9px" title="'+L('Award date missing; due date estimated from contract start','تاريخ الترسية مفقود؛ احتُسب الموعد من تاريخ بدء العقد')+'">⚠ '+L('award date missing — estimated','تاريخ الترسية مفقود — تقديري')+'</span>');}
+  return bits.length?(' '+bits.join(' ')):'';}
 function reportStateBadge(c,r){
   var st=reportState(c,r);
   var m={received:['bg','✓ Received'],upcoming:['bt','○ Upcoming'],due:['ba','⏰ Due'],overdue:['br','⚠ Overdue'],pending:['bgy','—']};
-  var x=m[st]||m.pending;return '<span class="badge '+x[0]+'" title="Due '+(r.due||'—')+(r.deadline?' · grace ends '+r.deadline:'')+'">'+x[1]+'</span>';
+  var x=m[st]||m.pending;return '<span class="badge '+x[0]+'" title="Due '+(r.due||'—')+(r.deadline?' · grace ends '+r.deadline:'')+'">'+x[1]+'</span>'+reportHints(c,r);
 }
 // Full-name label for a penalty type code (no short names shown to users).
 function penTypeLabel(t){
@@ -4210,6 +4257,17 @@ window.canonicalMechName=canonicalMechName;
     localStorage.setItem('lcMechCanon_v57b','1');
   }catch(e){}
 })();
+// A1: back-fill per-contract regime on existing records from the global Setup-Wizard regime.
+(function _migrateRegime(){
+  try{
+    if(localStorage.getItem('lcRegime_v57'))return;
+    var def=(typeof S!=='undefined'&&S.entityType)||'gov';
+    if(typeof DB!=='undefined'&&DB){DB.forEach(function(c){if(c&&!c.regime)c.regime=def;});if(typeof saveDB==='function')saveDB();}
+    if(typeof RFPS!=='undefined'&&RFPS){RFPS.forEach(function(r){if(r&&!r.regime)r.regime=def;});if(typeof lsSet==='function')lsSet('lcRFPS',JSON.stringify(RFPS));}
+    if(typeof BIDS!=='undefined'&&BIDS){BIDS.forEach(function(b){if(b&&!b.regime)b.regime=def;});if(typeof lsSet==='function')lsSet('lcBIDS',JSON.stringify(BIDS));}
+    localStorage.setItem('lcRegime_v57','1');
+  }catch(e){}
+})();
 function regenerateReports(c){
   // preserve user data (received/actual/achieved/penalty/evidence keys) where the same report key survives
   var old={};(c.reports||[]).forEach(function(r){old[r.type==='period'?'period_'+r.year:r.type]=r;});
@@ -4219,6 +4277,7 @@ function regenerateReports(c){
     var o=old[key];
     if(o){
       r.received=o.received===true;
+      if(o.receivedDate)r.receivedDate=o.receivedDate;
       if(o.actual!=null)r.actual=o.actual;
       if(o.achieved!=null)r.achieved=o.achieved;
       if(o.penalty)r.penalty=o.penalty;
@@ -4318,9 +4377,30 @@ function recalcContractPenalties(c){
     var excPending=exc.some(function(f){return (f.status||'pending')==='pending';});
     if(excApproved||excPending)return;
     var lineTotal=(parseFloat(it.unitPrice)||0)*qty;
-    var pen=Math.round(lineTotal*(shortfall/qty)*0.30);
+    var _gRate=(typeof S!=='undefined'&&S.goodsDev!=null)?S.goodsDev:0.30; // C3: configurable goods-deviation rate
+    var pen=Math.round(lineTotal*(shortfall/qty)*_gRate);
+    var _gRg=(typeof _regimeOf==='function')?_regimeOf(c):'gov'; // C3 per-line cap: Gov 10% of line (Art.30); Portfolio via portfolio-caps toggle
+    var _gCap=(_gRg==='portfolio')?(S.capPortfolioOn?Math.round((S.capPerFinePct!=null?S.capPerFinePct:10)/100*lineTotal):Infinity):Math.round(0.10*lineTotal);
+    if(pen>_gCap)pen=_gCap;
     if(pen>0){it.recvDevPenalty=pen;newPenalties.push({type:'GoodsDeviation',line:idx,amount:pen,reason:'Local-content goods deviation — "'+String(it.desc||('Item #'+(idx+1))).substring(0,40)+'": received '+recvLocal+' Local of '+qty+' (shortfall '+shortfall+')'});}
   });
+  // C1: statutory caps (Art.31/34). Government: 10% per fine / 20% aggregate (hard-coded). Portfolio: optional via Settings.
+  (function(){var _rg=(c.regime||(typeof S!=='undefined'&&S.entityType)||'gov');var pf=null,ag=null;
+    if(_rg==='portfolio'){ if(S.capPortfolioOn){pf=(S.capPerFinePct!=null?S.capPerFinePct:10)/100;ag=(S.capAggPct!=null?S.capAggPct:20)/100;} }
+    else { pf=0.10; ag=0.20; }
+    if(pf==null)return; var amt=c.amount||0; if(amt<=0)return;
+    var pfLim=Math.round(pf*amt);
+    newPenalties.forEach(function(p){ if((p.amount||0)>pfLim){p.amount=pfLim;p.capped=true;} });
+    var sum=newPenalties.reduce(function(s,p){return s+(p.amount||0);},0); var agLim=Math.round(ag*amt);
+    if(sum>agLim&&sum>0){ var sc=agLim/sum; newPenalties.forEach(function(p){p.amount=Math.round((p.amount||0)*sc);p.aggCapped=true;}); }
+    c._capInfo={regime:_rg,perFinePct:Math.round(pf*100),aggPct:Math.round(ag*100),aggApplied:(sum>agLim)};
+  })();
+  // C4: Art.37 escalation flag (advisory) — final LC deviation > 15% OR final report never submitted.
+  (function(){var fin=(c.reports||[]).find(function(r){return r.type==='final';});if(!fin){c._c4=null;return;}
+    var devOver=(c.agreedPct!=null&&fin.achieved!=null&&(c.agreedPct-fin.achieved)>0.15);
+    var notSub=(fin.received!==true&&typeof reportState==='function'&&reportState(c,fin)==='overdue');
+    if(devOver||notSub){var _rg4=(typeof _regimeOf==='function')?_regimeOf(c):'gov';c._c4={kind:(_rg4==='portfolio'?'blacklist':'committee'),reason:(devOver?'Final LC deviation exceeds 15% (Art.37)':'Final report not submitted (Art.37)')};}
+    else c._c4=null;})();
   c.penalties=newPenalties;
 }
 function recalcAllPenalties(){
@@ -4328,8 +4408,8 @@ function recalcAllPenalties(){
   saveDB();
 }
 
-function saveSettings(){function _num(id,dflt){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?dflt:v;}function _int(id,dflt){var v=parseInt(document.getElementById(id).value);return isNaN(v)?dflt:v;}S.dev=_num('pDev',0.30);S.gap=_num('pGap',5);S.fin=_num('pFin',10);S.npp=_num('pNPP',0.30);S.ml=_num('pML',0.30);S.rem=_int('pRem',15);S.graceLCMonths=_int('pGraceLC',7);S.graceNPPDays=_int('pGraceNPP',30);S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();if(typeof logAudit==='function')logAudit('edit','Penalty settings updated (deviation '+S.dev+', gap '+S.gap+'%, final '+S.fin+'%, NPP '+S.npp+', Mandatory List '+S.ml+')');toast('Settings saved — penalties recalculated','ok');}
-function resetSettings(){S={dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10};saveS();renderSettings();toast('Reset','info');}
+function saveSettings(){function _num(id,dflt){var v=parseFloat(document.getElementById(id).value);return isNaN(v)?dflt:v;}function _int(id,dflt){var v=parseInt(document.getElementById(id).value);return isNaN(v)?dflt:v;}S.dev=_num('pDev',0.30);S.gap=_num('pGap',5);S.fin=_num('pFin',10);S.npp=_num('pNPP',0.30);S.ml=_num('pML',0.30);S.rem=_int('pRem',15);S.graceLCMonths=_int('pGraceLC',7);S.graceNPPDays=_int('pGraceNPP',30);S.org=document.getElementById('orgN').value;S.proj=document.getElementById('orgP').value;var _opfp=S.periodicForPortfolio;var _pfpEl=document.getElementById('pPeriodicPortfolio');if(_pfpEl)S.periodicForPortfolio=_pfpEl.checked;var _expEl=document.getElementById('pExemptPortfolio');if(_expEl)S.exemptForPortfolio=_expEl.checked;var _cpEl=document.getElementById('pCapPortfolio');if(_cpEl)S.capPortfolioOn=_cpEl.checked;var _cpfEl=document.getElementById('pCapPerFine');if(_cpfEl)S.capPerFinePct=parseFloat(_cpfEl.value)||10;var _cagEl=document.getElementById('pCapAgg');if(_cagEl)S.capAggPct=parseFloat(_cagEl.value)||20;var _gdEl=document.getElementById('pGoodsDev');if(_gdEl)S.goodsDev=(parseFloat(_gdEl.value)||30)/100;if(S.periodicForPortfolio!==_opfp&&typeof regenerateReports==='function'){DB.forEach(function(c){regenerateReports(c);});saveDB();}saveS();applyOrgNameToSidebar();recalcAllPenalties();renderCurrentPage();updateBadges();if(typeof logAudit==='function')logAudit('edit','Penalty settings updated (deviation '+S.dev+', gap '+S.gap+'%, final '+S.fin+'%, NPP '+S.npp+', Mandatory List '+S.ml+')');toast('Settings saved — penalties recalculated','ok');}
+function resetSettings(){S={dev:0.30,gap:5,fin:10,npp:0.30,ml:0.30,rem:15,org:"My Organization",proj:"Project X",priceWeight:70,lcWeight:30,targetSplit:50,baselineSplit:50,listedBonus:true,listedBonusPct:5,highValueThreshold:25,smePref:10,nppPref:10,maxPriceDev:10,periodicForPortfolio:false,exemptForPortfolio:false,capPortfolioOn:false,capPerFinePct:10,capAggPct:20,goodsDev:0.30};saveS();renderSettings();toast('Reset','info');}
 function renderPPENGrid(){
   var on=(typeof S!=='undefined'&&S.periodicPenOn!==false);
   var cb=document.getElementById('ppenAll');if(cb)cb.checked=on;
@@ -4542,11 +4622,11 @@ function submitContract(e){
   // Awarding Date is required for Local-Content mechanisms (it drives the Improvement Plan due date).
   if(typeof mechClass==='function'){var _b=mechClass(mech).base;if((_b==='company'||_b==='project'||_b==='threshold')&&!award){toast('Awarding Date is required for Local-Content mechanisms','err');var _af=document.getElementById('fAward');if(_af)_af.focus();return;}}
   const endDt=new Date(start);endDt.setMonth(endDt.getMonth()+dur);
-  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,contractorContact:((document.getElementById('fContact')||{}).value||'').trim(),contractorEmail:((document.getElementById('fContEmail')||{}).value||'').trim(),name,mechanism:mech,amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
+  DB.push({id:uid(),num,endUser:document.getElementById('fEU').value,contractor:document.getElementById('fCont').value,contractorContact:((document.getElementById('fContact')||{}).value||'').trim(),contractorEmail:((document.getElementById('fContEmail')||{}).value||'').trim(),name,mechanism:mech,regime:(document.getElementById('fRegime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov',amount:amt,start,duration:dur,end:endDt.toISOString().split('T')[0],awardDate:award,agreedPct:ap,lcAmount:ap?amt*ap:null,baseline:bl,natProdAmount:parseFloat(document.getElementById('fNP').value)||0,mandatoryListAmount:parseFloat(document.getElementById('fML').value)||0,nppPct:parseFloat((document.getElementById('fNPPct')||{}).value)||0,reportsType:'',reportsDue:0,reports:[],penalties:[],attachments:pendingFiles.map(f=>({name:f.name,size:f.size})),documents:(window._importedDocs||[]),evidence:{},notes:document.getElementById('fNotes').value});
   var _newC=DB[DB.length-1];if(window._importedFromBidId){_newC.sourceBidId=window._importedFromBidId;var _srcB=BIDS.find(function(b){return String(b.id)===String(window._importedFromBidId);});if(_srcB){_srcB.status='contractCreated';_srcB.contractCreatedAt=new Date().toISOString();_srcB.contractId=_newC.id;}window._importedFromBidId=null;}window._importedDocs=null;if(typeof entryBoQ!=='undefined'&&entryBoQ.length){_newC.boqItems=JSON.parse(JSON.stringify(entryBoQ));}else if(window._importedBoQ&&window._importedBoQ.length){_newC.boqItems=window._importedBoQ;}window._importedBoQ=null;_newC.reports=buildReportsFor(_newC);recalcContractPenalties(_newC);
   saveDB();logAudit('create','Contract #'+num,num);var _bn=document.createElement('div');_bn.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:9999;background:#059669;color:#fff;padding:14px 28px;border-radius:12px;font-size:14px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,.2);display:flex;align-items:center;gap:10px';_bn.textContent='\u2705 Contract #'+num+' saved!';document.body.appendChild(_bn);setTimeout(function(){_bn.remove();},3500);toast('Saved #'+num,'ok');resetForm();setTimeout(function(){nav('contracts',null);},800);
 }
-function resetForm(){if(typeof _unlockContractForm==='function')_unlockContractForm();document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');pendingFiles=[];document.getElementById('attachList').innerHTML='';entryBoQ=[];renderEntryBoQ();}
+function resetForm(){if(typeof _unlockContractForm==='function')_unlockContractForm();document.querySelectorAll('#page-entry .fi,#page-entry .fsel2,#page-entry .fta').forEach(el=>el.value='');var _fr0=document.getElementById('fRegime');if(_fr0)_fr0.value=(typeof S!=='undefined'&&S.entityType)||'gov';pendingFiles=[];document.getElementById('attachList').innerHTML='';entryBoQ=[];renderEntryBoQ();}
 var entryBoQ=[];
 function renderEntryBoQ(){
   var tb=document.getElementById('entryBoQBody');if(!tb)return;
@@ -5452,7 +5532,7 @@ function newBidFromRFPChoice(){
   curBid={
     id:uid(),title:rfp.title||"",ref:rfp.ref||"",
     mechanism:(typeof canonicalMechName==='function'?(canonicalMechName(rfp.suggestedMech||rfp.mechanism||'')||rfp.suggestedMech||rfp.mechanism||''):(rfp.suggestedMech||rfp.mechanism||"")),rfpId:rfp.id,value:rfp.value||0,duration:rfp.duration||0,
-    endUser:rfp.endUser||"",nature:rfp.nature||"",expenditure:rfp.expenditure||"",
+    endUser:rfp.endUser||"",nature:rfp.nature||"",expenditure:rfp.expenditure||"",regime:rfp.regime||(typeof S!=='undefined'&&S.entityType)||'gov',
     boqItems:rfp.boqItems?JSON.parse(JSON.stringify(rfp.boqItems)):[],
     rfpBoQ:rfp.boq?JSON.parse(JSON.stringify(rfp.boq)):[],
     mlnpItems:rfp.mlnpItems?JSON.parse(JSON.stringify(rfp.mlnpItems)):[],
@@ -5477,7 +5557,7 @@ function newBidFromRFPChoice(){
   loadBidFormula();
   toast("Loaded from RFP: "+(rfp.ref||rfp.title||""),"ok");
 }
-function newBidManualChoice(){document.getElementById("newBidChoiceModal").remove();curBid={id:uid(),title:"",mechanism:"",rfpId:null,value:0,bidders:[],status:"draft",winner:"",created:new Date().toISOString().split("T")[0]};curBidders=[];openBidForm();}
+function newBidManualChoice(){document.getElementById("newBidChoiceModal").remove();curBid={id:uid(),title:"",mechanism:"",rfpId:null,value:0,regime:(typeof S!=='undefined'&&S.entityType)||'gov',bidders:[],status:"draft",winner:"",created:new Date().toISOString().split("T")[0]};curBidders=[];openBidForm();}
 
 
 // ============================================================
@@ -6234,6 +6314,12 @@ function _buildPenaltyLetterHTML(c,pens,single){
   pens.forEach(function(p,i){seen[p.type]=true;h+='<tr><td>'+(i+1)+'</td><td>'+escSub(typeName(p.type))+'</td><td>'+escSub(p.reason||'—')+'</td><td>'+fSAR(p.amount)+'</td></tr>';});
   h+='<tr><td colspan="3" style="text-align:'+(AR_MODE?'left':'right')+';font-weight:800">'+L('Total Penalty','إجمالي الغرامة')+'</td><td class="tot">'+fSAR(total)+'</td></tr>';
   h+='</tbody></table>';
+  // C6: statutory-cap note (from C1 cap pass)
+  if(c._capInfo){h+='<div class="box">'+L('Statutory caps applied: each fine ≤ '+c._capInfo.perFinePct+'% of contract value and the total ≤ '+c._capInfo.aggPct+'% (Art.31/34)'+(c._capInfo.aggApplied?' — the aggregate cap was binding on this contract':''),'الحدود النظامية المطبقة: كل غرامة ≤ '+c._capInfo.perFinePct+'٪ من قيمة العقد، والإجمالي ≤ '+c._capInfo.aggPct+'٪ (المادتان 31/34)'+(c._capInfo.aggApplied?' — تم تطبيق الحد الإجمالي على هذا العقد':''))+'.</div>';}
+  // C6: Mandatory-List remedy note
+  if(seen['MLNP']){h+='<div class="box">'+L('Note: the statutory remedy for Mandatory-List non-compliance is exclusion / non-acceptance of the non-compliant items; any amount shown is a monitoring deduction.','ملاحظة: المعالجة النظامية لمخالفة القائمة الإلزامية هي استبعاد/عدم قبول البنود المخالفة؛ وأي مبلغ معروض هو خصم رقابي.')+'</div>';}
+  // C4: Art.37 escalation flag
+  if(c._c4){h+='<div class="box" style="border-color:#fca5a5;font-weight:700;color:#b91c1c">⚠ '+(c._c4.kind==='blacklist'?L('Subject to blacklist','معرّض للإدراج في القائمة السوداء'):L('Committee referral required','يستلزم الإحالة إلى اللجنة'))+' — '+escSub(c._c4.reason)+'.</div>';}
   // ---- Compliance overview (reports + BoQ line items) ----
   var _sc=null;
   if(single){_sc={yr:{},fin:false,npp:false,ml:false,li:{}};pens.forEach(function(p){if(p.type==='Periodic'&&p.year!=null)_sc.yr[p.year]=1;else if(p.type==='FinalSub'||p.type==='Deviation')_sc.fin=true;else if(p.type==='NPP')_sc.npp=true;else if(p.type==='MLNP')_sc.ml=true;else if(p.type==='GoodsDeviation'&&p.line!=null)_sc.li[p.line]=1;});}
@@ -7955,7 +8041,7 @@ window.handleBidderCertFile=function(bidderIdx,certType,inp){
     // v49: surface the baseline certificate in Certificate Tracker as unconfirmed
     var bn=(b.name||"Bidder").trim();
     var exist=CERTS.find(function(x){return x.entity===bn&&x.source==="bid";});
-    var exp=new Date();exp.setFullYear(exp.getFullYear()+1);
+    var exp=new Date();exp.setMonth(exp.getMonth()+19);b._lcBaselineExpiry=exp.toISOString().split("T")[0]; // H1: LC baseline certificate validity = 19 months
     if(exist){exist.fileName=f.name;exist.lcPct=b.baselinePct||b.lcBaseline||null;exist.status="unconfirmed";}
     else{CERTS.push({id:uid(),entity:bn,num:"",type:"LC Baseline Certificate",lcPct:b.baselinePct||b.lcBaseline||null,issued:new Date().toISOString().split("T")[0],expiry:exp.toISOString().split("T")[0],fileName:f.name,status:"unconfirmed",source:"bid",notes:"Captured automatically from bid evaluation — confirm details."});}
     if(typeof saveCerts==="function")saveCerts();else lsSet("lcCerts",JSON.stringify(CERTS));
@@ -8165,7 +8251,7 @@ renderBiddersList=function(){
     // ── LC Certificate uploads ──
     var lcCertSection='';
     if(showLC){
-      lcCertSection='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;padding:8px;background:var(--surface);border-radius:var(--rs)">'+window._bidSlot(i,'LC Baseline Certificate','baseline',b._lcBaselineFile,blCertFn,'blCert','handleBidderCertFile','baseline')+window._bidSlot(i,'LC Target Certificate','target',b._lcTargetFile,tgCertFn,'tgCert','handleBidderCertFile','target')+'</div>';
+      lcCertSection='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px;padding:8px;background:var(--surface);border-radius:var(--rs)">'+((b._lcBaselineExpiry&&new Date(b._lcBaselineExpiry)<new Date())?('<div style="grid-column:1/-1;font-size:10px;color:#b91c1c;font-weight:700">⚠ '+L('Baseline certificate expired (valid 19 months)','انتهت صلاحية شهادة خط الأساس (صالحة 19 شهرًا)')+'</div>'):'')+window._bidSlot(i,'LC Baseline Certificate','baseline',b._lcBaselineFile,blCertFn,'blCert','handleBidderCertFile','baseline')+window._bidSlot(i,'LC Target Certificate','target',b._lcTargetFile,tgCertFn,'tgCert','handleBidderCertFile','target')+'</div>';
     }
 
     // ── Assemble bidder card ──
@@ -8257,8 +8343,10 @@ calcBids=function(){
   var showLC=isLC||isThreshold;
   var isHybrid=showLC&&isNPP;
 
-  var priceWt=(S.priceWeight||70)/100;
-  var lcWt=(S.lcWeight||30)/100;
+  var _rgW=(typeof _regimeWeights==='function')?_regimeWeights(curBid&&curBid.regime):null;
+  var _PW=_rgW?_rgW.pw:(S.priceWeight||70),_LW=_rgW?_rgW.lw:(S.lcWeight||30);
+  var priceWt=_PW/100;
+  var lcWt=_LW/100;
   var tSplit=(S.targetSplit||50)/100;
   var bSplit=(S.baselineSplit||50)/100;
   var nppP=(S.nppPref||10)/100;
@@ -8396,7 +8484,7 @@ calcBids=function(){
     formula+='<div class="bf-row"><span class="bf-l">'+_L('Total score','\u0627\u0644\u062F\u0631\u062C\u0629 \u0627\u0644\u0643\u0644\u064A\u0629')+'</span><span class="bf-eq"><b>'+_L('Total','\u0627\u0644\u0643\u0644\u064A')+'</b> = <b>'+_L('Technical','\u0627\u0644\u0641\u0646\u064A')+'</b>\u00D7<span class="w">'+twPct+'%</span> + <b>'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</b>\u00D7<span class="w">'+cwPct+'%</span></span></div>';
   }
   if(sL){
-    formula+='<div class="bf-row"><span class="bf-l">'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</span><span class="bf-eq"><span class="pill">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span> (Lowest'+(sA?'Adj':'')+'Price \u00F7 '+(sA?'Adj':'')+'Price) \u00D7 <span class="w">'+(S.priceWeight||70)+'%</span> + <span class="pill">'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span> ('+(S.targetSplit||50)+'%\u00B7'+_L('Target','\u0645\u0633\u062A\u0647\u062F\u0641')+' + '+(S.baselineSplit||50)+'%\u00B7'+_L('Baseline','\u0623\u0633\u0627\u0633')+(tadawulOn?' + '+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+' '+(S.listedBonusPct||5)+'%':'')+') \u00D7 <span class="w">'+(S.lcWeight||30)+'%</span></span></div>';
+    formula+='<div class="bf-row"><span class="bf-l">'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+'</span><span class="bf-eq"><span class="pill">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span> (Lowest'+(sA?'Adj':'')+'Price \u00F7 '+(sA?'Adj':'')+'Price) \u00D7 <span class="w">'+_PW+'%</span> + <span class="pill">'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span> ('+(S.targetSplit||50)+'%\u00B7'+_L('Target','\u0645\u0633\u062A\u0647\u062F\u0641')+' + '+(S.baselineSplit||50)+'%\u00B7'+_L('Baseline','\u0623\u0633\u0627\u0633')+(tadawulOn?' + '+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+' '+(S.listedBonusPct||5)+'%':'')+') \u00D7 <span class="w">'+_LW+'%</span></span></div>';
   } else if(isNPP&&!showLC){
     formula+='<div class="bf-row"><span class="bf-l">'+_L('Adjusted price','\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u0645\u0639\u062F\u0651\u0644')+'</span><span class="bf-eq">'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+' + <span class="w">'+(S.nppPref||10)+'%</span>\u00B7Price\u00B7(1 \u2212 NationalShare) \u2014 '+_L('lowest adjusted price wins','\u0623\u062F\u0646\u0649 \u0633\u0639\u0631 \u0645\u0639\u062F\u0651\u0644 \u064A\u0641\u0648\u0632')+'</span></div>';
   } else if(isSME&&!showLC){
@@ -8471,8 +8559,8 @@ calcBids=function(){
       }
       // commercial envelope
       cd+='<div class="bk-comm"'+(hasTW?'':' style="grid-column:1/-1"')+'><div class="bk-title"><span>'+_L('Commercial','\u0627\u0644\u062A\u062C\u0627\u0631\u064A')+' \u00B7 '+cwPct+'%</span><span class="sc">'+cScRaw.toFixed(1)+'<span class="of">/100</span></span></div><div class="subrows">';
-      cd+='<div class="subrow"><span class="sk"><span class="swatch price"></span><span>'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span></span><span class="smeter"><i class="price" style="width:'+Math.max(0,Math.min(100,psPct/(((S.priceWeight||70)/100)||1))).toFixed(0)+'%"></i></span><span class="sval">'+psPct.toFixed(1)+' <span class="of">\u00D7'+(S.priceWeight||70)+'%</span></span></div>';
-      cd+='<div class="subrow"><span class="sk"><span class="swatch lc"></span><span>'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span></span><span class="smeter"><i class="lc" style="width:'+Math.max(0,Math.min(100,lsPct/(((S.lcWeight||30)/100)||1))).toFixed(0)+'%"></i></span><span class="sval">'+lsPct.toFixed(1)+' <span class="of">\u00D7'+(S.lcWeight||30)+'%</span></span></div>';
+      cd+='<div class="subrow"><span class="sk"><span class="swatch price"></span><span>'+_L('Price','\u0627\u0644\u0633\u0639\u0631')+'</span></span><span class="smeter"><i class="price" style="width:'+Math.max(0,Math.min(100,psPct/(((_PW)/100)||1))).toFixed(0)+'%"></i></span><span class="sval">'+psPct.toFixed(1)+' <span class="of">\u00D7'+_PW+'%</span></span></div>';
+      cd+='<div class="subrow"><span class="sk"><span class="swatch lc"></span><span>'+_L('LC','\u0627\u0644\u0645\u062D\u062A\u0648\u0649')+'</span></span><span class="smeter"><i class="lc" style="width:'+Math.max(0,Math.min(100,lsPct/(((_LW)/100)||1))).toFixed(0)+'%"></i></span><span class="sval">'+lsPct.toFixed(1)+' <span class="of">\u00D7'+_LW+'%</span></span></div>';
       if(tadawulOn) cd+='<div class="subrow"><span class="sk"><span class="swatch tad"></span><span>'+_L('Tadawul','\u062A\u062F\u0627\u0648\u0644')+'</span></span><span class="smeter"><i class="tad" style="width:'+(tsPct>0?100:0)+'%"></i></span><span class="sval">'+tsPct.toFixed(1)+' <span class="of">'+_L('bonus','\u0639\u0644\u0627\u0648\u0629')+'</span></span></div>';
       cd+='</div></div></div>';
     } else {
@@ -9847,7 +9935,9 @@ function a1OpenWizard(){
       '<div class="fg"><label class="fl2">'+L('End-User','الجهة المستفيدة')+'</label><select class="fsel2" id="a1EU"><option value="">'+L('Select end-user…','اختر الجهة…')+'</option></select></div>'+
       '<div class="fg"><label class="fl2">'+L('Estimated Value (SAR)','القيمة التقديرية (ر.س)')+' <span class="req">*</span></label><input class="fi" id="a1Value" type="number" placeholder="0" oninput="a1Identify()"></div>'+
       '<div class="fg"><label class="fl2">'+L('Nature of Procurement','طبيعة المشتريات')+' <span class="req">*</span></label><select class="fsel2" id="a1Nature" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="services">'+L('Pure Services','خدمات بحتة')+'</option><option value="supply">'+L('Pure Supply (Goods)','توريد بحت (سلع)')+'</option><option value="mixed">'+L('Mixed (Services + Supply)','مختلط (خدمات + توريد)')+'</option></select></div>'+
+      '<div class="fg"><label class="fl2">'+L('Regime','الجهة')+'</label><select class="fsel2" id="a1Regime" onchange="a1Identify()"><option value="gov"'+(((typeof S!=='undefined'&&S.entityType)||'gov')==='gov'?' selected':'')+'>'+L('Government (≥SAR 25M)','حكومي (≥25 مليون)')+'</option><option value="portfolio"'+((typeof S!=='undefined'&&S.entityType==='portfolio')?' selected':'')+'>'+L('Portfolio / PIF (≥SAR 50M)','محفظة (≥50 مليون)')+'</option></select></div>'+
       '<div class="fg" id="a1CapexWrap" style="display:none"><label class="fl2">'+L('Expenditure Type','نوع الإنفاق')+'</label><select class="fsel2" id="a1Capex" onchange="a1Identify()"><option value="">'+L('Select…','اختر…')+'</option><option value="capex">'+L('Capex (Project Level)','رأسمالي (مستوى المشروع)')+'</option><option value="opex">'+L('Opex (Company Level)','تشغيلي (مستوى الشركة)')+'</option></select></div>'+
+      '<div class="fg" id="a1ActivityWrap" style="display:none"><label class="fl2">'+L('Activity Type','نوع النشاط')+' <span style="font-size:9px;color:var(--text3)">'+L('(Min-LC exemption)','(إعفاء الحد الأدنى)')+'</span></label><select class="fsel2" id="a1Activity" onchange="a1Identify()"><option value="">'+L('None of the listed activities','لا شيء من الأنشطة المدرجة')+'</option>'+ACT_EXEMPT.map(function(a){return '<option value="'+a[0]+'">'+L(a[1],a[2])+'</option>';}).join('')+'</select></div>'+
     '</div>'+
     '<div id="a1Result" style="margin-top:12px"><div style="font-size:11px;color:var(--text3)">'+L('Enter nature & estimated value to identify the mechanism.','أدخل الطبيعة والقيمة التقديرية لتحديد الآلية.')+'</div></div>'+
     '<div id="a1ThresholdBox" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:var(--rs);padding:12px;background:var(--surface2)">'+
@@ -9928,12 +10018,28 @@ function _a1ThrCell(r){
   if(r.thresholdFileData)txt+='<div style="display:flex;gap:4px;margin-top:2px"><button class="btn btn-s btn-sm" style="padding:1px 6px;font-size:9px" onclick="a1ViewThr('+JSON.stringify(r.id)+')" title="'+escSub(r.thresholdFileName||'')+'">👁</button><button class="btn btn-s btn-sm" style="padding:1px 6px;font-size:9px" onclick="a1DlThr('+JSON.stringify(r.id)+')">⬇</button></div>';
   return txt;
 }
+var ACT_EXEMPT=[
+ ['telecom','Telecommunications','الاتصالات'],
+ ['medical_nonasset','Medical (outside owned assets)','الخدمات الطبية (خارج الأصول المملوكة)'],
+ ['environmental','Environmental / pest control','الخدمات البيئية / مكافحة الآفات'],
+ ['recycling','Recycling / waste','إعادة التدوير / النفايات'],
+ ['insurance','Insurance (Insurance Authority licensed)','التأمين (المرخّص من هيئة التأمين)'],
+ ['tailoring','Tailoring & personal-care salons','الخياطة وصالونات العناية الشخصية'],
+ ['rental','Rental / leasing','التأجير'],
+ ['laundry','Laundry (clothing / linens)','غسيل الملابس / المفروشات'],
+ ['sterilization','General services — transaction sterilization','الخدمات العامة — تعقيم المعاملات'],
+ ['customs','Customs clearance','التخليص الجمركي'],
+ ['fishing','Fishing (except catering)','الصيد (عدا الإعاشة)']
+]; // LCGPA circular 9/46214/2, eff. 2025/05/28 — exempt from the Minimum-Required-LC mechanism
+function _exemptActive(){return (typeof S==='undefined'||!S.entityType||S.entityType==='gov')||(typeof S!=='undefined'&&S.exemptForPortfolio===true);}
 function a1Identify(){
   var n=(document.getElementById('a1Nature')||{}).value||'';
   var v=parseFloat((document.getElementById('a1Value')||{}).value)||0;
-  var thr=((typeof S!=='undefined'&&S.highValueThreshold)||25)*1e6; var isH=v>=thr;
+  var _a1rg=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov';var thr=_regimeThrM(_a1rg)*1e6; var isH=v>=thr;
   var cx=(document.getElementById('a1Capex')||{}).value||'';
   var res=document.getElementById('a1Result'); if(!res)return;
+  var act=(document.getElementById('a1Activity')||{}).value||'';
+  var _exA=(_a1rg==='gov')||(_a1rg==='portfolio'&&(typeof S!=='undefined'&&S.exemptForPortfolio===true));var _aw=document.getElementById('a1ActivityWrap');if(_aw)_aw.style.display=_exA?'':'none';
   var DR=(typeof DECISION_RULES!=='undefined'?DECISION_RULES:[]);
   var needCapex=DR.some(function(r){return r.nature===n&&r.valueLevel===(isH?'high':'low')&&(r.expenditure==='capex'||r.expenditure==='opex');});
   var cw=document.getElementById('a1CapexWrap'); if(cw)cw.style.display=needCapex?'':'none';
@@ -9943,8 +10049,12 @@ function a1Identify(){
   var vl=isH?'high':'low',match=null;
   DR.forEach(function(r){ if(r.nature===n&&r.valueLevel===vl){ if(r.expenditure==='any'&&!match)match=r; if(cx&&r.expenditure===cx)match=r; if(!needCapex&&r.expenditure==='any')match=r; } });
   if(!match){res.innerHTML='<div style="font-size:11px;color:var(--danger)">No matching rule. Add one in Settings → Decision Tree.</div>';return;}
-  var mechs=match.mechanisms||[],note=match.note||'';_a1Mechs=mechs;
-  var head='<div style="font-size:10px;color:var(--text3);margin:4px 0 8px">'+escSub(note)+' · '+_v57Money(v)+' · Threshold SAR '+(thr/1e6)+'M · '+(isH?'High-value':'Below threshold')+'</div>';
+  var mechs=(match.mechanisms||[]).slice(),note=match.note||'';
+  var _exNote='';
+  if(n==='supply'){mechs=mechs.filter(function(m){return !mechIsLC(m);});} // I2: pure-supply never gets Minimum-Threshold / LC-Weight (Res.245 Art.14/23)
+  if(_exA&&act&&n!=='supply'){var _hadThr=mechs.some(function(m){return mechClass(m).base==='threshold';});mechs=mechs.filter(function(m){return mechClass(m).base!=='threshold';});if(_hadThr)_exNote=L('Exempted from the Minimum-Required-LC mechanism (LCGPA circular 9/46214/2) — consider LC-Weight instead.','معفى من آلية الحد الأدنى للمحتوى المحلي (تعميم 9/46214/2) — يمكن اعتماد وزن المحتوى المحلي بدلاً منها.');}
+  _a1Mechs=mechs;
+  var head='<div style="font-size:10px;color:var(--text3);margin:4px 0 8px">'+escSub(note)+' · '+_v57Money(v)+' · Threshold SAR '+(thr/1e6)+'M · '+(isH?'High-value':'Below threshold')+'</div>'+(_exNote?'<div style="font-size:10px;color:var(--warn);font-weight:700;margin:0 0 8px">⚠ '+escSub(_exNote)+'</div>':'');
   if(mechs.length<=1){
     _a1Pick=mechs[0]||'';
     res.innerHTML='<div style="background:var(--al);border:1.5px solid var(--accent);border-radius:var(--rs);padding:12px 14px"><div style="font-size:10px;color:var(--accent);font-weight:700">RECOMMENDED MECHANISM</div><div style="font-size:14px;font-weight:800;margin:4px 0">'+escSub(_a1Pick||'—')+'</div>'+head+'<button class="btn btn-p btn-sm" onclick="a1Save()">💾 Save as Processed</button></div>';
@@ -9963,9 +10073,12 @@ function a1Save(){
   var v=parseFloat((document.getElementById('a1Value')||{}).value)||0;
   var n=(document.getElementById('a1Nature')||{}).value||'';
   var cx=(document.getElementById('a1Capex')||{}).value||'';
+  var act=(document.getElementById('a1Activity')||{}).value||'';
+  if(n==='supply'&&typeof mechIsLC==='function'&&mechIsLC(_a1Pick)){toast(L('Pure-supply tenders cannot use a Minimum-Threshold or LC-Weight mechanism (Res.245 Art.14/23).','عقود التوريد البحت لا يمكن أن تستخدم آلية الحد الأدنى أو وزن المحتوى المحلي (المادة 14/23).'),'err');return;}
+  if(_exemptActive()&&act&&mechClass(_a1Pick).base==='threshold'){toast(L('This activity is exempted from the Minimum-Required-LC mechanism — choose another mechanism.','هذا النشاط معفى من آلية الحد الأدنى للمحتوى المحلي — اختر آلية أخرى.'),'err');return;}
   var rec=num?RFPS.find(function(r){return (r.ref||'').trim().toLowerCase()===num.toLowerCase();}):null;
   if(!rec){rec={id:uid(),created:new Date().toISOString().split('T')[0],boq:[]};RFPS.push(rec);}
-  rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.suggestedMech=_a1Pick;rec.mechAuto=(_a1Mechs.length<=1);rec.status='ready';rec.processedAt=new Date().toISOString();/* v57 CHANGE A/B — Mechanism Identifier completion → 'ready' (was 'processed') */
+  rec.title=name;rec.ref=num;rec.endUser=eu;rec.value=v;rec.nature=n;rec.expenditure=cx;rec.activityType=act;rec.regime=(document.getElementById('a1Regime')||{}).value||(typeof S!=='undefined'&&S.entityType)||'gov';rec.suggestedMech=_a1Pick;rec.mechAuto=(_a1Mechs.length<=1);rec.status='ready';rec.processedAt=new Date().toISOString();/* v57 CHANGE A/B — Mechanism Identifier completion → 'ready' (was 'processed') */
   // #threshold — store LC min baseline/target + excel when the mechanism is a threshold type
   var _isThr=(typeof mechClass==='function'&&mechClass(_a1Pick).base==='threshold');
   if(_isThr){
@@ -9988,7 +10101,7 @@ function a1Edit(id){
   a1OpenWizard();
   document.getElementById('a1Name').value=r.title||'';document.getElementById('a1Num').value=r.ref||'';
   _v57EU(document.getElementById('a1EU'));document.getElementById('a1EU').value=r.endUser||'';
-  document.getElementById('a1Value').value=r.value||'';document.getElementById('a1Nature').value=r.nature||'';
+  document.getElementById('a1Value').value=r.value||'';document.getElementById('a1Nature').value=r.nature||'';var _aaE=document.getElementById('a1Activity');if(_aaE)_aaE.value=r.activityType||'';var _arE=document.getElementById('a1Regime');if(_arE)_arE.value=r.regime||(typeof S!=='undefined'&&S.entityType)||'gov';
   a1Identify();var cx=document.getElementById('a1Capex');if(cx&&r.expenditure){cx.value=r.expenditure;a1Identify();}
   // repopulate threshold fields if this RFP's mechanism is a threshold type
   if(typeof mechClass==='function'&&mechClass(r.suggestedMech||_a1Pick||'').base==='threshold'){
