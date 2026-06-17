@@ -4384,12 +4384,9 @@ function recalcContractPenalties(c){
     }
     else if(r.type==='npp'){
       var committed=c.natProdAmount||0;var _nppTotal=0;
-      // Art.11(2): NPP penalty base = (Amount − ML). Penalty = (shortfall / base) × rate × Amount = shortfall × rate × Amount/(Amount−ML).
-      var _nppBase=(c.amount||0)-(c.mandatoryListAmount||0);
-      if(committed>0&&_nppBase>0){
-        var _nppMul=(c.amount||0)/_nppBase;
-        if(r.received!==true&&overdue){var _nsp=Math.round(S.npp*committed*_nppMul);_nppTotal+=_nsp;newPenalties.push({type:'NPP',amount:_nsp,reason:'National Products Price Preferencing final supply report not received (grace period elapsed)'});}
-        if(r.actual!=null&&r.actual<committed){var sf=committed-r.actual;var _sfp=Math.round(S.npp*sf*_nppMul);_nppTotal+=_sfp;newPenalties.push({type:'NPP',amount:_sfp,reason:'National Products Price Preferencing supply shortfall: '+fSAR(sf)});}
+      if(committed>0){
+        if(r.received!==true&&overdue){var _nsp=Math.round(S.npp*committed);_nppTotal+=_nsp;newPenalties.push({type:'NPP',amount:_nsp,reason:'National Products Price Preferencing final supply report not received (grace period elapsed)'});}
+        if(r.actual!=null&&r.actual<committed){var sf=committed-r.actual;var _sfp=Math.round(S.npp*sf);_nppTotal+=_sfp;newPenalties.push({type:'NPP',amount:_sfp,reason:'National Products Price Preferencing supply shortfall: '+fSAR(sf)});}
       }
       r.penalty=_nppTotal;
     }
