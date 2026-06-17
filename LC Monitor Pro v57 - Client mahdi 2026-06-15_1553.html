@@ -1492,7 +1492,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <div class="app" id="app">
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro</div><div class="sls">منصة المحتوى المحلي</div></div></div><div style="text-align:center;padding:5px 0 0"><span id="profileBadge" class="profile-badge pbg-gov" onclick="openSetupWizard()" title="Active profile — click to switch">GOV</span></div></div>
+  <div class="sl"><div class="slr"><div class="sli" id="sidebarLogo">LC</div><div><div class="slt" id="sidebarTitle">LC Monitor Pro</div><div class="sls">منصة المحتوى المحلي</div></div></div><div style="text-align:center;padding:5px 0 0"><span id="profileBadge" class="profile-badge pbg-gov" style="cursor:default">GOV</span></div></div>
   <div class="ns">OVERVIEW</div>
   <div class="ni-wrap" onclick="homeGoLanding()"><span class="ni">🏠</span><span>Home</span></div>
   <div class="ni-wrap active" onclick="nav(&#39;dashboard&#39;,this)"><span class="ni">⬛</span><span>Executive Dashboard</span></div>
@@ -1514,10 +1514,10 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 <div class="ns">REPORTS</div>
   <div class="ni-wrap" onclick="nav(&#39;annual&#39;,this)"><span class="ni">📑</span><span>Annual LCGPA Report</span></div>
 <div class="ns">ADMIN</div>
+  <div class="ni-wrap" onclick="openSetupWizard()"><span class="ni">🪄</span><span>Setup Wizard</span></div>
   <div class="ni-wrap" onclick="openSettingsNav(this)" style="position:relative;cursor:pointer"><span class="ni">⚙</span><span>Settings &amp; Admin</span><span id="settArrow" style="margin-left: auto; font-size: 9px; transition: transform 0.2s;" onclick="event.stopPropagation();toggleSettSubs()">▼</span></div>
   <div id="settSubNav" style="display: none; padding-left: 20px;">
       <div class="ns" style="font-size:8px;opacity:.65;padding-left:4px">GENERAL</div>
-  <div class="ni-wrap" onclick="openSetupWizard()" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">🪄</span><span>Setup Wizard</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-account&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>👤 User Settings</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-dashboard&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>📊 Dashboard KPIs</span></div>
   <div class="ni-wrap" onclick="navSettSec(&#39;settSec-data&#39;)" style="padding:4px 14px;font-size:11px"><span class="ni" style="font-size:9px">▪</span><span>🗄️ Data</span></div>
@@ -2126,8 +2126,8 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
           </div>
         </div>
         <div class="sc" style="border-top:3px solid #7c3aed;margin:0">
-          <div class="sc-title" style="color:#7c3aed">🏢 Portfolio Company</div>
-          <div class="sc-desc">Configure your policy below</div>
+          <div class="sc-title" style="color:#7c3aed">🏢 <span data-i18n="Portfolio Company">Portfolio Company</span></div>
+          <div class="sc-desc" data-i18n="Configure your policy below">Configure your policy below</div>
           <div class="pr"><span class="pr-l">LC Report Grace Period</span><div class="pr-r"><input class="pr-in" id="pPFGraceLC" type="number" step="1" value="7"><span class="pr-u">months</span></div></div>
           <div class="pr"><span class="pr-l">NPP / MLNP Grace Period</span><div class="pr-r"><input class="pr-in" id="pPFGraceNPP" type="number" step="1" value="30"><span class="pr-u">days</span></div></div>
           <div class="pr"><span class="pr-l" id="pcadLbl">Periodic cadence (6-mo hold + 15-wd review)</span><div class="pr-r"><label class="sw-toggle"><input type="checkbox" id="pPeriodicPortfolio"><span class="sw-slider"></span></label></div></div>
@@ -2423,13 +2423,13 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
 
 <!-- MODALS -->
 <div class="mo" id="cFullEditModal"><div class="md"><div class="md-hd"><div><div class="md-title">✏️ Edit Contract's Info</div><div class="md-sub">Edit all contract fields, amounts and BoQ</div></div><button class="md-close" onclick="closeModal(&#39;cFullEditModal&#39;)">✕</button></div><div class="md-body" id="cfeBody"></div></div></div>
-<div class="mo" id="cModal"><div class="md"><div class="md-hd"><div><div class="md-title" id="mT">#1 — إعداد دراسات السعة والطلب والدراسات الخمس لعدد من مشاريع القوات الخاصة للأمن البيئي</div><div class="md-sub" id="mS">Small &amp; Medium Enterprises</div></div><button class="md-close" onclick="closeModal(&#39;cModal&#39;)">✕</button></div><div class="md-body" id="mB"><div class="md-sec"><div class="md-sec-title">Contract Info</div><div class="ig">
-    <div><div class="ik">End-User</div><div class="iv">Ministry of Environment</div></div>
-    <div><div class="ik">Amount</div><div class="iv">SAR&nbsp;55,000,000</div></div>
-    <div><div class="ik">Start</div><div class="iv">01 Jan 1970</div></div>
-    <div><div class="ik">End</div><div class="iv">01 Jan 1970</div></div>
-    <div><div class="ik">LC Target</div><div class="iv">—</div></div>
-    <div><div class="ik">LC Amount</div><div class="iv">—</div></div>
+<div class="mo" id="cModal"><div class="md"><div class="md-hd"><div><div class="md-title" id="mT">#1 — إعداد دراسات السعة والطلب والدراسات الخمس لعدد من مشاريع القوات الخاصة للأمن البيئي</div><div class="md-sub" id="mS">Small &amp; Medium Enterprises</div></div><button class="md-close" onclick="closeModal(&#39;cModal&#39;)">✕</button></div><div class="md-body" id="mB"><div class="md-sec"><div class="md-sec-title">'+L('Contract Info','معلومات العقد')+'</div><div class="ig">
+    <div><div class="ik">'+L('End-User','المستخدم النهائي')+'</div><div class="iv">Ministry of Environment</div></div>
+    <div><div class="ik">'+L('Amount','المبلغ')+'</div><div class="iv">SAR&nbsp;55,000,000</div></div>
+    <div><div class="ik">'+L('Start','البداية')+'</div><div class="iv">01 Jan 1970</div></div>
+    <div><div class="ik">'+L('End','النهاية')+'</div><div class="iv">01 Jan 1970</div></div>
+    <div><div class="ik">'+L('LC Target','نسبة المحتوى المستهدفة')+'</div><div class="iv">—</div></div>
+    <div><div class="ik">'+L('LC Amount','مبلغ المحتوى المحلي')+'</div><div class="iv">—</div></div>
 <script>
 let AUDIT_LOG=JSON.parse(localStorage.getItem('lcAudit')||'[]');
 let CERTS=JSON.parse(localStorage.getItem('lcCerts')||'[]');
@@ -2610,7 +2610,7 @@ let searchQ='',fMechVal='',fStatVal='',fEUVal='';
 let curRFP=null,curBid=null,curBidders=[];
 let mechAdvisorHistory=[],bidHistory=[];
 
-const fSAR=n=>n==null?'—':new Intl.NumberFormat('en-SA',{style:'currency',currency:'SAR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n);
+const fSAR=n=>{if(n==null)return '—';var _f=new Intl.NumberFormat('en-SA',{style:'currency',currency:'SAR',minimumFractionDigits:0,maximumFractionDigits:0}).format(n);return (typeof lang!=='undefined'&&lang==='ar')?_f.replace(/^SAR\s*/,'ر.س '):_f;};
 const _loc=()=>(typeof lang!=='undefined'&&lang==='ar')?'ar-SA':'en-GB';
 const fD=d=>d?new Date(d).toLocaleDateString(_loc(),{day:'2-digit',month:'short',year:'numeric'}):'—';
 const pct=v=>v!=null?(v*100).toFixed(1)+'%':'—';
@@ -2626,7 +2626,7 @@ const uid=()=>Date.now()+Math.floor(Math.random()*10000);
 
 // THEME & LANG
 function setTheme(t,btn){document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'');['btnL','btnD'].forEach(id=>document.getElementById(id).classList.remove('active'));btn.classList.add('active');setTimeout(()=>{destroyCharts();renderCurrentPage();},80);}
-function setLang(l,btn){lang=l;document.body.classList.toggle('rtl',l==='ar');['btnEN','btnAR'].forEach(id=>document.getElementById(id).classList.remove('active'));btn.classList.add('active');applyLang(l);}
+function setLang(l,btn){lang=l;document.body.classList.toggle('rtl',l==='ar');['btnEN','btnAR'].forEach(id=>document.getElementById(id).classList.remove('active'));btn.classList.add('active');applyLang(l);var _sb=document.getElementById('profileBadge');if(_sb&&typeof S!=='undefined'){var _ar=l==='ar';_sb.textContent=S.activeProfile==='gov'?(_ar?'حكومي':'GOV'):(_ar?'مملوكة':'PF');}}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
 function toggleMobileMode(){var on=!document.body.classList.contains('mobile-mode');document.body.classList.toggle('mobile-mode',on);try{localStorage.setItem('lcMobile',on?'1':'0');}catch(e){}var b=document.getElementById('mobileToggleBtn');if(b)b.classList.toggle('on',on);if(!on)document.getElementById('sidebar').classList.remove('open');toast(on?'📱 Mobile view ON':'Mobile view off','info');}
 window.toggleMobileMode=toggleMobileMode;
@@ -3435,7 +3435,7 @@ function filteredDB(){
   });
 }
 function renderContracts(){
-  const ms=document.getElementById('fMech');if(ms&&!ms.dataset.init){ms.innerHTML='<option value="">All Mechanisms</option>'+MECHS.map(m=>`<option value="${m}">${m.substring(0,25)}…</option>`).join('');ms.dataset.init='1';}
+  const ms=document.getElementById('fMech');if(ms&&!ms.dataset.init){ms.innerHTML='<option value="">'+L('All Mechanisms','جميع الآليات')+'</option>'+MECHS.map(m=>`<option value="${m}">${m.substring(0,25)}…</option>`).join('');ms.dataset.init='1';}
   populateEUFilter();
   const data=filteredDB();document.getElementById('cntLbl').textContent=`${data.length} of ${DB.length} contracts`;
   document.getElementById('cTbody').innerHTML=data.length?data.map(c=>{
@@ -3444,17 +3444,17 @@ function renderContracts(){
     const evCount=Object.values(c.evidence||{}).flat().length;
     const pendEv=Object.values(c.evidence||{}).flat().filter(f=>(f.status||'pending')==='pending').length;
     return `<tr onclick="openContractModal(${c.id})">
-      <td><span class="badge ${ex?'bgy':'bb'}">${ex?'Exp':'Act'}</span> #${c.num}</td>
+      <td><span class="badge ${ex?'bgy':'bb'}">${ex?L('Exp','منتهي'):L('Act','نشط')}</span> #${c.num}</td>
       <td style="font-size:11px;font-weight:600;color:var(--text2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.endUser||'—'}${euFrz?.frozen?' 🔒':''}</td>
       <td><div class="td-n" title="${c.name}">${c.name||'—'}</div></td>
       <td style="font-size:10px;color:var(--text3);max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.mechanism||'—'}</td>
       <td class="td-m b">${fSAR(c.amount)}</td><td class="td-m" style="font-size:10px;color:var(--text3)">${fSAR(c.amount*0.15)}</td><td class="td-m b" style="color:var(--accent2)">${fSAR(c.amount*1.15)}</td>
       <td style="font-size:11px">${fD(c.end)}</td>
       <td><div class="pg-w"><div class="pg-b"><div class="pg-f" style="width:${c.agreedPct?c.agreedPct*100:0}%;background:var(--accent2)"></div></div><span class="pg-p">${pct(c.agreedPct)}</span></div></td>
-      <td>${(c.reports||[]).length} <span class="badge ${m>0?'br':'bg'}">${m>0?m+' overdue':'✓'}</span>${(typeof dueCnt==='function'&&dueCnt(c)>0)?` <span class="badge ba" title="Due — within grace period">${dueCnt(c)} due</span>`:''}${(m>0||(typeof dueCnt==='function'&&dueCnt(c)>0))?` <button class="btn btn-s btn-sm" style="padding:2px 7px;font-size:10px;white-space:nowrap" title="Email the contractor (CC End-User) about the due report" onclick="event.stopPropagation();c1SendReminder(${c.id})">✉ Remind</button>`:''}</td>
-      <td>${p>0?`<span class="badge br">⚠ ${fSAR(p)}</span>`:`<span class="badge bg">✓ Clear</span>`}</td>
+      <td>${(c.reports||[]).length} <span class="badge ${m>0?'br':'bg'}">${m>0?m+' '+L('overdue','متأخرة'):'✓'}</span>${(typeof dueCnt==='function'&&dueCnt(c)>0)?` <span class="badge ba" title="${L('Due — within grace period','مستحقة — ضمن فترة السماح')}">${dueCnt(c)} ${L('due','مستحقة')}</span>`:''}${(m>0||(typeof dueCnt==='function'&&dueCnt(c)>0))?` <button class="btn btn-s btn-sm" style="padding:2px 7px;font-size:10px;white-space:nowrap" title="${L('Email contractor about due report','إرسال تذكير للمقاول بشأن التقرير المستحق')}" onclick="event.stopPropagation();c1SendReminder(${c.id})">✉ ${L('Remind','تذكير')}</button>`:''}</td>
+      <td>${p>0?`<span class="badge br">⚠ ${fSAR(p)}</span>`:`<span class="badge bg">✓ ${L('Clear','خالٍ')}</span>`}</td>
     </tr>`;
-  }).join(''):`<tr><td colspan="11"><div class="empty"><div class="ei">🔍</div><p>No results</p></div></td></tr>`;
+  }).join(''):`<tr><td colspan="11"><div class="empty"><div class="ei">🔍</div><p>${L('No results','لا توجد نتائج')}</p></div></td></tr>`;
 }
 
 // CONTRACT MODAL
@@ -3480,16 +3480,16 @@ function openContractModal(id){
   function evSection(rtKey){
     var files=(c.evidence||{})[rtKey]||[];
     var pendN=files.filter(function(f){return(f.status||'pending')==='pending';}).length;
-    var h='<div style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:9px;color:var(--text3)"><span>&#128206; Evidence</span>';
-    if(pendN)h+='<span class="badge ba" style="font-size:9px">'+pendN+' pending review</span>';
-    h+='<span>'+files.length+' file(s)</span></div>';
+    var h='<div style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:9px;color:var(--text3)"><span>&#128206; '+L('Evidence','الأدلة')+'</span>';
+    if(pendN)h+='<span class="badge ba" style="font-size:9px">'+pendN+' '+L('pending review','قيد المراجعة')+'</span>';
+    h+='<span>'+files.length+' '+L('file(s)','ملف(ات)')+'</span></div>';
     if(files.length){
       h+='<div style="margin-top:4px">';
       files.forEach(function(f,fi){
         var st=f.status||'pending';
         h+='<div class="ev-file" style="padding:3px 7px;margin-bottom:2px">';
         h+='<div><div class="ev-file-name" style="font-size:10px">'+escSub(f.name)+'</div>';
-        h+='<div class="ev-file-size" style="font-size:8px">'+(f.size||'')+' &middot; '+(f.uploadedBy||'')+' &middot; '+st+(f.endUserVerified?' &middot; verified':'')+'</div></div>';
+        h+='<div class="ev-file-size" style="font-size:8px">'+(f.size||'')+' &middot; '+(f.uploadedBy||'')+' &middot; '+st+(f.endUserVerified?' &middot; '+L('verified','موثَّق'):'')+'</div></div>';
         h+='<div class="ev-actions" style="gap:3px">';
         if(f.dataUrl)h+='<button class="ev-btn" style="font-size:9px;padding:1px 5px" data-a="view" data-cid="'+c.id+'" data-rt="'+rtKey+'" data-fi="'+fi+'">&#128065;</button>';
         h+='</div></div>';
@@ -3501,8 +3501,8 @@ function openContractModal(id){
 
   var h='';
   h+='<div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap">';
-  h+='<button class="btn btn-a btn-sm" onclick="openContractFullEdit('+c.id+')">&#9999;&#65039; Edit Contract&#39;s Info</button>';
-  h+='<button class="btn btn-p btn-sm" onclick="saveAndRecalc('+c.id+')">&#9889; Save &amp; Recalculate</button>';
+  h+='<button class="btn btn-a btn-sm" onclick="openContractFullEdit('+c.id+')">&#9999;&#65039; '+L("Edit Contract's Info",'تعديل معلومات العقد')+'</button>';
+  h+='<button class="btn btn-p btn-sm" onclick="saveAndRecalc('+c.id+')">&#9889; '+L('Save & Recalculate','حفظ وإعادة الحساب')+'</button>';
   h+='<button class="btn btn-s btn-sm" onclick="generateReport('+c.id+')">&#128196; PDF</button>';
   /* v57: penalty letter removed from contract details — available in the Penalties section */
   h+='</div>';
@@ -3516,32 +3516,32 @@ function openContractModal(id){
   h+='<div><div class="ik">End</div><div class="iv">'+fD(c.end)+'</div></div>';
   h+='<div><div class="ik">LC Target</div><div class="iv">'+pct(c.agreedPct)+'</div></div>';
   h+='<div><div class="ik">LC Amount</div><div class="iv">'+fSAR(c.lcAmount)+'</div></div>';
-  h+='<div><div class="ik">Duration</div><div class="iv">'+c.duration+' months</div></div>';
-  h+='<div><div class="ik">Status</div><div class="iv"><span class="badge '+(isExp(c)?'bgy':'bg')+'">'+(isExp(c)?'Expired':'Active')+'</span></div></div>';
+  h+='<div><div class="ik">'+L('Duration','المدة')+'</div><div class="iv">'+c.duration+' '+L('months','شهرًا')+'</div></div>';
+  h+='<div><div class="ik">'+L('Status','الحالة')+'</div><div class="iv"><span class="badge '+(isExp(c)?'bgy':'bg')+'">'+(isExp(c)?L('Expired','منتهي'):L('Active','نشط'))+'</span></div></div>';
   h+='</div></div>';
 
   // Improvement Plan — shown FIRST; yearly-% targets become editable when Edit Info is ON.
   var _ip=(c.reports||[]).find(function(r){return r.type==='improvement';});
   if(_ip){
-    h+='<div class="md-sec"><div class="md-sec-title">Improvement Plan</div>';
+    h+='<div class="md-sec"><div class="md-sec-title">'+L('Improvement Plan','خطة التحسين')+'</div>';
     h+='<div class="ev-row" style="padding:8px 10px">';
     h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
     h+='<span style="font-size:12px;font-weight:700">🎯 Improvement Plan</span>';
-    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; Approved</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; Set Awarding Date in Edit Contract&#39;s Info</span>')+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,_ip)+(_ip.planApproved?'<span class="badge bg" style="font-size:9px">&#10003; '+L('Approved','موافق عليه')+'</span>':'')+(_ip.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(_ip.due)+' (award + 60d)</span>':'<span style="font-size:9px;color:var(--warn);font-weight:700">&#9888; '+L("Set Awarding Date in Edit Contract's Info",'حدِّد تاريخ الترسية في تعديل معلومات العقد')+'</span>')+'</div>';
     h+='</div>';
-    if(typeof isHighValue==='function'&&!isHighValue(c))h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">Below the high-value threshold &mdash; tracked &amp; approvable, but not counted in KPIs.</div>';
-    h+='<div style="font-size:10px;color:var(--text3);margin:2px 0 4px">Yearly LC Targets <span style="color:var(--text3)">(feed each periodic report’s Target on Save &amp; Recalculate)</span>:</div>';
+    if(typeof isHighValue==='function'&&!isHighValue(c))h+='<div style="font-size:9px;color:var(--text3);margin-bottom:4px">'+L('Below the high-value threshold — tracked & approvable, but not counted in KPIs.','أقل من حد القيمة العالية — يُتابَع ويمكن اعتماده، لكن لا يُحتسب في مؤشرات الأداء.')+'</div>';
+    h+='<div style="font-size:10px;color:var(--text3);margin:2px 0 4px">'+L('Yearly LC Targets','أهداف المحتوى المحلي السنوية')+' <span style="color:var(--text3)">'+L("(feed each periodic report's Target on Save & Recalculate)",'(أدخل الهدف لكل تقرير دوري عند الحفظ وإعادة الحساب)')+'</span>:</div>';
     h+='<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end">';
     (_ip.planTargets||[]).forEach(function(pt,pi){
       h+='<div style="display:flex;flex-direction:column;gap:2px"><label style="font-size:9px;color:var(--text2);font-weight:600">'+pt.label+'</label><input class="fi" type="number" step="0.1" id="mip_'+pi+'" value="'+(pt.pct!=null&&pt.pct!==''?pt.pct:'')+'" placeholder="%" style="width:84px;font-size:11px;padding:3px 6px"/></div>';
     });
     h+='</div>';
-    h+='<div id="mipEdit" style="margin-top:7px"><label class="ev-add-btn" for="mipFile" style="cursor:pointer;display:inline-flex;font-size:10px">&#128206; Attach Plan</label><input type="file" id="mipFile" style="display:none" onchange="mipAttachPlan(this,'+c.id+')"/></div>';
+    h+='<div id="mipEdit" style="margin-top:7px"><label class="ev-add-btn" for="mipFile" style="cursor:pointer;display:inline-flex;font-size:10px">&#128206; '+L('Attach Plan','إرفاق الخطة')+'</label><input type="file" id="mipFile" style="display:none" onchange="mipAttachPlan(this,'+c.id+')"/></div>';
     h+=evSection('improvement');
     h+='</div></div>';
   }
   if(periods.length){
-    h+='<div class="md-sec"><div class="md-sec-title">Periodic Reports</div>';
+    h+='<div class="md-sec"><div class="md-sec-title">'+L('Periodic Reports','التقارير الدورية')+'</div>';
     periods.forEach(function(r){
       var rtKey='period_'+r.year;
       var ok=r.received===true;
@@ -3551,13 +3551,13 @@ function openContractModal(id){
       h+='<span style="font-size:12px;font-weight:700">'+reportTitle(r)+'</span>';
       h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
       h+=reportStateBadge(c,r);
-      h+='<button class="badge '+(ok?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\''+rtKey+'\')" id="mbadge_'+rtKey+'">'+(ok?'&#10003; Received':'&#10007; Not received')+'</button>';
-      if(penOff)h+='<span class="badge bgy" style="font-size:9px">Pen Off</span>';
-      if(r.due)h+='<span style="font-size:9px;color:var(--text3)">Due: '+fD(r.due)+(r.deadline?' · grace '+fD(r.deadline):'')+'</span>';
+      h+='<button class="badge '+(ok?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\''+rtKey+'\')" id="mbadge_'+rtKey+'">'+(ok?L('&#10003; Received','&#10003; مستلم'):L('&#10007; Not received','&#10007; لم يُستلم'))+'</button>';
+      if(penOff)h+='<span class="badge bgy" style="font-size:9px">'+L('Pen Off','موقفة الغرامة')+'</span>';
+      if(r.due)h+='<span style="font-size:9px;color:var(--text3)">'+L('Due:','مستحق:')+' '+fD(r.due)+(r.deadline?' · '+L('grace','فترة سماح')+' '+fD(r.deadline):'')+'</span>';
       h+='</div></div>';
       h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-      h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Target:</span><span style="font-size:11px;font-weight:700">'+pct(r.target)+'</span></div>';
-      h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Actual%:</label><input class="fi" type="number" step="0.1" id="minput_'+rtKey+'" value="'+(r.actual!=null?+(r.actual*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
+      h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">'+L('Target:','الهدف:')+'</span><span style="font-size:11px;font-weight:700">'+pct(r.target)+'</span></div>';
+      h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">'+L('Actual%:','الفعلي%:')+'</label><input class="fi" type="number" step="0.1" id="minput_'+rtKey+'" value="'+(r.actual!=null?+(r.actual*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
       if(r.penalty>0&&!(r.type==='period'&&r.year&&_pPenOff()))h+='<span class="badge br" style="font-size:9px">'+fSAR(r.penalty)+'</span>';
       h+='</div>';
       h+=evSection(rtKey);
@@ -3568,18 +3568,18 @@ function openContractModal(id){
 
   if(finalR){
     var fOk=finalR.received===true;
-    h+='<div class="md-sec"><div class="md-sec-title">Final Report</div>';
+    h+='<div class="md-sec"><div class="md-sec-title">'+L('Final Report','التقرير النهائي')+'</div>';
     h+='<div class="ev-row" style="padding:8px 10px">';
     h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
     h+='<span style="font-size:12px;font-weight:700">'+reportTitle(finalR)+'</span>';
     h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">';
     h+=reportStateBadge(c,finalR);
-    h+='<button class="badge '+(fOk?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\'final\')" id="mbadge_final">'+(fOk?'&#10003; Received':'&#10007; Not received')+'</button>';
-    if(finalR.due)h+='<span style="font-size:9px;color:var(--text3)">Due: '+fD(finalR.due)+(finalR.deadline?' · grace '+fD(finalR.deadline):'')+'</span>';
+    h+='<button class="badge '+(fOk?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\'final\')" id="mbadge_final">'+(fOk?L('&#10003; Received','&#10003; مستلم'):L('&#10007; Not received','&#10007; لم يُستلم'))+'</button>';
+    if(finalR.due)h+='<span style="font-size:9px;color:var(--text3)">'+L('Due:','مستحق:')+' '+fD(finalR.due)+(finalR.deadline?' · '+L('grace','فترة سماح')+' '+fD(finalR.deadline):'')+'</span>';
     h+='</div></div>';
     h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-    h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Target:</span><span style="font-size:11px;font-weight:700" id="mFinalTarget">'+pct(c.agreedPct)+'</span>'+(c.sourceBidId?'<button class="btn btn-s btn-sm" style="padding:1px 7px;font-size:9px" onclick="importFinalTargetFromEval('+c.id+')" title="Pull the LC Target % from the source evaluation">&#10515; Import</button>':'')+'</div>';
-    h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Actual%:</label><input class="fi" type="number" step="0.1" id="minput_final" value="'+(finalR.achieved!=null?+(finalR.achieved*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
+    h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">'+L('Target:','الهدف:')+'</span><span style="font-size:11px;font-weight:700" id="mFinalTarget">'+pct(c.agreedPct)+'</span>'+(c.sourceBidId?'<button class="btn btn-s btn-sm" style="padding:1px 7px;font-size:9px" onclick="importFinalTargetFromEval('+c.id+')" title="Pull the LC Target % from the source evaluation">&#10515; '+L('Import','استيراد')+'</button>':'')+'</div>';
+    h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">'+L('Actual%:','الفعلي%:')+'</label><input class="fi" type="number" step="0.1" id="minput_final" value="'+(finalR.achieved!=null?+(finalR.achieved*100).toFixed(1):'')+'" style="width:70px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
     var fPen=(finalR.penalty||0)+(finalR.devPenalty||0);
     if(fPen>0)h+='<span class="badge br" style="font-size:9px">'+fSAR(fPen)+'</span>';
     h+='</div>';
@@ -3588,17 +3588,17 @@ function openContractModal(id){
   }
 
   if(nppR||mlnpR){
-    h+='<div class="md-sec"><div class="md-sec-title">National Products Price Preferencing / Mandatory List Reports</div>';
+    h+='<div class="md-sec"><div class="md-sec-title">'+L('NPP / Mandatory List Reports','تقارير تفضيل المنتجات الوطنية / القائمة الإلزامية')+'</div>';
     if(nppR){
       var nOk=nppR.received===true;
       h+='<div class="ev-row" style="padding:8px 10px;margin-bottom:6px">';
       h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
       h+='<span style="font-size:12px;font-weight:700">'+reportTitle(nppR)+'</span>';
-      h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,nppR)+'<button class="badge '+(nOk?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\'npp\')" id="mbadge_npp">'+(nOk?'&#10003; Received':'&#10007; Not received')+'</button>'+(nppR.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(nppR.due)+(nppR.deadline?' · grace '+fD(nppR.deadline):'')+'</span>':'')+'</div>';
+      h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,nppR)+'<button class="badge '+(nOk?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\'npp\')" id="mbadge_npp">'+(nOk?L('&#10003; Received','&#10003; مستلم'):L('&#10007; Not received','&#10007; لم يُستلم'))+'</button>'+(nppR.due?'<span style="font-size:9px;color:var(--text3)">'+L('Due:','مستحق:')+' '+fD(nppR.due)+(nppR.deadline?' · '+L('grace','فترة سماح')+' '+fD(nppR.deadline):'')+'</span>':'')+'</div>';
       h+='</div>';
       h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-      h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Committed:</span><span style="font-size:11px;font-weight:700">'+fSAR(c.natProdAmount)+'</span></div>';
-      h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Actual SAR:</label><input class="fi" type="number" id="minput_npp" value="'+(nppR.actual!=null?nppR.actual:'')+'" style="width:110px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
+      h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">'+L('Committed:','الملتزم به:')+'</span><span style="font-size:11px;font-weight:700">'+fSAR(c.natProdAmount)+'</span></div>';
+      h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">'+L('Actual SAR:','الفعلي ر.س:')+'</label><input class="fi" type="number" id="minput_npp" value="'+(nppR.actual!=null?nppR.actual:'')+'" style="width:110px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
       if(nppR.penalty>0)h+='<span class="badge br" style="font-size:9px">'+fSAR(nppR.penalty)+'</span>';
       h+='</div>';
       h+=evSection('npp');
@@ -3609,11 +3609,11 @@ function openContractModal(id){
       h+='<div class="ev-row" style="padding:8px 10px">';
       h+='<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:6px">';
       h+='<span style="font-size:12px;font-weight:700">'+reportTitle(mlnpR)+'</span>';
-      h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,mlnpR)+'<button class="badge '+(mOk?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\'mlnp\')" id="mbadge_mlnp">'+(mOk?'&#10003; Received':'&#10007; Not received')+'</button>'+(mlnpR.due?'<span style="font-size:9px;color:var(--text3)">Due: '+fD(mlnpR.due)+(mlnpR.deadline?' · grace '+fD(mlnpR.deadline):'')+'</span>':'')+'</div>';
+      h+='<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'+reportStateBadge(c,mlnpR)+'<button class="badge '+(mOk?'bg':'br')+'" style="cursor:pointer;border:none;font-size:10px" onclick="toggleModalReceived(\'mlnp\')" id="mbadge_mlnp">'+(mOk?L('&#10003; Received','&#10003; مستلم'):L('&#10007; Not received','&#10007; لم يُستلم'))+'</button>'+(mlnpR.due?'<span style="font-size:9px;color:var(--text3)">'+L('Due:','مستحق:')+' '+fD(mlnpR.due)+(mlnpR.deadline?' · '+L('grace','فترة سماح')+' '+fD(mlnpR.deadline):'')+'</span>':'')+'</div>';
       h+='</div>';
       h+='<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">';
-      h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">Committed:</span><span style="font-size:11px;font-weight:700">'+fSAR(c.mandatoryListAmount)+'</span></div>';
-      h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">Actual SAR:</label><input class="fi" type="number" id="minput_mlnp" value="'+(mlnpR.actual!=null?mlnpR.actual:'')+'" style="width:110px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
+      h+='<div style="display:flex;align-items:center;gap:4px"><span style="font-size:10px;color:var(--text3)">'+L('Committed:','الملتزم به:')+'</span><span style="font-size:11px;font-weight:700">'+fSAR(c.mandatoryListAmount)+'</span></div>';
+      h+='<div style="display:flex;align-items:center;gap:4px"><label style="font-size:10px;color:var(--text3)">'+L('Actual SAR:','الفعلي ر.س:')+'</label><input class="fi" type="number" id="minput_mlnp" value="'+(mlnpR.actual!=null?mlnpR.actual:'')+'" style="width:110px;font-size:11px;padding:3px 6px;font-family:var(--fm)"/></div>';
       if(mlnpR.penalty>0)h+='<span class="badge br" style="font-size:9px">'+fSAR(mlnpR.penalty)+'</span>';
       h+='</div>';
       h+=evSection('mlnp');
@@ -3623,21 +3623,21 @@ function openContractModal(id){
   }
 
   if(c.documents&&c.documents.length){
-    h+='<div class="md-sec"><div class="md-sec-title">Contract Documents</div><div style="display:flex;flex-direction:column;gap:5px">';
+    h+='<div class="md-sec"><div class="md-sec-title">'+L('Contract Documents','وثائق العقد')+'</div><div style="display:flex;flex-direction:column;gap:5px">';
     c.documents.forEach(function(d,di){
-      h+='<div class="ev-file" style="padding:5px 9px"><div><div class="ev-file-name" style="font-size:11px">&#128196; '+(d.kind?'<b>'+d.kind+'</b> &middot; ':'')+(d.name||'Document')+'</div><div class="ev-file-size" style="font-size:9px;color:var(--text3)">imported from evaluation &middot; read-only</div></div><div class="ev-actions"><button class="ev-btn" style="font-size:9px;padding:2px 7px" onclick="viewContractDoc('+c.id+','+di+')">&#128065; View</button></div></div>';
+      h+='<div class="ev-file" style="padding:5px 9px"><div><div class="ev-file-name" style="font-size:11px">&#128196; '+(d.kind?'<b>'+d.kind+'</b> &middot; ':'')+(d.name||L('Document','مستند'))+'</div><div class="ev-file-size" style="font-size:9px;color:var(--text3)">'+L('imported from evaluation · read-only','مستورد من التقييم · للقراءة فقط')+'</div></div><div class="ev-actions"><button class="ev-btn" style="font-size:9px;padding:2px 7px" onclick="viewContractDoc('+c.id+','+di+')">&#128065; '+L('View','عرض')+'</button></div></div>';
     });
     h+='</div></div>';
   }
 
   if(p>0){
-    h+='<div class="md-sec"><div class="ph"><span style="font-size:18px">&#9888;&#65039;</span><div><div class="ph-lbl">Total Penalty</div><div class="ph-amt">'+fSAR(p)+'</div></div></div>';
+    h+='<div class="md-sec"><div class="ph"><span style="font-size:18px">&#9888;&#65039;</span><div><div class="ph-lbl">'+L('Total Penalty','إجمالي الغرامة')+'</div><div class="ph-amt">'+fSAR(p)+'</div></div></div>';
     h+='<div style="margin-top:8px">'+(c.penalties||[]).map(function(pn){return '<div style="display:flex;justify-content:space-between;gap:8px;font-size:10px;padding:3px 0;border-top:1px solid var(--border)"><span style="color:var(--text2)">'+penTypeLabel(pn.type||'')+(pn.reason?' — '+pn.reason:'')+'</span><span style="font-weight:700;color:var(--danger);white-space:nowrap">'+fSAR(pn.amount)+'</span></div>';}).join('')+'</div>';
     h+='</div>';
   }
 
   h+='<div class="fa-row" style="border-top:2px solid var(--border);padding-top:12px;margin-top:12px">';
-  h+='<button class="btn btn-p" onclick="saveAndRecalc('+c.id+')">&#9889; Save &amp; Recalculate Penalties</button>';
+  h+='<button class="btn btn-p" onclick="saveAndRecalc('+c.id+')">&#9889; '+L('Save & Recalculate Penalties','حفظ وإعادة حساب الغرامات')+'</button>';
   h+='<button class="btn btn-s" onclick="closeModal(\'cModal\')">Close</button>';
   h+='</div>';
 
@@ -3985,7 +3985,7 @@ function renderPenalties(){
     <div class="kpi purple"><div class="kpi-bar"></div><div class="kpi-in"><div class="kpi-lbl">Penalty Records</div><div class="kpi-val">${DB.reduce((s,c)=>s+(c.penalties||[]).length,0)}</div><div class="kpi-s">individual</div></div></div>`;
   // Penalty Legend
   var penLeg=document.getElementById('penLegend');if(!penLeg){penLeg=document.createElement('div');penLeg.id='penLegend';penLeg.style.cssText='display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:9px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:14px;box-shadow:var(--sh)';var pk=document.getElementById('penKPIs');if(pk&&pk.parentNode)pk.parentNode.insertBefore(penLeg,pk.nextSibling);}
-  penLeg.innerHTML='<span style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px">\u25cf Legend</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent2);flex-shrink:0"></span> Periodic</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--danger);flex-shrink:0"></span> Final Submission</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--warn);flex-shrink:0"></span> Deviation</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--info);flex-shrink:0"></span> National Products Price Preferencing</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent3);flex-shrink:0"></span> Mandatory List</span>';
+  penLeg.innerHTML='<span style="font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px">\u25cf '+L('Legend','\u0645\u0641\u062a\u0627\u062d \u0627\u0644\u0623\u0644\u0648\u0627\u0646')+'</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent2);flex-shrink:0"></span> '+L('Periodic','\u062f\u0648\u0631\u064a')+'</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--danger);flex-shrink:0"></span> '+L('Final Submission','\u0627\u0644\u062a\u0642\u062f\u064a\u0645 \u0627\u0644\u0646\u0647\u0627\u0626\u064a')+'</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--warn);flex-shrink:0"></span> '+L('Deviation','\u0627\u0646\u062d\u0631\u0627\u0641')+'</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--info);flex-shrink:0"></span> '+L('National Products Price Preferencing','\u062a\u0641\u0636\u064a\u0644 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0627\u0644\u0648\u0637\u0646\u064a\u0629')+'</span>'+'<span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text2)"><span style="width:10px;height:10px;border-radius:50%;background:var(--accent3);flex-shrink:0"></span> '+L('Mandatory List','\u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064a\u0629')+'</span>';
   let per=0,fs=0,dv=0,np=0,ml=0;
   DB.forEach(c=>(c.penalties||[]).forEach(p=>{if(p.type==='Periodic'){if(PPEN[p.year]!==false)per+=p.amount;}else if(p.type==='FinalSub')fs+=p.amount;else if(p.type==='Deviation')dv+=p.amount;else if(p.type==='NPP')np+=p.amount;else if(p.type==='MLNP')ml+=p.amount;}));
   const bk=[{l:'Periodic LC',v:per,c:'var(--accent2)'},{l:'Final Submission',v:fs,c:'var(--danger)'},{l:'LC Deviation',v:dv,c:'var(--warn)'},{l:'National Products Price Preferencing',v:np,c:'var(--info)'},{l:'Mandatory List',v:ml,c:'var(--accent3)'}].filter(x=>x.v>0);
@@ -4001,7 +4001,7 @@ function renderPenalties(){
   document.getElementById('penBreak').innerHTML=_c4Banner+bk.map(b=>`<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:var(--text2)">${b.l}</span><span style="font-size:11px;font-weight:700;color:${b.c};font-family:var(--fm)">${fSAR(b.v)}</span></div><div class="pg-b"><div class="pg-f" style="width:${pt?b.v/pt*100:0}%;background:${b.c}"></div></div></div>`).join('')||'<div class="empty"><div class="ei">✅</div><p>No penalties</p></div>';
   const pdEl=document.getElementById('cPenD');if(pdEl){if(charts.penD)charts.penD.destroy();const _pmax=Math.max.apply(null,DB.map(c=>tPen(c)).concat([0]));const _useM=_pmax>=1000000;const _div=_useM?1000000:1000;const _suf=_useM?'M':'K';const pv=DB.map(c=>+(tPen(c)/_div).toFixed(_useM?2:0));charts.penD=new Chart(pdEl,{type:'bar',data:{labels:DB.map(c=>`#${c.num}`),datasets:[{data:pv,backgroundColor:pv.map(v=>v>0?'rgba(220,38,38,.45)':'rgba(16,185,129,.2)'),borderColor:pv.map(v=>v>0?'#dc2626':'#10b981'),borderWidth:2,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,onClick:function(evt,elems){if(elems.length>0){var idx=elems[0].index;var cc=DB[idx];if(cc)openContractModal(cc.id);}},plugins:{tooltip:{callbacks:{label:function(ctx){return 'SAR '+ctx.parsed.y+_suf;}},backgroundColor:'rgba(15,23,42,.92)',titleColor:'#f1f5f9',bodyColor:'#e2e8f0',titleFont:{size:12,weight:'700'},bodyFont:{size:11},padding:10,cornerRadius:8,displayColors:true,boxPadding:4},legend:{display:false}},scales:{x:{ticks:{color:gc()},grid:{color:gg()}},y:{ticks:{color:gc(),callback:v=>v+_suf},grid:{color:gg()}}}}});}
   const rows=[];DB.forEach(c=>(c.penalties||[]).forEach((p,pi)=>{const dis=(p.type==='Periodic'&&p.year&&_pPenOff());rows.push({cid:c.id,pidx:pi,name:`#${c.num} ${(c.name||'').substring(0,22)}`,type:p.type,amt:p.amount,reason:p.reason,dis,pushed:!!p.pushedToSupplier,pushedAt:p.pushedAt||'',ackStatus:p.ackStatus||''});}));
-  document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':r.type==='Deviation'?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ Off</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?'Disabled':'Active'}</span></td><td style="text-align:center;white-space:nowrap">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Generate a penalty letter for this penalty line">⚠ Letter</button> ${r.pushed?`<span class="badge ${r.ackStatus==='disputed'?'br':r.ackStatus==='acknowledged'?'bg':'bb'}" style="font-size:9px" title="Sent to the supplier${r.pushedAt?' on '+r.pushedAt:''}">${r.ackStatus==='disputed'?'⚠ Disputed':r.ackStatus==='acknowledged'?'✓ Acknowledged':'✓ Sent'}</span> <button class="btn btn-d btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="recallPenalty(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Rescind this penalty notice — removes it from the supplier &amp; Reports Review">↩ Recall</button>`:`<button class="btn btn-s btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="sendPenaltyToSupplier(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="Push this penalty + letter to the supplier's LC Requirements and Reports Review">📨 Send to Supplier</button>`}`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>No penalties</p></div></td></tr>`;
+  document.getElementById('penTbody').innerHTML=rows.length?rows.map(r=>`<tr style="${r.dis?'opacity:.4':''}"><td class="td-n">${r.name}</td><td><span class="badge ${r.type==='Periodic'?'bp':r.type==='FinalSub'?'br':r.type==='Deviation'?'ba':r.type==='NPP'?'bt':'bg'}">${penTypeLabel(r.type)}</span>${r.dis?' <span class="badge bgy">⊘ '+L('Off','موقف')+'</span>':''}</td><td class="td-m ${r.dis?'':'r'}" style="${r.dis?'text-decoration:line-through;color:var(--text3)':''}">${fSAR(r.amt)}</td><td style="font-size:11px;color:var(--text3)">${r.reason||'—'}</td><td><span class="badge ${r.dis?'bgy':'br'}">${r.dis?L('Disabled','معطّل'):L('Active','نشط')}</span></td><td style="text-align:center;white-space:nowrap">${r.dis?'<span style="color:var(--text3);font-size:11px">—</span>':`<button class="btn btn-a btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="generatePenaltyLetterFor(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})" title="${L('Generate a penalty letter','إنشاء خطاب غرامة')}">⚠ ${L('Letter','خطاب')}</button> ${r.pushed?`<span class="badge ${r.ackStatus==='disputed'?'br':r.ackStatus==='acknowledged'?'bg':'bb'}" style="font-size:9px">${r.ackStatus==='disputed'?'⚠ '+L('Disputed','مُعترض عليه'):r.ackStatus==='acknowledged'?'✓ '+L('Acknowledged','مُقرّ به'):'✓ '+L('Sent','مُرسَل')}</span> <button class="btn btn-d btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="recallPenalty(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})">↩ ${L('Recall','سحب')}</button>`:`<button class="btn btn-s btn-sm" style="padding:3px 9px;font-size:10px;white-space:nowrap" onclick="sendPenaltyToSupplier(${typeof r.cid==='number'?r.cid:`'${r.cid}'`},${r.pidx})">📨 ${L('Send to Supplier','إرسال للمورد')}</button>`}`}</td></tr>`).join(''):`<tr><td colspan="6"><div class="empty"><div class="ei">✅</div><p>${L('No penalties','لا توجد غرامات')}</p></div></td></tr>`;
 }
 // Push a penalty (details + letter) to its supplier's LC Requirements + Reports Review (view-only).
 function sendPenaltyToSupplier(cid,pidx){
@@ -4109,7 +4109,7 @@ function renderSettings(){setTimeout(function(){renderColorPalette();var sl=loca
   var _cpf=document.getElementById('pCapPerFine');if(_cpf)_cpf.value=(S.capPerFinePct!=null?S.capPerFinePct:10);
   var _cag=document.getElementById('pCapAgg');if(_cag)_cag.value=(S.capAggPct!=null?S.capAggPct:20);
 
-  (function(){var m={remHelp:L('Reminders are sent this many days before each report due date.','تُرسل التذكيرات قبل الموعد المحدد لكل تقرير بهذا العدد من الأيام.'),pcadTitle:L('Periodic Report Cadence','جدولة التقارير الدورية'),pcadDesc:L('Government: no reports in the first 6 months; 15 working-day approval window','حكومي: لا تقارير في أول 6 أشهر؛ ونافذة اعتماد 15 يوم عمل'),pcadLbl:L('Apply government periodic cadence to portfolio companies','تطبيق الجدولة الحكومية على شركات المحافظ'),exTitle:L('Minimum-LC Activity Exemption','إعفاء الأنشطة من الحد الأدنى'),exDesc:L('Government: 11 activities exempt from the Minimum-LC mechanism (LCGPA circular 9/46214/2)','حكومي: 11 نشاطًا معفى من آلية الحد الأدنى (تعميم 9/46214/2)'),exLbl:L('Apply the exempted-activity list to portfolio companies','تطبيق قائمة الأنشطة المعفاة على شركات المحافظ'),capTitle:L('Penalty Caps','حدود الغرامات'),capDesc:L('Government: hard-coded 10% per fine / 20% aggregate (Art.31/34). Portfolio: set your own below.','حكومي: 10% لكل غرامة / 20% إجمالي (المادتان 31/34). المحافظ: حدد قيمك أدناه.'),capLbl:L('Apply penalty caps to portfolio companies','تطبيق حدود الغرامات على شركات المحافظ'),capPFLbl:L('Portfolio per-fine cap','حد الغرامة الواحدة (محافظ)'),capAGLbl:L('Portfolio aggregate cap','الحد الإجمالي (محافظ)'),gdLbl:L('Goods Deviation Rate (per-line)','معدل انحراف السلع (لكل بند)'),docMinTitle:L('Documented Minimum (Art.25)','الحد الأدنى الموثّق (المادة 25)'),docMinDesc:L('Government: the documented minimum baseline/target always applies. Portfolio companies: opt-in below (off by default).','حكومي: يُطبَّق الحد الأدنى الموثّق لخط الأساس/المستهدف دائمًا. شركات المحافظ: تفعيل اختياري أدناه (متوقف افتراضيًا).'),docMinLbl:L('Apply Art.25 documented minimum (baseline / target) to portfolio companies','تطبيق الحد الأدنى الموثّق (المادة 25) لخط الأساس/المستهدف على شركات المحافظ')};for(var k in m){var el=document.getElementById(k);if(el)el.textContent=m[k];}})();
+  (function(){var m={remHelp:L('Reminders are sent this many days before each report due date.','تُرسل التذكيرات قبل الموعد المحدد لكل تقرير بهذا العدد من الأيام.'),pcadTitle:L('Periodic Report Cadence','جدولة التقارير الدورية'),pcadDesc:L('Government: no reports in the first 6 months; 15 working-day approval window','حكومي: لا تقارير في أول 6 أشهر؛ ونافذة اعتماد 15 يوم عمل'),pcadLbl:L('Apply government periodic cadence to portfolio companies','تطبيق الجدولة الحكومية على الشركات المملوكة للدولة'),exTitle:L('Minimum-LC Activity Exemption','إعفاء الأنشطة من الحد الأدنى'),exDesc:L('Government: 11 activities exempt from the Minimum-LC mechanism (LCGPA circular 9/46214/2)','حكومي: 11 نشاطًا معفى من آلية الحد الأدنى (تعميم 9/46214/2)'),exLbl:L('Apply the exempted-activity list to portfolio companies','تطبيق قائمة الأنشطة المعفاة على الشركات المملوكة للدولة'),capTitle:L('Penalty Caps','حدود الغرامات'),capDesc:L('Government: hard-coded 10% per fine / 20% aggregate (Art.31/34). Portfolio: set your own below.','حكومي: 10% لكل غرامة / 20% إجمالي (المادتان 31/34). الشركات المملوكة للدولة: حدد قيمك أدناه.'),capLbl:L('Apply penalty caps to portfolio companies','تطبيق حدود الغرامات على الشركات المملوكة للدولة'),capPFLbl:L('Portfolio per-fine cap','حد الغرامة الواحدة (مملوكة للدولة)'),capAGLbl:L('Portfolio aggregate cap','الحد الإجمالي (مملوكة للدولة)'),gdLbl:L('Goods Deviation Rate (per-line)','معدل انحراف السلع (لكل بند)'),docMinTitle:L('Documented Minimum (Art.25)','الحد الأدنى الموثّق (المادة 25)'),docMinDesc:L('Government: the documented minimum baseline/target always applies. Portfolio companies: opt-in below (off by default).','حكومي: يُطبَّق الحد الأدنى الموثّق لخط الأساس/المستهدف دائمًا. الشركات المملوكة للدولة: تفعيل اختياري أدناه (متوقف افتراضيًا).'),docMinLbl:L('Apply Art.25 documented minimum (baseline / target) to portfolio companies','تطبيق الحد الأدنى الموثّق (المادة 25) لخط الأساس/المستهدف على الشركات المملوكة للدولة')};for(var k in m){var el=document.getElementById(k);if(el)el.textContent=m[k];}})();
 }
 function renderKPICfg(){document.getElementById('kpiCfg').innerHTML=KPI_DEFS.map((k,i)=>`<div class="kpi-cfg-item"><div style="display:flex;align-items:center;gap:8px"><span style="color:var(--text3);font-size:13px;cursor:grab" title="Drag to reorder">⠿</span><div class="kpi-cfg-lbl">${k.label}</div></div><label class="sw-toggle"><input type="checkbox" ${KPICFG[k.key]!==false?'checked':''} onchange="KPICFG['${k.key}']=this.checked"/><span class="sw-slider"></span></label></div>`).join('');attachDnD('kpiCfg','KPI_DEFS',function(){lsSet('lcKPIDefsOrder',JSON.stringify(KPI_DEFS.map(function(k){return k.key;})));renderKPICfg();});}
 function saveKPIConfig(){lsSet('lcKPI',JSON.stringify(KPICFG));toast('KPI layout saved','ok');if(curPage==='dashboard')renderDashboard();}
@@ -4254,7 +4254,7 @@ function _applyProfile(prof){
     if(sub.periodicPenOn!=null)S.periodicPenOn=!!sub.periodicPenOn;
   }
   var _sb=document.getElementById('profileBadge');
-  if(_sb){_sb.textContent=p==='gov'?'GOV':'PF';_sb.className='profile-badge '+(p==='gov'?'pbg-gov':'pbg-pf');}
+  if(_sb){var _ar=(typeof lang!=='undefined'&&lang==='ar');_sb.textContent=p==='gov'?(_ar?'حكومي':'GOV'):(_ar?'مملوكة':'PF');_sb.className='profile-badge '+(p==='gov'?'pbg-gov':'pbg-pf');}
 }
 window._applyProfile=_applyProfile;
 function isHighValue(c){return (c&&c.amount||0)>=_regimeThrM(_regimeOf(c))*1000000;}
@@ -4273,7 +4273,8 @@ function reportStateBadge(c,r){
 }
 // Full-name label for a penalty type code (no short names shown to users).
 function penTypeLabel(t){
-  return {Periodic:'Periodic LC',FinalSub:'Final Submission',Deviation:'LC Deviation',NPP:'National Products Price Preferencing',MLNP:'Mandatory List'}[t]||t;
+  var m={Periodic:L('Periodic LC','تقرير المحتوى الدوري'),FinalSub:L('Final Submission','التقديم النهائي'),Deviation:L('LC Deviation','انحراف المحتوى المحلي'),NPP:L('National Products Price Preferencing','تفضيل المنتجات الوطنية'),MLNP:L('Mandatory List','القائمة الإلزامية')};
+  return m[t]||t;
 }
 // Map any (possibly legacy/short) mechanism string to its canonical full-name form.
 // Canonical mechanism component names (v57 LOCKED):
@@ -5331,7 +5332,11 @@ function setFullLang(l){
 // Arabic UI translations
 var AR={
   // Nav items
-  'Executive Dashboard':'لوحة التحكم التنفيذية',
+  'Home':'الرئيسية',
+  'Executive Dashboard':'لوحة المعلومات التنفيذية',
+  'Mechanisms Identifier':'محدد الآليات',
+  'Mandatory List Identifier':'محدد القائمة الإلزامية',
+  'Evaluation Assistant':'مساعد التقييم',
   'RFP Preparation':'إعداد طلبات العروض',
   'Bid Evaluation':'تقييم العطاءات',
   'Contracts & Monitoring':'العقود والمتابعة',
@@ -5340,15 +5345,27 @@ var AR={
   'Reports Review':'مراجعة التقارير',
   'Penalties':'الغرامات',
   'Alerts':'التنبيهات',
-  'Email Reminders':'تذكيرات البريد',
-  'Audit Trail':'سجل المراجعة',
+  'Email Reminders':'تذكيرات البريد الإلكتروني',
+  'Audit Trail':'سجل التدقيق',
   'Portfolio View':'عرض المحفظة',
   'Certificates':'الشهادات',
+  'Suppliers':'الموردون',
+  'Roles & Permissions':'الأدوار والصلاحيات',
+  'Annual LCGPA Report':'التقرير السنوي لهيئة المحتوى المحلي',
+  'Setup Wizard':'معالج الإعداد',
   'Settings & Admin':'الإعدادات والإدارة',
   // Section headers
   'OVERVIEW':'نظرة عامة',
+  'PRE-TENDERING':'ما قبل الطرح',
+  'AWARDING':'الترسية',
+  'MONITORING':'المتابعة',
   'RFP PREPARATION':'إعداد طلبات العروض',
   'BIDS EVALUATION':'تقييم العطاءات',
+  'ANALYTICS':'التحليلات',
+  'SUPPLIERS':'الموردون',
+  'ADMINISTRATION':'الإدارة',
+  'REPORTS':'التقارير',
+  'ADMIN':'الإدارة',
   'CONTRACTS':'العقود',
   'REVIEW':'المراجعة',
   'ANALYTICS':'التحليلات',
@@ -5370,6 +5387,11 @@ var AR={
   'Portfolio by Entity':'المحفظة حسب الجهة',
   'Certificate Tracker':'متابعة الشهادات',
   'Settings & Admin':'الإعدادات والإدارة',
+  // Entity type labels
+  'Government Entity':'جهة حكومية',
+  'Portfolio Company':'شركة مملوكة للدولة',
+  'Configure your policy below':'قم بإعداد سياستك أدناه',
+  'Supplier Performance':'أداء الموردين',
   // Contracts page
   'FILTER:':'تصفية:','All Contracts':'جميع العقود',
   'All End-Users':'جميع المستخدمين النهائيين',
@@ -5500,6 +5522,76 @@ var AR={
   'SUPPLIERS':'\u0627\u0644\u0645\u0648\u0631\u062f\u0648\u0646',
   'Defined Roles':'\u0627\u0644\u0623\u062f\u0648\u0627\u0631 \u0627\u0644\u0645\u0639\u0631\u0641\u0629',
   'Permission Matrix':'\u0645\u0635\u0641\u0648\u0641\u0629 \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0627\u062a',
+  // Contract modal labels
+  'Contract Info':'\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0639\u0642\u062f',
+  'End-User':'\u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645 \u0627\u0644\u0646\u0647\u0627\u0626\u064a',
+  'Amount':'\u0627\u0644\u0645\u0628\u0644\u063a',
+  'Start':'\u0627\u0644\u0628\u062f\u0627\u064a\u0629',
+  'End':'\u0627\u0644\u0646\u0647\u0627\u064a\u0629',
+  'LC Target':'\u0646\u0633\u0628\u0629 \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u0633\u062a\u0647\u062f\u0641\u0629',
+  'LC Amount':'\u0645\u0628\u0644\u063a \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u062d\u0644\u064a',
+  'Duration':'\u0627\u0644\u0645\u062f\u0629',
+  'months':'\u0634\u0647\u0631\u064b\u0627',
+  'Status':'\u0627\u0644\u062d\u0627\u0644\u0629',
+  "Edit Contract's Info":'\u062a\u0639\u062f\u064a\u0644 \u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0639\u0642\u062f',
+  'Save & Recalculate':'\u062d\u0641\u0638 \u0648\u0625\u0639\u0627\u062f\u0629 \u0627\u0644\u062d\u0633\u0627\u0628',
+  'Save & Recalculate Penalties':'\u062d\u0641\u0638 \u0648\u0625\u0639\u0627\u062f\u0629 \u062d\u0633\u0627\u0628 \u0627\u0644\u063a\u0631\u0627\u0645\u0627\u062a',
+  // Contract modal sections
+  'Improvement Plan':'\u062e\u0637\u0629 \u0627\u0644\u062a\u062d\u0633\u064a\u0646',
+  'Periodic Reports':'\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0627\u0644\u062f\u0648\u0631\u064a\u0629',
+  'Final Report':'\u0627\u0644\u062a\u0642\u0631\u064a\u0631 \u0627\u0644\u0646\u0647\u0627\u0626\u064a',
+  'NPP / Mandatory List Reports':'\u062a\u0642\u0627\u0631\u064a\u0631 \u062a\u0641\u0636\u064a\u0644 \u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a \u0627\u0644\u0648\u0637\u0646\u064a\u0629 / \u0627\u0644\u0642\u0627\u0626\u0645\u0629 \u0627\u0644\u0625\u0644\u0632\u0627\u0645\u064a\u0629',
+  'Contract Documents':'\u0648\u062b\u0627\u0626\u0642 \u0627\u0644\u0639\u0642\u062f',
+  'Total Penalty':'\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u063a\u0631\u0627\u0645\u0629',
+  'Yearly LC Targets':'\u0623\u0647\u062f\u0627\u0641 \u0627\u0644\u0645\u062d\u062a\u0648\u0649 \u0627\u0644\u0645\u062d\u0644\u064a \u0627\u0644\u0633\u0646\u0648\u064a\u0629',
+  "Attach Plan":'\u0625\u0631\u0641\u0627\u0642 \u0627\u0644\u062e\u0637\u0629',
+  'Document':'\u0645\u0633\u062a\u0646\u062f',
+  'imported from evaluation \u00b7 read-only':'\u0645\u0633\u062a\u0648\u0631\u062f \u0645\u0646 \u0627\u0644\u062a\u0642\u064a\u064a\u0645 \u00b7 \u0644\u0644\u0642\u0631\u0627\u0621\u0629 \u0641\u0642\u0637',
+  'View':'\u0639\u0631\u0636',
+  'Import':'\u0627\u0633\u062a\u064a\u0631\u0627\u062f',
+  // Report toggles
+  '&#10003; Received':'&#10003; \u0645\u0633\u062a\u0644\u0645',
+  '&#10007; Not received':'&#10007; \u0644\u0645 \u064a\u064f\u0633\u062a\u0644\u0645',
+  'Pen Off':'\u0645\u0648\u0642\u0641\u0629 \u0627\u0644\u063a\u0631\u0627\u0645\u0629',
+  'Due:':'\u0645\u0633\u062a\u062d\u0642:',
+  'grace':'\u0641\u062a\u0631\u0629 \u0633\u0645\u0627\u062d',
+  'Target:':'\u0627\u0644\u0647\u062f\u0641:',
+  'Actual%:':'\u0627\u0644\u0641\u0639\u0644\u064a%:',
+  'Committed:':'\u0627\u0644\u0645\u0644\u062a\u0632\u0645 \u0628\u0647:',
+  'Actual SAR:':'\u0627\u0644\u0641\u0639\u0644\u064a \u0631.\u0633:',
+  'Approved':'\u0645\u0648\u0627\u0641\u0642 \u0639\u0644\u064a\u0647',
+  // Contracts table
+  'Exp':'\u0645\u0646\u062a\u0647\u064a',
+  'Act':'\u0646\u0634\u0637',
+  'overdue':'\u0645\u062a\u0623\u062e\u0631\u0629',
+  'due':'\u0645\u0633\u062a\u062d\u0642\u0629',
+  'Due \u2014 within grace period':'\u0645\u0633\u062a\u062d\u0642\u0629 \u2014 \u0636\u0645\u0646 \u0641\u062a\u0631\u0629 \u0627\u0644\u0633\u0645\u0627\u062d',
+  'Remind':'\u062a\u0630\u0643\u064a\u0631',
+  'Clear':'\u062e\u0627\u0644\u064d',
+  'No results':'\u0644\u0627 \u062a\u0648\u062c\u062f \u0646\u062a\u0627\u0626\u062c',
+  // Evidence
+  'Evidence':'\u0627\u0644\u0623\u062f\u0644\u0629',
+  'pending review':'\u0642\u064a\u062f \u0627\u0644\u0645\u0631\u0627\u062c\u0639\u0629',
+  'file(s)':'\u0645\u0644\u0641(\u0627\u062a)',
+  'verified':'\u0645\u0648\u062b\u064e\u0651\u0642',
+  // Penalty table
+  'Disabled':'\u0645\u0639\u0637\u0651\u0644',
+  'Off':'\u0645\u0648\u0642\u0641',
+  'Letter':'\u062e\u0637\u0627\u0628',
+  'Generate a penalty letter':'\u0625\u0646\u0634\u0627\u0621 \u062e\u0637\u0627\u0628 \u063a\u0631\u0627\u0645\u0629',
+  'Disputed':'\u0645\u064f\u0639\u062a\u0631\u0636 \u0639\u0644\u064a\u0647',
+  'Acknowledged':'\u0645\u064f\u0642\u0631\u0651 \u0628\u0647',
+  'Sent':'\u0645\u064f\u0631\u0633\u064e\u0644',
+  'Recall':'\u0633\u062d\u0628',
+  'Send to Supplier':'\u0625\u0631\u0633\u0627\u0644 \u0644\u0644\u0645\u0648\u0631\u062f',
+  'No penalties':'\u0644\u0627 \u062a\u0648\u062c\u062f \u063a\u0631\u0627\u0645\u0627\u062a',
+  // Penalty legend
+  'Legend':'\u0645\u0641\u062a\u0627\u062d \u0627\u0644\u0623\u0644\u0648\u0627\u0646',
+  'Periodic':'\u062f\u0648\u0631\u064a',
+  'Final Submission':'\u0627\u0644\u062a\u0642\u062f\u064a\u0645 \u0627\u0644\u0646\u0647\u0627\u0626\u064a',
+  'Deviation':'\u0627\u0646\u062d\u0631\u0627\u0641',
+  // Improvement plan extras
+  'Below the high-value threshold \u2014 tracked & approvable, but not counted in KPIs.':'\u0623\u0642\u0644 \u0645\u0646 \u062d\u062f \u0627\u0644\u0642\u064a\u0645\u0629 \u0627\u0644\u0639\u0627\u0644\u064a\u0629 \u2014 \u064a\u064f\u062a\u0627\u0628\u064e\u0639 \u0648\u064a\u0645\u0643\u0646 \u0627\u0639\u062a\u0645\u0627\u062f\u0647\u060c \u0644\u0643\u0646 \u0644\u0627 \u064a\u064f\u062d\u062a\u0633\u0628 \u0641\u064a \u0645\u0624\u0634\u0631\u0627\u062a \u0627\u0644\u0623\u062f\u0627\u0621.',
 };
 var EN={};Object.keys(AR).forEach(function(k){EN[AR[k]]=k;});
 
@@ -11442,7 +11534,7 @@ body.rtl .swz-summary{text-align:right;}
       +'<div class="swz-grid">'
       +optCard('gov','🏛️',L('Government Entity','جهة حكومية'),L('Public / government procurement under LCGPA rules.','مشتريات حكومية وفق أنظمة هيئة المحتوى المحلي.'),
           [L('Price / LC weight 60 / 40','وزن السعر / المحتوى 60 / 40'),L('LC split 50 / 50','تقسيم المحتوى 50 / 50'),L('Listed-company bonus 5%','حافز الشركات المدرجة 5%'),L('High-value threshold SAR 25M','حد القيمة العالية 25 مليون ريال'),L('Periodic-report penalty OFF','غرامة التقارير الدورية متوقفة')],cur)
-      +optCard('portfolio','🏢',L('Portfolio Company','شركة محفظة'),L('PIF / portfolio company applying its own Local Content policy.','شركة ضمن محفظة تطبّق سياسة المحتوى المحلي الخاصة بها.'),
+      +optCard('portfolio','🏢',L('Portfolio Company','شركة مملوكة للدولة'),L('PIF / portfolio company applying its own Local Content policy.','شركة مملوكة للدولة تطبّق سياسة المحتوى المحلي الخاصة بها.'),
           [L('Price / LC weight 70 / 30','وزن السعر / المحتوى 70 / 30'),L('LC split 50 / 50','تقسيم المحتوى 50 / 50'),L('Listed-company bonus OFF','حافز الشركات المدرجة متوقف'),L('High-value threshold SAR 50M','حد القيمة العالية 50 مليون ريال'),L('Periodic-report penalty — you choose','غرامة التقارير الدورية — باختيارك')],cur)
       +'</div>';
   }
@@ -11450,7 +11542,7 @@ body.rtl .swz-summary{text-align:right;}
   function stepPenalty(){
     host.innerHTML=topBar()
       +'<button class="swz-back" onclick="openSetupWizard()">‹ '+L('Back','رجوع')+'</button>'
-      +'<div class="swz-eyebrow">'+L('Step 2 of 2 — Portfolio Company','الخطوة 2 من 2 — شركة محفظة')+'</div>'
+      +'<div class="swz-eyebrow">'+L('Step 2 of 2 — Portfolio Company','الخطوة 2 من 2 — شركة مملوكة للدولة')+'</div>'
       +'<h1 class="swz-title" style="font-size:22px">'+L('One more question','سؤال أخير')+'</h1>'
       +'<div class="swz-q"><div class="swz-opt-ic">⚖️</div>'
       +'<div class="swz-q-txt">'+L('Does your Local Content policy empower penalizing suppliers for non-compliance on periodic reports?','هل تخوّل سياسة المحتوى المحلي لديكم فرض غرامات على المورّد عند عدم الالتزام بالتقارير الدورية؟')+'</div>'
@@ -11473,7 +11565,7 @@ body.rtl .swz-summary{text-align:right;}
   function stepDone(type,penaltyYes){
     var isGov=type==='gov', pen=isGov?false:!!penaltyYes;
     var rows=[
-      [L('Profile','النمط'), isGov?L('Government Entity','جهة حكومية'):L('Portfolio Company','شركة محفظة')],
+      [L('Profile','النمط'), isGov?L('Government Entity','جهة حكومية'):L('Portfolio Company','شركة مملوكة للدولة')],
       [L('Price / LC weight','وزن السعر / المحتوى'), isGov?'60 / 40':'70 / 30'],
       [L('LC split (Target / Baseline)','تقسيم المحتوى (مستهدف / أساس)'),'50 / 50'],
       [L('Listed-company bonus','حافز الشركات المدرجة'), isGov?L('On · 5%','مُفعّل · 5%'):L('Off','متوقف')],
