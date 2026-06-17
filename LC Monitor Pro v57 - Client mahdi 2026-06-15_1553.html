@@ -1581,7 +1581,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div class="fc" id="mwc-inprocess" onclick="mwPoolChip('inprocess')">In Process</div>
       <div class="fc" id="mwc-ready" onclick="mwPoolChip('ready')">Ready</div>
     </div>
-    <div style="overflow-x:auto;margin-top:8px"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Mechanism</th><th>Status</th><th></th></tr></thead><tbody id="mwPoolBody"></tbody></table></div>
+    <div class="tbl-wrap" style="margin-top:8px"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Mechanism</th><th>Status</th><th></th></tr></thead><tbody id="mwPoolBody"></tbody></table></div>
   </div>
   <div class="card">
     <div class="card-hd" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
@@ -1589,7 +1589,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <button class="btn btn-p btn-sm" onclick="mwNewProcess()">+ New process</button>
     </div>
     <div style="font-size:11px;color:var(--text2);margin:2px 0 12px">Processed RFPs and their identified LCGPA mechanism. Click <b>+ New process</b> to start identifying a mechanism for an existing draft RFP. Each row links to the mechanism's <b>Terms &amp; Conditions</b> (from Settings → Mechanism T&amp;C) — view &amp; download.</div>
-    <div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Nature</th><th>Mechanism</th><th>Thresholds</th><th>Terms &amp; Conditions</th><th>Processed</th><th></th></tr></thead><tbody id="a1Tbody"></tbody></table></div>
+    <div class="tbl-wrap"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Value</th><th>Nature</th><th>Mechanism</th><th>Thresholds</th><th>Terms &amp; Conditions</th><th>Processed</th><th></th></tr></thead><tbody id="a1Tbody"></tbody></table></div>
   </div>
 </div>
 <!-- ===== v57 A.2 · MANDATORY LIST IDENTIFIER ===== -->
@@ -1604,7 +1604,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
       <div class="fc" id="a2-toprocess" onclick="a2Chip('toprocess')">To process</div>
       <div class="fc" id="a2-finalized" onclick="a2Chip('finalized')">Finalized</div>
     </div>
-    <div style="overflow-x:auto;margin-top:8px"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Mechanism</th><th>Mandatory Items</th><th>Status</th><th>Attachments</th><th>Processed</th><th></th></tr></thead><tbody id="a2Tbody"></tbody></table></div>
+    <div class="tbl-wrap" style="margin-top:8px"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Name</th><th>End-User</th><th>Mechanism</th><th>Mandatory Items</th><th>Status</th><th>Attachments</th><th>Processed</th><th></th></tr></thead><tbody id="a2Tbody"></tbody></table></div>
   </div>
 </div>
 <!-- ===== v57 B.1 · EVALUATION ASSISTANT ===== -->
@@ -1665,7 +1665,7 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
         <div class="fg"><label class="fl2">RFP Reference #</label><input class="fi" id="rfpRef" placeholder="RFP-2024-001"></div>
         <div class="fg"><label class="fl2">Estimated Value (SAR) <span class="req">*</span></label><input class="fi" id="rfpValue" type="number" placeholder="0" oninput="runMechWizard()"></div>
         <div class="fg"><label class="fl2">Contract Duration (months) <span class="req">*</span></label><input class="fi" id="rfpDuration" type="number" min="1" placeholder="e.g. 36" title="Tender contract period — shown to suppliers &amp; evaluators, imported into the contract"></div>
-        <div class="fg"><label class="fl2" title="Art.9: in a divisible competition a Mandatory-List failure excludes only that item, not the whole bidder">Divisible Competition (Art.9)</label><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><label class="sw-toggle"><input type="checkbox" id="rfpDivisible"><span class="sw-slider"></span></label><span style="font-size:9px;color:var(--text3)">Mandatory failure excludes the item, not the bidder</span></div></div>
+        <div class="fg" id="rfpDivisibleWrap"><label class="fl2" title="Art.9: in a divisible competition a Mandatory-List failure excludes only that item, not the whole bidder">Divisible Competition (Art.9)</label><div style="display:flex;align-items:center;gap:8px;margin-top:6px"><label class="sw-toggle"><input type="checkbox" id="rfpDivisible"><span class="sw-slider"></span></label><span style="font-size:9px;color:var(--text3)">Mandatory failure excludes the item, not the bidder</span></div></div>
       </div>
       <div class="fsec" style="margin-top:14px;padding:14px;background:var(--al);border:1.5px solid var(--accent)">
         <div class="fsec-title" style="border:none;margin-bottom:8px;padding-bottom:0">🧙 Smart Mechanism Wizard</div>
@@ -1674,6 +1674,9 @@ body.rtl .mlcand-score{margin-left:0;margin-right:auto}
             <select class="fsel2" id="rfpNature" onchange="runMechWizard()"><option value="">Select...</option><option value="services">Pure Services</option><option value="supply">Pure Supply (Goods)</option><option value="mixed">Mixed (Services + Supply)</option></select></div>
           <div class="fg" id="rfpCapexWrap" style="display:none"><label class="fl2">2. Expenditure Type</label>
             <select class="fsel2" id="rfpCapex" onchange="runMechWizard()"><option value="">Select...</option><option value="capex">Capex (Project Level)</option><option value="opex">Opex (Company Level)</option></select></div>
+          <div class="fg" id="rfpActivityWrap" style="display:none"><label class="fl2">2. Activity Type <span style="font-size:9px;color:var(--text3)">(LCGPA Circular 9/46214/2 — Gov only)</span></label>
+            <select class="fsel2" id="rfpActivity" onchange="runMechWizard()"><option value="">&#8212; None of the above (LC Minimum Threshold applies) &#8212;</option><option value="telecom">Telecommunications</option><option value="medical">Medical Services</option><option value="environmental">Environmental Services</option><option value="recycling">Recycling &amp; Waste Management</option><option value="insurance">Insurance Services</option><option value="tailoring">Tailoring &amp; Personal Care Salons</option><option value="rental">Rental Services</option><option value="laundry">Laundry Services</option><option value="docsteril">General Services (Document Sterilization)</option><option value="customs">Customs Clearance</option><option value="fishing">Fishing</option></select>
+            <span style="font-size:9px;color:var(--text3);margin-top:3px;display:block">Select if the activity is on the excluded list — otherwise LC Minimum Threshold applies</span></div>
         </div>
         <div id="mechWizardResult" style="margin-top:10px"><div style="font-size:11px;color:var(--text3)">Fill nature &amp; value</div></div>
       </div>
@@ -3312,7 +3315,7 @@ function openBidForm(){
   document.getElementById('bidTitle').value=curBid.title||'';document.getElementById('bidValue').value=curBid.value||'';
   populateMechSelectFor('bidMech');if(curBid.mechanism)document.getElementById('bidMech').value=curBid.mechanism;
   populateRFPSelect();if(curBid.rfpId)document.getElementById('bidRFP').value=curBid.rfpId;if(typeof _syncBidDuration==='function')_syncBidDuration();
-  loadBidFormula();renderBiddersList();document.getElementById('bidResults').innerHTML='<div class="empty"><div class="ei">📊</div><p>Click Calculate to see results</p></div>';
+  loadBidFormula();renderBiddersList();var _br3315=document.getElementById('bidResults');if(_br3315)_br3315.innerHTML='<div class="empty"><div class="ei">📊</div><p>Click Calculate to see results</p></div>';
   document.getElementById('aiBidChat').innerHTML='';
 }
 function closeBidForm(){renderBidList();}
@@ -7301,11 +7304,13 @@ function _supplierMatchesFilters(s){var f=window._rfpFilters||{};if(f.sme&&!s.is
 function rfpRenderSupplierPick(){var el=document.getElementById('rfpSupplierPick');if(!el)return;window._rfpInvites=window._rfpInvites||[];var sl=(typeof SUPPLIERS!=='undefined'?SUPPLIERS:[]).filter(_supplierMatchesFilters);el.innerHTML=sl.length?sl.map(function(s){var inv=window._rfpInvites.indexOf(String(s.id))>=0;return '<label style="display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid var(--border);font-size:11px;cursor:pointer"><input type="checkbox" '+(inv?'checked':'')+' onchange="rfpToggleInvite(\''+s.id+'\',this.checked)"/><span style="font-weight:600;flex:1">'+s.name+'</span>'+(s.isSME?'<span class="badge bb" style="font-size:8px">SME</span> ':'')+(s.isTadawul?'<span class="badge bp" style="font-size:8px">Tadawul</span>':'')+'</label>';}).join(''):'<div style="font-size:10px;color:var(--text3);padding:8px">No suppliers match the filters — adjust filters or register a supplier.</div>';var c=document.getElementById('rfpInvitedCount');if(c)c.textContent=window._rfpInvites.length;}
 function rfpToggleInvite(id,on){window._rfpInvites=window._rfpInvites||[];id=String(id);var idx=window._rfpInvites.indexOf(id);if(on&&idx<0)window._rfpInvites.push(id);else if(!on&&idx>=0)window._rfpInvites.splice(idx,1);var c=document.getElementById('rfpInvitedCount');if(c)c.textContent=window._rfpInvites.length;}
 window.rfpToggleClosed=rfpToggleClosed;window.rfpToggleFilter=rfpToggleFilter;window.rfpToggleInvite=rfpToggleInvite;window.rfpRenderSupplierPick=rfpRenderSupplierPick;
-var _oSR=saveRFP;saveRFP=function(s){if(curRFP){curRFP.boq=rfpBoQ.filter(function(r){return r.desc;});var _rdv=document.getElementById('rfpDivisible');if(_rdv)curRFP.divisible=_rdv.checked; /* D1 */ var ts=document.getElementById('rfpTenderStyle');curRFP.tenderStyle=ts?ts.value:(curRFP.tenderStyle||'open');curRFP.invitedSuppliers=(curRFP.tenderStyle==='closed')?((window._rfpInvites||[]).slice()):[];}_oSR(s);};window.saveRFP=saveRFP;
-var _oNR=newRFP;newRFP=function(){rfpBoQ=[];_oNR();var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="none";var cw=document.getElementById("rfpCapexWrap");if(cw)cw.style.display="none";var wr=document.getElementById("mechWizardResult");if(wr)wr.innerHTML="";var _rdv4=document.getElementById('rfpDivisible');if(_rdv4)_rdv4.checked=false;populateEUSelectFor("rfpEU");};window.newRFP=newRFP;
-var _oER=editRFP;editRFP=function(id){_oER(id);if(curRFP&&curRFP.boq){rfpBoQ=JSON.parse(JSON.stringify(curRFP.boq));var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";renderBoQ();}var ts=document.getElementById('rfpTenderStyle');if(ts){ts.value=(curRFP&&curRFP.tenderStyle)||'open';}window._rfpInvites=(curRFP&&curRFP.invitedSuppliers||[]).map(String);window._rfpFilters={};if(typeof rfpToggleClosed==='function')rfpToggleClosed();var _rdv2=document.getElementById('rfpDivisible');if(_rdv2)_rdv2.checked=!!(curRFP&&curRFP.divisible); /* D1 */};window.editRFP=editRFP;
+var _oSR=saveRFP;saveRFP=function(s){if(curRFP){curRFP.boq=rfpBoQ.filter(function(r){return r.desc;});var _rdv=document.getElementById('rfpDivisible');if(_rdv)curRFP.divisible=_rdv.checked; /* D1 */ var ts=document.getElementById('rfpTenderStyle');curRFP.tenderStyle=ts?ts.value:(curRFP.tenderStyle||'open');curRFP.invitedSuppliers=(curRFP.tenderStyle==='closed')?((window._rfpInvites||[]).slice()):[];var _ract=document.getElementById('rfpActivity');if(_ract)curRFP.lcActivity=_ract.value||'';}_oSR(s);};window.saveRFP=saveRFP;
+var _oNR=newRFP;newRFP=function(){rfpBoQ=[];_oNR();var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="none";var cw=document.getElementById("rfpCapexWrap");if(cw)cw.style.display="none";var wr=document.getElementById("mechWizardResult");if(wr)wr.innerHTML="";var _rdv4=document.getElementById('rfpDivisible');if(_rdv4)_rdv4.checked=false;var _ract4=document.getElementById('rfpActivity');if(_ract4)_ract4.value='';populateEUSelectFor("rfpEU");};window.newRFP=newRFP;
+var _oER=editRFP;editRFP=function(id){_oER(id);if(curRFP&&curRFP.boq){rfpBoQ=JSON.parse(JSON.stringify(curRFP.boq));var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";renderBoQ();}var ts=document.getElementById('rfpTenderStyle');if(ts){ts.value=(curRFP&&curRFP.tenderStyle)||'open';}window._rfpInvites=(curRFP&&curRFP.invitedSuppliers||[]).map(String);window._rfpFilters={};if(typeof rfpToggleClosed==='function')rfpToggleClosed();var _rdv2=document.getElementById('rfpDivisible');if(_rdv2)_rdv2.checked=!!(curRFP&&curRFP.divisible); /* D1 */ var _ract2=document.getElementById('rfpActivity');if(_ract2)_ract2.value=(curRFP&&curRFP.lcActivity)||'';};window.editRFP=editRFP;
 // reset tendering UI when starting a NEW RFP
 var _oNR2=(typeof newRFP==='function')?newRFP:null;if(_oNR2){newRFP=function(){_oNR2.apply(this,arguments);window._rfpInvites=[];window._rfpFilters={};var ts=document.getElementById('rfpTenderStyle');if(ts)ts.value='open';if(typeof rfpToggleClosed==='function')rfpToggleClosed();};window.newRFP=newRFP;}
+
+
 var _oRML=renderMechList;renderMechList=function(){document.getElementById("mechList").innerHTML=MECHS.map(function(m,i){var fr=(typeof mechFrozen==='function'&&mechFrozen(m));return '<div class="mi"'+(fr?' style="opacity:.6"':'')+'><div class="mi-n" title="'+m+'" style="display:flex;align-items:center;gap:8px;max-width:300px;white-space:normal;line-height:1.3"><span style="color:var(--accent);cursor:grab;font-size:16px;line-height:1;user-select:none" title="Drag to reorder">⠿</span><span>'+m+(fr?' <span class="badge bgy" style="font-size:8px">❄ Frozen</span>':'')+'</span></div><div class="ma"><button class="mb" onclick="editMechName('+i+')">Edit</button><button class="mb" title="'+(fr?'Unfreeze (show in new pickers)':'Freeze (hide from new pickers, keep existing)')+'" onclick="toggleMechFreeze('+i+')">'+(fr?'❄ Unfreeze':'❄ Freeze')+'</button><button class="mb del" onclick="removeMech('+i+')">X</button></div></div>';}).join("");};window.renderMechList=renderMechList;
 function editMechName(i){var o=MECHS[i];var n=prompt("Edit mechanism name:",o);if(n===null||!n.trim())return;n=n.trim();DB.forEach(function(c){if(c.mechanism===o)c.mechanism=n;});if(FORMULAS[o]){FORMULAS[n]=FORMULAS[o];delete FORMULAS[o];}if(MECH_TC[o]){MECH_TC[n]=MECH_TC[o];delete MECH_TC[o];}MECHS[i]=n;saveMechs();saveDB();saveAll();renderMechList();renderMechTCList();renderMechFormulaList();populateMechSelects();logAudit("edit","Mech renamed: "+o+" -> "+n);toast("Renamed","ok");}
 window.editMechName=editMechName;
@@ -8357,6 +8362,83 @@ window.runMechWizard=function(){
   if(_prevRunMechWizard)_prevRunMechWizard();
   if(curRFP) toggleThresholdStep(curRFP.suggestedMech||curRFP._wizardMech||"");
 };
+// Gov-aware mechanism wizard — must come LAST; gov=value-based 400M/25M+activity; portfolio=capex/opex via existing chain
+(function(){
+  var _p=window.runMechWizard;
+  window.runMechWizard=function(){
+    var n=(document.getElementById("rfpNature")||{}).value||'';
+    var v=parseFloat((document.getElementById("rfpValue")||{}).value)||0;
+    var isGov=(typeof S!=='undefined')&&S.activeProfile==='gov';
+    var thr=((typeof S!=='undefined'&&S.highValueThreshold)||25)*1000000;
+    var isH=v>=thr;
+    var cw=document.getElementById("rfpCapexWrap");
+    var aw=document.getElementById("rfpActivityWrap");
+    var dw=document.getElementById("rfpDivisibleWrap");
+    // Divisible gate: disable+uncheck for pure services
+    if(dw){
+      var _isServ=n==='services';
+      dw.style.opacity=_isServ?'0.45':'';
+      dw.style.pointerEvents=_isServ?'none':'';
+      var _rdvt=document.getElementById('rfpDivisible');
+      if(_rdvt&&_isServ)_rdvt.checked=false;
+    }
+    // Portfolio: hide activity dropdown, delegate to existing capex/opex chain
+    if(!isGov){
+      if(aw)aw.style.display='none';
+      if(_p)_p();
+      return;
+    }
+    // Gov: hide capex/opex; show activity dropdown only for high-value services/mixed
+    if(cw)cw.style.display='none';
+    var needAct=isH&&(n==='services'||n==='mixed');
+    if(aw)aw.style.display=needAct?'':'none';
+    // Gov wizard computation
+    var res=document.getElementById("mechWizardResult");
+    if(!n||!v){if(res)res.innerHTML='<div style="font-size:11px;color:var(--text3)">Fill nature & value</div>';return;}
+    var actEl=document.getElementById("rfpActivity");
+    var act=(actEl&&actEl.value)||'';
+    var actLabel=actEl&&act?actEl.options[actEl.selectedIndex].text:'';
+    var m='',note='',bn=n==='supply'?'goods':n==='services'?'services':'mixed';
+    if(n==='supply'){
+      m='National Products Preferencing + Mandatory List';
+      note='Pure supply — NPP + Mandatory List';
+    } else if(!isH){
+      if(n==='services'){
+        m='Small & Medium Enterprises';
+        note='Services below SAR '+(thr/1e6)+'M threshold';
+      } else {
+        m='Small & Medium Enterprises + National Products Preferencing + Mandatory List';
+        note='Mixed below threshold — SME + NPP + MLNP';
+      }
+    } else {
+      // High-value gov: activity exclusion gates mechanism
+      var isExcl=!!act;
+      var isPrj=v>=400000000;
+      var lvl=isPrj?'Project Level':'Company Level';
+      if(n==='services'){
+        m=isExcl?('Local Content Weight in Commercial Evaluation - '+lvl):'Local Content Minimum Threshold';
+        note=isExcl?('Excluded: '+actLabel+' — LC Weight '+lvl):'No excluded activity — LC Minimum Threshold';
+      } else {
+        m=isExcl?('Local Content Weight in Commercial Evaluation - '+lvl+' + National Products Preferencing + Mandatory List'):'Local Content Minimum Threshold + National Products Preferencing + Mandatory List';
+        note=isExcl?('Mixed, excluded: '+actLabel+' — LC Weight '+lvl+' + NPP + MLNP'):'Mixed — LC Minimum Threshold + NPP + MLNP';
+      }
+    }
+    if(res){
+      res.innerHTML='<div style="background:var(--surface);border:1.5px solid var(--accent3);border-radius:var(--rs);padding:10px 14px">'
+        +'<div style="font-size:10px;color:var(--accent3);font-weight:700">RECOMMENDED MECHANISM</div>'
+        +'<div style="font-size:13px;font-weight:700;color:var(--text);margin:4px 0">'+m+'</div>'
+        +'<div style="font-size:10px;color:var(--text3)">'+note+' | '+(typeof fSAR==='function'?fSAR(v):('SAR '+v))+' | Threshold: SAR '+(thr/1e6)+'M</div>'
+        +'<button class="btn btn-p btn-sm" style="margin-top:8px" onclick="acceptWizardMech()">Accept</button>'
+        +'</div>';
+    }
+    if(typeof curRFP!=='undefined'&&curRFP){curRFP._wizardMech=m;curRFP._boqNature=bn;}
+    var bs=document.getElementById("rfpBoQStep");if(bs)bs.style.display="block";
+    if(typeof rfpBoQ!=='undefined'&&!rfpBoQ.length&&typeof addBoQRows==='function')addBoQRows(3);
+    if(typeof renderBoQ==='function')renderBoQ();
+    if(typeof toggleThresholdStep==='function')toggleThresholdStep(m);
+  };
+})();
+
 
 // v46: Hook mechanism dropdown change for threshold step visibility
 (function(){
@@ -8478,7 +8560,7 @@ calcBids=function(){
   } else if(curBid){ curBid._nppItemAwards=[]; }
 
   var q=results.filter(function(r){return !r.excluded;});
-  if(!q.length){document.getElementById("bidResults").innerHTML='<div class="bidev-award"><div class="bidev-award__icon" style="border-color:color-mix(in srgb,var(--bad) 30%,transparent);color:var(--bad-ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div><div class="bidev-award__body"><div class="bidev-award__title">'+((typeof window.L==="function")?window.L("All bidders excluded","استُبعد جميع العارضين"):"All bidders excluded")+'</div><div class="bidev-award__text">'+((typeof window.L==="function")?window.L("No qualified bid remains under the current mechanism and exclusion gates.","لا يوجد عطاء مؤهل وفق الآلية وبوابات الاستبعاد الحالية."):"No qualified bid remains under the current mechanism and exclusion gates.")+'</div></div></div>';return;}
+  if(!q.length){var _brEl=document.getElementById("bidResults");if(_brEl)_brEl.innerHTML='<div class="bidev-award"><div class="bidev-award__icon" style="border-color:color-mix(in srgb,var(--bad) 30%,transparent);color:var(--bad-ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/></svg></div><div class="bidev-award__body"><div class="bidev-award__title">'+((typeof window.L==="function")?window.L("All bidders excluded","استُبعد جميع العارضين"):"All bidders excluded")+'</div><div class="bidev-award__text">'+((typeof window.L==="function")?window.L("No qualified bid remains under the current mechanism and exclusion gates.","لا يوجد عطاء مؤهل وفق الآلية وبوابات الاستبعاد الحالية."):"No qualified bid remains under the current mechanism and exclusion gates.")+'</div></div></div>';return;}
 
   // ── Commercial fraction (0..1, best commercial = 1) per mechanism ──
   var lpAll=Math.min.apply(null,q.map(function(b){return b.price||Infinity;}));
@@ -8668,7 +8750,7 @@ calcBids=function(){
   }).join("")+'</section>';
 
   // Results display (formula \u2192 guidance \u2192 ranked cards). Assignment kept so the v55 award-select patch can append.
-  document.getElementById("bidResults").innerHTML=formula+awardGuide+sectionRule+cards;
+  var _brMain=document.getElementById("bidResults");if(_brMain)_brMain.innerHTML=formula+awardGuide+sectionRule+cards;
 
   if(curBid){curBid.bidders=curBidders;}
   toast("LCGPA evaluation complete","ok");
@@ -10354,7 +10436,7 @@ function renderEvalAssist(){
   document.getElementById('ea-list').style.display='block';document.getElementById('ea-detail').style.display='none';
   var el=document.getElementById('eaListBody');if(!el)return;
   var rows=(typeof BIDS!=='undefined'?BIDS:[]);
-  el.innerHTML=rows.length?('<div style="overflow-x:auto"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Evaluation</th><th>End-User</th><th>Mechanism</th><th>Bidders</th><th>Status</th><th></th></tr></thead><tbody>'+rows.map(function(b){var rfp=b.rfpId?(RFPS||[]).find(function(r){return String(r.id)===String(b.rfpId);}):null;var st=b.status==='awarded'?'<span class="badge bg">🏆 Awarded</span>':b.status==='evaluated'?'<span class="badge bg">✓ Evaluated</span>':b.status==='contractCreated'?'<span class="badge bp">📑 Contract Created</span>':'<span class="badge ba">Draft</span>';return '<tr style="cursor:pointer" onclick="eaOpen('+JSON.stringify(b.id)+')"><td>'+escSub((rfp&&rfp.ref)||b.ref||'—')+'</td><td class="td-n">'+escSub(b.title||'Untitled')+'</td><td>'+escSub((rfp&&rfp.endUser)||b.endUser||'—')+'</td><td style="font-size:11px">'+escSub(b.mechanism||'—')+'</td><td>'+((b.bidders||[]).length)+'</td><td>'+st+'</td><td><button class="btn btn-s btn-sm" onclick="event.stopPropagation();eaOpen('+JSON.stringify(b.id)+')">Open</button></td></tr>';}).join('')+'</tbody></table></div>'):'<div class="empty"><div class="ei">⚖️</div><p>No evaluations yet. Click "+ New Evaluation" and pick a processed RFP.</p></div>';
+  el.innerHTML=rows.length?('<div class="tbl-wrap"><table style="width:100%;font-size:12px"><thead><tr><th>RFP #</th><th>Evaluation</th><th>End-User</th><th>Mechanism</th><th>Bidders</th><th>Status</th><th></th></tr></thead><tbody>'+rows.map(function(b){var rfp=b.rfpId?(RFPS||[]).find(function(r){return String(r.id)===String(b.rfpId);}):null;var st=b.status==='awarded'?'<span class="badge bg">🏆 Awarded</span>':b.status==='evaluated'?'<span class="badge bg">✓ Evaluated</span>':b.status==='contractCreated'?'<span class="badge bp">📑 Contract Created</span>':'<span class="badge ba">Draft</span>';return '<tr style="cursor:pointer" onclick="eaOpen('+JSON.stringify(b.id)+')"><td>'+escSub((rfp&&rfp.ref)||b.ref||'—')+'</td><td class="td-n">'+escSub(b.title||'Untitled')+'</td><td>'+escSub((rfp&&rfp.endUser)||b.endUser||'—')+'</td><td style="font-size:11px">'+escSub(b.mechanism||'—')+'</td><td>'+((b.bidders||[]).length)+'</td><td>'+st+'</td><td><button class="btn btn-s btn-sm" onclick="event.stopPropagation();eaOpen('+JSON.stringify(b.id)+')">Open</button></td></tr>';}).join('')+'</tbody></table></div>'):'<div class="empty"><div class="ei">⚖️</div><p>No evaluations yet. Click "+ New Evaluation" and pick a processed RFP.</p></div>';
 }
 function eaNew(){
   /* v57 CHANGE D — import only RFPs ready for evaluation: non-ML mechanisms once 'ready', ML mechanisms once 'finalized'. */
